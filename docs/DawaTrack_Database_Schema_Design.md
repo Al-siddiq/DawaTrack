@@ -1,6 +1,6 @@
 # DawaTrack Database / Schema Design
 
-**Status:** Proposed authoritative database blueprint for review
+**Status:** Approved and frozen — authoritative database blueprint
 **Version:** 1.1 — September 2026
 **Target:** MySQL 8.4 LTS / InnoDB, CodeIgniter 4 and CodeIgniter Shield
 
