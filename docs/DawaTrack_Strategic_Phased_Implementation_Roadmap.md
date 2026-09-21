@@ -1,7 +1,7 @@
 # DawaTrack — Strategic Phased Implementation Roadmap
 
 **Version:** 1.1
-**Status:** Proposed authoritative implementation execution plan — awaiting final approval
+**Status:** Approved — Authoritative Implementation Execution Plan
 **Prepared from:** Business & Product Blueprint; Technical Blueprint v1.0; Database / Schema Design v1.1  
 **Target outcome:** A complete, production-ready DawaTrack Phase 1 application suitable for real pilot shops
 
@@ -91,7 +91,7 @@ Environment-only secrets, debug disabled outside development, safe headers basel
 **Architectural preparation.** Reserve versioned Service Worker, IndexedDB and sync protocol boundaries; do not cache authenticated data or enqueue operations yet.
 
 ### Audit Requirements
-Define the audit vocabulary/envelope and actor/context contract; persistence begins in Phase 2.
+Define the Audit vocabulary/envelope and actor/context contract; authoritative Audit persistence begins in Phase 1 before any sensitive mutation is enabled.
 
 ### Responsive/Mobile Requirements
 Demonstrate shell navigation, dialogs, notices, forms and feedback at phone/tablet/desktop widths with 44px-class touch comfort, visible focus and no essential hover-only behavior.
