@@ -1,0 +1,1 @@
+{"private":true,"scripts":{"build:css":"sass --style=compressed --no-source-map resources/css/app.scss public/assets/css/app.css","build:assets":"sh scripts/build-frontend-assets.sh","build":"npm run build:css && npm run build:assets"},"devDependencies":{"bootstrap":"5.3.8","sass":"1.93.2","vue":"3.5.22","dexie":"4.2.1"}}

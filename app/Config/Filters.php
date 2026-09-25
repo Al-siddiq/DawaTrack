@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Config;
 
+use App\Filters\RequestContextFilter;
+use App\Filters\SecurityHeadersFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -33,7 +37,9 @@ class Filters extends BaseFilters
         'cors'          => Cors::class,
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
-        'performance'   => PerformanceMetrics::class,
+        'performance'    => PerformanceMetrics::class,
+        'requestContext'  => RequestContextFilter::class,
+        'securityHeaders' => SecurityHeadersFilter::class,
     ];
 
     /**
@@ -51,12 +57,15 @@ class Filters extends BaseFilters
      */
     public array $required = [
         'before' => [
+            'requestContext',
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
         ],
         'after' => [
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
+            'requestContext',
+            'securityHeaders',
             'toolbar',     // Debug Toolbar
         ],
     ];

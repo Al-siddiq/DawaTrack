@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Config;
 
+use App\Libraries\Http\RequestContext;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -19,6 +22,15 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
+    public static function requestContext(bool $getShared = true): RequestContext
+    {
+        if ($getShared) {
+            return static::getSharedInstance('requestContext');
+        }
+
+        return new RequestContext();
+    }
+
     /*
      * public static function example($getShared = true)
      * {
