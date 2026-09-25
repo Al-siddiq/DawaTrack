@@ -11,7 +11,7 @@
 
 This roadmap implements the three approved foundation documents together. The Business & Product Blueprint defines the outcome and user experience; the Technical Blueprint defines the modular-monolith, security, offline and operational architecture; Database / Schema Design v1.1 is authoritative for persistence, constraints, transaction boundaries and concurrency. Database v1.1 explicitly resolves the Technical Blueprint's earlier custom-domain deferral: verified custom domains and complete Shop white-labeling are mandatory Phase 1 work. No other implementation-blocking contradiction was found.
 
-The approved foundation is fixed: latest stable PHP/CodeIgniter 4 at implementation start, CodeIgniter Shield, MySQL 8.4 LTS/InnoDB, one modular-monolith codebase, Vue 3 Composition API with normal `setup()`, ES6+ JavaScript, native Fetch through one API layer, statically compiled Tailwind CSS, Dexie/IndexedDB, a manually controlled Service Worker, and REST-style JSON over HTTPS. There is no TypeScript, JavaScript application build system, Vue Router, Pinia, GraphQL, microservice, raw-table replication, or Docker/Kubernetes-first redesign.
+The approved foundation is fixed: latest stable PHP/CodeIgniter 4 at implementation start, CodeIgniter Shield, MySQL 8.4 LTS/InnoDB, one modular-monolith codebase, Vue 3 Composition API with normal `setup()`, ES6+ JavaScript, native Fetch through one API layer, statically compiled Bootstrap CSS, Dexie/IndexedDB, a manually controlled Service Worker, and REST-style JSON over HTTPS. There is no TypeScript, JavaScript application build system, Vue Router, Pinia, GraphQL, microservice, raw-table replication, or Docker/Kubernetes-first redesign.
 
 ## v1.0 → v1.1 Refinement Summary
 
@@ -73,7 +73,7 @@ Establish a maintainable CI4/Vue/PWA skeleton, module conventions and environmen
 Every later slice needs consistent bootstrapping, response/error conventions, static assets, configuration and deployment-safe structure.
 
 ### Scope
-Pin compatible stable releases; define modular namespaces and dependency direction; create Shop, Authentication and Platform Admin application shells; establish environment configuration, logging, coding conventions, route naming, JSON envelope/pagination/error conventions and documentation directories. Self-host Vue/Dexie/runtime assets. Establish Tailwind's separate CSS compilation procedure without adding a JavaScript application bundler.
+Pin compatible stable releases; define modular namespaces and dependency direction; create Shop, Authentication and Platform Admin application shells; establish environment configuration, logging, coding conventions, route naming, JSON envelope/pagination/error conventions and documentation directories. Self-host Vue/Dexie/runtime assets. Establish Bootstrap's separate CSS compilation procedure without adding a JavaScript application bundler.
 
 ### Database Work
 Configure MySQL 8.4, InnoDB, strict SQL mode, `utf8mb4_0900_ai_ci`, UTC connections and least-privilege development credentials. Create no DawaTrack domain tables.

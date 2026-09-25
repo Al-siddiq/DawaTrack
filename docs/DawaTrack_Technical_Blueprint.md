@@ -79,8 +79,8 @@ DawaTrack will use the following stack:
 | Pinia                     | No                                |
 | State Management          | Vue Composition API / Composables |
 | HTTP Client               | Native Fetch API                  |
-| Styling                   | Tailwind CSS                      |
-| Tailwind Production       | Precompiled/minified static CSS   |
+| Styling                   | Bootstrap CSS                      |
+| Bootstrap Production      | Precompiled/minified static CSS   |
 | Server Database           | MySQL 8.4 LTS / InnoDB            |
 | Offline Database          | IndexedDB                         |
 | IndexedDB Interface       | Dexie.js                          |
@@ -89,7 +89,7 @@ DawaTrack will use the following stack:
 
 Vue, Dexie and other production-critical frontend resources will be **self-hosted** so the PWA does not depend on public CDNs to start while offline.
 
-Tailwind's browser development CDN will not be used in production. Production CSS will be compiled into a normal static CSS file without introducing a JavaScript application build pipeline.
+Bootstrap's browser development CDN will not be used in production. Production CSS will be compiled into a normal static CSS file without introducing a JavaScript application build pipeline.
 
 ## 1.2 High-Level Architecture
 
@@ -1614,7 +1614,7 @@ Establish:
 * CI4 project foundation;
 * environment configuration;
 * Vue application shell;
-* Tailwind static styling pipeline;
+* Bootstrap static styling pipeline;
 * REST response conventions;
 * MySQL connection/migrations;
 * base service architecture;
