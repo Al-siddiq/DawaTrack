@@ -2,6 +2,7 @@
 
 | Phase | CodeIgniter migration | Equivalent MySQL 8.4 SQL | Status |
 |---|---|---|---|
-| 0 | None | None | Foundation only; no DawaTrack domain tables |
+| 0 | None | None | Foundation only |
+| 1 | `2026-09-25-190000_CreatePhaseOneFoundation.php` | `phase-01/001_phase_01_foundation.sql` | Tenant, Shop, Identity, Branding, Domain, Subscription, Audit and Sync Generation foundation |
 
-Every later migration must be paired with behaviorally equivalent SQL under `docs/database/sql/phase-XX/`.
+Shield's pinned vendor migrations run first and remain Shield-owned. The Phase 1 migration executes the registered SQL verbatim so both paths have identical constraints, indexes, checks, generated guards and FKs. `audit_events.actor_device_id` receives its approved late FK in Phase 7 after `registered_devices` exists.

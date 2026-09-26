@@ -6,6 +6,8 @@ namespace Config;
 
 use App\Filters\RequestContextFilter;
 use App\Filters\SecurityHeadersFilter;
+use App\Filters\AuthenticatedFilter;
+use App\Filters\PlatformAdminFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -40,6 +42,8 @@ class Filters extends BaseFilters
         'performance'    => PerformanceMetrics::class,
         'requestContext'  => RequestContextFilter::class,
         'securityHeaders' => SecurityHeadersFilter::class,
+        'authenticated'   => AuthenticatedFilter::class,
+        'platformAdmin'  => PlatformAdminFilter::class,
     ];
 
     /**
