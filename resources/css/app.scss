@@ -19,3 +19,24 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .status-dot { flex: 0 0 auto; width: .75rem; height: .75rem; margin-top: .4rem; border-radius: 50%; background: #198754; }
 .app-footer { padding: 1rem; text-align: center; color: var(--dt-muted); font-size: .875rem; }
 @media (max-width: 35rem) { .app-header { align-items: flex-start; flex-direction: column; } .area-label { text-align: left; } }
+[v-cloak] { display: none; }
+.workspace { display: grid; gap: 1.5rem; }
+.phase-nav, .button-row { display: flex; flex-wrap: wrap; gap: .65rem; margin-bottom: 1.5rem; }
+.responsive-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,16rem),1fr)); gap: 1rem; align-items: end; }
+.responsive-form label { display: grid; gap: .4rem; font-weight: 600; }
+.responsive-form button { min-height: 44px; }
+.record-grid { display: grid; gap: .75rem; }
+.record-card { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem; border: 1px solid #d5dfda; border-radius: .75rem; background: #fff; }
+.record-card details { flex-basis: 100%; }
+.permission-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(14rem,1fr)); gap: .65rem; padding-top: 1rem; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(13rem,1fr)); gap: 1rem; }
+.detail-grid div { padding: 1rem; border-radius: .7rem; background: #f4f7f5; }
+.detail-grid dd { margin: .3rem 0 0; overflow-wrap: anywhere; }
+.brand-preview { display: grid; gap: .35rem; padding: 1.5rem; color: var(--preview-primary); background: var(--preview-background); border-radius: 1rem; }
+.step-indicator { display: flex; gap: 1rem; padding: 0; list-style: none; }
+.step-indicator li { padding: .65rem 1rem; border-radius: 2rem; background: #e8eeeb; }
+.step-indicator li.active { color: #fff; background: var(--dt-primary); }
+.auth-card, .success-panel, .empty-panel { max-width: 48rem; padding: clamp(1.25rem,5vw,3rem); border-radius: 1rem; background: #fff; }
+.button-stack { display: grid; gap: .5rem; }
+.toast-notice { position: fixed; right: 1rem; bottom: 1rem; max-width: min(24rem,calc(100vw - 2rem)); padding: 1rem; color: #fff; background: #155d46; border-radius: .75rem; }
+@media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button { width: 100%; } }

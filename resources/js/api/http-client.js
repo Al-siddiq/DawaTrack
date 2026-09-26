@@ -24,6 +24,7 @@ export async function apiRequest(path, options = {}) {
     try {
         const response = await fetch(path, { ...options, credentials: 'same-origin', headers, signal: options.signal ?? controller.signal });
         const payload = await response.json().catch(() => null);
+        if (response.status === 401) { window.location.assign('/auth?expired=1'); throw new ApiError({ code: 'SESSION_EXPIRED', message: 'Your session has expired. Please sign in again.', status: 401 }); }
         if (!response.ok || !payload?.success) {
             throw new ApiError({ code: payload?.error?.code ?? 'HTTP_ERROR', message: payload?.error?.message ?? 'The request could not be completed.', status: response.status, details: payload?.error?.details, requestId: payload?.meta?.request_id ?? response.headers.get('X-Request-ID') });
         }

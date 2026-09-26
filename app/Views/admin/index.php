@@ -1,10 +1,5 @@
 <?= $this->extend('layouts/shell') ?>
 <?= $this->setVar('entryScript', 'assets/js/admin/app.js') ?>
 <?= $this->section('content') ?>
-<section id="admin-app" class="welcome-panel" aria-labelledby="admin-heading">
-    <div class="eyebrow">Platform administration</div>
-    <h1 id="admin-heading">Administration foundation</h1>
-    <p>Administrative capabilities are not enabled in Phase 0. This separate shell is ready for its future protected route boundary.</p>
-    <status-panel></status-panel>
-</section>
+<div id="admin-app" class="workspace" v-cloak><header><div class="eyebrow">Platform administration</div><h1>Onboard a Shop</h1><p>Create the Tenant, Shop, Owner, brand, platform address and Trial as one audited operation.</p></header><ol class="step-indicator" aria-label="Onboarding progress"><li :class="{active:step===1}">Details</li><li :class="{active:step===2}">Review</li><li :class="{active:step===3}">Complete</li></ol><form v-if="step===1" class="responsive-form" @submit.prevent="step=2"><label v-for="field in fields" :key="field.key">{{field.label}}<input v-model="form[field.key]" class="form-control" :type="field.type||'text'" required></label><button class="btn btn-primary">Review onboarding</button></form><section v-if="step===2"><h2>Confirm details</h2><dl class="detail-grid"><div v-for="field in fields" :key="field.key"><dt>{{field.label}}</dt><dd>{{field.type==='password'?'••••••••••••':form[field.key]}}</dd></div></dl><div class="button-row"><button class="btn btn-outline-secondary" @click="step=1">Back</button><button class="btn btn-primary" :disabled="busy" @click="submit">Create Tenant and Shop</button></div></section><section v-if="step===3" class="success-panel" role="status"><h2>Shop onboarding complete</h2><dl class="detail-grid"><div><dt>Tenant</dt><dd>{{result.tenant_public_id}}</dd></div><div><dt>Shop</dt><dd>{{result.shop_public_id}}</dd></div><div><dt>Owner</dt><dd>{{result.owner_email}}</dd></div><div><dt>Platform address</dt><dd>{{result.hostname}}</dd></div><div><dt>Trial</dt><dd>30 days · Active</dd></div></dl></section><div v-if="error" class="alert alert-danger" role="alert">{{error}}</div></div>
 <?= $this->endSection() ?>
