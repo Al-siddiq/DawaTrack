@@ -62,6 +62,26 @@ final class StaffService
         $this->database->transComplete();
     }
 
+    public function resetPassword(ShopContext $context, int $membershipId, string $password, string $reason): void
+    {
+        $context->requireOwner();
+        if (strlen($password) < 12 || trim($reason) === '') throw new DomainException('A password of at least 12 characters and a reason are required.');
+        $membership=$this->database->table('tenant_memberships')->where(['id'=>$membershipId,'tenant_id'=>$context->tenantId,'role'=>'STAFF'])->get()->getRowArray();
+        if (!$membership) throw new DomainException('Staff membership was not found.');
+        $provider=auth()->getProvider(); $user=$provider->findById($membership['user_id']);
+        if (!$user || $user->inGroup('platform_admin')) throw new DomainException('This account cannot be reset here.');
+        $this->database->transException(true)->transStart(); $user->password=$password; $provider->save($user);
+        $this->database->table('auth_remember_tokens')->where('user_id',$membership['user_id'])->delete();
+        $this->audit->record(['tenant_id'=>$context->tenantId,'shop_id'=>$context->shopId,'actor_type'=>'USER','actor_user_id'=>$context->userId,'actor_membership_id'=>$context->membershipId,'action_code'=>'staff.credentials_reset','category'=>'SECURITY','resource_type'=>'membership','resource_public_id'=>$membership['public_id'],'reason'=>trim($reason)]); $this->database->transComplete();
+    }
+    public function permissions(ShopContext $context, int $membershipId): array
+    {
+        $context->requireOwner(); $membership=$this->database->table('tenant_memberships')->where(['id'=>$membershipId,'tenant_id'=>$context->tenantId,'role'=>'STAFF'])->get()->getRowArray(); if(!$membership) throw new DomainException('Staff membership was not found.');
+        $history=$this->database->table('membership_permission_grants')->select('permission_code,granted_at,revoked_at')->where(['tenant_id'=>$context->tenantId,'membership_id'=>$membershipId])->orderBy('granted_at','DESC')->get()->getResultArray();
+        $active=array_values(array_unique(array_column(array_filter($history,static fn(array $row):bool=>$row['revoked_at']===null),'permission_code')));
+        return ['catalogue'=>array_map(static fn(\App\Enums\PermissionCode $code):string=>$code->value,\App\Enums\PermissionCode::cases()),'active'=>$active,'history'=>$history];
+    }
+
     private function assertCapacity(int $tenantId): void
     {
         $now = gmdate('Y-m-d H:i:s.u');

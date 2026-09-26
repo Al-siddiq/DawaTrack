@@ -12,6 +12,7 @@ $routes->setAutoRoute(false);
 $routes->set404Override('App\Controllers\Api\ErrorController::notFound');
 
 $routes->get('/', 'Web\ShellController::shop', ['as' => 'shop.shell', 'filter' => 'authenticated']);
+$routes->get('brand-assets/(:segment)', 'Web\BrandAssetController::show/$1');
 $routes->get('manifest.webmanifest', 'Web\ShellController::manifest', ['as' => 'pwa.manifest']);
 $routes->get('auth', 'Web\ShellController::authentication', ['as' => 'auth.shell']);
 $routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin']);
@@ -22,6 +23,8 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('health/live', 'Api\HealthController::live', ['as' => 'api.health.live']);
     $routes->get('health/ready', 'Api\HealthController::ready', ['as' => 'api.health.ready']);
     $routes->get('shop/context', 'Api\ShopController::contextInfo', ['filter' => 'authenticated']);
+    $routes->get('shop/staff/(:num)/permissions', 'Api\ShopController::permissions/$1', ['filter'=>'authenticated']);
+    $routes->post('shop/staff/(:num)/reset-password', 'Api\ShopController::resetPassword/$1', ['filter'=>'authenticated']);
     $routes->get('shop/staff', 'Api\ShopController::staff', ['filter' => 'authenticated']);
     $routes->post('shop/staff', 'Api\ShopController::createStaff', ['filter' => 'authenticated']);
     $routes->patch('shop/staff/(:num)/status', 'Api\ShopController::staffStatus/$1', ['filter' => 'authenticated']);
