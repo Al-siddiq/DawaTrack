@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Config;
 
+use App\Libraries\Http\RequestContext;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -19,6 +22,34 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
+    public static function requestContext(bool $getShared = true): RequestContext
+    {
+        if ($getShared) {
+            return static::getSharedInstance('requestContext');
+        }
+
+        return new RequestContext();
+    }
+
+    public static function auditService(bool $getShared = true): \App\Modules\Audit\Application\AuditService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('auditService');
+        }
+
+        $request = static::request();
+        return new \App\Modules\Audit\Application\AuditService(static::database(), static::requestContext(), $request instanceof \CodeIgniter\HTTP\IncomingRequest ? $request : null);
+    }
+
+    public static function onboardingService(bool $getShared = true): \App\Modules\TenantShop\Application\OnboardingService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('onboardingService');
+        }
+
+        return new \App\Modules\TenantShop\Application\OnboardingService(static::database(), static::auditService());
+    }
+
     /*
      * public static function example($getShared = true)
      * {

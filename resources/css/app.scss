@@ -1,0 +1,42 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+:root { --dt-primary: #155d46; --dt-ink: #17231f; --dt-surface: #fff; --dt-muted: #5c6d66; }
+body { min-height: 100vh; display: flex; flex-direction: column; background: #f4f7f5; color: var(--dt-ink); }
+.skip-link { position: absolute; left: 1rem; top: -5rem; padding: .75rem 1rem; background: #fff; color: var(--dt-primary); z-index: 1000; }
+.skip-link:focus { top: 1rem; }
+:focus-visible { outline: 3px solid #f0a202; outline-offset: 3px; }
+.app-header { min-height: 4.5rem; padding: .75rem clamp(1rem, 4vw, 3rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #fff; background: var(--dt-primary); }
+.brand { min-height: 44px; display: inline-flex; align-items: center; gap: .65rem; color: #fff; text-decoration: none; font-size: 1.2rem; font-weight: 700; }
+.brand-mark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: .7rem; background: #fff; color: var(--dt-primary); }
+.area-label { text-align: right; font-weight: 600; }
+.shell-container { width: min(100% - 2rem, 72rem); margin: auto; padding: clamp(2rem, 8vw, 6rem) 0; }
+.welcome-panel { max-width: 48rem; padding: clamp(1.5rem, 5vw, 3.5rem); border-radius: 1.25rem; background: var(--dt-surface); box-shadow: 0 1rem 3rem rgba(20, 50, 40, .08); }
+.eyebrow { margin-bottom: .75rem; color: var(--dt-primary); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+h1 { max-width: 18ch; margin-bottom: 1rem; font-size: clamp(2rem, 6vw, 3.75rem); line-height: 1.05; }
+p { color: var(--dt-muted); line-height: 1.65; }
+.status-panel { display: flex; align-items: flex-start; gap: .8rem; margin-top: 2rem; padding: 1rem; border: 1px solid #c9ded5; border-radius: .8rem; background: #eff8f4; }
+.status-panel p { margin: .2rem 0 0; }
+.status-dot { flex: 0 0 auto; width: .75rem; height: .75rem; margin-top: .4rem; border-radius: 50%; background: #198754; }
+.app-footer { padding: 1rem; text-align: center; color: var(--dt-muted); font-size: .875rem; }
+@media (max-width: 35rem) { .app-header { align-items: flex-start; flex-direction: column; } .area-label { text-align: left; } }
+[v-cloak] { display: none; }
+.workspace { display: grid; gap: 1.5rem; }
+.phase-nav, .button-row { display: flex; flex-wrap: wrap; gap: .65rem; margin-bottom: 1.5rem; }
+.responsive-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,16rem),1fr)); gap: 1rem; align-items: end; }
+.responsive-form label { display: grid; gap: .4rem; font-weight: 600; }
+.responsive-form button { min-height: 44px; }
+.record-grid { display: grid; gap: .75rem; }
+.record-card { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem; border: 1px solid #d5dfda; border-radius: .75rem; background: #fff; }
+.record-card details { flex-basis: 100%; }
+.permission-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(14rem,1fr)); gap: .65rem; padding-top: 1rem; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(13rem,1fr)); gap: 1rem; }
+.detail-grid div { padding: 1rem; border-radius: .7rem; background: #f4f7f5; }
+.detail-grid dd { margin: .3rem 0 0; overflow-wrap: anywhere; }
+.brand-preview { display: grid; gap: .35rem; padding: 1.5rem; color: var(--preview-primary); background: var(--preview-background); border-radius: 1rem; }
+.step-indicator { display: flex; gap: 1rem; padding: 0; list-style: none; }
+.step-indicator li { padding: .65rem 1rem; border-radius: 2rem; background: #e8eeeb; }
+.step-indicator li.active { color: #fff; background: var(--dt-primary); }
+.auth-card, .success-panel, .empty-panel { max-width: 48rem; padding: clamp(1.25rem,5vw,3rem); border-radius: 1rem; background: #fff; }
+.button-stack { display: grid; gap: .5rem; }
+.toast-notice { position: fixed; right: 1rem; bottom: 1rem; max-width: min(24rem,calc(100vw - 2rem)); padding: 1rem; color: #fff; background: #155d46; border-radius: .75rem; }
+@media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button { width: 100%; } }
