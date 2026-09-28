@@ -41,6 +41,10 @@ class AuthGroups extends ShieldAuthGroups
      * @see https://codeigniter4.github.io/shield/quick_start_guide/using_authorization/#change-available-groups for more info
      */
     public array $groups = [
+        'platform_admin' => [
+            'title'       => 'Platform Administrator',
+            'description' => 'Operates DawaTrack tenants through the dedicated platform boundary.',
+        ],
         'superadmin' => [
             'title'       => 'Super Admin',
             'description' => 'Complete control of the site.',
@@ -72,6 +76,8 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
+        'platform.access'    => 'Can access the DawaTrack platform administration area',
+        'platform.onboard'   => 'Can onboard a Tenant and its Primary Owner',
         'admin.access'        => 'Can access the sites admin area',
         'admin.settings'      => 'Can access the main site settings',
         'users.manage-admins' => 'Can manage other admins',
@@ -90,6 +96,10 @@ class AuthGroups extends ShieldAuthGroups
      * This defines group-level permissions.
      */
     public array $matrix = [
+        'platform_admin' => [
+            'platform.access',
+            'platform.onboard',
+        ],
         'superadmin' => [
             'admin.*',
             'users.*',

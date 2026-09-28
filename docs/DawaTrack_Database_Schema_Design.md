@@ -106,7 +106,7 @@ Use `VARCHAR` columns constrained by application constants and, where migration 
 
 ### 3.5 Common rules
 
-* All tables are InnoDB with `utf8mb4`/`utf8mb4_0900_ai_ci`; UUIDs and normalized hostnames use explicit ASCII collations documented in migrations.
+* All tables are InnoDB with `utf8mb4`/`utf8mb4_unicode_ci`; UUIDs and normalized hostnames use explicit ASCII collations documented in migrations.
 * `created_by_user_id`/actor FKs normally use `RESTRICT`; identity is deactivated, not deleted.
 * JSON columns hold bounded metadata/snapshots only, are schema-versioned by the service, and never replace relational keys or searchable balances.
 * Booleans are `BOOLEAN` (`TINYINT(1)`) with `NOT NULL` defaults and `CHECK (x IN (0,1))`.

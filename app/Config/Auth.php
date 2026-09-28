@@ -20,6 +20,7 @@ use CodeIgniter\Shield\Authentication\Authenticators\AccessTokens;
 use CodeIgniter\Shield\Authentication\Authenticators\HmacSha256;
 use CodeIgniter\Shield\Authentication\Authenticators\JWT;
 use CodeIgniter\Shield\Authentication\Authenticators\Session;
+use CodeIgniter\Shield\Authentication\Actions\Email2FA;
 use CodeIgniter\Shield\Authentication\Passwords\CompositionValidator;
 use CodeIgniter\Shield\Authentication\Passwords\DictionaryValidator;
 use CodeIgniter\Shield\Authentication\Passwords\NothingPersonalValidator;
@@ -46,16 +47,16 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      */
     public array $views = [
-        'login'                       => '\CodeIgniter\Shield\Views\login',
-        'register'                    => '\CodeIgniter\Shield\Views\register',
-        'layout'                      => '\CodeIgniter\Shield\Views\layout',
+        'login'                       => 'App\Views\auth\login',
+        'register'                    => 'App\Views\auth\registration_disabled',
+        'layout'                      => 'App\Views\auth\layout',
         'action_email_2fa'            => '\CodeIgniter\Shield\Views\email_2fa_show',
         'action_email_2fa_verify'     => '\CodeIgniter\Shield\Views\email_2fa_verify',
         'action_email_2fa_email'      => '\CodeIgniter\Shield\Views\Email\email_2fa_email',
         'action_email_activate_show'  => '\CodeIgniter\Shield\Views\email_activate_show',
         'action_email_activate_email' => '\CodeIgniter\Shield\Views\Email\email_activate_email',
-        'magic-link-login'            => '\CodeIgniter\Shield\Views\magic_link_form',
-        'magic-link-message'          => '\CodeIgniter\Shield\Views\magic_link_message',
+        'magic-link-login'            => 'App\Views\auth\magic_link_form',
+        'magic-link-message'          => 'App\Views\auth\magic_link_message',
         'magic-link-email'            => '\CodeIgniter\Shield\Views\Email\magic_link_email',
     ];
 
@@ -105,7 +106,7 @@ class Auth extends ShieldAuth
      */
     public array $actions = [
         'register' => null,
-        'login'    => null,
+        'login'    => Email2FA::class,
     ];
 
     /**
@@ -158,7 +159,7 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      * Determines whether users can register for the site.
      */
-    public bool $allowRegistration = true;
+    public bool $allowRegistration = false;
 
     /**
      * --------------------------------------------------------------------
@@ -258,7 +259,7 @@ class Auth extends ShieldAuth
      * The minimum length that a password must be to be accepted.
      * Recommended minimum value by NIST = 8 characters.
      */
-    public int $minimumPasswordLength = 8;
+    public int $minimumPasswordLength = 12;
 
     /**
      * --------------------------------------------------------------------
@@ -442,10 +443,32 @@ class Auth extends ShieldAuth
      */
     public function loginRedirect(): string
     {
-        $session = session();
-        $url     = $session->getTempdata('beforeLoginUrl') ?? setting('Auth.redirects')['login'];
+        $user = auth()->user();
+        if ($user !== null && $user->inGroup('platform_admin')) {
+            service('platformMfa')->establish((int) $user->id);
+            session()->remove('authentication_area');
 
-        return $this->getUrl($url);
+            $destination = (string) (session()->getTempdata('beforeLoginUrl') ?? '/platform-admin');
+            if (($destination !== '/platform-admin' && ! str_starts_with($destination, '/platform-admin/'))
+                || str_starts_with($destination, '//')
+            ) {
+                $destination = '/platform-admin';
+            }
+
+            return site_url(ltrim($destination, '/'));
+        }
+
+        $candidate = (string) (session()->getTempdata('beforeLoginUrl') ?? '/');
+        if (! str_starts_with($candidate, '/') || str_starts_with($candidate, '//')) {
+            return site_url('/');
+        }
+
+        $path = parse_url($candidate, PHP_URL_PATH);
+        if (! is_string($path) || $path === '' || str_starts_with($path, '/platform-admin')) {
+            return site_url('/');
+        }
+
+        return site_url(ltrim($path, '/'));
     }
 
     /**

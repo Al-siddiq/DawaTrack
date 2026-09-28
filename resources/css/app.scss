@@ -38,5 +38,17 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .step-indicator li.active { color: #fff; background: var(--dt-primary); }
 .auth-card, .success-panel, .empty-panel { max-width: 48rem; padding: clamp(1.25rem,5vw,3rem); border-radius: 1rem; background: #fff; }
 .button-stack { display: grid; gap: .5rem; }
+.auth-page { background: linear-gradient(145deg, color-mix(in srgb, var(--dt-primary) 10%, #f4f7f5), #fff); }
+.auth-shell { width: min(100% - 2rem, 34rem); min-height: 100vh; margin: 0 auto; padding: clamp(1rem, 7vw, 4rem) 0; display: grid; align-items: center; }
+.auth-card { width: 100%; box-shadow: 0 1rem 3rem rgba(20, 50, 40, .12); }
+.auth-brand { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.5rem; }
+.auth-brand .eyebrow { margin-bottom: .1rem; }
+.auth-brand .brand-mark { flex: 0 0 auto; color: #fff; background: var(--dt-primary); }
+.brand-logo { display: block; max-width: 10rem; max-height: 3rem; object-fit: contain; }
+.auth-form { display: grid; gap: .75rem; }
+.auth-form label { font-weight: 600; }
+.auth-form .btn { min-height: 44px; margin-top: .5rem; }
+.auth-check { display: flex; align-items: center; gap: .6rem; min-height: 44px; }
+.auth-code { font-size: 1.4rem; letter-spacing: .2em; }
 .toast-notice { position: fixed; right: 1rem; bottom: 1rem; max-width: min(24rem,calc(100vw - 2rem)); padding: 1rem; color: #fff; background: #155d46; border-radius: .75rem; }
 @media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button { width: 100%; } }

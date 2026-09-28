@@ -22,6 +22,16 @@ final class SecurityHeadersFilter implements FilterInterface
             ->setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
             ->setHeader('Cross-Origin-Opener-Policy', 'same-origin')
             ->setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
+        $response->setHeader(config('Security')->headerName, csrf_hash());
+
+        $path = $request->getUri()->getPath();
+        if ($path === 'login'
+            || str_starts_with($path, 'login/')
+            || str_starts_with($path, 'auth/')
+            || str_starts_with($path, 'platform-admin')
+        ) {
+            $response->setHeader('Cache-Control', 'no-store, private');
+        }
 
         if (ENVIRONMENT === 'production') {
             $response->setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');

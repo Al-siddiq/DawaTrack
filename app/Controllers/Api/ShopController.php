@@ -14,11 +14,12 @@ use App\Modules\TenantShop\Infrastructure\ShopContext;
 use Config\Services;
 use DomainException;
 use Throwable;
+use App\Exceptions\ApiException;
 final class ShopController extends BaseController {
  private function context(): ShopContext { return ShopContext::resolve(db_connect(),(int)auth()->id(),$this->request->getServer('HTTP_HOST')??''); }
- private function mutableContext(): ShopContext { $context=$this->context(); $decision=(new AccessGate(db_connect()))->evaluate($context->tenantId,$context->shopId); if(!$decision->permitsMutation()) throw new DomainException($decision->message); return $context; }
+ private function mutableContext(): ShopContext { $context=$this->context(); $decision=(new AccessGate(db_connect()))->evaluate($context->tenantId,$context->shopId); if(!$decision->permitsMutation()) throw new ApiException($decision->mode,$decision->message,403); return $context; }
  private function ok(array $data=[],int $status=200){ return ApiResponse::success($this->response,$data,Services::requestContext()->requestId(),$status); }
- private function execute(callable $operation){ try{return $operation();}catch(DomainException $e){return ApiResponse::error($this->response,'VALIDATION_FAILED',$e->getMessage(),Services::requestContext()->requestId(),422);}catch(Throwable $e){log_message('error','phase1.request_failed {request_id}',['request_id'=>Services::requestContext()->requestId(),'exception'=>$e]);return ApiResponse::error($this->response,'REQUEST_FAILED','The request could not be completed.',Services::requestContext()->requestId(),500);} }
+ private function execute(callable $operation){ try{return $operation();}catch(ApiException $e){return ApiResponse::error($this->response,$e->errorCode,$e->getMessage(),Services::requestContext()->requestId(),$e->status,$e->details);}catch(DomainException $e){return ApiResponse::error($this->response,'VALIDATION_FAILED',$e->getMessage(),Services::requestContext()->requestId(),422);}catch(Throwable $e){log_message('error','phase1.request_failed {request_id}',['request_id'=>Services::requestContext()->requestId(),'exception'=>$e]);return ApiResponse::error($this->response,'REQUEST_FAILED','The request could not be completed.',Services::requestContext()->requestId(),500);} }
  public function contextInfo(){ return $this->execute(function(){ $c=$this->context(); $gate=(new AccessGate(db_connect()))->evaluate($c->tenantId,$c->shopId); return $this->ok(['role'=>$c->role,'access'=>['mode'=>$gate->mode,'message'=>$gate->message,'plan_code'=>$gate->planCode,'ends_at'=>$gate->endsAt]]);}); }
  public function staff(){ return $this->execute(fn()=>$this->ok((new StaffService(db_connect(),Services::auditService()))->listing($this->context()))); }
  public function createStaff(){ return $this->execute(fn()=>$this->ok((new StaffService(db_connect(),Services::auditService()))->create($this->mutableContext(),$this->request->getJSON(true)??[]),201)); }

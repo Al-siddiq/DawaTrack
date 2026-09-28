@@ -8,6 +8,9 @@ use App\Filters\RequestContextFilter;
 use App\Filters\SecurityHeadersFilter;
 use App\Filters\AuthenticatedFilter;
 use App\Filters\PlatformAdminFilter;
+use App\Filters\PlatformAdminIdentityFilter;
+use App\Filters\SensitiveRateLimitFilter;
+use App\Filters\SessionSecurityFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -44,6 +47,9 @@ class Filters extends BaseFilters
         'securityHeaders' => SecurityHeadersFilter::class,
         'authenticated'   => AuthenticatedFilter::class,
         'platformAdmin'  => PlatformAdminFilter::class,
+        'platformAdminIdentity' => PlatformAdminIdentityFilter::class,
+        'sensitiveThrottle' => SensitiveRateLimitFilter::class,
+        'sessionSecurity' => SessionSecurityFilter::class,
     ];
 
     /**
@@ -62,6 +68,8 @@ class Filters extends BaseFilters
     public array $required = [
         'before' => [
             'requestContext',
+            'sessionSecurity',
+            'csrf',
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
         ],
@@ -86,7 +94,6 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
@@ -119,5 +126,15 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        'sensitiveThrottle' => [
+            'before' => [
+                'login',
+                'login/*',
+                'auth/a/*',
+                'platform-admin/mfa/*',
+                'api/v1/platform/*',
+            ],
+        ],
+    ];
 }
