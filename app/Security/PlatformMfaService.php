@@ -6,7 +6,6 @@ namespace App\Security;
 
 use App\Modules\Audit\Application\AuditService;
 use CodeIgniter\Session\Session;
-use Throwable;
 
 final class PlatformMfaService
 {
@@ -52,20 +51,22 @@ final class PlatformMfaService
 
     private function auditSafely(string $actionCode, int $userId, string $reason): void
     {
-        try {
-            $this->audit->record([
-                'actor_type' => 'USER',
-                'actor_user_id' => $userId,
+        if (! db_connect()->tableExists('audit_events')) {
+            log_message('warning', 'security.audit_unavailable {action_code} {reason}', [
                 'action_code' => $actionCode,
-                'category' => 'SECURITY',
-                'resource_type' => 'platform_admin_authentication',
-                'reason' => $reason,
+                'reason' => 'audit_schema_not_installed',
             ]);
-        } catch (Throwable $exception) {
-            log_message('warning', 'security.audit_unavailable {action_code} {exception_class}', [
-                'action_code' => $actionCode,
-                'exception_class' => $exception::class,
-            ]);
+
+            return;
         }
+
+        $this->audit->record([
+            'actor_type' => 'USER',
+            'actor_user_id' => $userId,
+            'action_code' => $actionCode,
+            'category' => 'SECURITY',
+            'resource_type' => 'platform_admin_authentication',
+            'reason' => $reason,
+        ]);
     }
 }

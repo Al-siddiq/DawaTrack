@@ -62,6 +62,14 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [20, 60];
         }
 
+        if (str_contains($path, '/reset-password')) {
+            return [5, 300];
+        }
+
+        if (str_starts_with($path, 'api/v1/shop/staff')) {
+            return [20, 60];
+        }
+
         return [5, 300];
     }
 }

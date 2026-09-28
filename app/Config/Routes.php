@@ -27,8 +27,8 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('health/live', 'Api\HealthController::live', ['as' => 'api.health.live']);
     $routes->get('health/ready', 'Api\HealthController::ready', ['as' => 'api.health.ready']);
     $routes->get('shop/context', 'Api\ShopController::contextInfo', ['filter' => 'authenticated']);
-    $routes->get('shop/staff/(:num)/permissions', 'Api\ShopController::permissions/$1', ['filter'=>'authenticated']);
-    $routes->post('shop/staff/(:num)/reset-password', 'Api\ShopController::resetPassword/$1', ['filter'=>'authenticated']);
+    $routes->get('shop/staff/(:num)/permissions', 'Api\ShopController::permissions/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/staff/(:num)/reset-password', 'Api\ShopController::resetPassword/$1', ['filter' => 'authenticated']);
     $routes->get('shop/staff', 'Api\ShopController::staff', ['filter' => 'authenticated']);
     $routes->post('shop/staff', 'Api\ShopController::createStaff', ['filter' => 'authenticated']);
     $routes->patch('shop/staff/(:num)/status', 'Api\ShopController::staffStatus/$1', ['filter' => 'authenticated']);

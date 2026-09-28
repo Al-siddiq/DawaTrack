@@ -59,6 +59,15 @@ class Services extends BaseService
         return new \App\Security\PlatformMfaService(static::session(), static::auditService());
     }
 
+    public static function userSessionRevocation(bool $getShared = true): \App\Security\UserSessionRevocationService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('userSessionRevocation');
+        }
+
+        return new \App\Security\UserSessionRevocationService(static::cache(), static::session());
+    }
+
     /*
      * public static function example($getShared = true)
      * {

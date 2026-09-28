@@ -19,11 +19,23 @@ final class SessionSecurityFilter implements FilterInterface
     {
         if (! auth()->loggedIn()) {
             session()->remove(self::STARTED_AT_KEY);
+            Services::userSessionRevocation()->clearSessionMarker();
 
             return null;
         }
 
         $startedAt = (int) session(self::STARTED_AT_KEY);
+        $user = auth()->user();
+        if ($user === null || ! $user->active || Services::userSessionRevocation()->currentSessionIsRevoked((int) $user->id)) {
+            auth()->logout();
+            session()->destroy();
+
+            if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+                return ApiResponse::error(Services::response(), 'SESSION_EXPIRED', 'Your access has changed. Please sign in again.', Services::requestContext()->requestId(), 401);
+            }
+
+            return redirect()->to(site_url('auth?expired=1'));
+        }
         if ($startedAt === 0) {
             session()->set(self::STARTED_AT_KEY, time());
 
@@ -34,7 +46,6 @@ final class SessionSecurityFilter implements FilterInterface
             return null;
         }
 
-        $user = auth()->user();
         if ($user !== null && $user->inGroup('platform_admin')) {
             Services::platformMfa()->clear((int) $user->id, 'Platform Administrator session reached its absolute lifetime.');
         }
@@ -56,5 +67,8 @@ final class SessionSecurityFilter implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null): void
     {
+        if (auth()->loggedIn()) {
+            Services::userSessionRevocation()->markCurrentSession();
+        }
     }
 }

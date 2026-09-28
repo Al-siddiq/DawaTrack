@@ -74,6 +74,7 @@ class Filters extends BaseFilters
             'pagecache',  // Web Page Caching
         ],
         'after' => [
+            'sessionSecurity',
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
             'requestContext',
@@ -134,6 +135,8 @@ class Filters extends BaseFilters
                 'auth/a/*',
                 'platform-admin/mfa/*',
                 'api/v1/platform/*',
+                'api/v1/shop/staff',
+                'api/v1/shop/staff/*',
             ],
         ],
     ];

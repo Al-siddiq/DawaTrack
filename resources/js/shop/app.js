@@ -1,3 +1,224 @@
 import { phaseOneApi } from '../api/phase-one.js';
-const { createApp,ref,reactive,computed,onMounted }=window.Vue;
-createApp({setup(){const page=ref('home'),loading=ref(true),busy=ref(false),error=ref(''),notice=ref(''),access=reactive({}),staff=ref([]),settings=reactive({}),branding=reactive({}),assets=ref([]),domains=ref([]),subscription=reactive({}),hostname=ref(''),dnsToken=ref(''),asset=ref(null),assetType=ref('LOGO');const navigation=[['home','Home'],['staff','Staff'],['settings','Shop settings'],['branding','Branding'],['domains','Domains'],['subscription','Subscription']].map(([id,label])=>({id,label}));const permissionCodes=['inventory.view','inventory.adjust','sale.record','sale.reverse','debt.manage','debt.payment.record','reconciliation.view','reconciliation.count','reconciliation.review','reconciliation.finalize','reconciliation.adjust','report.view','staff.manage'];const settingFields=[['name','Shop name',1],['contact_phone','Phone'],['contact_email','Email'],['address_line_1','Address',1],['address_line_2','Address line 2'],['city_town','City/town',1],['state_region','State',1],['timezone_name','Timezone',1]].map(([key,label,required])=>({key,label,required}));const brandFields=[['brand_display_name','Brand name'],['tagline','Tagline'],['public_description','Description'],['primary_colour','Primary colour',1],['secondary_colour','Secondary colour',1],['accent_colour','Accent colour',1],['theme_colour','Theme colour',1],['background_colour','Background colour',1],['application_title','Application title'],['pwa_full_name','PWA full name'],['pwa_short_name','PWA short name']].map(([key,label,colour])=>({key,label,colour}));const assetTypes=['LOGO','FAVICON','PWA_ICON_192','PWA_ICON_512','LOGIN_BACKGROUND'];const staffForm=reactive({name:'',email:'',password:''});const readOnly=computed(()=>access.mode!=='FULL');const previewStyle=computed(()=>({'--preview-primary':branding.primary_colour,'--preview-background':branding.background_colour}));async function load(){try{const values=await Promise.all([phaseOneApi.context(),phaseOneApi.staff(),phaseOneApi.settings(),phaseOneApi.branding(),phaseOneApi.assets(),phaseOneApi.domains(),phaseOneApi.subscription()]);Object.assign(access,values[0].data.access);staff.value=values[1].data;Object.assign(settings,values[2].data);Object.assign(branding,values[3].data);assets.value=values[4].data;domains.value=values[5].data;Object.assign(subscription,values[6].data)}catch(e){error.value=e.message}finally{loading.value=false}}async function run(fn,message){busy.value=true;error.value='';try{await fn();notice.value=message;await load()}catch(e){error.value=e.message}finally{busy.value=false}}const createStaff=()=>run(()=>phaseOneApi.createStaff(staffForm),'Staff account created.');const toggleStaff=m=>{const active=m.status!=='ACTIVE',reason=prompt(`Reason to ${active?'reactivate':'deactivate'} this Staff member:`);if(reason)run(()=>phaseOneApi.staffStatus(m.id,{active,reason}),'Staff status updated.')};const permission=(m,code,grant)=>{const reason=grant?'':prompt('Reason for revocation:');if(grant||reason)run(()=>phaseOneApi.permission(m.id,{permission_code:code,reason},grant),'Permissions updated.')};const saveSettings=()=>run(()=>phaseOneApi.saveSettings(settings),'Shop settings saved.');const saveBranding=()=>run(()=>phaseOneApi.saveBranding(branding),'Branding saved.');const uploadAsset=()=>{const form=new FormData();form.append('asset_type',assetType.value);form.append('asset',asset.value.files[0]);run(()=>phaseOneApi.upload(form),'Brand asset replaced.')};const requestDomain=()=>run(async()=>{const r=await phaseOneApi.requestDomain({hostname:hostname.value});dnsToken.value=r.data.dns_txt_token},'Domain verification requested.');onMounted(load);return{page,loading,busy,error,notice,access,staff,settings,branding,assets,domains,subscription,hostname,dnsToken,asset,assetType,navigation,permissionCodes,settingFields,brandFields,assetTypes,staffForm,readOnly,previewStyle,createStaff,toggleStaff,permission,saveSettings,saveBranding,uploadAsset,requestDomain}}}).mount('#shop-app');
+import { groupedPermissions } from './permission-groups.js';
+
+const { createApp, ref, reactive, computed, onMounted, nextTick } = window.Vue;
+
+createApp({
+    setup() {
+        const page = ref('home');
+        const loading = ref(true);
+        const busy = ref(false);
+        const error = ref('');
+        const notice = ref('');
+        const context = reactive({ role: '', permissions: [], capabilities: {}, shop: {} });
+        const access = reactive({ mode: 'BLOCKED', message: '' });
+        const staff = ref([]);
+        const settings = reactive({});
+        const branding = reactive({});
+        const assets = ref([]);
+        const domains = ref([]);
+        const subscription = reactive({});
+        const hostname = ref('');
+        const dnsToken = ref('');
+        const asset = ref(null);
+        const assetType = ref('LOGO');
+        const fieldErrors = reactive({});
+        const permissionStates = reactive({});
+        const permissionSearch = reactive({});
+        const dialog = reactive({ open: false, type: '', member: null, permission: null, reason: '', error: '' });
+        const dialogReason = ref(null);
+        const temporaryCredential = ref('');
+        let dialogTrigger = null;
+        const staffForm = reactive({ name: '', email: '', password: '', reason: '' });
+
+        const allNavigation = [
+            { id: 'home', label: 'Home', capability: null },
+            { id: 'staff', label: 'Staff', capability: 'manage_staff' },
+            { id: 'settings', label: 'Shop settings', capability: 'manage_shop_settings' },
+            { id: 'branding', label: 'Branding', capability: 'manage_branding' },
+            { id: 'domains', label: 'Domains', capability: 'manage_domains' },
+            { id: 'subscription', label: 'Subscription', capability: 'view_subscription' },
+        ];
+        const navigation = computed(() => {
+            if (['BLOCKED', 'CLOSED'].includes(access.mode)) return allNavigation.filter((item) => item.id === 'home');
+            return allNavigation.filter((item) => !item.capability || context.capabilities[item.capability]);
+        });
+        const readOnly = computed(() => access.mode !== 'FULL');
+        const owner = computed(() => context.role === 'PRIMARY_OWNER');
+        const previewStyle = computed(() => ({ '--preview-primary': branding.primary_colour, '--preview-background': branding.background_colour }));
+        const settingFields = [
+            ['name', 'Shop name', 'text', true], ['contact_phone', 'Phone', 'tel'],
+            ['contact_email', 'Email', 'email'], ['address_line_1', 'Address', 'text', true],
+            ['address_line_2', 'Address line 2'], ['city_town', 'City/town', 'text', true],
+            ['state_region', 'State', 'text', true], ['timezone_name', 'Timezone', 'text', true],
+        ].map(([key, label, type, required]) => ({ key, label, type, required }));
+        const brandFields = [
+            ['brand_display_name', 'Brand name'], ['tagline', 'Tagline'], ['public_description', 'Description'],
+            ['primary_colour', 'Primary colour', true], ['secondary_colour', 'Secondary colour', true],
+            ['accent_colour', 'Accent colour', true], ['theme_colour', 'Theme colour', true],
+            ['background_colour', 'Background colour', true], ['application_title', 'Application title'],
+            ['pwa_full_name', 'PWA full name'], ['pwa_short_name', 'PWA short name'],
+        ].map(([key, label, colour]) => ({ key, label, colour }));
+        const assetTypes = ['LOGO', 'FAVICON', 'PWA_ICON_192', 'PWA_ICON_512', 'LOGIN_BACKGROUND'];
+
+        function clearFeedback() {
+            error.value = '';
+            notice.value = '';
+            Object.keys(fieldErrors).forEach((key) => delete fieldErrors[key]);
+        }
+
+        async function load() {
+            loading.value = true;
+            clearFeedback();
+            try {
+                const response = await phaseOneApi.context();
+                Object.assign(context, response.data);
+                Object.assign(access, response.data.access);
+                const requests = [];
+                if (!['BLOCKED', 'CLOSED'].includes(access.mode)) {
+                    if (context.capabilities.manage_staff) requests.push(loadStaff());
+                    if (context.capabilities.manage_shop_settings) requests.push(loadSettings());
+                    if (context.capabilities.manage_branding) requests.push(loadBranding());
+                    if (context.capabilities.manage_domains) requests.push(loadDomains());
+                    if (context.capabilities.view_subscription) requests.push(loadSubscription());
+                }
+                await Promise.all(requests);
+                if (!navigation.value.some((item) => item.id === page.value)) page.value = 'home';
+            } catch (exception) {
+                error.value = exception.message;
+            } finally {
+                loading.value = false;
+            }
+        }
+
+        async function loadStaff() { staff.value = (await phaseOneApi.staff()).data; }
+        async function loadSettings() { Object.assign(settings, (await phaseOneApi.settings()).data); }
+        async function loadBranding() {
+            const [profile, currentAssets] = await Promise.all([phaseOneApi.branding(), phaseOneApi.assets()]);
+            Object.assign(branding, profile.data);
+            assets.value = currentAssets.data;
+        }
+        async function loadDomains() { domains.value = (await phaseOneApi.domains()).data; }
+        async function loadSubscription() { Object.assign(subscription, (await phaseOneApi.subscription()).data); }
+
+        async function run(operation, message, reload = null) {
+            busy.value = true;
+            clearFeedback();
+            try {
+                const result = await operation();
+                notice.value = message;
+                if (reload) await reload();
+                return result;
+            } catch (exception) {
+                error.value = exception.message;
+                Object.assign(fieldErrors, exception.details ?? {});
+                throw exception;
+            } finally {
+                busy.value = false;
+            }
+        }
+
+        async function createStaff() {
+            try {
+                await run(() => phaseOneApi.createStaff(staffForm), 'Staff account created.', loadStaff);
+                Object.assign(staffForm, { name: '', email: '', password: '', reason: '' });
+            } catch (_) {
+                staffForm.password = '';
+            }
+        }
+
+        async function loadPermissions(member) {
+            const state = permissionStates[member.id] ?? reactive({ loading: true, error: '', catalogue: [], active: [], history: [] });
+            permissionStates[member.id] = state;
+            state.loading = true;
+            state.error = '';
+            try {
+                Object.assign(state, (await phaseOneApi.permissions(member.id)).data);
+            } catch (exception) {
+                state.error = exception.message;
+            } finally {
+                state.loading = false;
+            }
+        }
+
+        function permissionGroups(member) {
+            const state = permissionStates[member.id];
+            return groupedPermissions(state?.catalogue ?? [], permissionSearch[member.id] ?? '');
+        }
+
+        async function openDialog(type, member, permission = null) {
+            dialogTrigger = document.activeElement;
+            Object.assign(dialog, { open: true, type, member, permission, reason: '', error: '' });
+            temporaryCredential.value = '';
+            await nextTick();
+            dialogReason.value?.focus();
+        }
+
+        async function closeDialog() {
+            Object.assign(dialog, { open: false, type: '', member: null, permission: null, reason: '', error: '' });
+            temporaryCredential.value = '';
+            await nextTick();
+            dialogTrigger?.focus();
+            dialogTrigger = null;
+        }
+
+        async function confirmDialog() {
+            dialog.error = '';
+            if (!dialog.reason.trim()) {
+                dialog.error = 'Enter a reason before continuing.';
+                return;
+            }
+            const member = dialog.member;
+            try {
+                if (dialog.type === 'status') {
+                    const active = member.status !== 'ACTIVE';
+                    await run(() => phaseOneApi.staffStatus(member.id, { active, reason: dialog.reason }), 'Staff status updated.', loadStaff);
+                } else if (dialog.type === 'permission') {
+                    const state = permissionStates[member.id];
+                    const granted = state.active.includes(dialog.permission.code);
+                    const response = await run(
+                        () => phaseOneApi.permission(member.id, { permission_code: dialog.permission.code, reason: dialog.reason }, !granted),
+                        'Permission state updated.',
+                    );
+                    Object.assign(state, response.data);
+                } else if (dialog.type === 'reset') {
+                    const response = await run(() => phaseOneApi.resetStaffCredentials(member.id, { reason: dialog.reason }), 'Staff credentials reset.');
+                    temporaryCredential.value = response.data.temporary_password;
+                    return;
+                }
+                closeDialog();
+            } catch (exception) {
+                dialog.error = exception.message;
+            }
+        }
+
+        async function saveSettings() {
+            try { await run(() => phaseOneApi.saveSettings(settings), 'Shop settings saved.', loadSettings); } catch (_) {}
+        }
+        async function saveBranding() {
+            try { await run(() => phaseOneApi.saveBranding(branding), 'Branding saved.', loadBranding); } catch (_) {}
+        }
+        async function uploadAsset() {
+            const form = new FormData();
+            form.append('asset_type', assetType.value);
+            form.append('asset', asset.value.files[0]);
+            try { await run(() => phaseOneApi.upload(form), 'Brand asset replaced.', loadBranding); } catch (_) {}
+        }
+        async function requestDomain() {
+            try {
+                const response = await run(() => phaseOneApi.requestDomain({ hostname: hostname.value }), 'Domain verification requested.', loadDomains);
+                dnsToken.value = response.data.dns_txt_token;
+            } catch (_) {}
+        }
+
+        onMounted(load);
+        return {
+            page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
+            domains, subscription, hostname, dnsToken, asset, assetType, navigation, readOnly, owner,
+            previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
+            permissionSearch, permissionGroups, dialog, dialogReason, temporaryCredential, createStaff,
+            loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
+            uploadAsset, requestDomain,
+        };
+    },
+}).mount('#shop-app');
