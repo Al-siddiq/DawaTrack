@@ -35,6 +35,9 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .brand-preview { display: grid; gap: .35rem; padding: 1.5rem; color: var(--preview-primary); background: var(--preview-background); border-radius: 1rem; }
 .asset-preview { display: block; max-width: 100%; max-height: 12rem; object-fit: contain; border-radius: .5rem; }
 .break-all { overflow-wrap: anywhere; word-break: break-word; }
+.operation-card { display: grid; grid-template-columns: minmax(0, 1fr); }
+.operation-card > header, .operation-card > form, .operation-card > details, .operation-card > .detail-grid, .operation-card > .button-row { width: 100%; }
+.timeline-item { padding: .6rem; margin-block: .35rem; border-inline-start: .25rem solid var(--dt-primary); background: #f4f7f5; overflow-wrap: anywhere; }
 .step-indicator { display: flex; gap: 1rem; padding: 0; list-style: none; }
 .step-indicator li { padding: .65rem 1rem; border-radius: 2rem; background: #e8eeeb; }
 .step-indicator li.active { color: #fff; background: var(--dt-primary); }

@@ -79,6 +79,8 @@ class AuthGroups extends ShieldAuthGroups
         'platform.access'    => 'Can access the DawaTrack platform administration area',
         'platform.onboard'   => 'Can onboard a Tenant and its Primary Owner',
         'platform.domains'   => 'Can operate verified Shop domains and TLS readiness',
+        'platform.subscriptions' => 'Can manage immutable Tenant entitlements',
+        'platform.tenants' => 'Can manage Tenant and Shop lifecycle state',
         'admin.access'        => 'Can access the sites admin area',
         'admin.settings'      => 'Can access the main site settings',
         'users.manage-admins' => 'Can manage other admins',
@@ -101,6 +103,8 @@ class AuthGroups extends ShieldAuthGroups
             'platform.access',
             'platform.onboard',
             'platform.domains',
+            'platform.subscriptions',
+            'platform.tenants',
         ],
         'superadmin' => [
             'admin.*',

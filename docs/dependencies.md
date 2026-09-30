@@ -11,3 +11,7 @@
 | Dexie | 4.2.1 | Reserved future IndexedDB boundary; unused in Phase 0 | Self-hosted static asset |
 
 No browser dependency is loaded from a CDN. No JavaScript application bundler is used.
+
+## WP4 dependency outcome
+
+WP4 added no Composer, npm, queue, broker, billing, image, or binary dependency. It uses the existing CodeIgniter database/CLI facilities, Shield boundary, Vue 3, Bootstrap/Sass and native Fetch. MySQL advisory locks are part of the existing MySQL 8.4 deployment contract.

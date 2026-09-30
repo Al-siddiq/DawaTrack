@@ -9,6 +9,7 @@ use App\Modules\Audit\Application\AuditService;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use App\Security\UserSessionRevocationService;
 use App\Support\UtcTimestamp;
+use App\Support\SensitiveReason;
 use App\Support\Uuid;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Shield\Entities\User;
@@ -113,10 +114,7 @@ final class StaffService
     public function setActive(ShopContext $context, int $membershipId, bool $active, string $reason): void
     {
         $context->requireOwner();
-        $reason = trim($reason);
-        if ($reason === '') {
-            throw new ApiException('VALIDATION_FAILED', 'A reason is required.', 422, ['reason' => ['Enter a reason.']]);
-        }
+        $reason = SensitiveReason::require($reason);
         $this->acquireMembershipLock();
 
         try {
@@ -168,10 +166,7 @@ final class StaffService
     public function resetPassword(ShopContext $context, int $membershipId, string $reason): array
     {
         $context->requireOwner();
-        $reason = trim($reason);
-        if ($reason === '') {
-            throw new ApiException('VALIDATION_FAILED', 'A credential-reset reason is required.', 422, ['reason' => ['Enter a reason.']]);
-        }
+        $reason = SensitiveReason::require($reason);
         $this->acquireMembershipLock();
         try {
             $membership = $this->staffMembership($context->tenantId, $membershipId);

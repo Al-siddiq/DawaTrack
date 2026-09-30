@@ -11,6 +11,8 @@ createApp({
         const result = reactive({});
         const domains = ref([]);
         const domainReason = reactive({});
+        const tenants = ref([]);
+        const operationForms = reactive({});
         const form = reactive({
             business_name: '', shop_name: '', contact_phone: '', contact_email: '',
             address_line_1: '', address_line_2: '', city_town: '', state_region: '',
@@ -52,8 +54,12 @@ createApp({
 
         async function loadDomains() { try { domains.value=(await phaseOneApi.platformDomains()).data; } catch(exception) { error.value=exception.message; } }
         async function domainAction(domain, action, ready = undefined) { const reason=(domainReason[domain.public_id]??'').trim();if(!reason){error.value='Enter an operational reason for the domain action.';return;}busy.value=true;clearErrors();try{const body={reason};if(ready!==undefined)body.ready=ready;await phaseOneApi.domainAction(domain.public_id,action,body);await loadDomains();}catch(exception){error.value=exception.message;}finally{busy.value=false;} }
-        loadDomains();
+        function operationForm(tenant) { return operationForms[tenant.public_id] ??= reactive({ operation:'ACTIVATE',plan_code:'STARTER',starts_at:'',ends_at:'',external_reference:'',reason:'' }); }
+        async function loadOperations(){try{tenants.value=(await phaseOneApi.platformOperations()).data;}catch(exception){error.value=exception.message;}}
+        async function subscriptionAction(tenant){busy.value=true;clearErrors();try{await phaseOneApi.subscriptionAction(tenant.public_id,operationForm(tenant));await loadOperations();}catch(exception){error.value=exception.message;Object.assign(fieldErrors,exception.details??{});}finally{busy.value=false;}}
+        async function lifecycle(target,type,action){const data=operationForm(target);if(!data.reason.trim()){error.value='Enter a reason before changing lifecycle state.';return;}if(action==='close'&&!window.confirm('Close this Tenant permanently? Data will be retained but Shop access becomes CLOSED.'))return;busy.value=true;clearErrors();try{if(type==='tenant')await phaseOneApi.tenantAction(target.public_id,action,{reason:data.reason});else await phaseOneApi.shopAction(target.shop_public_id,action,{reason:data.reason});await loadOperations();}catch(exception){error.value=exception.message;}finally{busy.value=false;}}
+        loadDomains();loadOperations();
 
-        return { step, busy, error, fieldErrors, result, form, fields, domains, domainReason, submit, clearErrors, loadDomains, domainAction };
+        return { step, busy, error, fieldErrors, result, form, fields, domains, domainReason, tenants, operationForms, submit, clearErrors, loadDomains, domainAction, operationForm, loadOperations, subscriptionAction, lifecycle };
     },
 }).mount('#admin-app');

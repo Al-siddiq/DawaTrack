@@ -20,3 +20,7 @@ Brand profiles are versioned mutable configuration. Asset replacement validates 
 
 ## Audit
 Every sensitive service writes immutable Audit evidence in the same transaction as the mutation. Application database credentials should receive SELECT/INSERT but no UPDATE/DELETE on `audit_events`. `actor_device_id` intentionally has no FK until Phase 7 creates `registered_devices`.
+
+## Final Phase 1 subscription and lifecycle contract
+
+Platform Admin subscription writes require `platform.subscriptions`; Tenant/Shop lifecycle writes require `platform.tenants`. Both use the existing recent-MFA Platform boundary. Owner access is presentation-only. Periods/events remain append-oriented; lifecycle operations retain all data. Full operational rules are in `docs/operations/phase-01-subscriptions-and-lifecycle.md`.

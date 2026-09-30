@@ -12,6 +12,7 @@ use App\Modules\BrandingDomain\Application\BrandingService;
 use App\Modules\BrandingDomain\Application\DomainService;
 use App\Modules\Identity\Application\PermissionService;
 use App\Modules\Identity\Application\StaffService;
+use App\Modules\Subscription\Application\SubscriptionQuery;
 use App\Modules\TenantShop\Application\ShopSettingsService;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use Config\Services;
@@ -276,11 +277,7 @@ final class ShopController extends BaseController
             $context = $this->context();
             $context->requireOwner();
             $gate = (new AccessGate(db_connect()))->evaluate($context->tenantId, $context->shopId);
-            $subscription = db_connect()->table('subscriptions')
-                ->where('tenant_id', $context->tenantId)
-                ->orderBy('starts_at', 'DESC')
-                ->get(1)
-                ->getRowArray();
+            $subscription = (new SubscriptionQuery(db_connect()))->forTenant($context->tenantId);
             $count = db_connect()->table('tenant_memberships')->where([
                 'tenant_id' => $context->tenantId,
                 'role' => 'STAFF',
@@ -288,8 +285,10 @@ final class ShopController extends BaseController
             ])->countAllResults();
 
             return $this->ok([
-                'entitlement' => $subscription,
+                ...$subscription,
                 'active_staff' => $count,
+                'staff_limit' => $subscription['current_entitlement']['max_active_staff_snapshot'] ?? null,
+                'remaining_staff_capacity' => isset($subscription['current_entitlement']) && $subscription['current_entitlement'] !== null ? max(0, (int)$subscription['current_entitlement']['max_active_staff_snapshot']-$count) : 0,
                 'access' => ['mode' => $gate->mode, 'message' => $gate->message],
             ]);
         });
