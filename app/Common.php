@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Modules\BrandingDomain\Application\BrandResolver;
+
 /**
  * The goal of this file is to allow developers a location
  * where they can overwrite core procedural functions and
@@ -13,3 +17,18 @@
  *
  * @see: https://codeigniter.com/user_guide/extending/common.html
  */
+
+if (! function_exists('dawatrack_auth_brand')) {
+    /** @return array<string, mixed>|null */
+    function dawatrack_auth_brand(): ?array
+    {
+        try {
+            $request = service('request');
+            $host = method_exists($request, 'getServer') ? (string) $request->getServer('HTTP_HOST') : '';
+
+            return (new BrandResolver(db_connect()))->resolve($host);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+}

@@ -6,7 +6,7 @@ CREATE TABLE sync_generations (
  active_guard TINYINT GENERATED ALWAYS AS (CASE WHEN status='ACTIVE' THEN 1 ELSE NULL END) STORED,
  CONSTRAINT uq_sync_generations_uuid UNIQUE (generation_uuid), CONSTRAINT uq_sync_generations_active UNIQUE (active_guard),
  CONSTRAINT ck_sync_generations_status CHECK (status IN ('ACTIVE','RETIRED'))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE subscription_plans (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE subscription_plans (
  INDEX ix_subscription_plans_active_code (is_active,code),
  CONSTRAINT ck_subscription_plans_code CHECK (code IN ('TRIAL','STARTER','GROWTH')),
  CONSTRAINT ck_subscription_plans_currency CHECK (currency_code='NGN'), CONSTRAINT ck_subscription_plans_price CHECK (monthly_price_amount IS NULL OR monthly_price_amount >= 0)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE tenants (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE tenants (
  CONSTRAINT uq_tenants_public UNIQUE (public_id), INDEX ix_tenants_status_created (status,created_at),
  CONSTRAINT ck_tenants_status CHECK (status IN ('ONBOARDING','ACTIVE','SUSPENDED','CLOSED')),
  CONSTRAINT fk_tenants_creator FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE shops (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE shops (
  CONSTRAINT uq_shops_public UNIQUE (public_id), CONSTRAINT uq_shops_tenant_id UNIQUE (tenant_id,id), INDEX ix_shops_tenant_status (tenant_id,status), INDEX ix_shops_tenant_name (tenant_id,name),
  CONSTRAINT ck_shops_status CHECK (status IN ('ACTIVE','INACTIVE')), CONSTRAINT ck_shops_country CHECK (country_code='NG'), CONSTRAINT ck_shops_currency CHECK (currency_code='NGN'),
  CONSTRAINT fk_shops_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE tenant_memberships (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, user_id BIGINT UNSIGNED NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE tenant_memberships (
  CONSTRAINT fk_memberships_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_memberships_user FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_memberships_creator FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE membership_permission_grants (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, tenant_id BIGINT UNSIGNED NOT NULL, membership_id BIGINT UNSIGNED NOT NULL, permission_code VARCHAR(80) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE membership_permission_grants (
  CONSTRAINT fk_permission_grants_granter FOREIGN KEY (granted_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_permission_grants_revoker FOREIGN KEY (revoked_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT ck_permission_grants_revocation CHECK ((revoked_at IS NULL AND revoked_by_user_id IS NULL) OR (revoked_at IS NOT NULL AND revoked_by_user_id IS NOT NULL))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE shop_branding_profiles (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, shop_id BIGINT UNSIGNED NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE shop_branding_profiles (
  CONSTRAINT fk_brand_profiles_shop FOREIGN KEY (tenant_id,shop_id) REFERENCES shops(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_brand_profiles_updater FOREIGN KEY (updated_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT ck_brand_profiles_colours CHECK (primary_colour REGEXP '^#[0-9A-Fa-f]{6}$' AND secondary_colour REGEXP '^#[0-9A-Fa-f]{6}$' AND accent_colour REGEXP '^#[0-9A-Fa-f]{6}$' AND theme_colour REGEXP '^#[0-9A-Fa-f]{6}$' AND background_colour REGEXP '^#[0-9A-Fa-f]{6}$')
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE shop_brand_assets (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, shop_id BIGINT UNSIGNED NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE shop_brand_assets (
  CONSTRAINT ck_brand_assets_type CHECK (asset_type IN ('LOGO','FAVICON','PWA_ICON_192','PWA_ICON_512','LOGIN_BACKGROUND')),
  CONSTRAINT fk_brand_assets_shop FOREIGN KEY (tenant_id,shop_id) REFERENCES shops(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_brand_assets_uploader FOREIGN KEY (uploaded_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE shop_domains (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, shop_id BIGINT UNSIGNED NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE shop_domains (
  CONSTRAINT fk_shop_domains_creator FOREIGN KEY (created_by_admin_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_shop_domains_verifier FOREIGN KEY (verified_by_admin_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_shop_domains_updater FOREIGN KEY (updated_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE subscriptions (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, subscription_plan_id BIGINT UNSIGNED NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE subscriptions (
  CONSTRAINT fk_subscriptions_plan FOREIGN KEY (subscription_plan_id) REFERENCES subscription_plans(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_subscriptions_previous FOREIGN KEY (supersedes_subscription_id) REFERENCES subscriptions(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_subscriptions_creator FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE subscription_events (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NOT NULL, subscription_id BIGINT UNSIGNED NOT NULL,
@@ -130,7 +130,7 @@ CREATE TABLE subscription_events (
  CONSTRAINT fk_subscription_events_subscription FOREIGN KEY (tenant_id,subscription_id) REFERENCES subscriptions(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_subscription_events_previous FOREIGN KEY (previous_subscription_id) REFERENCES subscriptions(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_subscription_events_actor FOREIGN KEY (actor_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE audit_events (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, tenant_id BIGINT UNSIGNED NULL, shop_id BIGINT UNSIGNED NULL,
@@ -147,6 +147,6 @@ CREATE TABLE audit_events (
  CONSTRAINT fk_audit_events_actor_user FOREIGN KEY (actor_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_audit_events_membership FOREIGN KEY (actor_membership_id) REFERENCES tenant_memberships(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_audit_events_cause FOREIGN KEY (caused_by_audit_event_id) REFERENCES audit_events(id) ON UPDATE RESTRICT ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- actor_device_id intentionally receives fk_audit_events_device in Phase 7 after registered_devices exists.

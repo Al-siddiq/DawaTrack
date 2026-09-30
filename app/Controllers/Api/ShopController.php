@@ -1,8 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Controllers\Api;
+
 use App\Controllers\BaseController;
+use App\Exceptions\ApiException;
 use App\Libraries\Http\ApiResponse;
 use App\Modules\Access\Application\AccessGate;
 use App\Modules\BrandingDomain\Application\BrandingService;
@@ -14,27 +17,340 @@ use App\Modules\TenantShop\Infrastructure\ShopContext;
 use Config\Services;
 use DomainException;
 use Throwable;
-final class ShopController extends BaseController {
- private function context(): ShopContext { return ShopContext::resolve(db_connect(),(int)auth()->id(),$this->request->getServer('HTTP_HOST')??''); }
- private function mutableContext(): ShopContext { $context=$this->context(); $decision=(new AccessGate(db_connect()))->evaluate($context->tenantId,$context->shopId); if(!$decision->permitsMutation()) throw new DomainException($decision->message); return $context; }
- private function ok(array $data=[],int $status=200){ return ApiResponse::success($this->response,$data,Services::requestContext()->requestId(),$status); }
- private function execute(callable $operation){ try{return $operation();}catch(DomainException $e){return ApiResponse::error($this->response,'VALIDATION_FAILED',$e->getMessage(),Services::requestContext()->requestId(),422);}catch(Throwable $e){log_message('error','phase1.request_failed {request_id}',['request_id'=>Services::requestContext()->requestId(),'exception'=>$e]);return ApiResponse::error($this->response,'REQUEST_FAILED','The request could not be completed.',Services::requestContext()->requestId(),500);} }
- public function contextInfo(){ return $this->execute(function(){ $c=$this->context(); $gate=(new AccessGate(db_connect()))->evaluate($c->tenantId,$c->shopId); return $this->ok(['role'=>$c->role,'access'=>['mode'=>$gate->mode,'message'=>$gate->message,'plan_code'=>$gate->planCode,'ends_at'=>$gate->endsAt]]);}); }
- public function staff(){ return $this->execute(fn()=>$this->ok((new StaffService(db_connect(),Services::auditService()))->listing($this->context()))); }
- public function createStaff(){ return $this->execute(fn()=>$this->ok((new StaffService(db_connect(),Services::auditService()))->create($this->mutableContext(),$this->request->getJSON(true)??[]),201)); }
- public function staffStatus(int $id){ return $this->execute(function()use($id){$in=$this->request->getJSON(true)??[];(new StaffService(db_connect(),Services::auditService()))->setActive($this->mutableContext(),$id,(bool)($in['active']??false),(string)($in['reason']??''));return $this->ok();}); }
- public function grant(int $id){ return $this->execute(function()use($id){$c=$this->mutableContext();$c->requireOwner();$in=$this->request->getJSON(true)??[];(new PermissionService(db_connect(),Services::auditService()))->grant($c->tenantId,$id,(string)($in['permission_code']??''),$c->userId,$c->membershipId);return $this->ok();}); }
- public function revoke(int $id){ return $this->execute(function()use($id){$c=$this->mutableContext();$c->requireOwner();$in=$this->request->getJSON(true)??[];(new PermissionService(db_connect(),Services::auditService()))->revoke($c->tenantId,$id,(string)($in['permission_code']??''),$c->userId,$c->membershipId,(string)($in['reason']??''));return $this->ok();}); }
- public function settings(){ return $this->execute(fn()=>$this->ok((new ShopSettingsService(db_connect(),Services::auditService()))->get($this->context()))); }
- public function updateSettings(){ return $this->execute(fn()=>$this->ok((new ShopSettingsService(db_connect(),Services::auditService()))->update($this->mutableContext(),$this->request->getJSON(true)??[]))); }
- public function branding(){ return $this->execute(function(){ $c=$this->context(); return $this->ok(db_connect()->table('shop_branding_profiles')->where(['tenant_id'=>$c->tenantId,'shop_id'=>$c->shopId])->get()->getRowArray()??[]);}); }
- public function updateBranding(){ return $this->execute(function(){ $c=$this->mutableContext();$c->requireOwner();(new BrandingService(db_connect(),Services::auditService()))->updateProfile($c->tenantId,$c->shopId,$c->userId,$c->membershipId,$this->request->getJSON(true)??[]);return $this->branding();}); }
- public function assets(){ return $this->execute(function(){ $c=$this->context();return $this->ok(db_connect()->table('shop_brand_assets')->select('public_id,asset_type,mime_type,width_px,height_px,file_size_bytes,activated_at')->where(['tenant_id'=>$c->tenantId,'shop_id'=>$c->shopId,'is_active'=>1])->get()->getResultArray());}); }
- public function uploadAsset(){ return $this->execute(function(){ $c=$this->mutableContext();$c->requireOwner();$result=(new BrandingService(db_connect(),Services::auditService()))->replaceAsset($c->tenantId,$c->shopId,$c->userId,$c->membershipId,(string)$this->request->getPost('asset_type'),$this->request->getFile('asset'));return $this->ok($result,201);}); }
- public function domains(){ return $this->execute(function(){ $c=$this->context();return $this->ok(db_connect()->table('shop_domains')->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method')->where(['tenant_id'=>$c->tenantId,'shop_id'=>$c->shopId])->get()->getResultArray());}); }
- public function requestDomain(){ return $this->execute(function(){ $c=$this->mutableContext();$c->requireOwner();$in=$this->request->getJSON(true)??[];return $this->ok((new DomainService(db_connect(),Services::auditService()))->requestCustom($c->tenantId,$c->shopId,(string)($in['hostname']??''),$c->userId),201);}); }
- public function subscription(){ return $this->execute(function(){ $c=$this->context();$c->requireOwner();$gate=(new AccessGate(db_connect()))->evaluate($c->tenantId,$c->shopId);$now=gmdate('Y-m-d H:i:s.u');$sub=db_connect()->table('subscriptions')->where('tenant_id',$c->tenantId)->orderBy('starts_at','DESC')->get(1)->getRowArray();$count=db_connect()->table('tenant_memberships')->where(['tenant_id'=>$c->tenantId,'role'=>'STAFF','status'=>'ACTIVE'])->countAllResults();return $this->ok(['entitlement'=>$sub,'active_staff'=>$count,'access'=>['mode'=>$gate->mode,'message'=>$gate->message]]);}); }
- public function permissions(int $id){return $this->execute(fn()=>$this->ok((new StaffService(db_connect(),Services::auditService()))->permissions($this->context(),$id)));}
- public function resetPassword(int $id){return $this->execute(function()use($id){$in=$this->request->getJSON(true)??[];(new StaffService(db_connect(),Services::auditService()))->resetPassword($this->mutableContext(),$id,(string)($in['password']??''),(string)($in['reason']??''));return $this->ok();});}
 
+final class ShopController extends BaseController
+{
+    public function contextInfo()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $decision = (new AccessGate(db_connect()))->evaluate($context->tenantId, $context->shopId);
+            $permissions = $context->role === 'PRIMARY_OWNER'
+                ? array_column(PermissionService::catalogue(), 'code')
+                : $this->activePermissions($context);
+            $shop = db_connect()->table('shops s')
+                ->select('s.public_id,s.name,t.public_id AS tenant_public_id')
+                ->join('tenants t', 't.id=s.tenant_id')
+                ->where(['s.id' => $context->shopId, 's.tenant_id' => $context->tenantId])
+                ->get()
+                ->getRowArray();
+
+            return $this->ok([
+                'role' => $context->role,
+                'shop' => $shop,
+                'permissions' => $permissions,
+                'capabilities' => [
+                    'manage_staff' => $context->role === 'PRIMARY_OWNER',
+                    'manage_shop_settings' => $context->role === 'PRIMARY_OWNER',
+                    'manage_branding' => $context->role === 'PRIMARY_OWNER',
+                    'manage_domains' => $context->role === 'PRIMARY_OWNER',
+                    'view_subscription' => $context->role === 'PRIMARY_OWNER',
+                ],
+                'access' => [
+                    'mode' => $decision->mode,
+                    'message' => $decision->message,
+                    'plan_code' => $decision->planCode,
+                    'ends_at' => $decision->endsAt,
+                ],
+            ]);
+        });
+    }
+
+    public function staff()
+    {
+        return $this->execute(fn () => $this->ok($this->staffService()->listing($this->context())));
+    }
+
+    public function createStaff()
+    {
+        return $this->execute(fn () => $this->ok(
+            $this->staffService()->create($this->mutableContext(), $this->request->getJSON(true) ?? []),
+            201,
+        ));
+    }
+
+    public function staffStatus(int $id)
+    {
+        return $this->execute(function () use ($id) {
+            $input = $this->request->getJSON(true) ?? [];
+            $this->staffService()->setActive(
+                $this->mutableContext(),
+                $id,
+                (bool) ($input['active'] ?? false),
+                (string) ($input['reason'] ?? ''),
+            );
+
+            return $this->ok();
+        });
+    }
+
+    public function permissions(int $id)
+    {
+        return $this->execute(fn () => $this->ok($this->staffService()->permissions($this->context(), $id)));
+    }
+
+    public function grant(int $id)
+    {
+        return $this->execute(function () use ($id) {
+            $context = $this->mutableContext();
+            $input = $this->request->getJSON(true) ?? [];
+            $this->permissionService()->grant(
+                $context,
+                $id,
+                (string) ($input['permission_code'] ?? ''),
+                (string) ($input['reason'] ?? ''),
+            );
+
+            return $this->ok($this->staffService()->permissions($context, $id));
+        });
+    }
+
+    public function revoke(int $id)
+    {
+        return $this->execute(function () use ($id) {
+            $context = $this->mutableContext();
+            $input = $this->request->getJSON(true) ?? [];
+            $this->permissionService()->revoke(
+                $context,
+                $id,
+                (string) ($input['permission_code'] ?? ''),
+                (string) ($input['reason'] ?? ''),
+            );
+
+            return $this->ok($this->staffService()->permissions($context, $id));
+        });
+    }
+
+    public function resetPassword(int $id)
+    {
+        return $this->execute(function () use ($id) {
+            $input = $this->request->getJSON(true) ?? [];
+            $result = $this->staffService()->resetPassword(
+                $this->mutableContext(),
+                $id,
+                (string) ($input['reason'] ?? ''),
+            );
+
+            return $this->ok($result);
+        });
+    }
+
+    public function settings()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $context->requireOwner();
+
+            return $this->ok($this->settingsService()->get($context));
+        });
+    }
+
+    public function updateSettings()
+    {
+        return $this->execute(fn () => $this->ok($this->settingsService()->update(
+            $this->mutableContext(),
+            $this->request->getJSON(true) ?? [],
+        )));
+    }
+
+    public function branding()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $context->requireOwner();
+            $profile = db_connect()->table('shop_branding_profiles')
+                ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId])
+                ->get()
+                ->getRowArray() ?? [];
+
+            return $this->ok($profile);
+        });
+    }
+
+    public function updateBranding()
+    {
+        return $this->execute(function () {
+            $context = $this->mutableContext();
+            $context->requireOwner();
+            (new BrandingService(db_connect(), Services::auditService()))->updateProfile(
+                $context->tenantId,
+                $context->shopId,
+                $context->userId,
+                $context->membershipId,
+                $this->request->getJSON(true) ?? [],
+            );
+
+            return $this->branding();
+        });
+    }
+
+    public function assets()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $context->requireOwner();
+            $assets = db_connect()->table('shop_brand_assets')
+                ->select('public_id,asset_type,mime_type,width_px,height_px,file_size_bytes,activated_at')
+                ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId, 'is_active' => 1])
+                ->get()
+                ->getResultArray();
+
+            return $this->ok($assets);
+        });
+    }
+
+    public function uploadAsset()
+    {
+        return $this->execute(function () {
+            $context = $this->mutableContext();
+            $context->requireOwner();
+            $result = (new BrandingService(db_connect(), Services::auditService()))->replaceAsset(
+                $context->tenantId,
+                $context->shopId,
+                $context->userId,
+                $context->membershipId,
+                (string) $this->request->getPost('asset_type'),
+                $this->request->getFile('asset'),
+            );
+
+            return $this->ok($result, 201);
+        });
+    }
+
+    public function domains()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $context->requireOwner();
+            $domains = db_connect()->table('shop_domains')
+                ->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method')
+                ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId])
+                ->get()
+                ->getResultArray();
+
+            return $this->ok($domains);
+        });
+    }
+
+    public function requestDomain()
+    {
+        return $this->execute(function () {
+            $context = $this->mutableContext();
+            $context->requireOwner();
+            $input = $this->request->getJSON(true) ?? [];
+            $result = (new DomainService(db_connect(), Services::auditService()))->requestCustom(
+                $context->tenantId,
+                $context->shopId,
+                (string) ($input['hostname'] ?? ''),
+                $context->userId,
+            );
+
+            return $this->ok($result, 201);
+        });
+    }
+
+    public function subscription()
+    {
+        return $this->execute(function () {
+            $context = $this->context();
+            $context->requireOwner();
+            $gate = (new AccessGate(db_connect()))->evaluate($context->tenantId, $context->shopId);
+            $subscription = db_connect()->table('subscriptions')
+                ->where('tenant_id', $context->tenantId)
+                ->orderBy('starts_at', 'DESC')
+                ->get(1)
+                ->getRowArray();
+            $count = db_connect()->table('tenant_memberships')->where([
+                'tenant_id' => $context->tenantId,
+                'role' => 'STAFF',
+                'status' => 'ACTIVE',
+            ])->countAllResults();
+
+            return $this->ok([
+                'entitlement' => $subscription,
+                'active_staff' => $count,
+                'access' => ['mode' => $gate->mode, 'message' => $gate->message],
+            ]);
+        });
+    }
+
+    private function context(): ShopContext
+    {
+        return ShopContext::resolve(
+            db_connect(),
+            (int) auth()->id(),
+            $this->request->getServer('HTTP_HOST') ?? '',
+        );
+    }
+
+    private function mutableContext(): ShopContext
+    {
+        $context = $this->context();
+        $decision = (new AccessGate(db_connect()))->evaluate($context->tenantId, $context->shopId);
+        if (! $decision->permitsMutation()) {
+            throw new ApiException($decision->mode, $decision->message, 403);
+        }
+
+        return $context;
+    }
+
+    /** @return list<string> */
+    private function activePermissions(ShopContext $context): array
+    {
+        return array_column(db_connect()->table('membership_permission_grants')
+            ->select('permission_code')
+            ->where([
+                'tenant_id' => $context->tenantId,
+                'membership_id' => $context->membershipId,
+                'revoked_at' => null,
+            ])->get()->getResultArray(), 'permission_code');
+    }
+
+    private function staffService(): StaffService
+    {
+        return new StaffService(db_connect(), Services::auditService(), Services::userSessionRevocation());
+    }
+
+    private function permissionService(): PermissionService
+    {
+        return new PermissionService(db_connect(), Services::auditService());
+    }
+
+    private function settingsService(): ShopSettingsService
+    {
+        return new ShopSettingsService(db_connect(), Services::auditService());
+    }
+
+    private function ok(array $data = [], int $status = 200)
+    {
+        return ApiResponse::success($this->response, $data, Services::requestContext()->requestId(), $status);
+    }
+
+    private function execute(callable $operation)
+    {
+        try {
+            return $operation();
+        } catch (ApiException $exception) {
+            return ApiResponse::error(
+                $this->response,
+                $exception->errorCode,
+                $exception->getMessage(),
+                Services::requestContext()->requestId(),
+                $exception->status,
+                $exception->details,
+            );
+        } catch (DomainException $exception) {
+            $status = str_contains($exception->getMessage(), 'access is required') ? 403 : 422;
+            $code = $status === 403 ? 'PERMISSION_DENIED' : 'VALIDATION_FAILED';
+
+            return ApiResponse::error($this->response, $code, $exception->getMessage(), Services::requestContext()->requestId(), $status);
+        } catch (Throwable $exception) {
+            log_message('error', 'phase1.request_failed {request_id} {exception_class}', [
+                'request_id' => Services::requestContext()->requestId(),
+                'exception_class' => $exception::class,
+            ]);
+
+            return ApiResponse::error($this->response, 'REQUEST_FAILED', 'The request could not be completed.', Services::requestContext()->requestId(), 500);
+        }
+    }
 }

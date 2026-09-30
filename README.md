@@ -1,11 +1,11 @@
 # DawaTrack
 
-DawaTrack is a modular CodeIgniter 4 application for secure Nigerian chemist/PPMV operations. This repository currently delivers **Phase 0 — Controlled Project and Application Foundation** only; it contains no authentication or business workflows.
+DawaTrack is a modular CodeIgniter 4 application for secure Nigerian chemist/PPMV operations. Phase 1 recovery is in progress; the repository includes the runtime, database, Shield authentication, Tenant, Shop, branding, domain and subscription foundations, but Phase 1 is not yet approved as complete.
 
 ## Start locally
 
 ```bash
-cp .env.example .env
+cp env .env
 composer install
 npm ci
 npm run build

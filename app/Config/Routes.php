@@ -15,16 +15,20 @@ $routes->get('/', 'Web\ShellController::shop', ['as' => 'shop.shell', 'filter' =
 $routes->get('brand-assets/(:segment)', 'Web\BrandAssetController::show/$1');
 $routes->get('manifest.webmanifest', 'Web\ShellController::manifest', ['as' => 'pwa.manifest']);
 $routes->get('auth', 'Web\ShellController::authentication', ['as' => 'auth.shell']);
-$routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin']);
+$routes->get('platform-admin/login', 'Web\AdminAuthController::login', ['as' => 'admin.login']);
+$routes->get('platform-admin/mfa', 'Web\AdminAuthController::stepUp', ['as' => 'admin.mfa', 'filter' => 'platformAdminIdentity']);
+$routes->post('platform-admin/mfa/restart', 'Web\AdminAuthController::restart', ['as' => 'admin.mfa.restart', 'filter' => 'platformAdminIdentity']);
+$routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin:platform.access']);
+$routes->get('logout', 'Web\SecuritySessionController::logout', ['as' => 'dawatrack.logout']);
 
-service('auth')->routes($routes);
+service('auth')->routes($routes, ['except' => ['register', 'logout']]);
 
 $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('health/live', 'Api\HealthController::live', ['as' => 'api.health.live']);
     $routes->get('health/ready', 'Api\HealthController::ready', ['as' => 'api.health.ready']);
     $routes->get('shop/context', 'Api\ShopController::contextInfo', ['filter' => 'authenticated']);
-    $routes->get('shop/staff/(:num)/permissions', 'Api\ShopController::permissions/$1', ['filter'=>'authenticated']);
-    $routes->post('shop/staff/(:num)/reset-password', 'Api\ShopController::resetPassword/$1', ['filter'=>'authenticated']);
+    $routes->get('shop/staff/(:num)/permissions', 'Api\ShopController::permissions/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/staff/(:num)/reset-password', 'Api\ShopController::resetPassword/$1', ['filter' => 'authenticated']);
     $routes->get('shop/staff', 'Api\ShopController::staff', ['filter' => 'authenticated']);
     $routes->post('shop/staff', 'Api\ShopController::createStaff', ['filter' => 'authenticated']);
     $routes->patch('shop/staff/(:num)/status', 'Api\ShopController::staffStatus/$1', ['filter' => 'authenticated']);
@@ -40,5 +44,5 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/domains', 'Api\ShopController::requestDomain', ['filter' => 'authenticated']);
     $routes->get('shop/subscription', 'Api\ShopController::subscription', ['filter' => 'authenticated']);
     $routes->get('shop/assets/(:segment)', 'Api\AssetController::show/$1', ['filter' => 'authenticated']);
-    $routes->post('platform/tenants', 'Api\OnboardingController::create', ['as' => 'api.platform.tenants.create', 'filter' => 'platformAdmin']);
+    $routes->post('platform/tenants', 'Api\OnboardingController::create', ['as' => 'api.platform.tenants.create', 'filter' => 'platformAdmin:platform.onboard']);
 });

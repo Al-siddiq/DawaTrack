@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\TenantShop\Infrastructure;
 
+use App\Exceptions\ApiException;
 use CodeIgniter\Database\BaseConnection;
-use DomainException;
 
 final readonly class ShopContext
 {
@@ -23,7 +23,7 @@ final readonly class ShopContext
             'verification_status' => 'VERIFIED',
         ])->get()->getRowArray();
         if (! $domain) {
-            throw new DomainException('This Shop address is unavailable.');
+            throw new ApiException('RESOURCE_NOT_FOUND', 'This Shop address is unavailable.', 404);
         }
         $membership = $database->table('tenant_memberships')->where([
             'tenant_id' => $domain['tenant_id'],
@@ -31,7 +31,7 @@ final readonly class ShopContext
             'status' => 'ACTIVE',
         ])->get()->getRowArray();
         if (! $membership) {
-            throw new DomainException('You do not have access to this Shop.');
+            throw new ApiException('RESOURCE_NOT_FOUND', 'This Shop address is unavailable.', 404);
         }
 
         return new self((int) $domain['tenant_id'], (int) $domain['shop_id'], (int) $membership['id'], $userId, $membership['role']);
@@ -40,7 +40,7 @@ final readonly class ShopContext
     public function requireOwner(): void
     {
         if ($this->role !== 'PRIMARY_OWNER') {
-            throw new DomainException('Primary Owner access is required.');
+            throw new ApiException('PERMISSION_DENIED', 'Primary Owner access is required.', 403);
         }
     }
 }

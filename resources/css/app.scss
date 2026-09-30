@@ -38,5 +38,31 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .step-indicator li.active { color: #fff; background: var(--dt-primary); }
 .auth-card, .success-panel, .empty-panel { max-width: 48rem; padding: clamp(1.25rem,5vw,3rem); border-radius: 1rem; background: #fff; }
 .button-stack { display: grid; gap: .5rem; }
+.auth-page { background: linear-gradient(145deg, color-mix(in srgb, var(--dt-primary) 10%, #f4f7f5), #fff); }
+.auth-shell { width: min(100% - 2rem, 34rem); min-height: 100vh; margin: 0 auto; padding: clamp(1rem, 7vw, 4rem) 0; display: grid; align-items: center; }
+.auth-card { width: 100%; box-shadow: 0 1rem 3rem rgba(20, 50, 40, .12); }
+.auth-brand { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.5rem; }
+.auth-brand .eyebrow { margin-bottom: .1rem; }
+.auth-brand .brand-mark { flex: 0 0 auto; color: #fff; background: var(--dt-primary); }
+.brand-logo { display: block; max-width: 10rem; max-height: 3rem; object-fit: contain; }
+.auth-form { display: grid; gap: .75rem; }
+.auth-form label { font-weight: 600; }
+.auth-form .btn { min-height: 44px; margin-top: .5rem; }
+.auth-check { display: flex; align-items: center; gap: .6rem; min-height: 44px; }
+.auth-code { font-size: 1.4rem; letter-spacing: .2em; }
+.card-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.permission-workspace { display: grid; gap: 1rem; padding-top: 1rem; }
+.permission-group { padding: 1rem; border: 1px solid #d5dfda; border-radius: .75rem; }
+.permission-group h3 { font-size: 1rem; }
+.permission-option { display: flex; align-items: flex-start; gap: .6rem; min-height: 44px; padding: .5rem; border-radius: .5rem; }
+.permission-option:focus-within { outline: 3px solid var(--dt-accent); }
+.permission-option small { display: block; color: var(--dt-muted); overflow-wrap: anywhere; }
+.permission-history ol { display: grid; gap: .5rem; margin-top: 1rem; padding-left: 1.25rem; }
+.permission-summary { display: grid; gap: .75rem; }
+.badge-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+.dialog-backdrop { position: fixed; inset: 0; z-index: 1050; display: grid; place-items: center; padding: 1rem; background: rgba(10, 25, 20, .7); }
+.reason-dialog { width: min(100%, 34rem); max-height: calc(100vh - 2rem); overflow-y: auto; padding: clamp(1.25rem, 5vw, 2rem); border-radius: 1rem; background: #fff; box-shadow: 0 1rem 3rem rgba(0,0,0,.25); }
+.reason-dialog label { display: block; margin-bottom: .4rem; font-weight: 600; }
+.credential-value { display: block; margin: .75rem 0; overflow-wrap: anywhere; font-size: 1.05rem; }
 .toast-notice { position: fixed; right: 1rem; bottom: 1rem; max-width: min(24rem,calc(100vw - 2rem)); padding: 1rem; color: #fff; background: #155d46; border-radius: .75rem; }
-@media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button { width: 100%; } }
+@media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button, .card-actions, .card-actions .btn { width: 100%; } .step-indicator { gap: .35rem; } .step-indicator li { flex: 1 1 0; padding: .55rem; text-align: center; font-size: .85rem; } }

@@ -76,7 +76,7 @@ Every later slice needs consistent bootstrapping, response/error conventions, st
 Pin compatible stable releases; define modular namespaces and dependency direction; create Shop, Authentication and Platform Admin application shells; establish environment configuration, logging, coding conventions, route naming, JSON envelope/pagination/error conventions and documentation directories. Self-host Vue/Dexie/runtime assets. Establish Bootstrap's separate CSS compilation procedure without adding a JavaScript application bundler.
 
 ### Database Work
-Configure MySQL 8.4, InnoDB, strict SQL mode, `utf8mb4_0900_ai_ci`, UTC connections and least-privilege development credentials. Create no DawaTrack domain tables.
+Configure MySQL 8.4, InnoDB, strict SQL mode, `utf8mb4_unicode_ci`, UTC connections and least-privilege development credentials. Create no DawaTrack domain tables.
 
 ### Backend Work
 CI4 bootstrap; module boundaries; thin-controller base conventions; request correlation IDs; centralized production-safe exception mapping; health/readiness endpoints that reveal no secrets; configuration validation; structured application/security/job logs; REST content negotiation and pagination contracts.

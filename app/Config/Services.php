@@ -50,6 +50,24 @@ class Services extends BaseService
         return new \App\Modules\TenantShop\Application\OnboardingService(static::database(), static::auditService());
     }
 
+    public static function platformMfa(bool $getShared = true): \App\Security\PlatformMfaService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('platformMfa');
+        }
+
+        return new \App\Security\PlatformMfaService(static::session(), static::auditService());
+    }
+
+    public static function userSessionRevocation(bool $getShared = true): \App\Security\UserSessionRevocationService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('userSessionRevocation');
+        }
+
+        return new \App\Security\UserSessionRevocationService(static::cache(), static::session());
+    }
+
     /*
      * public static function example($getShared = true)
      * {
