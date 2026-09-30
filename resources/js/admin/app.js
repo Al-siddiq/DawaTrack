@@ -9,6 +9,8 @@ createApp({
         const error = ref('');
         const fieldErrors = reactive({});
         const result = reactive({});
+        const domains = ref([]);
+        const domainReason = reactive({});
         const form = reactive({
             business_name: '', shop_name: '', contact_phone: '', contact_email: '',
             address_line_1: '', address_line_2: '', city_town: '', state_region: '',
@@ -48,6 +50,10 @@ createApp({
             }
         }
 
-        return { step, busy, error, fieldErrors, result, form, fields, submit, clearErrors };
+        async function loadDomains() { try { domains.value=(await phaseOneApi.platformDomains()).data; } catch(exception) { error.value=exception.message; } }
+        async function domainAction(domain, action, ready = undefined) { const reason=(domainReason[domain.public_id]??'').trim();if(!reason){error.value='Enter an operational reason for the domain action.';return;}busy.value=true;clearErrors();try{const body={reason};if(ready!==undefined)body.ready=ready;await phaseOneApi.domainAction(domain.public_id,action,body);await loadDomains();}catch(exception){error.value=exception.message;}finally{busy.value=false;} }
+        loadDomains();
+
+        return { step, busy, error, fieldErrors, result, form, fields, domains, domainReason, submit, clearErrors, loadDomains, domainAction };
     },
 }).mount('#admin-app');

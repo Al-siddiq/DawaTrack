@@ -223,7 +223,7 @@ final class ShopController extends BaseController
             $context = $this->context();
             $context->requireOwner();
             $domains = db_connect()->table('shop_domains')
-                ->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method')
+                ->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method,verification_reference,verified_at,activated_at')
                 ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId])
                 ->get()
                 ->getResultArray();
@@ -243,9 +243,30 @@ final class ShopController extends BaseController
                 $context->shopId,
                 (string) ($input['hostname'] ?? ''),
                 $context->userId,
+                $context->membershipId,
             );
 
             return $this->ok($result, 201);
+        });
+    }
+
+    public function rotateDomain(string $publicId)
+    {
+        return $this->execute(function () use ($publicId) {
+            $context=$this->mutableContext();$context->requireOwner();
+            return $this->ok((new DomainService(db_connect(),Services::auditService()))->rotate($context->tenantId,$context->shopId,$publicId,$context->userId,$context->membershipId));
+        });
+    }
+
+    public function verifyDomain(string $publicId)
+    {
+        return $this->execute(function () use ($publicId) {
+            $context=$this->mutableContext();$context->requireOwner();
+            $domain=db_connect()->table('shop_domains')->where(['tenant_id'=>$context->tenantId,'shop_id'=>$context->shopId,'public_id'=>$publicId])->get()->getRowArray();
+            if(!$domain)throw new ApiException('RESOURCE_NOT_FOUND','Domain not found.',404);
+            $matched=(new DomainService(db_connect(),Services::auditService()))->verify($domain,'USER',$context->userId);
+            if(!$matched)throw new ApiException('DNS_CHALLENGE_PENDING','The expected TXT value is not visible yet. Retry after DNS propagation.',409);
+            return $this->ok(['verified'=>true]);
         });
     }
 

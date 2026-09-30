@@ -50,3 +50,17 @@ Confirm platform domain display. Request custom hostname and follow displayed DN
 
 ## Subscription, responsive and accessibility
 Confirm plan/type/start/end/cap/current active Staff/effective mode for Trial, Paid and expired periods. Complete every UI workflow at 320, 360, 390, tablet and desktop widths: no wide-table dependency or lost action. Repeat keyboard-only and 200% zoom; labels, focus, errors and status must remain perceivable.
+
+## WP3 — Branding, runtime assets, PWA, and domains
+
+Use only real operator-supplied PNG/JPEG uploads; do not create repository fixtures or screenshots.
+
+1. As a Primary Owner, edit every branding field at valid boundaries, then try blank required values, overlong values, malformed colours and a primary/background pair below 4.5:1. Confirm field errors, one version increment per successful change, refreshed UI, and one bounded Audit event.
+2. Upload each asset type, then try an extension/MIME mismatch, malformed/truncated input, oversize bytes/pixels, invalid aspect and wrong PWA dimensions. Confirm private storage, normalized MIME, versioned delivery, and old active asset survival after forced database, Audit and promotion failures.
+3. Visit Shop login/recovery/shell and the dynamic manifest on the platform hostname. Confirm text/CSS fallbacks without images; then repeat using real uploaded logo, favicon, background and PWA icons.
+4. With manual fallback files absent, confirm the manifest is valid and omits missing icon entries. Manually supply exact 192×192 and 512×512 PNG files under `public/assets/icons/`, then confirm only physically present entries appear.
+5. Request uppercase/trailing-dot and Unicode hosts plus invalid scheme, port, path, IP, wildcard, platform suffix, reserved/internal name, malformed label and duplicate cases. Confirm only canonical valid hostnames persist.
+6. Record the one-time TXT name/value, rotate it, and confirm the old value fails. Exercise missing, mismatched, DNS-error and matching records through both Owner action and `php spark domains:verify`.
+7. As a recent-MFA `platform_admin` with `platform.domains`, prove activation fails before verification/TLS; mark TLS ready, activate, select primary, restore platform fallback and deactivate custom. Confirm reasons and Audit. Repeat without permission and stale MFA.
+8. Prove hostname resolution never grants Tenant authority and public asset delivery cannot cross Tenant/Shop/active-host boundaries.
+9. Repeat all Owner/Admin flows at 320, 360, 390 px, tablet and desktop, keyboard-only and 200% zoom. Confirm DNS strings wrap, dialogs/actions remain reachable and no wide table is required.

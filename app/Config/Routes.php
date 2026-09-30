@@ -42,7 +42,15 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/assets', 'Api\ShopController::uploadAsset', ['filter' => 'authenticated']);
     $routes->get('shop/domains', 'Api\ShopController::domains', ['filter' => 'authenticated']);
     $routes->post('shop/domains', 'Api\ShopController::requestDomain', ['filter' => 'authenticated']);
+    $routes->post('shop/domains/(:segment)/rotate', 'Api\ShopController::rotateDomain/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/domains/(:segment)/verify', 'Api\ShopController::verifyDomain/$1', ['filter' => 'authenticated']);
     $routes->get('shop/subscription', 'Api\ShopController::subscription', ['filter' => 'authenticated']);
     $routes->get('shop/assets/(:segment)', 'Api\AssetController::show/$1', ['filter' => 'authenticated']);
     $routes->post('platform/tenants', 'Api\OnboardingController::create', ['as' => 'api.platform.tenants.create', 'filter' => 'platformAdmin:platform.onboard']);
+    $routes->get('platform/domains', 'Api\PlatformDomainController::index', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->post('platform/domains/(:segment)/tls', 'Api\PlatformDomainController::tls/$1', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->post('platform/domains/(:segment)/activate', 'Api\PlatformDomainController::activate/$1', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->post('platform/domains/(:segment)/primary', 'Api\PlatformDomainController::primary/$1', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->post('platform/domains/(:segment)/deactivate', 'Api\PlatformDomainController::deactivate/$1', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->post('platform/domains/(:segment)/fallback', 'Api\PlatformDomainController::fallback/$1', ['filter' => 'platformAdmin:platform.domains']);
 });

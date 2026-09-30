@@ -33,12 +33,14 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .detail-grid div { padding: 1rem; border-radius: .7rem; background: #f4f7f5; }
 .detail-grid dd { margin: .3rem 0 0; overflow-wrap: anywhere; }
 .brand-preview { display: grid; gap: .35rem; padding: 1.5rem; color: var(--preview-primary); background: var(--preview-background); border-radius: 1rem; }
+.asset-preview { display: block; max-width: 100%; max-height: 12rem; object-fit: contain; border-radius: .5rem; }
+.break-all { overflow-wrap: anywhere; word-break: break-word; }
 .step-indicator { display: flex; gap: 1rem; padding: 0; list-style: none; }
 .step-indicator li { padding: .65rem 1rem; border-radius: 2rem; background: #e8eeeb; }
 .step-indicator li.active { color: #fff; background: var(--dt-primary); }
 .auth-card, .success-panel, .empty-panel { max-width: 48rem; padding: clamp(1.25rem,5vw,3rem); border-radius: 1rem; background: #fff; }
 .button-stack { display: grid; gap: .5rem; }
-.auth-page { background: linear-gradient(145deg, color-mix(in srgb, var(--dt-primary) 10%, #f4f7f5), #fff); }
+.auth-page { background-color: var(--dt-background, #f4f7f5); background-image: linear-gradient(rgb(244 247 245 / 86%), rgb(244 247 245 / 86%)), var(--dt-login-background, none); background-size: cover; background-position: center; }
 .auth-shell { width: min(100% - 2rem, 34rem); min-height: 100vh; margin: 0 auto; padding: clamp(1rem, 7vw, 4rem) 0; display: grid; align-items: center; }
 .auth-card { width: 100%; box-shadow: 0 1rem 3rem rgba(20, 50, 40, .12); }
 .auth-brand { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.5rem; }

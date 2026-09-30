@@ -11,7 +11,7 @@
     <?php endif ?>
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 </head>
-<body class="auth-page" style="--dt-primary: <?= esc($brand['primary_colour'] ?? '#155D46') ?>; --dt-ink: <?= esc($brand['secondary_colour'] ?? '#17231F') ?>; --dt-accent: <?= esc($brand['accent_colour'] ?? '#F0A202') ?>;">
+<body class="auth-page" style="--dt-primary: <?= esc($brand['primary_colour'] ?? '#155D46') ?>; --dt-ink: <?= esc($brand['secondary_colour'] ?? '#17231F') ?>; --dt-accent: <?= esc($brand['accent_colour'] ?? '#F0A202') ?>; --dt-background: <?= esc($brand['background_colour'] ?? '#F4F7F5') ?>;<?php if (! empty($brand['assets']['LOGIN_BACKGROUND'])): ?> --dt-login-background: url('<?= esc($brand['assets']['LOGIN_BACKGROUND']) ?>');<?php endif ?>">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <main id="main-content" class="auth-shell" tabindex="-1">
     <section class="auth-card" aria-labelledby="auth-heading">

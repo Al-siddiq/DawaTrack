@@ -78,6 +78,7 @@ class AuthGroups extends ShieldAuthGroups
     public array $permissions = [
         'platform.access'    => 'Can access the DawaTrack platform administration area',
         'platform.onboard'   => 'Can onboard a Tenant and its Primary Owner',
+        'platform.domains'   => 'Can operate verified Shop domains and TLS readiness',
         'admin.access'        => 'Can access the sites admin area',
         'admin.settings'      => 'Can access the main site settings',
         'users.manage-admins' => 'Can manage other admins',
@@ -99,6 +100,7 @@ class AuthGroups extends ShieldAuthGroups
         'platform_admin' => [
             'platform.access',
             'platform.onboard',
+            'platform.domains',
         ],
         'superadmin' => [
             'admin.*',
