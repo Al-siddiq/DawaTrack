@@ -19,7 +19,7 @@ createApp({
         const domains = ref([]);
         const subscription = reactive({});
         const hostname = ref('');
-        const dnsToken = ref('');
+        const dnsChallenge = reactive({});
         const asset = ref(null);
         const assetType = ref('LOGO');
         const fieldErrors = reactive({});
@@ -202,23 +202,25 @@ createApp({
             const form = new FormData();
             form.append('asset_type', assetType.value);
             form.append('asset', asset.value.files[0]);
-            try { await run(() => phaseOneApi.upload(form), 'Brand asset replaced.', loadBranding); } catch (_) {}
+            try { await run(() => phaseOneApi.uploadAsset(form), 'Brand asset replaced.', loadBranding); } catch (_) {}
         }
         async function requestDomain() {
             try {
                 const response = await run(() => phaseOneApi.requestDomain({ hostname: hostname.value }), 'Domain verification requested.', loadDomains);
-                dnsToken.value = response.data.dns_txt_token;
+                Object.assign(dnsChallenge, response.data);
             } catch (_) {}
         }
+        async function rotateDomain(domain) { try { const response=await run(()=>phaseOneApi.rotateDomain(domain.public_id),'DNS challenge rotated.',loadDomains);Object.assign(dnsChallenge,response.data); } catch (_) {} }
+        async function verifyDomain(domain) { try { await run(()=>phaseOneApi.verifyDomain(domain.public_id),'Domain ownership verified.',loadDomains); } catch (_) {} }
 
         onMounted(load);
         return {
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
-            domains, subscription, hostname, dnsToken, asset, assetType, navigation, readOnly, owner,
+            domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
             permissionSearch, permissionGroups, dialog, dialogReason, temporaryCredential, createStaff,
             loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
-            uploadAsset, requestDomain,
+            uploadAsset, requestDomain, rotateDomain, verifyDomain,
         };
     },
 }).mount('#shop-app');

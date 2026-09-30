@@ -50,3 +50,32 @@ Confirm platform domain display. Request custom hostname and follow displayed DN
 
 ## Subscription, responsive and accessibility
 Confirm plan/type/start/end/cap/current active Staff/effective mode for Trial, Paid and expired periods. Complete every UI workflow at 320, 360, 390, tablet and desktop widths: no wide-table dependency or lost action. Repeat keyboard-only and 200% zoom; labels, focus, errors and status must remain perceivable.
+
+## WP3 — Branding, runtime assets, PWA, and domains
+
+Use only real operator-supplied PNG/JPEG uploads; do not create repository fixtures or screenshots.
+
+1. As a Primary Owner, edit every branding field at valid boundaries, then try blank required values, overlong values, malformed colours and a primary/background pair below 4.5:1. Confirm field errors, one version increment per successful change, refreshed UI, and one bounded Audit event.
+2. Upload each asset type, then try an extension/MIME mismatch, malformed/truncated input, oversize bytes/pixels, invalid aspect and wrong PWA dimensions. Confirm private storage, normalized MIME, versioned delivery, and old active asset survival after forced database, Audit and promotion failures.
+3. Visit Shop login/recovery/shell and the dynamic manifest on the platform hostname. Confirm text/CSS fallbacks without images; then repeat using real uploaded logo, favicon, background and PWA icons.
+4. With manual fallback files absent, confirm the manifest is valid and omits missing icon entries. Manually supply exact 192×192 and 512×512 PNG files under `public/assets/icons/`, then confirm only physically present entries appear.
+5. Request uppercase/trailing-dot and Unicode hosts plus invalid scheme, port, path, IP, wildcard, platform suffix, reserved/internal name, malformed label and duplicate cases. Confirm only canonical valid hostnames persist.
+6. Record the one-time TXT name/value, rotate it, and confirm the old value fails. Exercise missing, mismatched, DNS-error and matching records through both Owner action and `php spark domains:verify`.
+7. As a recent-MFA `platform_admin` with `platform.domains`, prove activation fails before verification/TLS; mark TLS ready, activate, select primary, restore platform fallback and deactivate custom. Confirm reasons and Audit. Repeat without permission and stale MFA.
+8. Prove hostname resolution never grants Tenant authority and public asset delivery cannot cross Tenant/Shop/active-host boundaries.
+9. Repeat all Owner/Admin flows at 320, 360, 390 px, tablet and desktop, keyboard-only and 200% zoom. Confirm DNS strings wrap, dialogs/actions remain reachable and no wide table is required.
+
+## WP4 — subscriptions, lifecycle, access, and final acceptance
+
+1. With a recent-MFA Admin holding `platform.subscriptions`, create Starter/Growth activation, contiguous renewal, future upgrade/downgrade, and contiguous Trial extension. Inspect immutable periods, matching event types, Audit, snapshots, reference/reason, and current/history/future classification.
+2. Race two renewals, upgrade plus renewal, two downgrades, and a downgrade with Staff activation. Expect Tenant lock serialization, one valid result, `SUBSCRIPTION_OVERLAP` for the competitor, and no duplicate event/Audit evidence.
+3. Attempt downgrade to Starter above two active Staff. Expect `SUBSCRIPTION_STAFF_CAP_CONFLICT` with count/limit and no Staff or subscription mutation. Reduce Staff explicitly, retry, and confirm the period applies only at its start.
+4. Run `php spark subscriptions:record-expiries <admin-user-id>` twice after a period ends. The first run adds evidence; the second adds none. Access remains time-derived.
+5. Exercise Tenant ACTIVE→SUSPENDED→ACTIVE and ACTIVE/SUSPENDED→CLOSED, and Shop ACTIVE↔INACTIVE. Confirm invalid transitions conflict, close is terminal, nothing is deleted, and every success has reasoned Audit.
+6. Verify FULL, READ_ONLY, BLOCKED, CLOSED combinations on platform and custom hostnames with an existing session. Every next request must reevaluate state; future/stale entitlements and permissions must not override lifecycle.
+7. Inspect Owner subscription presentation for current window, active Staff/snapshot/remaining capacity, future periods, history, and plain access explanation. Confirm there are no Owner mutation/payment controls.
+8. Call every Platform endpoint without authentication, group, permission, recent MFA, CSRF, valid UUID, reason, and valid transition. Confirm the established 401/403/404/409/422/429 envelope semantics.
+9. Submit nested forbidden Audit metadata directly at a controlled service boundary and oversized/deep metadata. Confirm rejection and rollback. Force Audit insert failure inside a lifecycle/subscription transaction and confirm business rollback.
+10. As DB owner, execute `SHOW GRANTS`, confirm runtime Audit privileges are append-only, and prove runtime `UPDATE`/`DELETE` fails while `INSERT` through the application succeeds.
+11. Repeat with two Tenants and swapped Shop/domain/membership/Staff/subscription UUIDs and Host headers. Ordinary identities must not disclose or mutate foreign state; Admin still requires explicit permission and recent MFA.
+12. Complete all Phase 1 journeys at 320, 360, 390 px, tablet, desktop, keyboard-only and 200% zoom. Do not capture screenshots.

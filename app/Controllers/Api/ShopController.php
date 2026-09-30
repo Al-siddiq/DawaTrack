@@ -12,6 +12,7 @@ use App\Modules\BrandingDomain\Application\BrandingService;
 use App\Modules\BrandingDomain\Application\DomainService;
 use App\Modules\Identity\Application\PermissionService;
 use App\Modules\Identity\Application\StaffService;
+use App\Modules\Subscription\Application\SubscriptionQuery;
 use App\Modules\TenantShop\Application\ShopSettingsService;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use Config\Services;
@@ -223,7 +224,7 @@ final class ShopController extends BaseController
             $context = $this->context();
             $context->requireOwner();
             $domains = db_connect()->table('shop_domains')
-                ->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method')
+                ->select('public_id,hostname,domain_type,verification_status,certificate_status,is_active,is_primary,verification_method,verification_reference,verified_at,activated_at')
                 ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId])
                 ->get()
                 ->getResultArray();
@@ -243,9 +244,30 @@ final class ShopController extends BaseController
                 $context->shopId,
                 (string) ($input['hostname'] ?? ''),
                 $context->userId,
+                $context->membershipId,
             );
 
             return $this->ok($result, 201);
+        });
+    }
+
+    public function rotateDomain(string $publicId)
+    {
+        return $this->execute(function () use ($publicId) {
+            $context=$this->mutableContext();$context->requireOwner();
+            return $this->ok((new DomainService(db_connect(),Services::auditService()))->rotate($context->tenantId,$context->shopId,$publicId,$context->userId,$context->membershipId));
+        });
+    }
+
+    public function verifyDomain(string $publicId)
+    {
+        return $this->execute(function () use ($publicId) {
+            $context=$this->mutableContext();$context->requireOwner();
+            $domain=db_connect()->table('shop_domains')->where(['tenant_id'=>$context->tenantId,'shop_id'=>$context->shopId,'public_id'=>$publicId])->get()->getRowArray();
+            if(!$domain)throw new ApiException('RESOURCE_NOT_FOUND','Domain not found.',404);
+            $matched=(new DomainService(db_connect(),Services::auditService()))->verify($domain,'USER',$context->userId);
+            if(!$matched)throw new ApiException('DNS_CHALLENGE_PENDING','The expected TXT value is not visible yet. Retry after DNS propagation.',409);
+            return $this->ok(['verified'=>true]);
         });
     }
 
@@ -255,11 +277,7 @@ final class ShopController extends BaseController
             $context = $this->context();
             $context->requireOwner();
             $gate = (new AccessGate(db_connect()))->evaluate($context->tenantId, $context->shopId);
-            $subscription = db_connect()->table('subscriptions')
-                ->where('tenant_id', $context->tenantId)
-                ->orderBy('starts_at', 'DESC')
-                ->get(1)
-                ->getRowArray();
+            $subscription = (new SubscriptionQuery(db_connect()))->forTenant($context->tenantId);
             $count = db_connect()->table('tenant_memberships')->where([
                 'tenant_id' => $context->tenantId,
                 'role' => 'STAFF',
@@ -267,8 +285,10 @@ final class ShopController extends BaseController
             ])->countAllResults();
 
             return $this->ok([
-                'entitlement' => $subscription,
+                ...$subscription,
                 'active_staff' => $count,
+                'staff_limit' => $subscription['current_entitlement']['max_active_staff_snapshot'] ?? null,
+                'remaining_staff_capacity' => isset($subscription['current_entitlement']) && $subscription['current_entitlement'] !== null ? max(0, (int)$subscription['current_entitlement']['max_active_staff_snapshot']-$count) : 0,
                 'access' => ['mode' => $gate->mode, 'message' => $gate->message],
             ]);
         });

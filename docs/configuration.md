@@ -32,3 +32,7 @@ Shield's native email second-factor action is mandatory at login. A Platform Adm
 The server session has a two-hour configured idle lifetime and an eight-hour application-enforced absolute lifetime. Session identifiers rotate every five minutes with the previous data destroyed. Production cookies are Secure, HTTP-only and SameSite Strict. Absolute expiry returns JSON `SESSION_EXPIRED` to APIs and the branded expired-session route to browsers.
 
 All session-authenticated writes use the session CSRF filter. Server-rendered forms include `csrf_field()`. The Fetch client sends the configured CSRF header and adopts the refreshed response token. Authentication, recovery, MFA and Platform Admin writes use the shared sensitive throttling filter.
+
+## Phase 1 WP4 operations
+
+The controlled `platform_admin` group receives the focused `platform.subscriptions` and `platform.tenants` permissions. All `/api/v1/platform/operations/*` writes remain behind the established Platform Admin identity, recent-MFA, CSRF, and rate-limit filters. No subscription processor, queue, Redis, or worker configuration is required. Schedule expiry evidence, if desired, through cron invoking `php spark subscriptions:record-expiries <platform-admin-user-id>` under a controlled operational identity.

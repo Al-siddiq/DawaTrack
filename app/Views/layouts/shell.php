@@ -11,7 +11,7 @@
     <link rel="manifest" href="<?= base_url('manifest.webmanifest') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 </head>
-<body style="--dt-primary: <?= esc($brand['primary_colour'] ?? '#155D46') ?>; --dt-ink: <?= esc($brand['secondary_colour'] ?? '#17231F') ?>; --dt-accent: <?= esc($brand['accent_colour'] ?? '#F0A202') ?>;">
+<body style="--dt-primary: <?= esc($brand['primary_colour'] ?? '#155D46') ?>; --dt-ink: <?= esc($brand['secondary_colour'] ?? '#17231F') ?>; --dt-accent: <?= esc($brand['accent_colour'] ?? '#F0A202') ?>; --dt-background: <?= esc($brand['background_colour'] ?? '#F4F7F5') ?>;<?php if (! empty($brand['assets']['LOGIN_BACKGROUND'])): ?> --dt-login-background: url('<?= esc($brand['assets']['LOGIN_BACKGROUND']) ?>');<?php endif ?>">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="app-header">
     <a class="brand" href="<?= site_url('/') ?>" aria-label="DawaTrack home">

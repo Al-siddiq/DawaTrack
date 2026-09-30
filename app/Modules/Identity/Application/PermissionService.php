@@ -9,6 +9,7 @@ use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use App\Support\UtcTimestamp;
+use App\Support\SensitiveReason;
 use CodeIgniter\Database\BaseConnection;
 use Throwable;
 
@@ -48,10 +49,7 @@ final class PermissionService
     private function grantLocked(ShopContext $context, int $membershipId, string $permissionCode, string $reason): void
     {
         $this->assertKnown($permissionCode);
-        $reason = trim($reason);
-        if ($reason === '') {
-            throw new ApiException('VALIDATION_FAILED', 'A grant reason is required.', 422, ['reason' => ['Enter a reason.']]);
-        }
+        $reason = SensitiveReason::require($reason);
         $membership = $this->staffMembership($context->tenantId, $membershipId, true);
         $existing = $this->database->table('membership_permission_grants')->where([
             'tenant_id' => $context->tenantId,
@@ -108,10 +106,7 @@ final class PermissionService
     private function revokeLocked(ShopContext $context, int $membershipId, string $permissionCode, string $reason): void
     {
         $this->assertKnown($permissionCode);
-        $reason = trim($reason);
-        if ($reason === '') {
-            throw new ApiException('VALIDATION_FAILED', 'A revocation reason is required.', 422, ['reason' => ['Enter a reason.']]);
-        }
+        $reason = SensitiveReason::require($reason);
         $membership = $this->staffMembership($context->tenantId, $membershipId, false);
         $grant = $this->database->table('membership_permission_grants')->where([
             'tenant_id' => $context->tenantId,
