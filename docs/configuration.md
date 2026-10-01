@@ -36,3 +36,9 @@ All session-authenticated writes use the session CSRF filter. Server-rendered fo
 ## Phase 1 WP4 operations
 
 The controlled `platform_admin` group receives the focused `platform.subscriptions` and `platform.tenants` permissions. All `/api/v1/platform/operations/*` writes remain behind the established Platform Admin identity, recent-MFA, CSRF, and rate-limit filters. No subscription processor, queue, Redis, or worker configuration is required. Schedule expiry evidence, if desired, through cron invoking `php spark subscriptions:record-expiries <platform-admin-user-id>` under a controlled operational identity.
+
+## Phase 1 database installation
+
+Phase 1 requires a deliberately created MySQL 8.4 database and an explicit `.env` `database.default` configuration. The supported driver is MySQLi with strict mode, `utf8mb4`, and `utf8mb4_unicode_ci`; database timestamps are UTC. Use a development-specific name such as `dawatrack_phase1_dev` and never commit its credentials.
+
+Package migration dependencies are explicit: `CodeIgniter\\Settings`, then `CodeIgniter\\Shield`, then `App`. Do not treat cross-namespace timestamps as dependency ordering and do not use `migrate --all` as the authoritative bootstrap procedure. See `docs/operations/phase-01-bootstrap.md` for the exact preflight, install, rollback, and clean-recovery commands.
