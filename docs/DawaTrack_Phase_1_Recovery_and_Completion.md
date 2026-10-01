@@ -2,17 +2,17 @@ DawaTrack Phase 1 Recovery & Completion — Four Work Package Implementation Pla
 A. Planning Assessment
 Phase 1 recovery should be delivered through four sequential vertical milestones because the outstanding problems form a clear dependency chain:
 
-The runtime, schema baseline, authentication boundary, and Platform Admin authority must be trustworthy first. The current application cannot be fully executed in the supplied environment, public registration is enabled, CSRF is inactive, platform_admin is not configured, and the MFA filter relies on session state that no supported flow establishes. 
+The runtime, schema baseline, authentication boundary, and Platform Admin authority must be trustworthy first. The current application cannot be fully executed in the supplied environment, public registration is enabled, CSRF is inactive, platform_admin is not configured, and the MFA filter relies on session state that no supported flow establishes.
 
-Tenant identity workflows must then be made transactionally correct and usable by both Owners and Staff. Onboarding currently creates the Shield identity before the Tenant transaction, while the Shop shell unconditionally loads Owner-only resources. 
+Tenant identity workflows must then be made transactionally correct and usable by both Owners and Staff. Onboarding currently creates the Shield identity before the Tenant transaction, while the Shop shell unconditionally loads Owner-only resources.
 
-White-label assets and domains depend on working authentication, Tenant context, Owner authority, and Platform Admin MFA. The current asset upload client call is broken, and the domain lifecycle stops before TLS readiness and operational activation. 
+White-label assets and domains depend on working authentication, Tenant context, Owner authority, and Platform Admin MFA. The current asset upload client call is broken, and the domain lifecycle stops before TLS readiness and operational activation.
 
 Subscription and lifecycle administration must be completed last, after Admin security and Staff-cap enforcement exist, because downgrade decisions depend on trustworthy membership counts and Tenant isolation. Package 4 can then close Audit coverage, documentation, and full Phase 1 acceptance.
 
 Each package ends at an independently reviewable operational boundary. No package is merely a backend layer; each includes its routes, services, UI, responsive behavior, Audit, documentation relevant to that milestone, and manual verification.
 
-The implementation plan preserves the approved modular-monolith and frontend architecture: server-derived tenancy, Shield identity, Vue 3 Composition API, native Fetch, Bootstrap/Sass, static self-hosted assets, and no JavaScript application bundler. The Technical Blueprint explicitly requires one shared Shop application governed by permissions, a logically separate Platform Admin interface, and backend-established Tenant authority. 
+The implementation plan preserves the approved modular-monolith and frontend architecture: server-derived tenancy, Shield identity, Vue 3 Composition API, native Fetch, Bootstrap/Sass, static self-hosted assets, and no JavaScript application bundler. The Technical Blueprint explicitly requires one shared Shop application governed by permissions, a logically separate Platform Admin interface, and backend-established Tenant authority.
 
 B. Dependency Overview
 WP1 — Runtime, Database & Security Foundation
@@ -29,7 +29,7 @@ WP2 → WP3: Branding and domain changes require a functioning Owner shell, reli
 
 WP3 → WP4: Domain activation and white-label presentation must already work before final subscription and Tenant lifecycle actions are tested across platform and custom hostnames.
 
-WP4 closes the phase: Subscription changes, suspension, closure, and final Audit review exercise every earlier authority and presentation boundary. The Roadmap’s Phase 1 Definition of Done requires all membership/status/entitlement gates, Admin MFA, complete brand/domain workflows, safe uploads, schema parity, and atomic Audit before approval. 
+WP4 closes the phase: Subscription changes, suspension, closure, and final Audit review exercise every earlier authority and presentation boundary. The Roadmap’s Phase 1 Definition of Done requires all membership/status/entitlement gates, Admin MFA, complete brand/domain workflows, safe uploads, schema parity, and atomic Audit before approval.
 
 C. Work Package 1 — Runtime, Database & Security Foundation
 Objective
@@ -76,7 +76,7 @@ insufficient session/logout/recovery invalidation behavior;
 
 stale runtime/bootstrap/security/collation documentation.
 
-The current mismatch is explicit: the application config already uses utf8mb4_unicode_ci, while raw SQL and schema notes use utf8mb4_0900_ai_ci. 
+The current mismatch is explicit: the application config already uses utf8mb4_unicode_ci, while raw SQL and schema notes use utf8mb4_0900_ai_ci.
 
 Exact Implementation Scope
 Recreate PHP dependencies strictly from composer.lock.
@@ -260,7 +260,7 @@ migration register.
 
 Align strict SQL mode and UTC requirements with actual configuration/runtime connection initialization.
 
-Ensure migration ordering remains Shield first, then DawaTrack Phase 1, then seeder. The migration deliberately executes the registered SQL verbatim. 
+Ensure migration ordering remains Settings, Shield, the six dependency-focused DawaTrack Phase 1 migrations, then the seeder. Each migration executes fixed complete DDL strings and has a statement-equivalent registered SQL file; no generic SQL splitter is used.
 
 Validate plan and Sync Generation seed repeat-safety.
 
@@ -370,7 +370,7 @@ resources/js/api/http-client.js
 
 resources/css/app.scss
 
-docs/database/sql/phase-01/001_phase_01_foundation.sql
+docs/database/sql/phase-01/ (six registered dependency-focused SQL files)
 
 possibly one corrective migration only under Section H scenario 2
 
@@ -1125,7 +1125,7 @@ primary-domain generated guard;
 
 hashed challenge storage;
 
-no TLS private keys/certificates in MySQL. 
+no TLS private keys/certificates in MySQL.
 
 Resolve dynamic versus static manifest delivery:
 
@@ -1539,7 +1539,7 @@ blocked/closed messages remain readable and provide logout/recovery/help paths;
 200% zoom and keyboard operation preserve every action.
 
 Database/Configuration Work
-The current schema is intended to support immutable periods/events. No new subscription-status field is permitted. 
+The current schema is intended to support immutable periods/events. No new subscription-status field is permitted.
 
 Database work is limited to:
 
@@ -1622,7 +1622,7 @@ Audit query/history UI beyond what is necessary to verify Phase 1 evidence remai
 Documentation Work
 After implementation matches behavior, close all documentation:
 
-correct README’s obsolete “Phase 0 only” statement. 
+correct README’s obsolete “Phase 0 only” statement.
 
 correct env versus .env.example setup naming;
 
@@ -1907,7 +1907,7 @@ do not add a corrective migration;
 
 retain every explicit ASCII column;
 
-because the CodeIgniter migration executes this SQL verbatim, fresh migration behavior changes with the SQL source;
+because every CodeIgniter migration and its paired registered SQL must remain statement-equivalent;
 
 align application config, env, schema blueprint, Roadmap, configuration guide, schema notes, and migration register;
 
@@ -1951,7 +1951,7 @@ All four packages must preserve:
 
 Server-derived authority: a client-supplied Tenant/Shop ID never establishes authorization.
 
-Hostname is context, not authority: active verified hostname selection must still be followed by identity, membership, status, entitlement, and permission checks. 
+Hostname is context, not authority: active verified hostname selection must still be followed by identity, membership, status, entitlement, and permission checks.
 
 Tenant isolation: every target relationship is checked within the resolved Tenant/Shop scope.
 
@@ -2279,7 +2279,7 @@ Alternative: approve one corrective migration if durable history exists.
 This cannot be inferred conclusively from Git alone.
 
 2. Mandatory MFA factor supported by the pinned Shield version
-The lock pins Shield v1.4.1, while the current config exposes Shield’s email 2FA views but enables no login action. 
+The lock pins Shield v1.4.1, while the current config exposes Shield’s email 2FA views but enables no login action.
 
 Recommended decision: use Shield’s native supported email second-factor action for Phase 1 if that is the strongest enrollment/challenge flow available in the pinned package, with verified Admin email, recent-MFA step-up, and secured recovery.
 

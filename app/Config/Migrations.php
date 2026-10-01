@@ -61,5 +61,5 @@ class Migrations extends BaseConfig
      * This is useful in production environments to avoid conflicts
      * or race conditions during concurrent deployments.
      */
-    public bool $lock = false;
+    public bool $lock = true;
 }
