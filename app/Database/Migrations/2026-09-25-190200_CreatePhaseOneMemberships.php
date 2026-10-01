@@ -34,7 +34,7 @@ CREATE TABLE membership_permission_grants (
  CONSTRAINT uq_permission_grants_event UNIQUE (membership_id,permission_code,granted_at), INDEX ix_permission_grants_scope (tenant_id,membership_id,revoked_at),
  CONSTRAINT fk_permission_grants_membership FOREIGN KEY (tenant_id,membership_id) REFERENCES tenant_memberships(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_permission_grants_granter FOREIGN KEY (granted_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
- CONSTRAINT fk_permission_grants_revoker FOREIGN KEY (revoked_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+ CONSTRAINT fk_permission_grants_revoker FOREIGN KEY (revoked_by_user_id) REFERENCES users(id),
  CONSTRAINT ck_permission_grants_revocation CHECK ((revoked_at IS NULL AND revoked_by_user_id IS NULL) OR (revoked_at IS NOT NULL AND revoked_by_user_id IS NOT NULL))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL);

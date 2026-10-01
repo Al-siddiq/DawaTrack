@@ -25,7 +25,7 @@ CREATE TABLE audit_events (
  CONSTRAINT ck_audit_events_category CHECK (category IN ('AUTHORIZATION','TENANT','SUBSCRIPTION','INVENTORY','SALE','DEBT','FINANCIAL','RECONCILIATION','SYNC','SUPPORT','SECURITY')),
  CONSTRAINT fk_audit_events_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_audit_events_shop FOREIGN KEY (tenant_id,shop_id) REFERENCES shops(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
- CONSTRAINT fk_audit_events_actor_user FOREIGN KEY (actor_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+ CONSTRAINT fk_audit_events_actor_user FOREIGN KEY (actor_user_id) REFERENCES users(id),
  CONSTRAINT fk_audit_events_membership FOREIGN KEY (actor_membership_id) REFERENCES tenant_memberships(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT fk_audit_events_cause FOREIGN KEY (caused_by_audit_event_id) REFERENCES audit_events(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
