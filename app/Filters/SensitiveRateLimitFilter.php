@@ -8,6 +8,7 @@ use App\Libraries\Http\ApiResponse;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Libraries\Http\RequestPath;
 use Config\Services;
 
 final class SensitiveRateLimitFilter implements FilterInterface
@@ -18,7 +19,8 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return null;
         }
 
-        [$capacity, $seconds] = $this->limitFor($request->getUri()->getPath());
+        $path = RequestPath::normalized($request);
+        [$capacity, $seconds] = $this->limitFor($path);
         $identity = auth()->id() ?? $request->getIPAddress();
         $key = hash('sha256', $identity . '|' . $request->getUri()->getPath());
 
@@ -27,7 +29,7 @@ final class SensitiveRateLimitFilter implements FilterInterface
         }
 
         $retryAfter = service('throttler')->getTokenTime();
-        if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+        if (RequestPath::isApi($request)) {
             return ApiResponse::error(
                 Services::response()->setHeader('Retry-After', (string) $retryAfter),
                 'RATE_LIMITED',
@@ -58,7 +60,7 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [6, 900];
         }
 
-        if (str_starts_with($path, 'api/v1/platform/')) {
+        if (str_starts_with($path, '/api/v1/platform/')) {
             return [20, 60];
         }
 
@@ -66,7 +68,7 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [5, 300];
         }
 
-        if (str_starts_with($path, 'api/v1/shop/staff')) {
+        if (str_starts_with($path, '/api/v1/shop/staff')) {
             return [20, 60];
         }
 

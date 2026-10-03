@@ -34,7 +34,7 @@ final class SessionSecurityFilter implements FilterInterface
                 return ApiResponse::error(Services::response(), 'SESSION_EXPIRED', 'Your access has changed. Please sign in again.', Services::requestContext()->requestId(), 401);
             }
 
-            return redirect()->to(site_url('auth?expired=1'));
+            return redirect()->to(service('sameOriginUrl')->to('auth?expired=1'));
         }
         if ($startedAt === 0) {
             session()->set(self::STARTED_AT_KEY, time());
@@ -62,7 +62,7 @@ final class SessionSecurityFilter implements FilterInterface
             );
         }
 
-        return redirect()->to(site_url('auth?expired=1'));
+        return redirect()->to(service('sameOriginUrl')->to('auth?expired=1'));
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null): void

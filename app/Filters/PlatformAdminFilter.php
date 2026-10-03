@@ -8,6 +8,7 @@ use App\Libraries\Http\ApiResponse;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Libraries\Http\RequestPath;
 use Config\Services;
 
 final class PlatformAdminFilter implements FilterInterface
@@ -15,7 +16,7 @@ final class PlatformAdminFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null): ?ResponseInterface
     {
         $user = auth()->user();
-        $isApi = str_starts_with($request->getUri()->getPath(), 'api/');
+        $isApi = RequestPath::isApi($request);
         if ($user === null) {
             if (! $isApi) {
                 return redirect()->to(site_url('platform-admin/login'));

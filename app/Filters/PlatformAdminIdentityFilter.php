@@ -8,6 +8,7 @@ use App\Libraries\Http\ApiResponse;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Libraries\Http\RequestPath;
 use Config\Services;
 
 final class PlatformAdminIdentityFilter implements FilterInterface
@@ -19,7 +20,7 @@ final class PlatformAdminIdentityFilter implements FilterInterface
             return null;
         }
 
-        if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+        if (RequestPath::isApi($request)) {
             if ($user === null) {
                 return ApiResponse::error(
                     Services::response(),

@@ -2,7 +2,7 @@
 <?= $this->section('main') ?>
 <h1 id="auth-heading">Sign in</h1>
 <p>Use the email address assigned to your DawaTrack account.</p>
-<form action="<?= url_to('login') ?>" method="post" class="auth-form">
+<form action="<?= esc(dt_url('login'), 'attr') ?>" method="post" class="auth-form">
     <?= csrf_field() ?>
     <label for="email">Email address</label>
     <input id="email" name="email" type="email" autocomplete="username" inputmode="email" class="form-control" value="<?= esc(old('email')) ?>" required autofocus>
@@ -14,6 +14,6 @@
     <button type="submit" class="btn btn-primary btn-lg">Continue securely</button>
 </form>
 <?php if (setting('Auth.allowMagicLinkLogins')): ?>
-    <a class="btn btn-link" href="<?= url_to('magic-link') ?>">Recover access</a>
+    <a class="btn btn-link" href="<?= esc(service('sameOriginUrl')->to('login/magic-link'), 'attr') ?>">Recover access</a>
 <?php endif ?>
 <?= $this->endSection() ?>

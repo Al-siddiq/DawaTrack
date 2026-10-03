@@ -24,11 +24,43 @@ if (! function_exists('dawatrack_auth_brand')) {
     {
         try {
             $request = service('request');
-            $host = method_exists($request, 'getServer') ? (string) $request->getServer('HTTP_HOST') : '';
 
-            return (new BrandResolver(db_connect()))->resolve($host);
+            $host = method_exists($request, 'getServer')
+                ? (string) $request->getServer('HTTP_HOST')
+                : '';
+
+            return (new BrandResolver(
+                db_connect()
+            ))->resolve($host);
         } catch (\Throwable) {
             return null;
         }
+    }
+}
+
+if (! function_exists('dt_url')) {
+    function dt_url(string $target = '/'): string
+    {
+        return service('sameOriginUrl')->to($target);
+    }
+}
+
+if (! function_exists('dt_route')) {
+    function dt_route(
+        string $routeName,
+        mixed ...$params
+    ): string {
+        $path = route_to(
+            $routeName,
+            ...$params
+        );
+
+        if ($path === false) {
+            throw new LogicException(
+                "Unknown route: {$routeName}"
+            );
+        }
+
+        return dt_url($path);
     }
 }

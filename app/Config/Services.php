@@ -6,6 +6,9 @@ namespace Config;
 
 use App\Libraries\Http\RequestContext;
 use CodeIgniter\Config\BaseService;
+use App\Libraries\Http\CspNonce;
+use App\Libraries\Http\SameOriginUrl;
+use CodeIgniter\HTTP\IncomingRequest;
 
 /**
  * Services Configuration file.
@@ -38,7 +41,11 @@ class Services extends BaseService
         }
 
         $request = static::request();
-        return new \App\Modules\Audit\Application\AuditService(static::database(), static::requestContext(), $request instanceof \CodeIgniter\HTTP\IncomingRequest ? $request : null);
+        return new \App\Modules\Audit\Application\AuditService(
+            db_connect(),
+            static::requestContext(),
+            $request instanceof \CodeIgniter\HTTP\IncomingRequest ? $request : null
+        );
     }
 
     public static function onboardingService(bool $getShared = true): \App\Modules\TenantShop\Application\OnboardingService
@@ -47,7 +54,10 @@ class Services extends BaseService
             return static::getSharedInstance('onboardingService');
         }
 
-        return new \App\Modules\TenantShop\Application\OnboardingService(static::database(), static::auditService());
+        return new \App\Modules\TenantShop\Application\OnboardingService(
+            db_connect(),
+            static::auditService()
+        );
     }
 
     public static function platformMfa(bool $getShared = true): \App\Security\PlatformMfaService
@@ -66,6 +76,37 @@ class Services extends BaseService
         }
 
         return new \App\Security\UserSessionRevocationService(static::cache(), static::session());
+    }
+
+    public static function cspNonce(bool $getShared = true): CspNonce
+    {
+        if ($getShared) {
+            return static::getSharedInstance('cspNonce');
+        }
+
+        return new CspNonce();
+    }
+
+    public static function sameOriginUrl(bool $getShared = true): SameOriginUrl 
+    {
+        if ($getShared) {
+            return static::getSharedInstance(
+                'sameOriginUrl'
+            );
+        }
+
+        $request = static::request();
+
+        if (! $request instanceof IncomingRequest) {
+            throw new \LogicException(
+                'Same-origin URL generation requires an HTTP request.'
+            );
+        }
+
+        return new SameOriginUrl(
+            db_connect(),
+            $request
+        );
     }
 
     /*

@@ -1,17 +1,65 @@
-<?php $brand = dawatrack_auth_brand(); ?>
+<?php
+$brand = dawatrack_auth_brand();
+
+$cspNonce = service('cspNonce')->value();
+
+$primaryColour    = $brand['primary_colour'] ?? '#155D46';
+$secondaryColour  = $brand['secondary_colour'] ?? '#17231F';
+$accentColour     = $brand['accent_colour'] ?? '#F0A202';
+$backgroundColour = $brand['background_colour'] ?? '#F4F7F5';
+$loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
+?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="<?= esc($brand['theme_colour'] ?? '#155D46') ?>">
-    <title><?= esc($brand['application_title'] ?? 'Secure access · DawaTrack') ?></title>
+
+    <meta
+        name="theme-color"
+        content="<?= esc($brand['theme_colour'] ?? '#155D46') ?>"
+    >
+
+    <title>
+        <?= esc($brand['application_title'] ?? 'Secure access · DawaTrack') ?>
+    </title>
+
     <?php if (! empty($brand['assets']['FAVICON'])): ?>
-        <link rel="icon" href="<?= esc($brand['assets']['FAVICON']) ?>">
+        <link
+            rel="icon"
+            href="<?= esc($brand['assets']['FAVICON']) ?>"
+        >
     <?php endif ?>
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
+
+    <style nonce="<?= esc($cspNonce, 'attr') ?>">
+        :root {
+            --dt-primary: <?= esc($primaryColour) ?>;
+            --dt-ink: <?= esc($secondaryColour) ?>;
+            --dt-accent: <?= esc($accentColour) ?>;
+            --dt-background: <?= esc($backgroundColour) ?>;
+        }
+
+        <?php if (! empty($loginBackground)): ?>
+        :root {
+            --dt-login-background:
+                url(<?= json_encode(
+                    $loginBackground,
+                    JSON_HEX_TAG
+                    | JSON_HEX_AMP
+                    | JSON_HEX_APOS
+                    | JSON_HEX_QUOT
+                ) ?>);
+        }
+        <?php endif ?>
+    </style>
 </head>
-<body class="auth-page" style="--dt-primary: <?= esc($brand['primary_colour'] ?? '#155D46') ?>; --dt-ink: <?= esc($brand['secondary_colour'] ?? '#17231F') ?>; --dt-accent: <?= esc($brand['accent_colour'] ?? '#F0A202') ?>; --dt-background: <?= esc($brand['background_colour'] ?? '#F4F7F5') ?>;<?php if (! empty($brand['assets']['LOGIN_BACKGROUND'])): ?> --dt-login-background: url('<?= esc($brand['assets']['LOGIN_BACKGROUND']) ?>');<?php endif ?>">
+
+<body class="auth-page">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <main id="main-content" class="auth-shell" tabindex="-1">
     <section class="auth-card" aria-labelledby="auth-heading">

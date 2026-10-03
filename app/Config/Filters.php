@@ -21,6 +21,7 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
+use CodeIgniter\Shield\Filters\ForcePasswordResetFilter;
 
 class Filters extends BaseFilters
 {
@@ -50,6 +51,7 @@ class Filters extends BaseFilters
         'platformAdminIdentity' => PlatformAdminIdentityFilter::class,
         'sensitiveThrottle' => SensitiveRateLimitFilter::class,
         'sessionSecurity' => SessionSecurityFilter::class,
+        'force-reset' => ForcePasswordResetFilter::class,
     ];
 
     /**
@@ -79,7 +81,7 @@ class Filters extends BaseFilters
             'performance', // Performance Metrics
             'requestContext',
             'securityHeaders',
-            'toolbar',     // Debug Toolbar
+            //'toolbar',     // Debug Toolbar
         ],
     ];
 
@@ -94,6 +96,19 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
+            'force-reset' => [
+                'except' => [
+                    'login',
+                    'login/*',
+                    'auth/a/*',
+                    'change-password',
+                    'logout',
+                    'platform-admin/login',
+                    'platform-admin/mfa',
+                    'platform-admin/mfa/*',
+                ],
+            ],
+
             // 'honeypot',
             // 'invalidchars',
         ],

@@ -1,9 +1,20 @@
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
+import { render } from './render.js';
 
-const { createApp, ref, reactive, computed, onMounted, nextTick } = window.Vue;
+const {
+    createApp,
+    ref,
+    reactive,
+    computed,
+    onMounted,
+    nextTick,
+    watch
+} = window.Vue;
 
 createApp({
+    render,
+
     setup() {
         const page = ref('home');
         const loading = ref(true);
@@ -46,6 +57,54 @@ createApp({
         const readOnly = computed(() => access.mode !== 'FULL');
         const owner = computed(() => context.role === 'PRIMARY_OWNER');
         const previewStyle = computed(() => ({ '--preview-primary': branding.primary_colour, '--preview-background': branding.background_colour }));
+
+        const previewStyleElement =
+            document.getElementById(
+                'shop-preview-style'
+            );
+
+        function safeColour(
+            value,
+            fallback
+        ) {
+            return /^#[0-9a-f]{6}$/i.test(
+                value ?? ''
+            )
+                ? value
+                : fallback;
+        }
+
+        watch(
+            [
+                () => branding.primary_colour,
+                () => branding.background_colour,
+            ],
+            () => {
+                if (!previewStyleElement) {
+                    return;
+                }
+
+                const primary = safeColour(
+                    branding.primary_colour,
+                    '#155D46'
+                );
+
+                const background = safeColour(
+                    branding.background_colour,
+                    '#F4F7F5'
+                );
+
+                previewStyleElement.textContent =
+                    `.brand-preview{`
+                    + `--preview-primary:${primary};`
+                    + `--preview-background:${background};`
+                    + `}`;
+            },
+            {
+                immediate: true,
+            }
+        );
+        
         const settingFields = [
             ['name', 'Shop name', 'text', true], ['contact_phone', 'Phone', 'tel'],
             ['contact_email', 'Email', 'email'], ['address_line_1', 'Address', 'text', true],

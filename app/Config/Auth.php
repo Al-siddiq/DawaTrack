@@ -20,7 +20,7 @@ use CodeIgniter\Shield\Authentication\Authenticators\AccessTokens;
 use CodeIgniter\Shield\Authentication\Authenticators\HmacSha256;
 use CodeIgniter\Shield\Authentication\Authenticators\JWT;
 use CodeIgniter\Shield\Authentication\Authenticators\Session;
-use CodeIgniter\Shield\Authentication\Actions\Email2FA;
+use App\Authentication\Actions\PlatformAdminEmail2FA;
 use CodeIgniter\Shield\Authentication\Passwords\CompositionValidator;
 use CodeIgniter\Shield\Authentication\Passwords\DictionaryValidator;
 use CodeIgniter\Shield\Authentication\Passwords\NothingPersonalValidator;
@@ -78,7 +78,7 @@ class Auth extends ShieldAuth
         'register'          => '/',
         'login'             => '/',
         'logout'            => 'login',
-        'force_reset'       => '/',
+        'force_reset'       => 'change-password',
         'permission_denied' => '/',
         'group_denied'      => '/',
     ];
@@ -106,7 +106,7 @@ class Auth extends ShieldAuth
      */
     public array $actions = [
         'register' => null,
-        'login'    => Email2FA::class,
+        'login'    => PlatformAdminEmail2FA::class,
     ];
 
     /**
@@ -460,7 +460,7 @@ class Auth extends ShieldAuth
 
         $candidate = (string) (session()->getTempdata('beforeLoginUrl') ?? '/');
         if (! str_starts_with($candidate, '/') || str_starts_with($candidate, '//')) {
-            return site_url('/');
+            return service('sameOriginUrl')->to('/');
         }
 
         $path = parse_url($candidate, PHP_URL_PATH);
@@ -468,7 +468,9 @@ class Auth extends ShieldAuth
             return site_url('/');
         }
 
-        return site_url(ltrim($path, '/'));
+        return service('sameOriginUrl')->to(
+            ltrim($path, '/')
+        );
     }
 
     /**
@@ -535,10 +537,23 @@ class Auth extends ShieldAuth
      */
     protected function getUrl(string $url): string
     {
-        return match (true) {
-            str_starts_with($url, 'http://') || str_starts_with($url, 'https://') => $url,
-            route_to($url) !== false                                              => rtrim(url_to($url), '/ '),
-            default                                                               => rtrim(site_url($url), '/ '),
-        };
+        if (
+            str_starts_with($url, 'http://')
+            || str_starts_with($url, 'https://')
+        ) {
+            return $url;
+        }
+
+        $route = route_to($url);
+
+        if ($route !== false) {
+            return service('sameOriginUrl')->to(
+                $route
+            );
+        }
+
+        return service('sameOriginUrl')->to(
+            $url
+        );
     }
 }

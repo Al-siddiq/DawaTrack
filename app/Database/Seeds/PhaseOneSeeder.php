@@ -16,10 +16,26 @@ final class PhaseOneSeeder extends Seeder
     private const LOCK_NAME = 'dawatrack:phase-one-bootstrap';
 
     /** @var list<array{code: string, name: string, max_active_staff: int, monthly_price_amount: string|null}> */
-    private const PLANS = [
-        ['code' => 'TRIAL', 'name' => 'Trial', 'max_active_staff' => 5, 'monthly_price_amount' => '0.00'],
-        ['code' => 'STARTER', 'name' => 'Starter', 'max_active_staff' => 2, 'monthly_price_amount' => null],
-        ['code' => 'GROWTH', 'name' => 'Growth', 'max_active_staff' => 5, 'monthly_price_amount' => null],
+    private const PLANS = 
+    [
+        [
+            'code' => 'TRIAL',
+            'name' => 'Trial',
+            'max_active_staff' => 5,
+            'monthly_price_amount' => '0.00',
+        ],
+        [
+            'code' => 'STARTER',
+            'name' => 'Starter',
+            'max_active_staff' => 2,
+            'monthly_price_amount' => '5000.00',
+        ],
+        [
+            'code' => 'GROWTH',
+            'name' => 'Growth',
+            'max_active_staff' => 5,
+            'monthly_price_amount' => '10000.00',
+        ],
     ];
 
     public function run(): void

@@ -8,6 +8,7 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Libraries\Http\ApiResponse;
+use App\Libraries\Http\RequestPath;
 use Config\Services;
 
 final class AuthenticatedFilter implements FilterInterface
@@ -15,7 +16,7 @@ final class AuthenticatedFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null): ?ResponseInterface
     {
         if (! auth()->loggedIn()) {
-            if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+            if (RequestPath::isApi($request)) {
                 return ApiResponse::error(
                     Services::response(),
                     'AUTHENTICATION_REQUIRED',
@@ -27,7 +28,7 @@ final class AuthenticatedFilter implements FilterInterface
 
             session()->setTempdata('beforeLoginUrl', $this->safePath($request->getUri()->getPath()), 600);
 
-            return redirect()->to(site_url('auth'));
+            return redirect()->to(service('sameOriginUrl')->to('auth'));
         }
 
         return null;

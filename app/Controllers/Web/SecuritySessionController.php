@@ -19,6 +19,6 @@ final class SecuritySessionController extends BaseController
         auth()->logout();
         session()->destroy();
 
-        return redirect()->to(site_url('auth?logged_out=1'));
+        return redirect()->to(dt_url('auth?logged_out=1'));
     }
 }

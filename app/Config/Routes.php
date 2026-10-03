@@ -21,6 +21,12 @@ $routes->post('platform-admin/mfa/restart', 'Web\AdminAuthController::restart', 
 $routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin:platform.access']);
 $routes->get('logout', 'Web\SecuritySessionController::logout', ['as' => 'dawatrack.logout']);
 
+$routes->get('change-password', 'Web\\PasswordChangeController::show', ['as' => 'password.change','filter' => 'authenticated',
+    ]
+);
+
+$routes->post('change-password', 'Web\\PasswordChangeController::update', ['filter' => 'authenticated',]);
+
 service('auth')->routes($routes, ['except' => ['register', 'logout']]);
 
 $routes->group('api/v1', static function (RouteCollection $routes): void {
