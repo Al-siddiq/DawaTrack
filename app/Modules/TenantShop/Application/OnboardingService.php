@@ -6,6 +6,9 @@ namespace App\Modules\TenantShop\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\Identity\Application\MembershipInvariantService;
 use App\Support\UtcTimestamp;
 use App\Support\Uuid;
@@ -98,35 +101,30 @@ final class OnboardingService
             $this->createPlatformDomain($tenantId, $shopId, $adminUserId, $data['hostname'], $now);
             $subscription = $this->createTrial($tenantId, $adminUserId, $now);
 
-            $this->audit->record([
-                'tenant_id' => $tenantId,
-                'shop_id' => $shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $adminUserId,
-                'action_code' => 'owner.created',
-                'category' => 'SECURITY',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $membershipPublicId,
-                'reason' => $data['reason'],
-                'change_metadata' => ['role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'],
-            ]);
-            $this->audit->record([
-                'tenant_id' => $tenantId,
-                'shop_id' => $shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $adminUserId,
-                'action_code' => 'tenant.onboarded',
-                'category' => 'TENANT',
-                'resource_type' => 'tenant',
-                'resource_public_id' => $tenantPublicId,
-                'reason' => $data['reason'],
-                'change_metadata' => [
+            $platformActor = AuditActor::platformUser($adminUserId, $tenantId, $shopId);
+            $this->audit->append(new AuditAppendCommand(
+                actor: $platformActor,
+                actionCode: 'owner.created',
+                category: AuditCategory::SECURITY,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $membershipPublicId,
+                reason: $data['reason'],
+                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'],
+            ));
+            $this->audit->append(new AuditAppendCommand(
+                actor: $platformActor,
+                actionCode: 'tenant.onboarded',
+                category: AuditCategory::TENANT,
+                resourceType: 'tenant',
+                resourcePublicId: $tenantPublicId,
+                reason: $data['reason'],
+                metadata: [
                     'shop_public_id' => $shopPublicId,
                     'owner_membership_public_id' => $membershipPublicId,
                     'subscription_public_id' => $subscription['public_id'],
                     'plan' => 'TRIAL',
                 ],
-            ]);
+            ));
 
             if (! $this->database->transCommit()) {
                 throw new ApiException('ONBOARDING_FAILED', 'The Tenant could not be committed.', 500);

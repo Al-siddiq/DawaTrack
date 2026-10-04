@@ -6,6 +6,9 @@ namespace App\Modules\Identity\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use App\Security\UserSessionRevocationService;
 use App\Support\UtcTimestamp;
@@ -87,19 +90,15 @@ final class StaffService
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => 'staff.created',
-                'category' => 'AUTHORIZATION',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $publicId,
-                'reason' => $data['reason'],
-                'change_metadata' => ['role' => 'STAFF', 'status' => 'ACTIVE'],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: 'staff.created',
+                category: AuditCategory::AUTHORIZATION,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $publicId,
+                reason: $data['reason'],
+                metadata: ['role' => 'STAFF', 'status' => 'ACTIVE'],
+            ));
             $this->database->transCommit();
 
             return ['public_id' => $publicId, 'email' => $data['email'], 'status' => 'ACTIVE'];
@@ -140,19 +139,15 @@ final class StaffService
             if (! $active) {
                 $this->invalidateIdentityAccess((int) $membership['user_id']);
             }
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => $active ? 'staff.activated' : 'staff.deactivated',
-                'category' => 'AUTHORIZATION',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $membership['public_id'],
-                'reason' => $reason,
-                'change_metadata' => ['before' => ['status' => $membership['status']], 'after' => ['status' => $targetStatus]],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: $active ? 'staff.activated' : 'staff.deactivated',
+                category: AuditCategory::AUTHORIZATION,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $membership['public_id'],
+                reason: $reason,
+                metadata: ['before' => ['status' => $membership['status']], 'after' => ['status' => $targetStatus]],
+            ));
             $this->database->transCommit();
         } catch (Throwable $exception) {
             $this->database->transRollback();
@@ -187,19 +182,15 @@ final class StaffService
                     throw new ApiException('CREDENTIAL_RESET_FAILED', 'Staff credentials could not be reset.', 500);
                 }
                 $this->invalidateIdentityAccess((int) $membership['user_id']);
-                $this->audit->record([
-                    'tenant_id' => $context->tenantId,
-                    'shop_id' => $context->shopId,
-                    'actor_type' => 'USER',
-                    'actor_user_id' => $context->userId,
-                    'actor_membership_id' => $context->membershipId,
-                    'action_code' => 'staff.credentials_reset',
-                    'category' => 'SECURITY',
-                    'resource_type' => 'tenant_membership',
-                    'resource_public_id' => $membership['public_id'],
-                    'reason' => $reason,
-                    'change_metadata' => ['sessions_invalidated' => true, 'force_reset_requested' => method_exists($user, 'forcePasswordReset')],
-                ]);
+                $this->audit->append(new AuditAppendCommand(
+                    actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                    actionCode: 'staff.credentials_reset',
+                    category: AuditCategory::SECURITY,
+                    resourceType: 'tenant_membership',
+                    resourcePublicId: $membership['public_id'],
+                    reason: $reason,
+                    metadata: ['sessions_invalidated' => true, 'force_reset_requested' => method_exists($user, 'forcePasswordReset')],
+                ));
                 $this->database->transCommit();
             } catch (Throwable $exception) {
                 $this->database->transRollback();

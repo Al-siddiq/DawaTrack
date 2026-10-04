@@ -60,14 +60,14 @@
     <div v-if="notice" class="toast-notice" role="status">{{notice}}</div><div v-if="error" class="alert alert-danger" role="alert">{{error}}</div>
 
     <div v-if="dialog.open" class="dialog-backdrop" @click.self="closeDialog">
-      <section class="reason-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" @keydown.esc="closeDialog">
+      <section ref="dialogElement" class="reason-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-error" @keydown="handleDialogKeydown">
         <h2 id="dialog-title">{{dialog.type==='reset'?'Reset Staff credentials':dialog.type==='status'?(dialog.member.status==='ACTIVE'?'Deactivate Staff':'Reactivate Staff'):(permissionStates[dialog.member.id]?.active.includes(dialog.permission.code)?'Revoke permission':'Grant permission')}}</h2>
         <p v-if="dialog.type==='reset'">A temporary password will be shown once. Existing remembered and active Shop sessions will be invalidated.</p>
         <p v-if="dialog.type==='permission'"><code>{{dialog.permission.code}}</code></p>
-        <label for="action-reason">Reason</label><textarea id="action-reason" ref="dialogReason" v-model="dialog.reason" class="form-control" rows="3" required></textarea>
-        <div v-if="dialog.error" class="alert alert-danger" role="alert">{{dialog.error}}</div>
+        <label for="action-reason">Reason</label><textarea id="action-reason" ref="dialogReason" v-model="dialog.reason" class="form-control" rows="3" maxlength="500" required :aria-invalid="Boolean(dialog.error)" aria-describedby="dialog-error"></textarea>
+        <div id="dialog-error" class="field-message" aria-live="assertive">{{dialog.error}}</div>
         <div v-if="temporaryCredential" class="alert alert-warning" role="status"><strong>Temporary password — copy it now:</strong><code class="credential-value">{{temporaryCredential}}</code><p>It will not be shown again.</p></div>
-        <div class="button-row"><button v-if="!temporaryCredential" class="btn btn-primary" :disabled="busy" @click="confirmDialog">Confirm</button><button class="btn btn-outline-secondary" @click="closeDialog">{{temporaryCredential?'Done':'Cancel'}}</button></div>
+        <div class="button-row"><button v-if="!temporaryCredential" class="btn btn-primary" :disabled="dialog.pending" @click="confirmDialog">{{dialog.pending?'Working…':'Confirm'}}</button><button class="btn btn-outline-secondary" :disabled="dialog.pending" @click="closeDialog">{{temporaryCredential?'Done':'Cancel'}}</button></div>
       </section>
     </div>
   </div>

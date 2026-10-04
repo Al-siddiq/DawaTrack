@@ -6,6 +6,8 @@ All business tables use InnoDB and `utf8mb4_unicode_ci`. UUIDs, normalized hostn
 
 The one-Shop Phase 1 invariant remains serialized in onboarding rather than enforced by `UNIQUE(tenant_id)`. `audit_events.actor_device_id` is present and nullable; its FK is intentionally deferred to Phase 7.
 
+Phase 2 WP1 requires no DDL. The approved `audit_events` migration and raw MySQL script remain unchanged and equivalent. Application code always inserts `NULL` for `actor_device_id`; it does not trust Device attribution before Phase 7. WP1 creates no `sync_changes`, Device, idempotency, support-session, correction, or event-store table.
+
 Each migration executes complete SQL strings directly. No generic semicolon parser is used. Normal migrations deliberately omit `IF NOT EXISTS`: physical schema drift must fail loudly instead of being hidden.
 
 MySQL DDL is implicitly committed. A failed, unrecorded migration can therefore leave its earlier statements behind. Recovery for a disposable database is to verify the target, drop/recreate it, and rerun from an empty baseline—not to forge migration-history rows.

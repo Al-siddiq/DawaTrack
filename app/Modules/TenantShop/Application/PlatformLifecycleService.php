@@ -6,6 +6,9 @@ namespace App\Modules\TenantShop\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Support\SensitiveReason;
 use App\Support\UtcTimestamp;
 use CodeIgniter\Database\BaseConnection;
@@ -88,20 +91,18 @@ final class PlatformLifecycleService
                 );
             }
 
-            $this->audit->record([
-                'tenant_id' => $tenant['id'],
-                'actor_type' => 'USER',
-                'actor_user_id' => $actor,
-                'action_code' => 'tenant.' . $action,
-                'category' => 'TENANT',
-                'resource_type' => 'tenant',
-                'resource_public_id' => $publicId,
-                'reason' => $reason,
-                'change_metadata' => [
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::platformUser($actor, (int) $tenant['id']),
+                actionCode: 'tenant.' . $action,
+                category: AuditCategory::TENANT,
+                resourceType: 'tenant',
+                resourcePublicId: $publicId,
+                reason: $reason,
+                metadata: [
                     'before' => $from,
                     'after' => $target,
                 ],
-            ]);
+            ));
 
             if (! $this->db->transCommit()) {
                 throw new ApiException(
@@ -179,21 +180,18 @@ final class PlatformLifecycleService
                 );
             }
 
-            $this->audit->record([
-                'tenant_id' => $shop['tenant_id'],
-                'shop_id' => $shop['id'],
-                'actor_type' => 'USER',
-                'actor_user_id' => $actor,
-                'action_code' => 'shop.' . $action,
-                'category' => 'TENANT',
-                'resource_type' => 'shop',
-                'resource_public_id' => $publicId,
-                'reason' => $reason,
-                'change_metadata' => [
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::platformUser($actor, (int) $shop['tenant_id'], (int) $shop['id']),
+                actionCode: 'shop.' . $action,
+                category: AuditCategory::TENANT,
+                resourceType: 'shop',
+                resourcePublicId: $publicId,
+                reason: $reason,
+                metadata: [
                     'before' => $from,
                     'after' => $target,
                 ],
-            ]);
+            ));
 
             if (! $this->db->transCommit()) {
                 throw new ApiException(

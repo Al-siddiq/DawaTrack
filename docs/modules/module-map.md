@@ -1,11 +1,16 @@
 # Module ownership and dependency direction
 
-Phase 0 exposes only foundation code:
+- `Controllers/Web` owns server-rendered entry shells and web authentication transitions.
+- `Controllers/Api` owns transport mapping only; it does not own business rules or Audit construction.
+- `Libraries/Http` owns canonical request correlation and API response contracts.
+- `Filters` owns cross-cutting authentication, Platform authority, request context, throttling, session, CSRF, and response-security boundaries.
+- `Modules/TenantShop` owns Tenant/Shop context, onboarding, settings, and lifecycle.
+- `Modules/Identity` owns memberships, Staff lifecycle, and grants.
+- `Modules/BrandingDomain` owns branding, assets, hostname, and domain lifecycle.
+- `Modules/Subscription` owns immutable entitlement periods/events and their operational queries.
+- `Modules/Audit` owns typed immutable Audit commands, authority/scope validation, vocabulary, reason/metadata/causal policy, append, and safe output representation.
+- `resources` is editable frontend source; `public/assets` is generated browser output.
 
-- `Controllers/Web` owns the three server-rendered entry shells.
-- `Controllers/Api` owns transport endpoints such as health/readiness.
-- `Libraries/Http` owns request context and API response contracts.
-- `Filters` owns cross-cutting request correlation and response security headers.
-- `resources` is editable frontend source; `public/assets` is generated, browser-served output.
+Controllers call owning services. Business modules may use the cross-cutting Audit contract, but Audit does not mutate their records. Platform authority and Tenant membership remain separate. No generic repository or controller may bypass established scope.
 
-Future business modules will live under their own namespaces and may depend on shared foundation contracts. Shared foundation code must not depend on a business module. Controllers remain transport adapters and must not own business rules. Platform Admin and Shop entry boundaries remain separate. No tenant, identity, or business module exists in Phase 0.
+Phase 2 WP1 adds no Audit query route/UI and no change sequence. Those remain later authorized work.

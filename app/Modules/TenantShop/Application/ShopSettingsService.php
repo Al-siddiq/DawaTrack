@@ -6,6 +6,9 @@ namespace App\Modules\TenantShop\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use App\Support\UtcTimestamp;
 use CodeIgniter\Database\BaseConnection;
@@ -71,18 +74,14 @@ final class ShopSettingsService
                 'id' => $context->shopId,
                 'tenant_id' => $context->tenantId,
             ])->update($update);
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => 'shop.profile_updated',
-                'category' => 'TENANT',
-                'resource_type' => 'shop',
-                'resource_public_id' => $current['public_id'],
-                'change_metadata' => ['changes' => $changes],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: 'shop.profile_updated',
+                category: AuditCategory::TENANT,
+                resourceType: 'shop',
+                resourcePublicId: $current['public_id'],
+                metadata: ['changes' => $changes],
+            ));
             $this->database->transCommit();
         } catch (Throwable $exception) {
             $this->database->transRollback();

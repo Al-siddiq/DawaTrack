@@ -17,6 +17,8 @@ MySQL 8.4 LTS is required. Provision the application account only for the select
 
 Readiness requires `DAWATRACK_DEPLOYMENT_ID`; `/api/v1/health/ready` returns a safe 503 envelope if it is absent. Liveness never reveals configuration or secrets.
 
+Request correlation has no secret configuration. The server accepts only canonical UUIDv4 `X-Request-ID` values and otherwise generates one. Proxies should preserve the response `X-Request-ID` and application logs, but must not rewrite it mid-request. Scheduled commands initialize their own operation correlation at command entry.
+
 ## Phase 1
 
 Set `DAWATRACK_PLATFORM_DOMAIN` to the canonical platform hostname suffix. Configure Shield session authentication, generic login/recovery errors, CSRF, password policy, login/recovery rate limits, and the `platform_admin` group. Production Platform Administrators must complete Shield email MFA; the Admin boundary rejects sessions without a recent MFA verification. Branding bytes are stored below `writable/uploads/branding` and must be served only through an authorized, non-executable delivery endpoint.
