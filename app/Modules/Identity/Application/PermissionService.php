@@ -7,7 +7,12 @@ namespace App\Modules\Identity\Application;
 use App\Enums\PermissionCode;
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
+use App\Modules\Sync\Application\ChangeSequenceService;
+use App\Modules\Sync\Domain\ChangeCommand;
 use App\Support\UtcTimestamp;
 use App\Support\SensitiveReason;
 use CodeIgniter\Database\BaseConnection;
@@ -72,19 +77,16 @@ final class PermissionService
                 'granted_at' => $now,
                 'created_at' => $now,
             ]);
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => 'permission.granted',
-                'category' => 'AUTHORIZATION',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $membership['public_id'],
-                'reason' => $reason,
-                'change_metadata' => ['permission_code' => $permissionCode, 'before' => false, 'after' => true],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: 'permission.granted',
+                category: AuditCategory::AUTHORIZATION,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $membership['public_id'],
+                reason: $reason,
+                metadata: ['permission_code' => $permissionCode, 'before' => false, 'after' => true],
+            ));
+            (new ChangeSequenceService($this->database, service('requestContext')))->publish([new ChangeCommand($context->tenantId, $context->shopId, 'tenant_membership', $membership['public_id'])]);
             $this->database->transCommit();
         } catch (Throwable $exception) {
             $this->database->transRollback();
@@ -125,19 +127,16 @@ final class PermissionService
                 'revoked_by_user_id' => $context->userId,
                 'revoked_at' => $now,
             ]);
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => 'permission.revoked',
-                'category' => 'AUTHORIZATION',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $membership['public_id'],
-                'reason' => $reason,
-                'change_metadata' => ['permission_code' => $permissionCode, 'before' => true, 'after' => false],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: 'permission.revoked',
+                category: AuditCategory::AUTHORIZATION,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $membership['public_id'],
+                reason: $reason,
+                metadata: ['permission_code' => $permissionCode, 'before' => true, 'after' => false],
+            ));
+            (new ChangeSequenceService($this->database, service('requestContext')))->publish([new ChangeCommand($context->tenantId, $context->shopId, 'tenant_membership', $membership['public_id'])]);
             $this->database->transCommit();
         } catch (Throwable $exception) {
             $this->database->transRollback();

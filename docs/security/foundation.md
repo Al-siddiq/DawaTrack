@@ -9,3 +9,7 @@ Public registration is disabled. Shield owns password hashing, magic-link recove
 The global session CSRF filter protects form, JSON and multipart mutations. Browser navigation redirects to same-origin branded authentication; API requests receive JSON authentication/authorization outcomes rather than an HTML login redirect. Shared throttling protects login, recovery, MFA and Platform Admin mutation routes and is the policy reused by later credential/upload/domain work.
 
 Successful high-value Admin MFA establishment and clearing are written to Audit when the Phase 1 Audit table is available. Passwords, hashes, MFA codes, magic links, recovery material, cookies, session identifiers and authentication tokens are never Audit metadata or log context.
+
+Phase 2 WP1 centralizes Audit authority validation. Tenant evidence requires a verified active membership matching the actor, Tenant, and Shop. Platform evidence verifies the Shield `platform_admin` group and never creates Tenant membership. System evidence has no user. Device attribution remains untrusted and `NULL` until the approved Registered Device phase.
+
+One lowercase UUIDv4 correlates each request/command across response metadata/header, relevant logs, and Audit. Audit metadata is rejected when it exceeds structural or total-size limits or contains forbidden secret/request-body/binary keys. These failures abort the owning transaction rather than degrading evidence.

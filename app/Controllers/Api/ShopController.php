@@ -8,6 +8,7 @@ use App\Controllers\BaseController;
 use App\Exceptions\ApiException;
 use App\Libraries\Http\ApiResponse;
 use App\Modules\Access\Application\AccessGate;
+use App\Modules\Audit\Domain\AuditActor;
 use App\Modules\BrandingDomain\Application\BrandingService;
 use App\Modules\BrandingDomain\Application\DomainService;
 use App\Modules\Identity\Application\PermissionService;
@@ -265,7 +266,10 @@ final class ShopController extends BaseController
             $context=$this->mutableContext();$context->requireOwner();
             $domain=db_connect()->table('shop_domains')->where(['tenant_id'=>$context->tenantId,'shop_id'=>$context->shopId,'public_id'=>$publicId])->get()->getRowArray();
             if(!$domain)throw new ApiException('RESOURCE_NOT_FOUND','Domain not found.',404);
-            $matched=(new DomainService(db_connect(),Services::auditService()))->verify($domain,'USER',$context->userId);
+            $matched=(new DomainService(db_connect(),Services::auditService()))->verify(
+                $domain,
+                AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+            );
             if(!$matched)throw new ApiException('DNS_CHALLENGE_PENDING','The expected TXT value is not visible yet. Retry after DNS propagation.',409);
             return $this->ok(['verified'=>true]);
         });
