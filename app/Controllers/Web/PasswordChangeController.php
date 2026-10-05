@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controllers\Web;
 
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
+
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\RedirectResponse;
 
@@ -126,17 +130,16 @@ final class PasswordChangeController extends BaseController
             /*
              * Record security evidence without password data.
              */
-            service('auditService')->record([
-                'actor_type' => 'USER',
-                'actor_user_id' => (int) $user->id,
-                'action_code' => 'identity.password_changed',
-                'category' => 'SECURITY',
-                'resource_type' => 'user_identity',
-                'reason' => 'Forced password change completed.',
-                'change_metadata' => [
+            service('auditService')->append(new AuditAppendCommand(
+                actor: AuditActor::identityUser((int) $user->id),
+                actionCode: 'identity.password_changed',
+                category: AuditCategory::SECURITY,
+                resourceType: 'user_identity',
+                reason: 'Forced password change completed.',
+                metadata: [
                     'forced_reset' => true,
                 ],
-            ]);
+            ));
 
             if (! $database->transCommit()) {
                 throw new \RuntimeException(
@@ -148,8 +151,9 @@ final class PasswordChangeController extends BaseController
 
             log_message(
                 'error',
-                'security.password_change_failed {user_id} {exception_class}',
+                'security.password_change_failed {request_id} {user_id} {exception_class}',
                 [
+                    'request_id' => service('requestContext')->requestId(),
                     'user_id' => (int) $user->id,
                     'exception_class' => $exception::class,
                 ]

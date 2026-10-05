@@ -52,6 +52,8 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/domains/(:segment)/verify', 'Api\ShopController::verifyDomain/$1', ['filter' => 'authenticated']);
     $routes->get('shop/subscription', 'Api\ShopController::subscription', ['filter' => 'authenticated']);
     $routes->get('shop/assets/(:segment)', 'Api\AssetController::show/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/audit-events', 'Api\AuditController::ownerIndex', ['filter' => 'authenticated']);
+    $routes->get('shop/audit-events/(:segment)', 'Api\AuditController::ownerDetail/$1', ['filter' => 'authenticated']);
     $routes->post('platform/tenants', 'Api\OnboardingController::create', ['as' => 'api.platform.tenants.create', 'filter' => 'platformAdmin:platform.onboard']);
     $routes->get('platform/domains', 'Api\PlatformDomainController::index', ['filter' => 'platformAdmin:platform.domains']);
     $routes->post('platform/domains/(:segment)/tls', 'Api\PlatformDomainController::tls/$1', ['filter' => 'platformAdmin:platform.domains']);
@@ -63,4 +65,8 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('platform/operations/tenants/(:segment)/subscriptions', 'Api\PlatformOperationsController::subscription/$1', ['filter' => 'platformAdmin:platform.subscriptions']);
     $routes->post('platform/operations/tenants/(:segment)/(:segment)', 'Api\PlatformOperationsController::tenantLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);
     $routes->post('platform/operations/shops/(:segment)/(:segment)', 'Api\PlatformOperationsController::shopLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);
+    $routes->get('platform/audit-events', 'Api\AuditController::platformIndex', ['filter' => 'platformAdmin:platform.audit']);
+    $routes->get('platform/audit-events/(:segment)', 'Api\AuditController::platformDetail/$1', ['filter' => 'platformAdmin:platform.audit']);
+    $routes->post('platform/audit-events/support/query', 'Api\AuditController::supportQuery', ['filter' => 'platformAdmin:platform.audit_support']);
+    $routes->post('platform/audit-events/support/events/(:segment)', 'Api\AuditController::supportDetail/$1', ['filter' => 'platformAdmin:platform.audit_support']);
 });

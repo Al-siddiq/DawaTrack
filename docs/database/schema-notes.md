@@ -6,6 +6,12 @@ All business tables use InnoDB and `utf8mb4_unicode_ci`. UUIDs, normalized hostn
 
 The one-Shop Phase 1 invariant remains serialized in onboarding rather than enforced by `UNIQUE(tenant_id)`. `audit_events.actor_device_id` is present and nullable; its FK is intentionally deferred to Phase 7.
 
+Phase 2 WP1 required no DDL. WP2 adds only the approved `sync_changes` notification/index table after its Generation, Tenant and Shop parents. It stores resource identity and ordering, never business payload. Application code continues to insert `NULL` for `audit_events.actor_device_id`; Device attribution remains deferred to Phase 7.
+
 Each migration executes complete SQL strings directly. No generic semicolon parser is used. Normal migrations deliberately omit `IF NOT EXISTS`: physical schema drift must fail loudly instead of being hidden.
 
 MySQL DDL is implicitly committed. A failed, unrecorded migration can therefore leave its earlier statements behind. Recovery for a disposable database is to verify the target, drop/recreate it, and rerun from an empty baseline—not to forge migration-history rows.
+
+## Phase 2 WP3 no-DDL decision
+
+The implemented Owner, Platform, and support Audit queries use the v1.1 `audit_events` scope/time, resource, actor, correlation, and category indexes. WP3 adds no migration, table, column, copy, support-session record, or saved-filter structure. Runtime MySQL query-plan review remains blocked with the carried database verification debt; an index was not added without that evidence.

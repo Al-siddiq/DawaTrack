@@ -81,6 +81,8 @@ class AuthGroups extends ShieldAuthGroups
         'platform.domains'   => 'Can operate verified Shop domains and TLS readiness',
         'platform.subscriptions' => 'Can manage immutable Tenant entitlements',
         'platform.tenants' => 'Can manage Tenant and Shop lifecycle state',
+        'platform.audit' => 'Can view platform-wide Audit evidence',
+        'platform.audit_support' => 'Can access explicitly scoped Tenant Audit for support',
         'admin.access'        => 'Can access the sites admin area',
         'admin.settings'      => 'Can access the main site settings',
         'users.manage-admins' => 'Can manage other admins',
@@ -105,6 +107,8 @@ class AuthGroups extends ShieldAuthGroups
             'platform.domains',
             'platform.subscriptions',
             'platform.tenants',
+            'platform.audit',
+            'platform.audit_support',
         ],
         'superadmin' => [
             'admin.*',

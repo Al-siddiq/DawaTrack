@@ -1,6 +1,64 @@
 import { apiRequest } from './http-client.js';
-const json = (method, body) => ({ method, body: JSON.stringify(body) });
+
+const json = (method, body) => ({
+    method,
+    body: JSON.stringify(body),
+});
+
 export const phaseOneApi = {
- context:()=>apiRequest('/api/v1/shop/context'), staff:()=>apiRequest('/api/v1/shop/staff'), createStaff:(v)=>apiRequest('/api/v1/shop/staff',json('POST',v)), staffStatus:(id,v)=>apiRequest(`/api/v1/shop/staff/${id}/status`,json('PATCH',v)), permissions:(id)=>apiRequest(`/api/v1/shop/staff/${id}/permissions`), permission:(id,v,grant)=>apiRequest(`/api/v1/shop/staff/${id}/permissions`,json(grant?'POST':'DELETE',v)), resetStaffCredentials:(id,v)=>apiRequest(`/api/v1/shop/staff/${id}/reset-password`,json('POST',v)),
- settings:()=>apiRequest('/api/v1/shop/settings'), saveSettings:(v)=>apiRequest('/api/v1/shop/settings',json('PUT',v)), branding:()=>apiRequest('/api/v1/shop/branding'), saveBranding:(v)=>apiRequest('/api/v1/shop/branding',json('PUT',v)), assets:()=>apiRequest('/api/v1/shop/assets'), uploadAsset:(v)=>apiRequest('/api/v1/shop/assets',{method:'POST',body:v}), domains:()=>apiRequest('/api/v1/shop/domains'), requestDomain:(v)=>apiRequest('/api/v1/shop/domains',json('POST',v)), rotateDomain:(id)=>apiRequest(`/api/v1/shop/domains/${id}/rotate`,json('POST',{})), verifyDomain:(id)=>apiRequest(`/api/v1/shop/domains/${id}/verify`,json('POST',{})), platformDomains:()=>apiRequest('/api/v1/platform/domains'), domainAction:(id,action,v)=>apiRequest(`/api/v1/platform/domains/${id}/${action}`,json('POST',v)), platformOperations:()=>apiRequest('/api/v1/platform/operations/tenants'), subscriptionAction:(id,v)=>apiRequest(`/api/v1/platform/operations/tenants/${id}/subscriptions`,json('POST',v)), tenantAction:(id,action,v)=>apiRequest(`/api/v1/platform/operations/tenants/${id}/${action}`,json('POST',v)), shopAction:(id,action,v)=>apiRequest(`/api/v1/platform/operations/shops/${id}/${action}`,json('POST',v)), subscription:()=>apiRequest('/api/v1/shop/subscription'), onboard:(v)=>apiRequest('/api/v1/platform/tenants',json('POST',v)),
+    context: () => apiRequest('/api/v1/shop/context'),
+    staff: () => apiRequest('/api/v1/shop/staff'),
+    createStaff: (values) => apiRequest('/api/v1/shop/staff', json('POST', values)),
+    staffStatus: (id, values) => apiRequest(`/api/v1/shop/staff/${id}/status`, json('PATCH', values)),
+    permissions: (id) => apiRequest(`/api/v1/shop/staff/${id}/permissions`),
+    permission: (id, values, grant) => apiRequest(
+        `/api/v1/shop/staff/${id}/permissions`,
+        json(grant ? 'POST' : 'DELETE', values)
+    ),
+    resetStaffCredentials: (id, values) => apiRequest(
+        `/api/v1/shop/staff/${id}/reset-password`,
+        json('POST', values)
+    ),
+    settings: () => apiRequest('/api/v1/shop/settings'),
+    saveSettings: (values) => apiRequest('/api/v1/shop/settings', json('PUT', values)),
+    branding: () => apiRequest('/api/v1/shop/branding'),
+    saveBranding: (values) => apiRequest('/api/v1/shop/branding', json('PUT', values)),
+    assets: () => apiRequest('/api/v1/shop/assets'),
+    uploadAsset: (values) => apiRequest('/api/v1/shop/assets', { method: 'POST', body: values }),
+    domains: () => apiRequest('/api/v1/shop/domains'),
+    requestDomain: (values) => apiRequest('/api/v1/shop/domains', json('POST', values)),
+    rotateDomain: (id) => apiRequest(`/api/v1/shop/domains/${id}/rotate`, json('POST', {})),
+    verifyDomain: (id) => apiRequest(`/api/v1/shop/domains/${id}/verify`, json('POST', {})),
+    platformDomains: () => apiRequest('/api/v1/platform/domains'),
+    domainAction: (id, action, values) => apiRequest(
+        `/api/v1/platform/domains/${id}/${action}`,
+        json('POST', values)
+    ),
+    platformOperations: () => apiRequest('/api/v1/platform/operations/tenants'),
+    subscriptionAction: (id, values) => apiRequest(
+        `/api/v1/platform/operations/tenants/${id}/subscriptions`,
+        json('POST', values)
+    ),
+    tenantAction: (id, action, values) => apiRequest(
+        `/api/v1/platform/operations/tenants/${id}/${action}`,
+        json('POST', values)
+    ),
+    shopAction: (id, action, values) => apiRequest(
+        `/api/v1/platform/operations/shops/${id}/${action}`,
+        json('POST', values)
+    ),
+    subscription: () => apiRequest('/api/v1/shop/subscription'),
+    onboard: (values) => apiRequest('/api/v1/platform/tenants', json('POST', values)),
+    auditOwner: (query = '') => apiRequest(`/api/v1/shop/audit-events${query}`),
+    auditOwnerDetail: (id) => apiRequest(`/api/v1/shop/audit-events/${id}`),
+    platformAudit: (query = '') => apiRequest(`/api/v1/platform/audit-events${query}`),
+    platformAuditDetail: (id) => apiRequest(`/api/v1/platform/audit-events/${id}`),
+    supportAudit: (values) => apiRequest(
+        '/api/v1/platform/audit-events/support/query',
+        json('POST', values)
+    ),
+    supportAuditDetail: (id, values) => apiRequest(
+        `/api/v1/platform/audit-events/support/events/${id}`,
+        json('POST', values)
+    ),
 };

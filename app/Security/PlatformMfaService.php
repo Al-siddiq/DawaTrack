@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use CodeIgniter\Session\Session;
 
 final class PlatformMfaService
@@ -52,7 +55,8 @@ final class PlatformMfaService
     private function auditSafely(string $actionCode, int $userId, string $reason): void
     {
         if (! db_connect()->tableExists('audit_events')) {
-            log_message('warning', 'security.audit_unavailable {action_code} {reason}', [
+            log_message('warning', 'security.audit_unavailable {request_id} {action_code} {reason}', [
+                'request_id' => service('requestContext')->requestId(),
                 'action_code' => $actionCode,
                 'reason' => 'audit_schema_not_installed',
             ]);
@@ -60,13 +64,12 @@ final class PlatformMfaService
             return;
         }
 
-        $this->audit->record([
-            'actor_type' => 'USER',
-            'actor_user_id' => $userId,
-            'action_code' => $actionCode,
-            'category' => 'SECURITY',
-            'resource_type' => 'platform_admin_authentication',
-            'reason' => $reason,
-        ]);
+        $this->audit->append(new AuditAppendCommand(
+            actor: AuditActor::platformUser($userId),
+            actionCode: $actionCode,
+            category: AuditCategory::SECURITY,
+            resourceType: 'platform_admin_authentication',
+            reason: $reason,
+        ));
     }
 }

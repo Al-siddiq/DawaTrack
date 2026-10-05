@@ -79,3 +79,7 @@ Use only real operator-supplied PNG/JPEG uploads; do not create repository fixtu
 10. As DB owner, execute `SHOW GRANTS`, confirm runtime Audit privileges are append-only, and prove runtime `UPDATE`/`DELETE` fails while `INSERT` through the application succeeds.
 11. Repeat with two Tenants and swapped Shop/domain/membership/Staff/subscription UUIDs and Host headers. Ordinary identities must not disclose or mutate foreign state; Admin still requires explicit permission and recent MFA.
 12. Complete all Phase 1 journeys at 320, 360, 390 px, tablet, desktop, keyboard-only and 200% zoom. Do not capture screenshots.
+
+## Phase 2 closure status (2026-10-05)
+
+Phase 1 runtime verification targets are not treated as historical proof. Checks requiring the application, MySQL, production grants, or a browser remain **BLOCKED — not executed** in the WP3 environment because Composer dependencies could not be downloaded (environment proxy HTTP 403), and no MySQL 8.4/browser runtime was available. Re-run the original checklist in the documented production-equivalent environment before Phase 2 final acceptance.

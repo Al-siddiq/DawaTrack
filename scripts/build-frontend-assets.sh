@@ -5,3 +5,4 @@ cp node_modules/vue/dist/vue.global.prod.js public/assets/vendor/vue/vue.global.
 cp node_modules/dexie/dist/dexie.min.js public/assets/vendor/dexie/dexie.min.js
 rm -rf public/assets/js/shop public/assets/js/admin public/assets/js/auth public/assets/js/shared public/assets/js/api public/assets/js/components
 cp -R resources/js/shop resources/js/admin resources/js/auth resources/js/shared resources/js/api resources/js/components public/assets/js/
+rm -f public/assets/js/shop/template.html

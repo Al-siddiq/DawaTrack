@@ -6,9 +6,14 @@ namespace App\Modules\Subscription\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Support\SensitiveReason;
 use App\Support\UtcTimestamp;
 use App\Support\Uuid;
+use App\Modules\Sync\Application\ChangeSequenceService;
+use App\Modules\Sync\Domain\ChangeCommand;
 use CodeIgniter\Database\BaseConnection;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -271,24 +276,22 @@ final class SubscriptionService
                         'created_at' => $createdAt,
                     ]);
 
-                $this->audit->record([
-                    'tenant_id' => $tenantId,
-                    'actor_type' => 'USER',
-                    'actor_user_id' => $actor,
-                    'action_code' => 'subscription.'
-                        . strtolower($operation),
-                    'category' => 'SUBSCRIPTION',
-                    'resource_type' => 'subscription',
-                    'resource_public_id' => $publicId,
-                    'reason' => $reason,
-                    'change_metadata' => [
+                $this->audit->append(new AuditAppendCommand(
+                    actor: AuditActor::platformUser($actor, $tenantId),
+                    actionCode: 'subscription.' . strtolower($operation),
+                    category: AuditCategory::SUBSCRIPTION,
+                    resourceType: 'subscription',
+                    resourcePublicId: $publicId,
+                    reason: $reason,
+                    metadata: [
                         'plan_code' => $plan['code'],
                         'starts_at' => $startText,
                         'ends_at' => $endText,
                         'max_active_staff' => (int) $plan['max_active_staff'],
                         'operation' => $operation,
                     ],
-                ]);
+                ));
+                (new ChangeSequenceService($this->db, service('requestContext')))->publish([new ChangeCommand($tenantId, null, 'subscription', $publicId)]);
 
                 if (! $this->db->transCommit()) {
                     throw new ApiException(
@@ -372,16 +375,15 @@ final class SubscriptionService
                             'created_at' => $createdAt,
                         ]);
 
-                    $this->audit->record([
-                        'tenant_id' => $subscription['tenant_id'],
-                        'actor_type' => 'USER',
-                        'actor_user_id' => $actor,
-                        'action_code' => 'subscription.expired_recorded',
-                        'category' => 'SUBSCRIPTION',
-                        'resource_type' => 'subscription',
-                        'resource_public_id' => $subscription['public_id'],
-                        'reason' => $reason,
-                    ]);
+                    $this->audit->append(new AuditAppendCommand(
+                        actor: AuditActor::platformUser($actor, (int) $subscription['tenant_id']),
+                        actionCode: 'subscription.expired_recorded',
+                        category: AuditCategory::SUBSCRIPTION,
+                        resourceType: 'subscription',
+                        resourcePublicId: $subscription['public_id'],
+                        reason: $reason,
+                    ));
+                    (new ChangeSequenceService($this->db, service('requestContext')))->publish([new ChangeCommand((int) $subscription['tenant_id'], null, 'subscription', $subscription['public_id'])]);
 
                     if (! $this->db->transCommit()) {
                         throw new ApiException(
