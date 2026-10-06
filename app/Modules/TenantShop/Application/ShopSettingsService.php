@@ -6,7 +6,12 @@ namespace App\Modules\TenantShop\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\TenantShop\Infrastructure\ShopContext;
+use App\Modules\Sync\Application\ChangeSequenceService;
+use App\Modules\Sync\Domain\ChangeCommand;
 use App\Support\UtcTimestamp;
 use CodeIgniter\Database\BaseConnection;
 use Throwable;
@@ -44,45 +49,45 @@ final class ShopSettingsService
     public function update(ShopContext $context, array $input): array
     {
         $context->requireOwner();
-        $current = $this->get($context);
-        if ($current === []) {
-            throw new ApiException('RESOURCE_NOT_FOUND', 'The Shop was not found.', 404);
-        }
         $normalized = $this->normalizeAndValidate($input);
-        $changes = [];
-        foreach (self::EDITABLE_FIELDS as $field) {
-            if (($current[$field] ?? null) !== $normalized[$field]) {
-                $changes[$field] = ['before' => $current[$field] ?? null, 'after' => $normalized[$field]];
-            }
-        }
-        if ($changes === []) {
-            throw new ApiException('SHOP_SETTINGS_UNCHANGED', 'No Shop setting changed.', 409);
-        }
-
-        $update = [];
-        foreach ($changes as $field => $change) {
-            $update[$field] = $change['after'];
-        }
-        $update['updated_at'] = UtcTimestamp::now();
-
         $this->database->transException(true)->transBegin();
         try {
+            $current = $this->database->query(
+            'SELECT * FROM shops WHERE id = ? AND tenant_id = ? FOR UPDATE',
+            [$context->shopId, $context->tenantId],
+            )->getRowArray() ?? [];
+            if ($current === []) {
+                throw new ApiException('RESOURCE_NOT_FOUND', 'The Shop was not found.', 404);
+            }
+            $changes = [];
+            foreach (self::EDITABLE_FIELDS as $field) {
+                if (($current[$field] ?? null) !== $normalized[$field]) {
+                    $changes[$field] = ['before' => $current[$field] ?? null, 'after' => $normalized[$field]];
+                }
+            }
+            if ($changes === []) {
+                throw new ApiException('SHOP_SETTINGS_UNCHANGED', 'No Shop setting changed.', 409);
+            }
+
+            $update = [];
+            foreach ($changes as $field => $change) {
+                $update[$field] = $change['after'];
+            }
+            $update['updated_at'] = UtcTimestamp::now();
+
             $this->database->table('shops')->where([
                 'id' => $context->shopId,
                 'tenant_id' => $context->tenantId,
             ])->update($update);
-            $this->audit->record([
-                'tenant_id' => $context->tenantId,
-                'shop_id' => $context->shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $context->userId,
-                'actor_membership_id' => $context->membershipId,
-                'action_code' => 'shop.profile_updated',
-                'category' => 'TENANT',
-                'resource_type' => 'shop',
-                'resource_public_id' => $current['public_id'],
-                'change_metadata' => ['changes' => $changes],
-            ]);
+            $this->audit->append(new AuditAppendCommand(
+                actor: AuditActor::tenantUser($context->userId, $context->membershipId, $context->tenantId, $context->shopId),
+                actionCode: 'shop.profile_updated',
+                category: AuditCategory::TENANT,
+                resourceType: 'shop',
+                resourcePublicId: $current['public_id'],
+                metadata: ['changes' => $changes],
+            ));
+            (new ChangeSequenceService($this->database, service('requestContext')))->publish([new ChangeCommand($context->tenantId, $context->shopId, 'shop', $current['public_id'])]);
             $this->database->transCommit();
         } catch (Throwable $exception) {
             $this->database->transRollback();

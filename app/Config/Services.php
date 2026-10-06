@@ -48,6 +48,12 @@ class Services extends BaseService
         );
     }
 
+    public static function changeSequenceService(bool $getShared = true): \App\Modules\Sync\Application\ChangeSequenceService
+    {
+        if ($getShared) return static::getSharedInstance('changeSequenceService');
+        return new \App\Modules\Sync\Application\ChangeSequenceService(db_connect(), static::requestContext());
+    }
+
     public static function onboardingService(bool $getShared = true): \App\Modules\TenantShop\Application\OnboardingService
     {
         if ($getShared) {

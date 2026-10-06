@@ -6,9 +6,14 @@ namespace App\Modules\TenantShop\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Modules\Identity\Application\MembershipInvariantService;
 use App\Support\UtcTimestamp;
 use App\Support\Uuid;
+use App\Modules\Sync\Application\ChangeSequenceService;
+use App\Modules\Sync\Domain\ChangeCommand;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Shield\Entities\User;
 use DateTimeImmutable;
@@ -94,38 +99,41 @@ final class OnboardingService
             ]);
             $membershipId = (int) $this->database->insertID();
 
-            $this->createBranding($tenantId, $shopId, $adminUserId, $data['shop_name'], $now);
-            $this->createPlatformDomain($tenantId, $shopId, $adminUserId, $data['hostname'], $now);
+            $brandingPublicId = $this->createBranding($tenantId, $shopId, $adminUserId, $data['shop_name'], $now);
+            $domainPublicId = $this->createPlatformDomain($tenantId, $shopId, $adminUserId, $data['hostname'], $now);
             $subscription = $this->createTrial($tenantId, $adminUserId, $now);
 
-            $this->audit->record([
-                'tenant_id' => $tenantId,
-                'shop_id' => $shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $adminUserId,
-                'action_code' => 'owner.created',
-                'category' => 'SECURITY',
-                'resource_type' => 'tenant_membership',
-                'resource_public_id' => $membershipPublicId,
-                'reason' => $data['reason'],
-                'change_metadata' => ['role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'],
-            ]);
-            $this->audit->record([
-                'tenant_id' => $tenantId,
-                'shop_id' => $shopId,
-                'actor_type' => 'USER',
-                'actor_user_id' => $adminUserId,
-                'action_code' => 'tenant.onboarded',
-                'category' => 'TENANT',
-                'resource_type' => 'tenant',
-                'resource_public_id' => $tenantPublicId,
-                'reason' => $data['reason'],
-                'change_metadata' => [
+            $platformActor = AuditActor::platformUser($adminUserId, $tenantId, $shopId);
+            $this->audit->append(new AuditAppendCommand(
+                actor: $platformActor,
+                actionCode: 'owner.created',
+                category: AuditCategory::SECURITY,
+                resourceType: 'tenant_membership',
+                resourcePublicId: $membershipPublicId,
+                reason: $data['reason'],
+                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'],
+            ));
+            $this->audit->append(new AuditAppendCommand(
+                actor: $platformActor,
+                actionCode: 'tenant.onboarded',
+                category: AuditCategory::TENANT,
+                resourceType: 'tenant',
+                resourcePublicId: $tenantPublicId,
+                reason: $data['reason'],
+                metadata: [
                     'shop_public_id' => $shopPublicId,
                     'owner_membership_public_id' => $membershipPublicId,
                     'subscription_public_id' => $subscription['public_id'],
                     'plan' => 'TRIAL',
                 ],
+            ));
+            (new ChangeSequenceService($this->database, service('requestContext')))->publish([
+                new ChangeCommand($tenantId, null, 'tenant', $tenantPublicId),
+                new ChangeCommand($tenantId, $shopId, 'shop', $shopPublicId),
+                new ChangeCommand($tenantId, $shopId, 'tenant_membership', $membershipPublicId),
+                new ChangeCommand($tenantId, $shopId, 'shop_branding_profile', $brandingPublicId),
+                new ChangeCommand($tenantId, $shopId, 'shop_domain', $domainPublicId),
+                new ChangeCommand($tenantId, null, 'subscription', $subscription['public_id']),
             ]);
 
             if (! $this->database->transCommit()) {
@@ -265,10 +273,11 @@ final class OnboardingService
         }
     }
 
-    private function createBranding(int $tenantId, int $shopId, int $adminUserId, string $shopName, string $now): void
+    private function createBranding(int $tenantId, int $shopId, int $adminUserId, string $shopName, string $now): string
     {
+        $publicId = Uuid::v4();
         $this->database->table('shop_branding_profiles')->insert([
-            'public_id' => Uuid::v4(),
+            'public_id' => $publicId,
             'tenant_id' => $tenantId,
             'shop_id' => $shopId,
             'brand_display_name' => $shopName,
@@ -285,12 +294,14 @@ final class OnboardingService
             'created_at' => $now,
             'updated_at' => $now,
         ]);
+        return $publicId;
     }
 
-    private function createPlatformDomain(int $tenantId, int $shopId, int $adminUserId, string $hostname, string $now): void
+    private function createPlatformDomain(int $tenantId, int $shopId, int $adminUserId, string $hostname, string $now): string
     {
+        $publicId = Uuid::v4();
         $this->database->table('shop_domains')->insert([
-            'public_id' => Uuid::v4(),
+            'public_id' => $publicId,
             'tenant_id' => $tenantId,
             'shop_id' => $shopId,
             'hostname' => $hostname,
@@ -308,6 +319,7 @@ final class OnboardingService
             'created_at' => $now,
             'updated_at' => $now,
         ]);
+        return $publicId;
     }
 
     /** @return array{public_id: string} */

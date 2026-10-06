@@ -15,14 +15,16 @@ final class SensitiveRateLimitFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null): ?ResponseInterface
     {
-        if (in_array(strtoupper($request->getMethod()), ['GET', 'HEAD', 'OPTIONS'], true)) {
+        $path = RequestPath::normalized($request);
+        $isAuditQuery = str_contains($path, '/audit-events');
+        if (in_array(strtoupper($request->getMethod()), ['GET', 'HEAD', 'OPTIONS'], true) && ! $isAuditQuery) {
             return null;
         }
 
-        $path = RequestPath::normalized($request);
         [$capacity, $seconds] = $this->limitFor($path);
         $identity = auth()->id() ?? $request->getIPAddress();
-        $key = hash('sha256', $identity . '|' . $request->getUri()->getPath());
+        $bucket = $this->bucketFor($path);
+        $key = hash('sha256', $identity . '|' . $bucket);
 
         if (service('throttler')->check($key, $capacity, $seconds)) {
             return null;
@@ -61,7 +63,15 @@ final class SensitiveRateLimitFilter implements FilterInterface
         }
 
         if (str_starts_with($path, '/api/v1/platform/')) {
+            if (str_contains($path, '/audit-events')) {
+                return [30, 60];
+            }
+
             return [20, 60];
+        }
+
+        if (str_contains($path, '/shop/audit-events')) {
+            return [60, 60];
         }
 
         if (str_contains($path, '/reset-password')) {
@@ -73,5 +83,18 @@ final class SensitiveRateLimitFilter implements FilterInterface
         }
 
         return [5, 300];
+    }
+
+    private function bucketFor(string $path): string
+    {
+        if (str_contains($path, '/platform/audit-events')) {
+            return '/api/v1/platform/audit-events';
+        }
+
+        if (str_contains($path, '/shop/audit-events')) {
+            return '/api/v1/shop/audit-events';
+        }
+
+        return $path;
     }
 }

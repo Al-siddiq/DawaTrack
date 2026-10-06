@@ -6,7 +6,7 @@
 
 const Vue = window.Vue;
 
-const { openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, createElementVNode: _createElementVNode, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass, renderList: _renderList, Fragment: _Fragment, vModelText: _vModelText, withDirectives: _withDirectives, withModifiers: _withModifiers, vModelDynamic: _vModelDynamic, vModelSelect: _vModelSelect, withKeys: _withKeys } = Vue
+const { openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, createElementVNode: _createElementVNode, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass, renderList: _renderList, Fragment: _Fragment, vModelText: _vModelText, withDirectives: _withDirectives, withModifiers: _withModifiers, vModelDynamic: _vModelDynamic, vModelSelect: _vModelSelect, resolveComponent: _resolveComponent, createBlock: _createBlock } = Vue
 
 const _hoisted_1 = {
   key: 0,
@@ -165,33 +165,37 @@ const _hoisted_65 = {
 }
 const _hoisted_66 = { class: "record-grid" }
 const _hoisted_67 = {
-  key: 6,
+  key: 7,
   class: "toast-notice",
   role: "status"
 }
 const _hoisted_68 = {
-  key: 7,
+  key: 8,
   class: "alert alert-danger",
   role: "alert"
 }
 const _hoisted_69 = { id: "dialog-title" }
 const _hoisted_70 = { key: 0 }
 const _hoisted_71 = { key: 1 }
-const _hoisted_72 = {
-  key: 2,
-  class: "alert alert-danger",
-  role: "alert"
-}
+const _hoisted_72 = ["aria-invalid"]
 const _hoisted_73 = {
-  key: 3,
+  id: "dialog-error",
+  class: "field-message",
+  "aria-live": "assertive"
+}
+const _hoisted_74 = {
+  key: 2,
   class: "alert alert-warning",
   role: "status"
 }
-const _hoisted_74 = { class: "credential-value" }
-const _hoisted_75 = { class: "button-row" }
-const _hoisted_76 = ["disabled"]
+const _hoisted_75 = { class: "credential-value" }
+const _hoisted_76 = { class: "button-row" }
+const _hoisted_77 = ["disabled"]
+const _hoisted_78 = ["disabled"]
 
 export function render(_ctx, _cache) {
+  const _component_audit_panel = _resolveComponent("audit-panel")
+
   return (_openBlock(), _createElementBlock("div", null, [
     (_ctx.loading)
       ? (_openBlock(), _createElementBlock("div", _hoisted_1, "Loading your Shop…"))
@@ -671,6 +675,12 @@ export function render(_ctx, _cache) {
                 ])
               ]))
             : _createCommentVNode("v-if", true),
+          (_ctx.page==='audit' && _ctx.context.capabilities.view_audit)
+            ? (_openBlock(), _createBlock(_component_audit_panel, {
+                key: 6,
+                mode: "owner"
+              }))
+            : _createCommentVNode("v-if", true),
           (_ctx.notice)
             ? (_openBlock(), _createElementBlock("div", _hoisted_67, _toDisplayString(_ctx.notice), 1 /* TEXT */))
             : _createCommentVNode("v-if", true),
@@ -679,16 +689,18 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.dialog.open)
             ? (_openBlock(), _createElementBlock("div", {
-                key: 8,
+                key: 9,
                 class: "dialog-backdrop",
                 onClick: _cache[15] || (_cache[15] = _withModifiers((...args) => (_ctx.closeDialog && _ctx.closeDialog(...args)), ["self"]))
               }, [
                 _createElementVNode("section", {
+                  ref: "dialogElement",
                   class: "reason-dialog",
                   role: "dialog",
                   "aria-modal": "true",
                   "aria-labelledby": "dialog-title",
-                  onKeydown: _cache[14] || (_cache[14] = _withKeys((...args) => (_ctx.closeDialog && _ctx.closeDialog(...args)), ["esc"]))
+                  "aria-describedby": "dialog-error",
+                  onKeydown: _cache[14] || (_cache[14] = (...args) => (_ctx.handleDialogKeydown && _ctx.handleDialogKeydown(...args)))
                 }, [
                   _createElementVNode("h2", _hoisted_69, _toDisplayString(_ctx.dialog.type==='reset'?'Reset Staff credentials':_ctx.dialog.type==='status'?(_ctx.dialog.member.status==='ACTIVE'?'Deactivate Staff':'Reactivate Staff'):(_ctx.permissionStates[_ctx.dialog.member.id]?.active.includes(_ctx.dialog.permission.code)?'Revoke permission':'Grant permission')), 1 /* TEXT */),
                   (_ctx.dialog.type==='reset')
@@ -706,35 +718,37 @@ export function render(_ctx, _cache) {
                     "onUpdate:modelValue": _cache[11] || (_cache[11] = $event => ((_ctx.dialog.reason) = $event)),
                     class: "form-control",
                     rows: "3",
-                    required: ""
-                  }, null, 512 /* NEED_PATCH */), [
+                    maxlength: "500",
+                    required: "",
+                    "aria-invalid": Boolean(_ctx.dialog.error),
+                    "aria-describedby": "dialog-error"
+                  }, null, 8 /* PROPS */, _hoisted_72), [
                     [_vModelText, _ctx.dialog.reason]
                   ]),
-                  (_ctx.dialog.error)
-                    ? (_openBlock(), _createElementBlock("div", _hoisted_72, _toDisplayString(_ctx.dialog.error), 1 /* TEXT */))
-                    : _createCommentVNode("v-if", true),
+                  _createElementVNode("div", _hoisted_73, _toDisplayString(_ctx.dialog.error), 1 /* TEXT */),
                   (_ctx.temporaryCredential)
-                    ? (_openBlock(), _createElementBlock("div", _hoisted_73, [
+                    ? (_openBlock(), _createElementBlock("div", _hoisted_74, [
                         _cache[49] || (_cache[49] = _createElementVNode("strong", null, "Temporary password — copy it now:", -1 /* CACHED */)),
-                        _createElementVNode("code", _hoisted_74, _toDisplayString(_ctx.temporaryCredential), 1 /* TEXT */),
+                        _createElementVNode("code", _hoisted_75, _toDisplayString(_ctx.temporaryCredential), 1 /* TEXT */),
                         _cache[50] || (_cache[50] = _createElementVNode("p", null, "It will not be shown again.", -1 /* CACHED */))
                       ]))
                     : _createCommentVNode("v-if", true),
-                  _createElementVNode("div", _hoisted_75, [
+                  _createElementVNode("div", _hoisted_76, [
                     (!_ctx.temporaryCredential)
                       ? (_openBlock(), _createElementBlock("button", {
                           key: 0,
                           class: "btn btn-primary",
-                          disabled: _ctx.busy,
+                          disabled: _ctx.dialog.pending,
                           onClick: _cache[12] || (_cache[12] = (...args) => (_ctx.confirmDialog && _ctx.confirmDialog(...args)))
-                        }, "Confirm", 8 /* PROPS */, _hoisted_76))
+                        }, _toDisplayString(_ctx.dialog.pending?'Working…':'Confirm'), 9 /* TEXT, PROPS */, _hoisted_77))
                       : _createCommentVNode("v-if", true),
                     _createElementVNode("button", {
                       class: "btn btn-outline-secondary",
+                      disabled: _ctx.dialog.pending,
                       onClick: _cache[13] || (_cache[13] = (...args) => (_ctx.closeDialog && _ctx.closeDialog(...args)))
-                    }, _toDisplayString(_ctx.temporaryCredential?'Done':'Cancel'), 1 /* TEXT */)
+                    }, _toDisplayString(_ctx.temporaryCredential?'Done':'Cancel'), 9 /* TEXT, PROPS */, _hoisted_78)
                   ])
-                ], 32 /* NEED_HYDRATION */)
+                ], 544 /* NEED_HYDRATION, NEED_PATCH */)
               ]))
             : _createCommentVNode("v-if", true)
         ]))

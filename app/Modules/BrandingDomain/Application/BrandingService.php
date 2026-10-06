@@ -6,7 +6,12 @@ namespace App\Modules\BrandingDomain\Application;
 
 use App\Exceptions\ApiException;
 use App\Modules\Audit\Application\AuditService;
+use App\Modules\Audit\Domain\AuditActor;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditCategory;
 use App\Support\Uuid;
+use App\Modules\Sync\Application\ChangeSequenceService;
+use App\Modules\Sync\Domain\ChangeCommand;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use DomainException;
@@ -35,12 +40,27 @@ final class BrandingService
         foreach(self::COLOURS as $field){$value=strtoupper(trim((string)($input[$field]??'')));if(preg_match('/^#[0-9A-F]{6}$/',$value)!==1)$errors[$field][]='Use #RRGGBB format.';$clean[$field]=$value;}
         if(!$errors && !$this->contrastPasses($clean['primary_colour'],$clean['background_colour']))$errors['primary_colour'][]='Primary and background colours must have a WCAG contrast ratio of at least 4.5:1.';
         if($errors)throw new ApiException('VALIDATION_FAILED','Correct the highlighted branding fields.',422,$errors);
-        $profile=$this->db->table('shop_branding_profiles')->where(['tenant_id'=>$tenantId,'shop_id'=>$shopId])->get()->getRowArray();if(!$profile)throw new DomainException('Branding profile was not found.');
+        $this->db->transException(true)->transStart();
+        $profile=$this->db->query('SELECT * FROM shop_branding_profiles WHERE tenant_id = ? AND shop_id = ? FOR UPDATE', [$tenantId, $shopId])->getRowArray();if(!$profile){$this->db->transRollback();throw new DomainException('Branding profile was not found.');}
         $before=[];$after=[];foreach($clean as $field=>$value){if(($profile[$field]??null)!==$value){$before[$field]=$profile[$field]??null;$after[$field]=$value;}}
-        if(!$after)throw new ApiException('CONFLICT','No branding values changed.',409);
+        if(!$after){$this->db->transRollback();throw new ApiException('CONFLICT','No branding values changed.',409);}
         $version=(int)$profile['configuration_version']+1;$update=$after+['configuration_version'=>$version,'updated_by_user_id'=>$actorUserId,'updated_at'=>gmdate('Y-m-d H:i:s.u')];
-        $this->db->transException(true)->transStart();$this->db->table('shop_branding_profiles')->where('id',$profile['id'])->update($update);
-        $this->audit->record(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'actor_type'=>'USER','actor_user_id'=>$actorUserId,'actor_membership_id'=>$membershipId,'action_code'=>'branding.updated','category'=>'TENANT','resource_type'=>'shop_branding_profile','resource_public_id'=>$profile['public_id'],'change_metadata'=>['fields'=>array_keys($after),'before'=>$before,'after'=>$after,'configuration_version'=>$version]]);$this->db->transComplete();
+        $this->db->table('shop_branding_profiles')->where('id',$profile['id'])->update($update);
+        $this->audit->append(new AuditAppendCommand(
+            actor: AuditActor::tenantUser($actorUserId, $membershipId, $tenantId, $shopId),
+            actionCode: 'branding.updated',
+            category: AuditCategory::TENANT,
+            resourceType: 'shop_branding_profile',
+            resourcePublicId: $profile['public_id'],
+            metadata: [
+                'fields' => array_keys($after),
+                'before' => $before,
+                'after' => $after,
+                'configuration_version' => $version,
+            ],
+        ));
+        (new ChangeSequenceService($this->db, service('requestContext')))->publish([new ChangeCommand($tenantId, $shopId, 'shop_branding_profile', $profile['public_id'])]);
+        $this->db->transComplete();
     }
 
     public function replaceAsset(int $tenantId,int $shopId,int $actorUserId,int $membershipId,string $type,?UploadedFile $file):array
@@ -53,8 +73,24 @@ final class BrandingService
         $opaque=bin2hex(random_bytes(24)).'.'.self::MIME_EXTENSIONS[$mime];$temporary=$directory.'/.'.$opaque.'.tmp';$final=$directory.'/'.$opaque;$relative="{$tenantId}/{$shopId}/{$opaque}";
         $this->normalize($source,$temporary,$mime);$bytes=file_get_contents($temporary);if($bytes===false){@unlink($temporary);throw new DomainException('The normalized image could not be read.');}
         $publicId=Uuid::v4();$now=gmdate('Y-m-d H:i:s.u');$old=[];
-        try{$this->db->transException(true)->transStart();$old=$this->db->table('shop_brand_assets')->select('id')->where(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'is_active'=>1])->get()->getResultArray();$this->db->table('shop_brand_assets')->where(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'is_active'=>1])->update(['is_active'=>0,'deactivated_at'=>$now]);$this->db->table('shop_brand_assets')->insert(['public_id'=>$publicId,'tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'storage_key'=>$relative,'mime_type'=>$mime,'width_px'=>$w,'height_px'=>$h,'file_size_bytes'=>strlen($bytes),'content_sha256'=>hash('sha256',$bytes,true),'is_active'=>1,'uploaded_by_user_id'=>$actorUserId,'activated_at'=>$now,'created_at'=>$now]);$this->audit->record(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'actor_type'=>'USER','actor_user_id'=>$actorUserId,'actor_membership_id'=>$membershipId,'action_code'=>'branding.asset_replaced','category'=>'TENANT','resource_type'=>'shop_brand_asset','resource_public_id'=>$publicId,'change_metadata'=>['asset_type'=>$type,'mime_type'=>$mime,'width'=>$w,'height'=>$h,'bytes'=>strlen($bytes)]]);$this->db->transComplete();if(!rename($temporary,$final))throw new DomainException('The asset could not be finalized.');}
-        catch(Throwable $e){@unlink($temporary);@unlink($final);if($this->db->transStatus()){try{$this->db->transException(true)->transStart();$this->db->table('shop_brand_assets')->where('public_id',$publicId)->delete();foreach($old as $row)$this->db->table('shop_brand_assets')->where('id',$row['id'])->update(['is_active'=>1,'deactivated_at'=>null]);$this->db->transComplete();}catch(Throwable){}}throw $e;}
+        try{$this->db->transException(true)->transStart();$old=$this->db->table('shop_brand_assets')->select('id')->where(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'is_active'=>1])->get()->getResultArray();$this->db->table('shop_brand_assets')->where(['tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'is_active'=>1])->update(['is_active'=>0,'deactivated_at'=>$now]);$this->db->table('shop_brand_assets')->insert(['public_id'=>$publicId,'tenant_id'=>$tenantId,'shop_id'=>$shopId,'asset_type'=>$type,'storage_key'=>$relative,'mime_type'=>$mime,'width_px'=>$w,'height_px'=>$h,'file_size_bytes'=>strlen($bytes),'content_sha256'=>hash('sha256',$bytes,true),'is_active'=>1,'uploaded_by_user_id'=>$actorUserId,'activated_at'=>$now,'created_at'=>$now]);$this->audit->append(new AuditAppendCommand(
+            actor: AuditActor::tenantUser($actorUserId, $membershipId, $tenantId, $shopId),
+            actionCode: 'branding.asset_replaced',
+            category: AuditCategory::TENANT,
+            resourceType: 'shop_brand_asset',
+            resourcePublicId: $publicId,
+            metadata: [
+                'asset_type' => $type,
+                'mime_type' => $mime,
+                'width' => $w,
+                'height' => $h,
+                'byte_count' => strlen($bytes),
+            ],
+        ));
+        (new ChangeSequenceService($this->db, service('requestContext')))->publish([new ChangeCommand($tenantId, $shopId, 'shop_brand_asset', $publicId)]);
+        if(!rename($temporary,$final))throw new DomainException('The asset could not be finalized.');
+        $this->db->transComplete();}
+        catch(Throwable $e){$this->db->transRollback();@unlink($temporary);@unlink($final);throw $e;}
         return ['public_id'=>$publicId,'asset_type'=>$type,'width_px'=>$w,'height_px'=>$h];
     }
 

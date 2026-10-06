@@ -74,7 +74,7 @@ final class PhaseOneSeeder extends Seeder
                 }
             }
 
-            $activeGenerations = $this->db->table('sync_generations')->where('status', 'ACTIVE')->get()->getResultArray();
+            $activeGenerations = $this->db->query("SELECT * FROM sync_generations WHERE status = 'ACTIVE' FOR UPDATE")->getResultArray();
             if (count($activeGenerations) > 1) {
                 throw new RuntimeException('Phase 1 bootstrap drift detected: more than one active Sync Generation exists.');
             }

@@ -4,47 +4,89 @@ declare(strict_types=1);
 
 namespace App\Modules\Audit\Application;
 
+use App\Exceptions\ApiException;
 use App\Libraries\Http\RequestContext;
+use App\Modules\Audit\Domain\AuditAction;
+use App\Modules\Audit\Domain\AuditAppendCommand;
+use App\Modules\Audit\Domain\AuditReasonPolicy;
+use App\Modules\Audit\Domain\AuditResource;
 use App\Support\Uuid;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\HTTP\IncomingRequest;
-use InvalidArgumentException;
 
 final class AuditService
 {
-    public function __construct(private BaseConnection $database, private RequestContext $requestContext, private ?IncomingRequest $request = null)
-    {
+    private readonly AuditAuthorityValidator $authorityValidator;
+    private readonly AuditCausalLinkValidator $causalLinkValidator;
+    private readonly AuditMetadataPolicy $metadataPolicy;
+    private readonly AuditReasonPolicy $reasonPolicy;
+
+    public function __construct(
+        private readonly BaseConnection $database,
+        private readonly RequestContext $requestContext,
+        private readonly ?IncomingRequest $request = null,
+    ) {
+        $this->authorityValidator = new AuditAuthorityValidator($database);
+        $this->causalLinkValidator = new AuditCausalLinkValidator($database);
+        $this->metadataPolicy = new AuditMetadataPolicy();
+        $this->reasonPolicy = new AuditReasonPolicy();
     }
 
     /** Append immutable accountability evidence inside the caller's active transaction. */
-    public function record(array $event): int
+    public function append(AuditAppendCommand $command): int
     {
-        foreach (['actor_type', 'action_code', 'category', 'resource_type'] as $required) {
-            if (empty($event[$required])) {
-                throw new InvalidArgumentException("Audit field {$required} is required.");
-            }
-        }
+        $actionCode = AuditAction::validate($command->actionCode);
+        $resourceType = AuditResource::validate($command->resourceType);
+        $reason = $this->reasonPolicy->validate($actionCode, $command->reason);
+        $this->authorityValidator->validate($command->actor);
+        $this->causalLinkValidator->validate($command->causedByAuditEventId, $command->actor);
+        $resourcePublicId = $this->validateResourcePublicId($command->resourcePublicId);
 
+        $metadata = $command->metadata === null
+            ? null
+            : $this->metadataPolicy->sanitize($command->metadata);
         $now = gmdate('Y-m-d H:i:s.u');
-        $requestId = $this->requestContext->requestId();
-        $correlationId = preg_match('/^[0-9a-f-]{36}$/i', $requestId) === 1 ? strtolower($requestId) : null;
-        $ip = $this->request?->getIPAddress();
+        $occurrence = $command->occurrence ?? \App\Modules\Audit\Domain\AuditOccurrence::serverNow();
+        $ipAddress = $this->request?->getIPAddress();
         $userAgent = $this->request?->getUserAgent()->getAgentString();
 
-        $reason=isset($event['reason'])?trim((string)$event['reason']):null;if($reason!==null&&mb_strlen($reason)>500)throw new InvalidArgumentException('Audit reason exceeds 500 characters.');
-        $metadata=isset($event['change_metadata'])?(new AuditMetadataPolicy())->sanitize($event['change_metadata']):null;
         $this->database->table('audit_events')->insert([
-            'public_id' => Uuid::v4(), 'tenant_id' => $event['tenant_id'] ?? null, 'shop_id' => $event['shop_id'] ?? null,
-            'actor_type' => $event['actor_type'], 'actor_user_id' => $event['actor_user_id'] ?? null,
-            'actor_membership_id' => $event['actor_membership_id'] ?? null, 'actor_device_id' => null,
-            'action_code' => $event['action_code'], 'category' => $event['category'], 'resource_type' => $event['resource_type'],
-            'resource_public_id' => $event['resource_public_id'] ?? null, 'reason' => $reason,
-            'change_metadata' => $metadata!==null ? json_encode($metadata, JSON_THROW_ON_ERROR) : null,
-            'caused_by_audit_event_id' => $event['caused_by_audit_event_id'] ?? null, 'correlation_id' => $correlationId,
-            'sync_operation_id' => null, 'ip_address' => $ip ? @inet_pton($ip) ?: null : null,
-            'user_agent_hash' => $userAgent ? hash('sha256', $userAgent, true) : null, 'occurred_at' => $now, 'created_at' => $now,
+            'public_id' => Uuid::v4(),
+            'tenant_id' => $command->actor->tenantId,
+            'shop_id' => $command->actor->shopId,
+            'actor_type' => $command->actor->actorType(),
+            'actor_user_id' => $command->actor->userId,
+            'actor_membership_id' => $command->actor->membershipId,
+            'actor_device_id' => null,
+            'action_code' => $actionCode,
+            'category' => $command->category->value,
+            'resource_type' => $resourceType,
+            'resource_public_id' => $resourcePublicId,
+            'reason' => $reason,
+            'change_metadata' => $metadata === null ? null : json_encode($metadata, JSON_THROW_ON_ERROR),
+            'caused_by_audit_event_id' => $command->causedByAuditEventId,
+            'correlation_id' => $this->requestContext->requestId(),
+            'sync_operation_id' => $occurrence->operationId,
+            'ip_address' => $ipAddress ? (@inet_pton($ipAddress) ?: null) : null,
+            'user_agent_hash' => $userAgent ? hash('sha256', $userAgent, true) : null,
+            'occurred_at' => $occurrence->formatOr($now),
+            'created_at' => $now,
         ]);
 
         return (int) $this->database->insertID();
+    }
+
+    private function validateResourcePublicId(?string $publicId): ?string
+    {
+        if ($publicId === null) {
+            return null;
+        }
+
+        $publicId = strtolower($publicId);
+        if (! Uuid::isV4($publicId)) {
+            throw new ApiException('AUDIT_CONTEXT_INVALID', 'Audit resource public identifier must be a UUIDv4.', 422);
+        }
+
+        return $publicId;
     }
 }

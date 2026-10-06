@@ -1,4 +1,5 @@
 import { phaseOneApi } from '../api/phase-one.js';
+import { AuditPanel } from '../components/audit-panel.js';
 
 const { createApp, reactive, ref, h } = window.Vue;
 
@@ -1464,6 +1465,7 @@ createApp({
                     renderComplete(),
                     renderDomains(),
                     renderOperations(),
+                    h(AuditPanel, { mode: 'platform', tenants: tenants.value }),
                 ]
             );
     },

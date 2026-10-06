@@ -16,3 +16,12 @@ The Owner interface obtains the catalogue, active grants and complete grant/revo
 | `platform.tenants` | Suspend/reactivate/close Tenants and deactivate/reactivate Shops |
 
 Both permissions are assigned only to `platform_admin`; their routes also require recent MFA. They do not establish Tenant membership or impersonation.
+
+## Phase 2 Audit permissions
+
+| Permission | Scope |
+|---|---|
+| `platform.audit` | Read platform-scoped Audit evidence; requires `platform_admin` and recent MFA |
+| `platform.audit_support` | Establish a reasoned, explicit Tenant/Shop diagnostic Audit scope; requires `platform_admin`, recent MFA, and successful SUPPORT evidence |
+
+Primary Owner activity history is role-authorized through `ShopContext`; Staff have no Audit-history permission by default. Platform support access is **Platform-authorized diagnostic reading, not Tenant membership or impersonation**.

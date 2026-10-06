@@ -1,6 +1,8 @@
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
+import { useReasonDialog } from '../components/reason-dialog.js';
+import { AuditPanel } from '../components/audit-panel.js';
 
 const {
     createApp,
@@ -14,6 +16,7 @@ const {
 
 createApp({
     render,
+    components: { AuditPanel },
 
     setup() {
         const page = ref('home');
@@ -36,10 +39,11 @@ createApp({
         const fieldErrors = reactive({});
         const permissionStates = reactive({});
         const permissionSearch = reactive({});
-        const dialog = reactive({ open: false, type: '', member: null, permission: null, reason: '', error: '' });
-        const dialogReason = ref(null);
+        const reasonDialog = useReasonDialog({ reactive, ref, nextTick });
+        const dialog = reasonDialog.state;
+        const dialogReason = reasonDialog.reasonInput;
+        const dialogElement = reasonDialog.dialogElement;
         const temporaryCredential = ref('');
-        let dialogTrigger = null;
         const staffForm = reactive({ name: '', email: '', password: '', reason: '' });
 
         const allNavigation = [
@@ -49,9 +53,12 @@ createApp({
             { id: 'branding', label: 'Branding', capability: 'manage_branding' },
             { id: 'domains', label: 'Domains', capability: 'manage_domains' },
             { id: 'subscription', label: 'Subscription', capability: 'view_subscription' },
+            { id: 'audit', label: 'Activity', capability: 'view_audit' },
         ];
         const navigation = computed(() => {
-            if (['BLOCKED', 'CLOSED'].includes(access.mode)) return allNavigation.filter((item) => item.id === 'home');
+            if (['BLOCKED', 'CLOSED'].includes(access.mode)) {
+                return allNavigation.filter((item) => ['home', 'audit'].includes(item.id));
+            }
             return allNavigation.filter((item) => !item.capability || context.capabilities[item.capability]);
         });
         const readOnly = computed(() => access.mode !== 'FULL');
@@ -206,48 +213,43 @@ createApp({
         }
 
         async function openDialog(type, member, permission = null) {
-            dialogTrigger = document.activeElement;
-            Object.assign(dialog, { open: true, type, member, permission, reason: '', error: '' });
             temporaryCredential.value = '';
-            await nextTick();
-            dialogReason.value?.focus();
+            await reasonDialog.open({ type, member, permission });
         }
 
         async function closeDialog() {
-            Object.assign(dialog, { open: false, type: '', member: null, permission: null, reason: '', error: '' });
             temporaryCredential.value = '';
-            await nextTick();
-            dialogTrigger?.focus();
-            dialogTrigger = null;
+            await reasonDialog.close();
         }
 
         async function confirmDialog() {
-            dialog.error = '';
-            if (!dialog.reason.trim()) {
-                dialog.error = 'Enter a reason before continuing.';
-                return;
-            }
+            const reason = reasonDialog.validate();
+            if (reason === null) return;
             const member = dialog.member;
+            dialog.pending = true;
             try {
                 if (dialog.type === 'status') {
                     const active = member.status !== 'ACTIVE';
-                    await run(() => phaseOneApi.staffStatus(member.id, { active, reason: dialog.reason }), 'Staff status updated.', loadStaff);
+                    await run(() => phaseOneApi.staffStatus(member.id, { active, reason }), 'Staff status updated.', loadStaff);
                 } else if (dialog.type === 'permission') {
                     const state = permissionStates[member.id];
                     const granted = state.active.includes(dialog.permission.code);
                     const response = await run(
-                        () => phaseOneApi.permission(member.id, { permission_code: dialog.permission.code, reason: dialog.reason }, !granted),
+                        () => phaseOneApi.permission(member.id, { permission_code: dialog.permission.code, reason }, !granted),
                         'Permission state updated.',
                     );
                     Object.assign(state, response.data);
                 } else if (dialog.type === 'reset') {
-                    const response = await run(() => phaseOneApi.resetStaffCredentials(member.id, { reason: dialog.reason }), 'Staff credentials reset.');
+                    const response = await run(() => phaseOneApi.resetStaffCredentials(member.id, { reason }), 'Staff credentials reset.');
                     temporaryCredential.value = response.data.temporary_password;
                     return;
                 }
+                dialog.pending = false;
                 closeDialog();
             } catch (exception) {
                 dialog.error = exception.message;
+            } finally {
+                dialog.pending = false;
             }
         }
 
@@ -277,9 +279,9 @@ createApp({
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
             domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
-            permissionSearch, permissionGroups, dialog, dialogReason, temporaryCredential, createStaff,
+            permissionSearch, permissionGroups, dialog, dialogReason, dialogElement, temporaryCredential, createStaff,
             loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
-            uploadAsset, requestDomain, rotateDomain, verifyDomain,
+            uploadAsset, requestDomain, rotateDomain, verifyDomain, handleDialogKeydown: reasonDialog.handleKeydown,
         };
     },
 }).mount('#shop-app');
