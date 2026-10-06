@@ -12,6 +12,9 @@ final class AuditReasonPolicy
         'branding.asset_replaced',
         'branding.updated',
         'shop.profile_updated',
+        'product.created',
+        'product.updated',
+        'stock.threshold_updated',
     ];
 
     public function validate(string $actionCode, ?string $reason): ?string

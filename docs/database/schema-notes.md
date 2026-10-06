@@ -15,3 +15,7 @@ MySQL DDL is implicitly committed. A failed, unrecorded migration can therefore 
 ## Phase 2 WP3 no-DDL decision
 
 The implemented Owner, Platform, and support Audit queries use the v1.1 `audit_events` scope/time, resource, actor, correlation, and category indexes. WP3 adds no migration, table, column, copy, support-session record, or saved-filter structure. Runtime MySQL query-plan review remains blocked with the carried database verification debt; an index was not added without that evidence.
+
+## Phase 3 WP1
+
+WP1 adds only `products` and `stock_positions`. Product creation atomically materializes the current Shop's zero `UNESTABLISHED` position. Stock quantity/cost/pointer have no generic mutation boundary; threshold is independently mutable and versioned. `stock_positions.last_movement_id` is nullable without an FK until the WP2 parent exists. Stock-position change notifications use the Product public UUID as the logical Shop-scoped position identity because frozen v1.1 gives `stock_positions` no separate public UUID.
