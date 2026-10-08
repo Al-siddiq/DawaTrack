@@ -17,3 +17,7 @@ Controllers call owning services. Business modules may use the cross-cutting Aud
 Phase 2 WP1 adds no Audit query route/UI and no change sequence. Those remain later authorized work.
 
 Phase 2 WP3 extends `Modules/Audit` with focused query parsing, scope-aware keyset queries, safe detail/relationship presentation, and reasoned support-access evidence. `AuditController` maps transport only. Primary Owner authority remains in `ShopContext`; Platform permissions/MFA remain in `PlatformAdminFilter`. Audit reads never call `Modules/Sync` and never emit `sync_changes`.
+- `Modules/ProductCatalog` owns Product normalization, validation, lifecycle transactions and scoped Product queries.
+- `Modules/Inventory` owns the protected Stock Position threshold command in WP1. Quantity/cost evidence remains deferred to WP2/WP3.
+- Phase 3 WP2 extends `Modules/Inventory` with focused Draft, exact-decimal posting and scoped Intake/history query responsibilities. It exposes no WP3 manual/reversal command.
+- Phase 3 WP3 adds focused manual movement, Movement reversal, current-suffix Intake reversal, cost-state reconstruction and replacement-link services within `Modules/Inventory`; no alternate ledger or WAC engine exists.
