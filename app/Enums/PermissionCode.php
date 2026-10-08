@@ -8,6 +8,9 @@ enum PermissionCode: string
 {
     case InventoryView = 'inventory.view';
     case InventoryAdjust = 'inventory.adjust';
+    case ProductManage = 'product.manage';
+    case InventoryIntake = 'inventory.intake';
+    case InventoryReverse = 'inventory.reverse';
     case SaleRecord = 'sale.record';
     case SaleReverse = 'sale.reverse';
     case DebtManage = 'debt.manage';

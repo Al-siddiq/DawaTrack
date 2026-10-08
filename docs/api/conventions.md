@@ -23,3 +23,11 @@ Future collections use `meta.pagination` with `page`, `per_page`, `total`, and `
 Owner Audit uses `GET /api/v1/shop/audit-events` and `GET /api/v1/shop/audit-events/{public_id}`. Tenant/Shop authority is server-derived. Normal Platform Audit uses the equivalent `/api/v1/platform/audit-events` GET routes and cannot accept Tenant/Shop scope. Tenant-support Audit uses POST `/api/v1/platform/audit-events/support/query` and POST `/api/v1/platform/audit-events/support/events/{public_id}` so the required reason and scope do not enter URLs, browser history, or routine access logs.
 
 Audit collections use stable keyset pagination with an opaque `next_cursor`, not offset pagination. Filters are bounded to date range, category, action, actor, resource type/public UUID, and canonical correlation UUID. Page sizes are 1–50. Invalid filters and cursors use `AUDIT_FILTER_INVALID` and `AUDIT_PAGE_INVALID`; foreign or unavailable events use the non-enumerating `AUDIT_EVENT_NOT_FOUND`. Audit requests share identity-scoped throttle buckets and return `RATE_LIMITED` with `Retry-After` when exhausted.
+
+## Phase 3 WP1 Product and stock resources
+
+Authenticated Shop routes provide paginated Product search/list, Product detail/create/edit/explicit deactivation, and explicit low-stock-threshold update. External identity is Product UUID; Stock Position detail is addressed through its Product. Protected quantity/cost/state/pointer fields have no generic route. Stable conflicts include `PRODUCT_UNCHANGED`, `PRODUCT_ALREADY_INACTIVE`, `PRODUCT_UNIT_IMMUTABLE`, and `THRESHOLD_UNCHANGED`.
+
+## Phase 3 WP2 Intake resources
+
+Explicit authenticated Shop routes support Intake list/detail, Draft create/header edit, item add/edit/remove, Draft discard, and `/post`. Generic status, movement-create, position-update and posted-evidence delete routes do not exist. Stable conflicts include `INTAKE_ALREADY_POSTED`, `OPENING_ALREADY_ESTABLISHED`, `INVENTORY_STATE_CONFLICT`, `PRODUCT_INACTIVE`, and `INTAKE_LINE_CONFLICT`.

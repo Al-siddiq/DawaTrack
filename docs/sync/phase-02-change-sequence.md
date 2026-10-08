@@ -34,3 +34,11 @@ The result is `(generation_uuid, change_sequence)`, with sequence zero for an em
 ## Generation transitions
 
 Initial seeding and any future activation/retirement lock the active-generation selection inside their transaction. No Phase 2 generation-management UI or endpoint exists.
+
+## Phase 3 WP1 publishers
+
+The closed resource registry now includes `product` and `stock_position`. Product creation publishes both resources as `UPSERT`; edit publishes Product `UPSERT`; deactivation publishes Product `DEACTIVATE` without deactivating its position; threshold change publishes position `UPSERT`. The Shop-scoped position notification uses its Product public UUID. No transport, cursor, receipt or pull API is added.
+
+## Phase 3 WP2
+
+Draft Intake activity emits no changes. Successful posting publishes `stock_intake`, every `stock_movement`, and one final `stock_position` per affected Product, after all Product/position locks and Audit. Position identity remains Shop scope plus Product UUID. `stock_intake` and `stock_movement` are now allow-listed; no transport is added.

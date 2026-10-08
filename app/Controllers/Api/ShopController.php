@@ -30,6 +30,7 @@ final class ShopController extends BaseController
             $permissions = $context->role === 'PRIMARY_OWNER'
                 ? array_column(PermissionService::catalogue(), 'code')
                 : $this->activePermissions($context);
+            $hasPermission = static fn (string $code): bool => in_array($code, $permissions, true);
             $shop = db_connect()->table('shops s')
                 ->select('s.public_id,s.name,t.public_id AS tenant_public_id')
                 ->join('tenants t', 't.id=s.tenant_id')
@@ -48,6 +49,10 @@ final class ShopController extends BaseController
                     'manage_domains' => $context->role === 'PRIMARY_OWNER',
                     'view_subscription' => $context->role === 'PRIMARY_OWNER',
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
+                    'view_inventory' => $hasPermission('inventory.view'),
+                    'manage_products' => $hasPermission('product.manage'),
+                    'adjust_inventory' => $hasPermission('inventory.adjust'),
+                    'manage_intakes' => $hasPermission('inventory.intake'),
                 ],
                 'access' => [
                     'mode' => $decision->mode,
