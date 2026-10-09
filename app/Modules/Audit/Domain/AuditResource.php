@@ -10,11 +10,15 @@ final class AuditResource
 {
     private const TYPES = [
         'platform_admin_authentication',
+        'product',
         'shop',
         'shop_brand_asset',
         'shop_branding_profile',
         'shop_domain',
         'subscription',
+        'stock_position',
+        'stock_intake',
+        'stock_movement',
         'support_audit_scope',
         'tenant',
         'tenant_membership',

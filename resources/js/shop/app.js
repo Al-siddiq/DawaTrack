@@ -3,6 +3,9 @@ import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
 import { useReasonDialog } from '../components/reason-dialog.js';
 import { AuditPanel } from '../components/audit-panel.js';
+import { useProducts } from './composables/use-products.js';
+import { useIntakes } from './composables/use-intakes.js';
+import { useInventoryActions } from './composables/use-inventory-actions.js';
 
 const {
     createApp,
@@ -48,6 +51,8 @@ createApp({
 
         const allNavigation = [
             { id: 'home', label: 'Home', capability: null },
+            { id: 'products', label: 'Products & stock', capability: 'view_inventory' },
+            { id: 'intakes', label: 'Stock coming in', capability: 'view_inventory' },
             { id: 'staff', label: 'Staff', capability: 'manage_staff' },
             { id: 'settings', label: 'Shop settings', capability: 'manage_shop_settings' },
             { id: 'branding', label: 'Branding', capability: 'manage_branding' },
@@ -62,6 +67,9 @@ createApp({
             return allNavigation.filter((item) => !item.capability || context.capabilities[item.capability]);
         });
         const readOnly = computed(() => access.mode !== 'FULL');
+        const products = useProducts({ ref, reactive, computed }, access, context);
+        const intakes = useIntakes({ ref, reactive, computed }, access, context, products);
+        const inventoryActions = useInventoryActions({ ref, reactive, computed }, access, context, products, intakes);
         const owner = computed(() => context.role === 'PRIMARY_OWNER');
         const previewStyle = computed(() => ({ '--preview-primary': branding.primary_colour, '--preview-background': branding.background_colour }));
 
@@ -149,6 +157,7 @@ createApp({
                     if (context.capabilities.view_subscription) requests.push(loadSubscription());
                 }
                 await Promise.all(requests);
+                if (context.capabilities.view_inventory) { await products.load(); await intakes.load(); }
                 if (!navigation.value.some((item) => item.id === page.value)) page.value = 'home';
             } catch (exception) {
                 error.value = exception.message;
@@ -281,7 +290,7 @@ createApp({
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
             permissionSearch, permissionGroups, dialog, dialogReason, dialogElement, temporaryCredential, createStaff,
             loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
-            uploadAsset, requestDomain, rotateDomain, verifyDomain, handleDialogKeydown: reasonDialog.handleKeydown,
+            uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions, handleDialogKeydown: reasonDialog.handleKeydown,
         };
     },
 }).mount('#shop-app');
