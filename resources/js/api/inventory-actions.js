@@ -1,0 +1,3 @@
+import { apiRequest } from './http-client.js';
+const json=(method,body)=>({method,body:JSON.stringify(body)});
+export const inventoryActionsApi={record:(values)=>apiRequest('/api/v1/shop/stock-movements',json('POST',values)),movement:(id)=>apiRequest(`/api/v1/shop/stock-movements/${id}`),reverseMovement:(id,reason)=>apiRequest(`/api/v1/shop/stock-movements/${id}/reverse`,json('POST',{reason})),reverseIntake:(id,reason)=>apiRequest(`/api/v1/shop/stock-intakes/${id}/reverse`,json('POST',{reason})),replacement:(id,values)=>apiRequest(`/api/v1/shop/stock-intakes/${id}/replacement`,json('POST',values))};

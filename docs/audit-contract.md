@@ -19,6 +19,8 @@ Target Shop scope is verified against its Tenant. Invalid authority and causal c
 
 Each HTTP request has one canonical lowercase UUIDv4. `RequestContext` accepts only a UUIDv4 inbound `X-Request-ID`; otherwise it creates one. The same value is used in the response `X-Request-ID`, API `meta.request_id`, relevant logs, and `audit_events.correlation_id`. Audit never creates a replacement correlation ID.
 
+Replacement Intake Draft creation, editing and discard are non-authoritative and emit no permanent Audit. The bounded mandatory replacement reason is retained with the Draft. A successful replacement post atomically emits both `stock_intake.posted` and reasoned `stock_intake.replaced`; a rejected or rolled-back post emits neither success event.
+
 Spark commands initialize one correlation UUID at command entry and reuse it in job logs and every Audit append made by that command.
 
 ## Device and operation boundary
@@ -62,3 +64,17 @@ WP3 exposes immutable, redacted Audit reads through the same `AuditOutputMapper`
 Tenant diagnostic reading is a separate POST-only support workflow. It requires `platform.audit_support`, recent MFA, an explicit server-resolved Tenant/Shop pair, and a nonblank bounded reason. Before results are returned, `SupportAuditAccessService` commits a `SUPPORT` / `support.audit_accessed` event carrying the Platform actor, target scope, canonical correlation, reason, and minimized purpose metadata. A short-lived continuation is the event's public UUID, bound to that operator and revalidated on every request; it is not a support session, membership, login, or impersonation. A failed evidence append returns no scoped results. Routine pagination and detail reads create neither Audit nor `sync_changes`.
 
 List ordering is `occurred_at DESC, id DESC`; opaque cursors contain only the last event's occurrence time and public UUID, which is resolved again inside the authorized scope. Page size is capped at 50 and date ranges at 366 days. Detail and causal/correlation results are re-scoped before release. Internal numeric IDs, IP bytes, user-agent hashes, device identity, and unredacted metadata are never returned. There is no Audit mutation endpoint.
+
+## Phase 3 WP1 vocabulary
+
+WP1 adds INVENTORY actions `product.created`, `product.updated`, `product.deactivated`, and `stock.threshold_updated`, with resources `product` and `stock_position`. Create/edit/threshold reasons are optional; deactivation requires a reason. Rejected validation/conflict creates no event. Each successful event shares the business transaction and request correlation.
+
+## Phase 3 WP2
+
+Ordinary Draft Intake CRUD/discard emits no permanent Audit. Atomic posting emits one optional-reason `stock_intake.posted` INVENTORY event on resource `stock_intake`, with bounded kind/line-count/rounded-total/occurrence metadata. Movement rows are the line evidence.
+
+## Phase 3 WP3 vocabulary
+
+All WP3 actions require a reason: `stock_movement.recorded`, `stock_movement.corrected`, `stock_movement.reversed`, `stock_intake.reversed`, and `stock_intake.replaced`. Resources remain `stock_movement`/`stock_intake`, category INVENTORY. Metadata is bounded to public causal IDs, movement type, signed quantity and safe before/after/cost snapshots. Domain FKs, not Audit metadata, are causal authority.
+
+Phase 3 closure confirms Product create/update/deactivate, threshold, Intake post, manual/Correction, Movement reversal, Intake reversal, and replacement post append typed INVENTORY Audit inside the owning transaction. Ordinary and replacement Draft lifecycle remains silent; diagnostics append nothing because they only read.

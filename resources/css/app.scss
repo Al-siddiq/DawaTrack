@@ -78,3 +78,34 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .credential-value { display: block; margin: .75rem 0; overflow-wrap: anywhere; font-size: 1.05rem; }
 .toast-notice { position: fixed; right: 1rem; bottom: 1rem; max-width: min(24rem,calc(100vw - 2rem)); padding: 1rem; color: #fff; background: #155d46; border-radius: .75rem; }
 @media (max-width: 35rem) { .phase-nav .btn { flex: 1 1 45%; } .record-card > button, .card-actions, .card-actions .btn { width: 100%; } .step-indicator { gap: .35rem; } .step-indicator li { flex: 1 1 0; padding: .55rem; text-align: center; font-size: .85rem; } }
+.workspace-heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.inventory-filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,13rem),1fr)); gap: 1rem; align-items: end; padding: 1rem; border-radius: .8rem; background: #fff; }
+.inventory-filters label,.product-form label,.inline-action label,.sensitive-action label { display: grid; gap: .4rem; font-weight: 600; }
+.inventory-check { display: flex !important; align-items: center; min-height: 44px; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,18rem),1fr)); gap: 1rem; }
+.product-card,.product-detail,.product-form,.sensitive-action { display: grid; gap: 1rem; padding: clamp(1rem,3vw,1.5rem); border: 1px solid #d5dfda; border-radius: .85rem; background: #fff; }
+.product-card header { display: flex; justify-content: space-between; gap: .75rem; }
+.product-card h2,.product-detail h2 { margin: .5rem 0 .25rem; font-size: 1.35rem; }
+.stock-left { display: grid; font-size: 1.5rem; }
+.stock-left small,.stock-summary small,.product-form small { color: var(--dt-muted); font-size: .85rem; font-weight: 400; }
+.stock-summary { display: grid; grid-template-columns: repeat(auto-fit,minmax(11rem,1fr)); gap: .75rem; }
+.stock-summary div { padding: 1rem; border-radius: .7rem; background: #f4f7f5; }
+.stock-summary dd { margin: .35rem 0 0; font-size: 1.2rem; font-weight: 700; }
+.inline-action { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+.inline-action label { flex: 1 1 14rem; }
+.sensitive-action { border-color: #e9b3b3; }
+.pagination-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; }
+@media (max-width: 35rem) { .workspace-heading .btn,.product-card .btn,.inline-action .btn,.sensitive-action .btn { width: 100%; } .stock-summary { grid-template-columns: 1fr; } }
+.intake-card,.intake-line-editor,.intake-review { display: grid; gap: 1rem; padding: clamp(1rem,3vw,1.5rem); border: 1px solid #d5dfda; border-radius: .85rem; background: #fff; }
+.intake-card label,.intake-line-editor label,.intake-header-form label { display: grid; gap: .35rem; font-weight: 600; }
+.intake-header-form,.intake-line-editor { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap: 1rem; align-items: end; }
+.intake-lines,.intake-list,.movement-timeline { display: grid; gap: .75rem; }
+.intake-line-card,.movement-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border: 1px solid #d8e2dc; border-radius: .75rem; background: #fff; }
+.movement-card dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); width: 100%; gap: .5rem; }
+.movement-card dd { margin: 0; font-weight: 700; }
+.sticky-intake-actions { position: sticky; bottom: .5rem; display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; border-radius: .75rem; background: rgb(255 255 255 / 95%); box-shadow: 0 .25rem 1rem rgba(20,50,40,.15); }
+@media(max-width:35rem){.intake-line-card,.movement-card{align-items:stretch;flex-direction:column}.intake-line-card .button-row,.intake-line-card .btn,.sticky-intake-actions .btn{width:100%}.movement-card dl{grid-template-columns:1fr}}
+.inventory-action-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap: 1rem; align-items: end; padding: 1rem; border: 1px solid #d5dfda; border-radius: .85rem; background: #fff; }
+.inventory-action-form h3,.inventory-action-form p { grid-column: 1/-1; }
+.inventory-action-form label { display: grid; gap: .35rem; font-weight: 600; }
+@media(max-width:35rem){.inventory-action-form{grid-template-columns:1fr}.inventory-action-form .btn{width:100%}}
