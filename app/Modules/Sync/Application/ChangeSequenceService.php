@@ -22,6 +22,10 @@ final class ChangeSequenceService
         'shop_brand_asset',
         'shop_domain',
         'subscription',
+        'product',
+        'stock_position',
+        'stock_intake',
+        'stock_movement',
     ];
 
     public function __construct(

@@ -34,3 +34,25 @@ MySQL DDL performs implicit commits. Splitting migrations limits the failure bou
 ## Phase 2 WP3
 
 WP3 introduces no migration or raw SQL artifact. Its scoped Audit queries use the existing v1.1 `audit_events` indexes; the register therefore remains unchanged at order 7. Any future index change requires observed MySQL query-plan evidence, a paired migration/raw SQL artifact, and separate approval.
+
+## Phase 3 WP1
+
+| Order | Migration | Raw SQL | Purpose |
+|---:|---|---|---|
+| 8 | `2026-10-06-000000 CreatePhaseThreeProducts` | `docs/database/sql/phase-03/20261006_000000_create_phase_three_products.sql` | Tenant Product master; duplicate normalized names remain legal |
+| 9 | `2026-10-06-000100 CreatePhaseThreeStockPositions` | `docs/database/sql/phase-03/20261006_000100_create_phase_three_stock_positions.sql` | Protected Shop/Product zero projection and threshold |
+
+Apply after Phase 2. Roll back Stock Positions before Products. `last_movement_id` intentionally has no FK until WP2 creates `stock_movements`.
+
+## Phase 3 WP2
+
+| Order | Migration | Raw SQL | Purpose |
+|---:|---|---|---|
+| 10 | `2026-10-06-000200 CreatePhaseThreeStockIntakes` | `phase-03/20261006_000200_create_phase_three_stock_intakes.sql` | Draft/posted Intake header |
+| 11 | `2026-10-06-000300 CreatePhaseThreeStockIntakeItems` | `phase-03/20261006_000300_create_phase_three_stock_intake_items.sql` | Positive acquisition lines and cost snapshots |
+| 12 | `2026-10-06-000400 CreatePhaseThreeStockMovements` | `phase-03/20261006_000400_create_phase_three_stock_movements.sql` | Immutable movement ledger |
+| 13 | `2026-10-06-000500 AddPhaseThreePositionMovementForeignKey` | `phase-03/20261006_000500_add_phase_three_position_movement_fk.sql` | Scoped circular last-movement pointer |
+
+## Phase 3 WP4 closure
+
+No migration is owned by WP4. Static review retains the six Phase 3 migration/raw-SQL pairs. Phase 4 owns the deferred scoped Sale Item FK only after `sale_items` exists; Phase 7 owns the deferred reconciliation variance FK.

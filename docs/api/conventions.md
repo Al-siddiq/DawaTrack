@@ -23,3 +23,17 @@ Future collections use `meta.pagination` with `page`, `per_page`, `total`, and `
 Owner Audit uses `GET /api/v1/shop/audit-events` and `GET /api/v1/shop/audit-events/{public_id}`. Tenant/Shop authority is server-derived. Normal Platform Audit uses the equivalent `/api/v1/platform/audit-events` GET routes and cannot accept Tenant/Shop scope. Tenant-support Audit uses POST `/api/v1/platform/audit-events/support/query` and POST `/api/v1/platform/audit-events/support/events/{public_id}` so the required reason and scope do not enter URLs, browser history, or routine access logs.
 
 Audit collections use stable keyset pagination with an opaque `next_cursor`, not offset pagination. Filters are bounded to date range, category, action, actor, resource type/public UUID, and canonical correlation UUID. Page sizes are 1–50. Invalid filters and cursors use `AUDIT_FILTER_INVALID` and `AUDIT_PAGE_INVALID`; foreign or unavailable events use the non-enumerating `AUDIT_EVENT_NOT_FOUND`. Audit requests share identity-scoped throttle buckets and return `RATE_LIMITED` with `Retry-After` when exhausted.
+
+## Phase 3 WP1 Product and stock resources
+
+Authenticated Shop routes provide paginated Product search/list, Product detail/create/edit/explicit deactivation, and explicit low-stock-threshold update. External identity is Product UUID; Stock Position detail is addressed through its Product. Protected quantity/cost/state/pointer fields have no generic route. Stable conflicts include `PRODUCT_UNCHANGED`, `PRODUCT_ALREADY_INACTIVE`, `PRODUCT_UNIT_IMMUTABLE`, and `THRESHOLD_UNCHANGED`.
+
+## Phase 3 WP2 Intake resources
+
+Explicit authenticated Shop routes support Intake list/detail, Draft create/header edit, item add/edit/remove, Draft discard, and `/post`. Generic status, movement-create, position-update and posted-evidence delete routes do not exist. Stable conflicts include `INTAKE_ALREADY_POSTED`, `OPENING_ALREADY_ESTABLISHED`, `INVENTORY_STATE_CONFLICT`, `PRODUCT_INACTIVE`, and `INTAKE_LINE_CONFLICT`.
+
+## Phase 3 WP3 accountable movement commands
+
+Explicit commands record allow-listed manual movement/Correction, reverse one Movement, reverse one eligible current-suffix Intake, and create a reasoned replacement Draft. Replacement creation accepts `RECEIPT` or `OPENING`; Receipt is normal and Opening remains subject to the same locked eligibility rule as ordinary Opening. Draft operations emit no Audit/change publication. Posting makes the relationship authoritative. Clients cannot submit scope, source kind/FKs, actor, cost basis, or before/after snapshots. Stable conflicts include `INVALID_MOVEMENT_TYPE`, `INVALID_MOVEMENT_SIGN`, `INVALID_INTAKE_KIND`, `MOVEMENT_ALREADY_REVERSED`, `REVERSAL_OF_REVERSAL_NOT_ALLOWED`, `INTAKE_ALREADY_REVERSED`, `INTAKE_REVERSAL_NOT_CURRENT`, `REPLACEMENT_REQUIRES_REVERSAL`, and `INTAKE_REPLACEMENT_EXISTS`.
+
+Phase 3 collection reads are bounded. Products, Stock Intakes and Product stock history accept positive `page`/capped `per_page` and return `meta.pagination`; ordering includes a stable internal-ID tie breaker while external identity remains UUID. Product `stock_state` accepts `ALL`, `LOW`, or `NEGATIVE`. Internal IDs are never returned as resource identity.
