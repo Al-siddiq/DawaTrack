@@ -67,12 +67,13 @@ createApp({
             return allNavigation.filter((item) => !item.capability || context.capabilities[item.capability]);
         });
         const readOnly = computed(() => access.mode !== 'FULL');
-        const products = useProducts({ ref, reactive, computed }, access, context);
-        const intakes = useIntakes({ ref, reactive, computed }, access, context, products);
-        const inventoryActions = useInventoryActions({ ref, reactive, computed, nextTick }, access, context, products, intakes);
+        const products = reactive(useProducts({ ref, reactive, computed }, access, context));
+        const intakes = reactive(useIntakes({ ref, reactive, computed }, access, context, products));
+        const inventoryActions = reactive(useInventoryActions({ ref, reactive, computed, nextTick }, access, context, products, intakes));
         const owner = computed(() => context.role === 'PRIMARY_OWNER');
         const previewStyle = computed(() => ({ '--preview-primary': branding.primary_colour, '--preview-background': branding.background_colour }));
 
+        
         const previewStyleElement =
             document.getElementById(
                 'shop-preview-style'

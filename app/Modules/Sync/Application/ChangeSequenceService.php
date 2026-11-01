@@ -96,8 +96,7 @@ final class ChangeSequenceService
 
     private function assertTransactionActive(): void
     {
-        $row = $this->database->query('SELECT @@session.in_transaction AS active_transaction')->getRowArray();
-        if ((int) ($row['active_transaction'] ?? 0) !== 1) {
+        if ($this->database->transDepth < 1) {
             throw new \LogicException('Change publication requires the owning transaction.');
         }
     }
