@@ -1,5 +1,7 @@
 # Phase 3 Closure Report
 
+> Current owner-acceptance status: recorded on 2026-11-02; see the appended owner acceptance update. The original report below is preserved as historical delivery evidence, including its then-pending verification status.
+
 ## A. Executive Phase 3 status
 
 **IMPLEMENTATION COMPLETE — OWNER MANUAL ACCEPTANCE PENDING.** WP1–WP4 deliver the Product Catalog and movement-led Inventory ledger end to end. Static/build closure is complete; the owner must execute the integrated manual closure checklist before final acceptance.
@@ -79,3 +81,8 @@ Sales, Items/Payments, Customers/Returns/Receivables/debt, expenses/Financial Mo
 ## T. Phase 4 readiness contract
 
 After owner closure, Phase 4 may use permanent Product UUIDs, immutable unit meaning, protected Position quantity/cost state/current WAC, immutable Movements, deterministic locks, Audit/change and Tenant isolation. Phase 4 owns Sale parents and the deferred Sale Item FK, must call authoritative Inventory services for Sale effects, snapshot COGS, append Sale Movements, and must never directly patch Position, rewrite Intake WAC or reinterpret historical units. No Sales implementation is included here.
+
+
+## Owner acceptance update recorded 2026-11-02
+
+The owner reports thorough manual testing of the current implemented system against the blueprint and implementation roadmap and has requested that their acceptance be recorded. Owner manual acceptance of the current Phases 1–3 foundation is now recorded in [the consolidated acceptance record](../acceptance/2026-11-02-foundation-owner-acceptance.md). Earlier pending/blocked statements above retain their historical meaning; this later decision updates owner acceptance without inventing item-by-item results or independent runtime evidence. The separate engineering findings remain open and are tracked in that record. The next roadmap boundary is Phase 4A Opening Cash control before cash-affecting Sales.

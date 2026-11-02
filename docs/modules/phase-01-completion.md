@@ -9,3 +9,8 @@ WP2 completes the onboarding/identity slice: Owner identity creation participate
 ## WP4 completion boundary
 
 Phase 1 now includes the focused `SubscriptionService`/`SubscriptionQuery`, Platform Tenant/Shop lifecycle service, current/history/future Owner presentation, and recent-MFA Platform operations UI. Entitlements are immutable half-open periods with serialized no-overlap creation, snapshot limits, events, and Audit. Tenant/Shop status dominates entitlement through `AccessGate`. No Phase 2 module or change-sequence work is part of this boundary.
+
+
+## Owner acceptance update recorded 2026-11-02
+
+The owner reports thorough manual testing of the current implemented system against the blueprint and implementation roadmap and has requested that their acceptance be recorded. Owner manual acceptance of the current Phases 1–3 foundation is now recorded in [the consolidated acceptance record](../acceptance/2026-11-02-foundation-owner-acceptance.md). Earlier pending/blocked statements above retain their historical meaning; this later decision updates owner acceptance without inventing item-by-item results or independent runtime evidence. The separate engineering findings remain open and are tracked in that record. The next roadmap boundary is Phase 4A Opening Cash control before cash-affecting Sales.

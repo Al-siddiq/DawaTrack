@@ -13,3 +13,8 @@ This append-only record preserves the October 4–5 reports: their original envi
 | HTTP/browser | BLOCKED | Framework dependencies/database/browser runtime unavailable. |
 
 A suitable later environment must append executed commands/procedures, PASS/FAIL outcomes and evidence references. Do not rewrite the historical reports or promote this blocked record to PASS.
+
+
+## Owner acceptance update recorded 2026-11-02
+
+The owner reports thorough manual testing of the current implemented system against the blueprint and implementation roadmap and has requested that their acceptance be recorded. Owner manual acceptance of the current Phases 1–3 foundation is now recorded in [the consolidated acceptance record](../acceptance/2026-11-02-foundation-owner-acceptance.md). Earlier pending/blocked statements above retain their historical meaning; this later decision updates owner acceptance without inventing item-by-item results or independent runtime evidence. The separate engineering findings remain open and are tracked in that record. The next roadmap boundary is Phase 4A Opening Cash control before cash-affecting Sales.

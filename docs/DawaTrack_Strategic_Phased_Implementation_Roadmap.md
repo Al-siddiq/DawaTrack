@@ -7,6 +7,10 @@
 
 ---
 
+## Execution status recorded 2026-11-02
+
+Owner manual acceptance of the current implemented Phases 1–3 foundation has been recorded. See [the acceptance record](acceptance/2026-11-02-foundation-owner-acceptance.md) for the owner's statement, repository baseline, evidence limitations and separate open engineering findings. The approved phase scope and dependencies below remain unchanged. The next boundary is Phase 4A Opening Cash control before cash-affecting Sales; high-priority foundation findings must be resolved before dependent Sales behavior is added. Subsequent deliveries use owner hands-on manual acceptance supported by engineering checks.
+
 ## 1. Authority, interpretation and scope
 
 This roadmap implements the three approved foundation documents together. The Business & Product Blueprint defines the outcome and user experience; the Technical Blueprint defines the modular-monolith, security, offline and operational architecture; Database / Schema Design v1.1 is authoritative for persistence, constraints, transaction boundaries and concurrency. Database v1.1 explicitly resolves the Technical Blueprint's earlier custom-domain deferral: verified custom domains and complete Shop white-labeling are mandatory Phase 1 work. No other implementation-blocking contradiction was found.
