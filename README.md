@@ -27,3 +27,8 @@ Phase 2 provides typed Audit, Owner/Platform Audit queries, reasoned support acc
 The owner reports thorough manual verification of the current system against the blueprint and implementation roadmap. This is recorded owner acceptance, not a replacement for historical test evidence or a declaration that the separate engineering findings have been fixed. Future phases use owner manual acceptance supported by engineering checks.
 
 The next implementation boundary is Phase 4A Opening Cash control before cash-affecting Sales. Sales, Customers, Debt, Financial Movements, full Reconciliation, reporting, registered devices and offline/sync transport remain unimplemented. The existing service worker does not provide offline business operation.
+
+
+## Phase 4 delivery planning
+
+The [Phase 4 comprehensive four-work-package plan](docs/Phase-4/Phase_4_Comprehensive_Analysis_and_Four_Work_Package_Plan.md) proposes sequential delivery of Opening Cash, Customers/Sale drafts, Sale posting/payments/credit, and Returns/corrections with integrated closure. It includes requirement coverage and owner manual acceptance gates. This is a planning document for owner review; Phase 4 implementation and acceptance are not claimed.
