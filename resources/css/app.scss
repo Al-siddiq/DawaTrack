@@ -109,3 +109,10 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .inventory-action-form h3,.inventory-action-form p { grid-column: 1/-1; }
 .inventory-action-form label { display: grid; gap: .35rem; font-weight: 600; }
 @media(max-width:35rem){.inventory-action-form{grid-template-columns:1fr}.inventory-action-form .btn{width:100%}}
+
+.opening-cash-form { display:grid; gap:1rem; max-width:36rem; }
+.opening-cash-evidence { display:grid; gap:.75rem; }
+.opening-cash-evidence div, .opening-cash-history { overflow-wrap:anywhere; }
+.opening-cash-evidence dd { margin:0; }
+.opening-cash-history { padding:1rem; margin-block:1rem; border:1px solid #d5d9e0; border-radius:.5rem; }
+.opening-cash-workspace button { margin:.25rem; white-space:normal; }

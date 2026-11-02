@@ -31,7 +31,7 @@ final class HostnamePolicy
         if (strlen($host) > 253 || preg_match('/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/', $host) !== 1) {
             throw new DomainException('Enter a valid fully-qualified hostname with valid DNS labels.');
         }
-        $platform = strtolower(trim((string) env('app.platformDomain', 'dawatrack.test')));
+        $platform = strtolower(trim((string) env('DAWATRACK_PLATFORM_DOMAIN', 'dawatrack.local')));
         if ($host === $platform || str_ends_with($host, '.' . $platform)) {
             throw new DomainException('Platform hostnames cannot be requested as custom domains.');
         }

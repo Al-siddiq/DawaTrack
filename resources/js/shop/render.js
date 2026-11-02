@@ -6,7 +6,7 @@
 
 const Vue = window.Vue;
 
-const { openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, createElementVNode: _createElementVNode, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass, renderList: _renderList, Fragment: _Fragment, vModelText: _vModelText, withDirectives: _withDirectives, withModifiers: _withModifiers, vModelSelect: _vModelSelect, vModelDynamic: _vModelDynamic, resolveComponent: _resolveComponent, createBlock: _createBlock, withKeys: _withKeys, createStaticVNode: _createStaticVNode } = Vue
+const { openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, createElementVNode: _createElementVNode, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass, renderList: _renderList, Fragment: _Fragment, resolveComponent: _resolveComponent, createBlock: _createBlock, vModelText: _vModelText, withDirectives: _withDirectives, withModifiers: _withModifiers, vModelSelect: _vModelSelect, vModelDynamic: _vModelDynamic, withKeys: _withKeys, createStaticVNode: _createStaticVNode } = Vue
 
 const _hoisted_1 = {
   key: 0,
@@ -20,7 +20,7 @@ const _hoisted_3 = {
 }
 const _hoisted_4 = ["onClick"]
 const _hoisted_5 = {
-  key: 0,
+  key: 1,
   class: "welcome-panel"
 }
 const _hoisted_6 = { class: "eyebrow" }
@@ -32,7 +32,7 @@ const _hoisted_9 = {
 }
 const _hoisted_10 = { class: "badge-list" }
 const _hoisted_11 = {
-  key: 1,
+  key: 2,
   class: "workspace intake-workspace"
 }
 const _hoisted_12 = { class: "workspace-heading" }
@@ -130,7 +130,7 @@ const _hoisted_53 = {
   role: "alert"
 }
 const _hoisted_54 = {
-  key: 2,
+  key: 3,
   class: "workspace product-workspace"
 }
 const _hoisted_55 = { class: "workspace-heading" }
@@ -244,7 +244,7 @@ const _hoisted_98 = {
   role: "alert"
 }
 const _hoisted_99 = {
-  key: 3,
+  key: 4,
   class: "workspace"
 }
 const _hoisted_100 = {
@@ -300,7 +300,7 @@ const _hoisted_118 = {
 const _hoisted_119 = { key: 0 }
 const _hoisted_120 = { key: 1 }
 const _hoisted_121 = {
-  key: 4,
+  key: 5,
   class: "workspace"
 }
 const _hoisted_122 = ["onUpdate:modelValue", "type", "required"]
@@ -310,7 +310,7 @@ const _hoisted_123 = {
 }
 const _hoisted_124 = ["disabled"]
 const _hoisted_125 = {
-  key: 5,
+  key: 6,
   class: "workspace"
 }
 const _hoisted_126 = { class: "brand-preview" }
@@ -333,7 +333,7 @@ const _hoisted_133 = { class: "record-grid" }
 const _hoisted_134 = { class: "record-card" }
 const _hoisted_135 = ["src"]
 const _hoisted_136 = {
-  key: 6,
+  key: 7,
   class: "workspace"
 }
 const _hoisted_137 = { class: "record-grid" }
@@ -362,7 +362,7 @@ const _hoisted_146 = {
 const _hoisted_147 = { class: "break-all" }
 const _hoisted_148 = { class: "break-all" }
 const _hoisted_149 = {
-  key: 7,
+  key: 8,
   class: "workspace"
 }
 const _hoisted_150 = { class: "detail-grid" }
@@ -377,12 +377,12 @@ const _hoisted_153 = {
 }
 const _hoisted_154 = { class: "record-grid" }
 const _hoisted_155 = {
-  key: 9,
+  key: 10,
   class: "toast-notice",
   role: "status"
 }
 const _hoisted_156 = {
-  key: 10,
+  key: 11,
   class: "alert alert-danger",
   role: "alert"
 }
@@ -391,12 +391,12 @@ const _hoisted_158 = { key: 1 }
 const _hoisted_159 = { key: 2 }
 const _hoisted_160 = ["disabled"]
 const _hoisted_161 = {
-  key: 12,
+  key: 13,
   class: "toast-notice",
   role: "status"
 }
 const _hoisted_162 = {
-  key: 13,
+  key: 14,
   class: "alert alert-danger",
   role: "alert"
 }
@@ -420,6 +420,7 @@ const _hoisted_171 = ["disabled"]
 const _hoisted_172 = ["disabled"]
 
 export function render(_ctx, _cache) {
+  const _component_OpeningCashPanel = _resolveComponent("OpeningCashPanel")
   const _component_audit_panel = _resolveComponent("audit-panel")
 
   return (_openBlock(), _createElementBlock("div", null, [
@@ -446,6 +447,12 @@ export function render(_ctx, _cache) {
               href: "/logout"
             }, "Sign out", -1 /* CACHED */))
           ]),
+          (_ctx.page==='opening-cash' && _ctx.context.capabilities.manage_opening_cash)
+            ? (_openBlock(), _createBlock(_component_OpeningCashPanel, {
+                key: 0,
+                "read-only": _ctx.readOnly
+              }, null, 8 /* PROPS */, ["read-only"]))
+            : _createCommentVNode("v-if", true),
           (_ctx.page==='home')
             ? (_openBlock(), _createElementBlock("section", _hoisted_5, [
                 _createElementVNode("div", _hoisted_6, _toDisplayString(_ctx.context.role==='PRIMARY_OWNER'?'Primary Owner':'Staff'), 1 /* TEXT */),
@@ -1770,7 +1777,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.page==='audit' && _ctx.context.capabilities.view_audit)
             ? (_openBlock(), _createBlock(_component_audit_panel, {
-                key: 8,
+                key: 9,
                 mode: "owner"
               }))
             : _createCommentVNode("v-if", true),
@@ -1782,7 +1789,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.inventoryActions.movement)
             ? (_openBlock(), _createElementBlock("div", {
-                key: 11,
+                key: 12,
                 class: "dialog-backdrop",
                 onClick: _cache[73] || (_cache[73] = _withModifiers((...args) => (_ctx.inventoryActions.closeMovement && _ctx.inventoryActions.closeMovement(...args)), ["self"]))
               }, [
@@ -1848,7 +1855,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.dialog.open)
             ? (_openBlock(), _createElementBlock("div", {
-                key: 14,
+                key: 15,
                 class: "dialog-backdrop",
                 onClick: _cache[78] || (_cache[78] = _withModifiers((...args) => (_ctx.closeDialog && _ctx.closeDialog(...args)), ["self"]))
               }, [

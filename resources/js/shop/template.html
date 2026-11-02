@@ -9,6 +9,8 @@
       <a class="btn btn-outline-secondary" href="/logout">Sign out</a>
     </nav>
 
+    <OpeningCashPanel v-if="page==='opening-cash' && context.capabilities.manage_opening_cash" :read-only="readOnly" />
+
     <section v-if="page==='home'" class="welcome-panel">
       <div class="eyebrow">{{context.role==='PRIMARY_OWNER'?'Primary Owner':'Staff'}}</div>
       <h1>{{context.shop?.name||'Account home'}}</h1>

@@ -48,6 +48,7 @@ final class ShopController extends BaseController
                     'manage_branding' => $context->role === 'PRIMARY_OWNER',
                     'manage_domains' => $context->role === 'PRIMARY_OWNER',
                     'view_subscription' => $context->role === 'PRIMARY_OWNER',
+                    'manage_opening_cash' => $context->role === 'PRIMARY_OWNER',
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),
@@ -132,6 +133,7 @@ final class ShopController extends BaseController
 
     public function resetPassword(int $id)
     {
+        $this->response->setHeader('Cache-Control', 'no-store, private');
         return $this->execute(function () use ($id) {
             $input = $this->request->getJSON(true) ?? [];
             $result = $this->staffService()->resetPassword(

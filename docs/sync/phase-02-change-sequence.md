@@ -48,3 +48,8 @@ Draft Intake activity emits no changes. Successful posting publishes `stock_inta
 Manual/Correction/movement reversal publishes the new Movement and final position. Intake reversal publishes its same-kind zero-item reversal header, each reversal Movement, each final position, and original Intake UPSERT for derived state. Originals are never deactivated. Replacement Draft create/edit/discard publishes nothing. Successful replacement posting atomically publishes C, each resulting Movement, each final position and original A UPSERT for its changed derived replacement state.
 
 Phase 3 closure adds no transport or publication kind. Read filters, pagination and diagnostics never publish changes. The final publication matrix remains Product/Position at catalog mutations, Intake/Movement/final Position at posting, Movement/Position for manual/reversal, and derived original-Intake UPSERT for Intake reversal/replacement posting.
+
+
+## Phase 4 WP1 publisher
+
+`reconciliation_session` is an approved aggregate resource; each successful Opening transition publishes one UPSERT. Count confirmation captures active generation/cutoff sequence after existing domain locks and Audit, before its own notification. Review/finalization reject changed generation and preserve the original watermark. No transport, receipt, cursor or replay infrastructure is added.

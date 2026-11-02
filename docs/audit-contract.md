@@ -78,3 +78,8 @@ Ordinary Draft Intake CRUD/discard emits no permanent Audit. Atomic posting emit
 All WP3 actions require a reason: `stock_movement.recorded`, `stock_movement.corrected`, `stock_movement.reversed`, `stock_intake.reversed`, and `stock_intake.replaced`. Resources remain `stock_movement`/`stock_intake`, category INVENTORY. Metadata is bounded to public causal IDs, movement type, signed quantity and safe before/after/cost snapshots. Domain FKs, not Audit metadata, are causal authority.
 
 Phase 3 closure confirms Product create/update/deactivate, threshold, Intake post, manual/Correction, Movement reversal, Intake reversal, and replacement post append typed INVENTORY Audit inside the owning transaction. Ordinary and replacement Draft lifecycle remains silent; diagnostics append nothing because they only read.
+
+
+## Phase 4 WP1 Opening Cash
+
+Closed vocabulary adds `reconciliation.opening_started`, `.opening_counted`, `.opening_committed`, `.opening_reviewed`, `.opening_finalized`, `.opening_aborted` under RECONCILIATION with `reconciliation_session` resource. Each authoritative transition appends Audit and aggregate change atomically. Reasons required; GET and exact terminal retries create no event. Credential reset uses bounded `access_invalidated` metadata; sensitive session/token keys remain forbidden.

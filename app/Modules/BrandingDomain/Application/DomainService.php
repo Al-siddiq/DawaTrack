@@ -83,6 +83,7 @@ final class DomainService
         $this->db->table('shop_domains')->where([
             'id' => $domain['id'],
             'verification_status' => 'PENDING',
+            'verification_token_hash' => $domain['verification_token_hash'],
         ])->update([
             'verification_status' => 'VERIFIED',
             'verified_at' => $now,

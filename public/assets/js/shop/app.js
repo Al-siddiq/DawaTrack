@@ -1,6 +1,7 @@
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
+import { OpeningCashPanel } from '../components/opening-cash-panel.js';
 import { useReasonDialog } from '../components/reason-dialog.js';
 import { AuditPanel } from '../components/audit-panel.js';
 import { useProducts } from './composables/use-products.js';
@@ -19,7 +20,7 @@ const {
 
 createApp({
     render,
-    components: { AuditPanel },
+    components: { AuditPanel, OpeningCashPanel },
 
     setup() {
         const page = ref('home');
@@ -51,6 +52,7 @@ createApp({
 
         const allNavigation = [
             { id: 'home', label: 'Home', capability: null },
+            { id: 'opening-cash', label: 'Opening Cash', capability: 'manage_opening_cash' },
             { id: 'products', label: 'Products & stock', capability: 'view_inventory' },
             { id: 'intakes', label: 'Stock coming in', capability: 'view_inventory' },
             { id: 'staff', label: 'Staff', capability: 'manage_staff' },

@@ -23,3 +23,8 @@ Phase 2 WP3 extends `Modules/Audit` with focused query parsing, scope-aware keys
 - Phase 3 WP3 adds focused manual movement, Movement reversal, current-suffix Intake reversal, cost-state reconstruction and replacement-link services within `Modules/Inventory`; no alternate ledger or WAC engine exists.
 
 Phase 3 WP4 closes Product Catalog + Inventory as one Shop capability. `InventoryDiagnostics`/`inventory:diagnose` is operator-only, read-only and has no HTTP or Shop UI surface.
+
+
+## Phase 4 WP1
+
+`Modules/Reconciliation` owns Opening Cash commands/query and the caller-transaction CashControlGuard. `Modules/Sales/Application/CommercialDecimal` supplies only exact calculation primitives; no Sales posting is implemented. OpeningCashController maps transport; OpeningCashPanel is a runtime-rendered Vue component. See Phase-4 integration contracts and the Owner manual verification checklist.
