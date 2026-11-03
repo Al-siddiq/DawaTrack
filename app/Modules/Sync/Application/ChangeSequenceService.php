@@ -22,6 +22,7 @@ final class ChangeSequenceService
         'shop_brand_asset',
         'shop_domain',
         'subscription',
+        'customer',
         'product',
         'reconciliation_session',
         'stock_position',

@@ -66,3 +66,8 @@ Do not run both raw SQL and migrations. Financial counts precede sessions on rol
 Owner decision: PENDING. Record tested commit/environment, checklist results and any requested correction. WP2 remains unimplemented.
 
 The WP1 contract file records routine integration choices and highlights future decisions requiring review. In particular, the existing schema's normal SALE header/new-Receivable rule needs an explicit interpretation/amendment for compensating a credit Return into the existing Receivable. Return settlement/cost proposals also need review before WP4. This delivery does not invent accounting rules or imply owner approval of those proposals. Resolve each source-level ambiguity before its dependent implementation; independent Opening Cash is delivered for manual verification now.
+
+
+## Subsequent owner acceptance — 2026-11-03
+
+The owner reported all 15 checklist items working as expected and authorized WP2. See `docs/acceptance/2026-11-03-phase-04-wp1-owner-acceptance.md`. This dated update supersedes earlier pending-acceptance status, preserves historical engineering-check limitations and does not assert execution of additional unreported cases.

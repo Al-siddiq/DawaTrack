@@ -53,3 +53,7 @@ Phase 3 closure adds no transport or publication kind. Read filters, pagination 
 ## Phase 4 WP1 publisher
 
 `reconciliation_session` is an approved aggregate resource; each successful Opening transition publishes one UPSERT. Count confirmation captures active generation/cutoff sequence after existing domain locks and Audit, before its own notification. Review/finalization reject changed generation and preserve the original watermark. No transport, receipt, cursor or replay infrastructure is added.
+
+## Phase 4 WP2 resource extension
+
+Customer lifecycle publishes the approved Tenant-owned `customer` aggregate (`shop_id = null`) with public UUID: UPSERT for create/update, DEACTIVATE for deactivation. Refresh through the scoped Customer list/detail APIs applies the reader's current private-field permission. Publication is in the owning transaction after Customer mutation/Audit; failure rolls everything back. Draft Sale/basket/preparation/discard publishes no sync resource. No payment, Receivable, stock or reconciliation effect occurs. This does not enable a device transport, outbox or generic operation replay. See `docs/modules/phase-04-wp2.md`.

@@ -1,6 +1,6 @@
 # Phase 4 WP1 owner manual verification
 
-Status: checklist delivered; execution/acceptance pending owner report. Use a development MySQL 8.4 database, not production. Record tested commit, PHP/MySQL versions, hostname, role and observed result for each case. All cases begin UNEXECUTED; mark PASS / FAIL / BLOCKED yourself.
+Status update 2026-11-03: owner reported all 15 checklist items working and authorized WP2. See `acceptance/2026-11-03-phase-04-wp1-owner-acceptance.md` for exact provenance and the distinction from the additional S cases. Original execution instructions follow. Use a development MySQL 8.4 database, not production. Record tested commit, PHP/MySQL versions, hostname, role and observed result for each case. All cases begin UNEXECUTED; mark PASS / FAIL / BLOCKED yourself.
 
 ## Setup and migrations
 

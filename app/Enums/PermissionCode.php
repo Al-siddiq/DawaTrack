@@ -11,6 +11,11 @@ enum PermissionCode: string
     case ProductManage = 'product.manage';
     case InventoryIntake = 'inventory.intake';
     case InventoryReverse = 'inventory.reverse';
+    case CustomerView = 'customer.view';
+    case CustomerManage = 'customer.manage';
+    case CustomerPrivate = 'customer.private';
+    case SaleView = 'sale.view';
+    case SalePriceOverride = 'sale.price_override';
     case SaleRecord = 'sale.record';
     case SaleReverse = 'sale.reverse';
     case DebtManage = 'debt.manage';
