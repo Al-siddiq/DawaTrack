@@ -44,6 +44,10 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('shop/customers/(:segment)', 'Api\CustomerController::show/$1', ['filter' => 'authenticated']);
     $routes->put('shop/customers/(:segment)', 'Api\CustomerController::update/$1', ['filter' => 'authenticated']);
     $routes->post('shop/customers/(:segment)/deactivate', 'Api\CustomerController::deactivate/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/sales', 'Api\SaleController::index', ['filter' => 'authenticated']);
+    $routes->get('shop/sales/(:segment)', 'Api\SaleController::show/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/sales/(:segment)/post', 'Api\SaleController::post/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/sale-credit/(:segment)', 'Api\SaleController::receivable/$1', ['filter' => 'authenticated']);
     $routes->get('shop/sale-drafts', 'Api\SaleDraftController::index', ['filter' => 'authenticated']);
     $routes->post('shop/sale-drafts', 'Api\SaleDraftController::create', ['filter' => 'authenticated']);
     $routes->get('shop/sale-draft-lookups/products', 'Api\SaleDraftController::products', ['filter' => 'authenticated']);

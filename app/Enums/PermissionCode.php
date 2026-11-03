@@ -16,6 +16,7 @@ enum PermissionCode: string
     case CustomerPrivate = 'customer.private';
     case SaleView = 'sale.view';
     case SalePriceOverride = 'sale.price_override';
+    case SaleProfitView = 'sale.profit.view';
     case SaleRecord = 'sale.record';
     case SaleReverse = 'sale.reverse';
     case DebtManage = 'debt.manage';

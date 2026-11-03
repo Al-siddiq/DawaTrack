@@ -58,14 +58,39 @@ SQL, $scope),
 SELECT id movement_id,public_id movement_public_id,movement_type,source_kind,quantity_delta
 FROM stock_movements
 WHERE tenant_id=? AND shop_id=? AND (
- movement_type NOT IN ('OPENING','STOCK_INTAKE','DAMAGED','EXPIRED','OWNER_WITHDRAWAL','MISSING_LOSS','CORRECTION','REVERSAL')
- OR source_kind NOT IN ('INTAKE_ITEM','MANUAL','REVERSAL')
+ movement_type NOT IN ('OPENING','STOCK_INTAKE','DAMAGED','EXPIRED','OWNER_WITHDRAWAL','MISSING_LOSS','CORRECTION','REVERSAL','SALE','CUSTOMER_RETURN')
+ OR source_kind NOT IN ('INTAKE_ITEM','MANUAL','REVERSAL','SALE_ITEM')
  OR (movement_type IN ('OPENING','STOCK_INTAKE') AND (source_kind<>'INTAKE_ITEM' OR quantity_delta<=0))
  OR (movement_type IN ('DAMAGED','EXPIRED','OWNER_WITHDRAWAL','MISSING_LOSS') AND (source_kind<>'MANUAL' OR quantity_delta>=0))
  OR (movement_type='CORRECTION' AND source_kind<>'MANUAL')
  OR (movement_type='REVERSAL' AND source_kind<>'REVERSAL')
+ OR (movement_type='SALE' AND (source_kind<>'SALE_ITEM' OR quantity_delta>=0))
+ OR (movement_type='CUSTOMER_RETURN' AND (source_kind<>'SALE_ITEM' OR quantity_delta<=0))
+ OR (source_kind='SALE_ITEM' AND movement_type NOT IN ('SALE','CUSTOMER_RETURN'))
 )
 ORDER BY id LIMIT 100
+SQL, $scope),
+            'sale_source_integrity' => $this->rows(<<<'SQL'
+SELECT m.id movement_id,m.public_id movement_public_id
+FROM stock_movements m
+LEFT JOIN sale_items i ON i.tenant_id=m.tenant_id AND i.shop_id=m.shop_id AND i.id=m.sale_item_id
+LEFT JOIN sales s ON s.tenant_id=i.tenant_id AND s.shop_id=i.shop_id AND s.id=i.sale_id
+WHERE m.tenant_id=? AND m.shop_id=? AND m.source_kind='SALE_ITEM' AND (
+ i.id IS NULL OR s.id IS NULL OR s.status<>'POSTED' OR i.product_id<>m.product_id
+ OR m.unit_cost_basis<>i.unit_cost_snapshot
+ OR (m.movement_type='SALE' AND (s.kind<>'SALE' OR m.quantity_delta<>-i.quantity OR m.average_cost_before<>m.average_cost_after))
+ OR (m.movement_type='CUSTOMER_RETURN' AND (s.kind<>'RETURN' OR s.original_sale_id IS NULL OR i.original_sale_item_id IS NULL OR m.quantity_delta<>i.quantity))
+)
+ORDER BY m.id LIMIT 100
+SQL, $scope),
+            'sale_item_coverage' => $this->rows(<<<'SQL'
+SELECT i.id item_id,i.public_id item_public_id,s.public_id sale_public_id,COUNT(m.id) movement_count
+FROM sale_items i
+JOIN sales s ON s.tenant_id=i.tenant_id AND s.shop_id=i.shop_id AND s.id=i.sale_id
+LEFT JOIN stock_movements m ON m.tenant_id=i.tenant_id AND m.shop_id=i.shop_id AND m.sale_item_id=i.id AND m.source_kind='SALE_ITEM'
+WHERE i.tenant_id=? AND i.shop_id=? AND s.status='POSTED'
+GROUP BY i.id,i.public_id,s.public_id HAVING movement_count<>1
+ORDER BY i.id LIMIT 100
 SQL, $scope),
             'intake_item_coverage' => $this->rows(<<<'SQL'
 SELECT i.id item_id,i.public_id item_public_id,si.public_id intake_public_id,COUNT(m.id) movement_count

@@ -1,6 +1,6 @@
 # Phase 4 WP2 owner manual verification
 
-Status: **UNEXECUTED / acceptance pending**. Mark each case PASS / FAIL / BLOCKED with observed result. Record tested commit, PHP/MySQL versions, verified hostname and device/browser. The implementer's source/build checks do not prefill owner results.
+Status update 2026-11-03: **owner accepted WP2 and authorized WP3**. See `acceptance/2026-11-03-phase-04-wp2-owner-acceptance.md`. Historical per-case rows remain UNEXECUTED because no individual results were supplied; they are not silently filled as PASS. Original instructions follow. Mark each case PASS / FAIL / BLOCKED with observed result. Record tested commit, PHP/MySQL versions, verified hostname and device/browser. The implementer's source/build checks do not prefill owner results.
 
 ## Setup
 

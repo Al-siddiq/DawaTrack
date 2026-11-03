@@ -1,3 +1,4 @@
+import { SaleHistoryPanel } from '../components/sale-history-panel.js';
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
@@ -22,10 +23,10 @@ const {
 
 createApp({
     render,
-    components: { AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel },
+    components: { AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
-        const page = ref(location.hash.startsWith('#sale-draft') ? 'sale-drafts' : 'home');
+        const page = ref(location.hash.startsWith('#sale-draft') ? 'sale-drafts' : location.hash.startsWith('#sale/') || location.hash === '#sale-history' ? 'sale-history' : 'home');
         const loading = ref(true);
         const busy = ref(false);
         const error = ref('');
@@ -56,7 +57,8 @@ createApp({
             { id: 'home', label: 'Home', capability: null },
             { id: 'opening-cash', label: 'Opening Cash', capability: 'manage_opening_cash' },
             { id: 'customers', label: 'Customers', capability: 'view_customers' },
-            { id: 'sale-drafts', label: 'Sale drafts', capability: 'view_sale_drafts' },
+            { id: 'sale-drafts', label: 'Record Sale', capability: 'view_sale_drafts' },
+            { id: 'sale-history', label: 'Sale history', capability: 'view_sale_drafts' },
             { id: 'products', label: 'Products & stock', capability: 'view_inventory' },
             { id: 'intakes', label: 'Stock coming in', capability: 'view_inventory' },
             { id: 'staff', label: 'Staff', capability: 'manage_staff' },

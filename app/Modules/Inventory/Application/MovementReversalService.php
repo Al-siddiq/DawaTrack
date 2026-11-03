@@ -28,6 +28,7 @@ $this->database->transException(true)->transBegin();
 try{$original=$this->database->query('SELECT * FROM stock_movements WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$context->shopId,strtolower($originalPublicId)])->getRowArray();
 if(!$original)throw new ApiException('MOVEMENT_NOT_FOUND','The Stock Movement was not found.',404);
 if($original['movement_type']==='REVERSAL')throw new ApiException('REVERSAL_OF_REVERSAL_NOT_ALLOWED','Use a Correction instead of reversing a reversal.',409);
+if($original['source_kind']==='SALE_ITEM')throw new ApiException('COMMERCIAL_MOVEMENT_PROTECTED','Sale and Return stock evidence must be corrected through its commercial workflow.',409);
 if($original['source_kind']!=='MANUAL')throw new ApiException('MOVEMENT_REVERSAL_REQUIRES_INTAKE','Reverse Intake-sourced evidence through the whole Intake.',409);
 $existing=$this->database->table('stock_movements')->where('reversal_of_movement_id',$original['id'])->countAllResults();
 if($existing)throw new ApiException('MOVEMENT_ALREADY_REVERSED','This Stock Movement has already been reversed.',409);

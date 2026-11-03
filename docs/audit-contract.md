@@ -87,3 +87,7 @@ Closed vocabulary adds `reconciliation.opening_started`, `.opening_counted`, `.o
 ## Phase 4 WP2
 
 Customer lifecycle uses `customer.created`, `customer.updated`, `customer.deactivated`, category DEBT/resource `customer`. Metadata lists affected field names rather than phone/notes payloads. Fixed create/update reasons describe ordinary actions; deactivation requires an operator reason. Saved-draft discard is material: `sale.draft_discarded`, category SALE/resource `sale`, required reason, line count and estimated total. Ordinary draft create/edit/read and payment preview append no business evidence. Customer writes and discard Audit are atomic with their mutations; failed/rejected commands do not report successful events. The full contract is in `docs/modules/phase-04-wp2.md`.
+
+## Phase 4 WP3
+
+`sale.posted`, SALE category/resource sale, records one aggregate forward transaction with actor, fixed reason, total/paid/credit, line count, historical total COGS and unestablished-cost line count. Business FKs link immutable payments/Receivable and each Sale Item movement; correlation groups effects without replacing those relationships. Posting Audit and all changes commit with header/items/stock/payment/credit; any failure rolls back the entire command. Repeating the same posted UUID and read queries append no false success. Cost metadata is part of existing Owner/authorized Audit visibility, not a new Staff cost read route. See `docs/modules/phase-04-wp3.md`.
