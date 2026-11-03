@@ -53,3 +53,7 @@ Native PHP/MySQL 8.4 migration state/decimal/constraint behavior, real two-sessi
 ## Remaining phase boundary
 
 WP4 owns original-linked Returns, refunds/Receivable reductions, reversal/correction/replacement, commercial diagnostics and integrated Phase 4 closure. The recorded open credit-Return compensation interpretation requires an explicit decision before dependent WP4 code. WP3 implements ordinary forward Sales and does not resolve that by inventing a second Receivable or changing header rules. Phase 5 collections/statements, Phase 6 non-sale Financial Movements, Phase 7 full Reconciliation and Phase 10 device/offline transport remain outside this package.
+
+## Subsequent Windows setup report and fix — 2026-11-03
+
+The owner reported successful dependency setup, current migration registration and all four PHP contract scripts, but asset build failed because Windows CMD lacked `sh`; Sass warnings were non-fatal. The targeted follow-up replaces shell copying/cleanup with Node APIs and patches the three reproduced npm audit findings without a major/forced upgrade. See `docs/Phase-4/Phase_4_WP3_Windows_Build_Followup_20261103.md` for evidence, limitations, native Windows recheck and current checkout commands. WP3 functional acceptance remains pending.

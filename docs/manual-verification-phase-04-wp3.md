@@ -8,7 +8,7 @@ Use a backed-up disposable MySQL 8.4 development checkout with accepted WP1/WP2.
 
 ```bash
 git fetch origin
-git switch codex/phase-4-wp3-sale-posting-20261103
+git switch codex/wp3-windows-build-fix-20261103
 composer install
 npm ci
 npm run build
@@ -19,6 +19,8 @@ php tests/contracts/wp2.php
 php tests/contracts/wp3.php
 php tests/contracts/wp3-posting.php
 ```
+
+The current follow-up branch includes the Windows asset-build fix and targeted dependency patches. `npm run build` should end with `Frontend assets built.`; Sass deprecation warnings alone do not indicate failure. No Git Bash or separate `sh` installation is required. See `Phase-4/Phase_4_WP3_Windows_Build_Followup_20261103.md`.
 
 WP3 adds no migration. On a current checkout App migrate should have nothing pending. Do not execute raw SQL too. Contract scripts are optional engineering support. The posting script uses in-memory doubles; it does not replace native database checks.
 
