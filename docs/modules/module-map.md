@@ -36,3 +36,7 @@ CustomerDebt implements Tenant Customer lifecycle/safe queries; Sales implements
 ## Phase 4 WP3
 
 Sales owns forward posting, exact money composition, state/receipt/history queries and confirmation/recovery UI. Inventory's `SaleStockParticipant` owns Sale stock/cost/projection effects inside the caller's prelocked transaction. Historical cost state is reconstructed from existing immutable movement evidence; unknown bases are labeled provisional, with independent `sale.profit.view` masking. CustomerDebt schema holds the one optional Sale Receivable; collection remains Phase 5. WP3 adds no schema and activates no Return/reversal workflow. See [contract](phase-04-wp3.md), [delivery](../Phase-4/Phase_4_Work_Package_3_Delivery_Report.md) and [manual verification](../manual-verification-phase-04-wp3.md). WP2 is owner-accepted; WP3 acceptance and Phase 4 closure remain pending.
+
+## Phase 4 WP4 readiness
+
+WP3 owner acceptance was recorded on 2026-11-04. Sales now also exposes operator-only `sales:diagnose` with a scoped, owned read-only snapshot and bounded normal-evidence invariant samples. The explicit compensation-header/Return policy decision is prepared for review; dependent financial writers/UI remain unimplemented. This is not WP4 or Phase 4 completion. See [readiness](../Phase-4/Phase_4_WP4_Implementation_Readiness_and_Decision.md) and [proposed contract](../Phase-4/Phase_4_WP4_Proposed_Return_and_Compensation_Contract.md).

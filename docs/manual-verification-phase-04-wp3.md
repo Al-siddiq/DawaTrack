@@ -1,6 +1,6 @@
 # Phase 4 WP3 owner manual verification
 
-Status: **UNEXECUTED — owner acceptance pending**. Use PASS / FAIL / BLOCKED with observed results, tested SHA, PHP/MySQL versions, Shop hostname and browser/device. Focused engineering checks do not prefill these results.
+Status update 2026-11-04: **owner accepted WP3 and authorized WP4**. See `acceptance/2026-11-04-phase-04-wp3-owner-acceptance.md`. Historical per-case rows are preserved because individual results/environment evidence were not supplied. Original instructions follow. Use PASS / FAIL / BLOCKED with observed results, tested SHA, PHP/MySQL versions, Shop hostname and browser/device. Focused engineering checks do not prefill these results.
 
 ## Setup
 

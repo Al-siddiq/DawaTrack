@@ -57,3 +57,8 @@ WP4 owns original-linked Returns, refunds/Receivable reductions, reversal/correc
 ## Subsequent Windows setup report and fix — 2026-11-03
 
 The owner reported successful dependency setup, current migration registration and all four PHP contract scripts, but asset build failed because Windows CMD lacked `sh`; Sass warnings were non-fatal. The targeted follow-up replaces shell copying/cleanup with Node APIs and patches the three reproduced npm audit findings without a major/forced upgrade. See `docs/Phase-4/Phase_4_WP3_Windows_Build_Followup_20261103.md` for evidence, limitations, native Windows recheck and current checkout commands. WP3 functional acceptance remains pending.
+
+
+## Subsequent owner acceptance — 2026-11-04
+
+The owner stated “I have confirmed it and accepted. proceed to next Work package implementation”. See `docs/acceptance/2026-11-04-phase-04-wp3-owner-acceptance.md`. This dated decision supersedes historical pending-acceptance status without inventing per-case execution evidence. WP4 is authorized; its explicitly unresolved compensation/schema decision remains separate.

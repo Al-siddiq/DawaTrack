@@ -69,3 +69,7 @@ Seven ordered App migrations after WP1: `2026-11-03-100000` Customers, `100100` 
 ## Phase 4 WP3
 
 No migration or raw SQL is introduced. WP3 uses the six accepted commercial tables and deferred Sale Item FK from WP2. It replaces draft-only cost placeholders at the atomic DRAFT→POSTED transition. Posted Sales/payments/Receivables/stock evidence must be preserved; downgrading code is not permission to drop schema/history. Inspect migration status before deployment and do not run WP2 down migrations around posted references. See [WP3 delivery](../Phase-4/Phase_4_Work_Package_3_Delivery_Report.md).
+
+## Phase 4 WP4 readiness — pending decision
+
+No migration is applied or introduced by the readiness change. The [proposed Return/compensation contract](../Phase-4/Phase_4_WP4_Proposed_Return_and_Compensation_Contract.md) contains review-only SQL for an explicit `ck_sales_composition` amendment. It must not be copied into the database before the owner decision and a new paired forward migration/preflight/rollback guard. Existing WP2 migration artifacts remain unchanged.
