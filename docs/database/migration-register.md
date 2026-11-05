@@ -73,3 +73,8 @@ No migration or raw SQL is introduced. WP3 uses the six accepted commercial tabl
 ## Phase 4 WP4 readiness — pending decision
 
 No migration is applied or introduced by the readiness change. The [proposed Return/compensation contract](../Phase-4/Phase_4_WP4_Proposed_Return_and_Compensation_Contract.md) contains review-only SQL for an explicit `ck_sales_composition` amendment. It must not be copied into the database before the owner decision and a new paired forward migration/preflight/rollback guard. Existing WP2 migration artifacts remain unchanged.
+
+
+## Phase 4 WP4 — approved compensation composition amendment
+
+Owner approved the debt-first Return/refund, historical-cost provenance, linked compensation and dependency-protected reversal/replacement contract on 2026-11-05. WP4-A adds migration 2026-11-05-100000 AmendPhaseFourSaleCompensationComposition with paired SQL phase-04/20261105100000_amend_sale_compensation_composition.sql. It preflights unexpected ordinary SALE rows referencing original_sale_id, changes only ck_sales_composition, and refuses rollback while posted SALE-shaped compensation rows exist. No business evidence is rewritten. Native MySQL 8.4 execution is still required; do not apply on production based solely on static review. Return writers, reversal/replacement, UI/evidence and integrated acceptance remain outstanding.
