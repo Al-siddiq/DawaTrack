@@ -35,8 +35,10 @@ final class InventoryDecimal
     }
 
     /** @return array{quantity:string,average:string,state:string} */
-    public function incoming(string $quantity, string $average, string $state, string $incoming, string $cost): array
+    public function incoming(string $quantity, string $average, string $state, string $incoming, string $cost, bool $returnEra = false): array
     {
+        $wide=(string)$this->database->query('SELECT CAST(? AS DECIMAL(38,4))+CAST(? AS DECIMAL(38,4)) value',[$quantity,$incoming])->getRowArray()['value'];
+        if(!preg_match('/^-?(?:0|[1-9][0-9]{0,14})\.[0-9]{4}$/D',$wide))throw new ApiException('STOCK_QUANTITY_OVERFLOW','Incoming quantity exceeds Stock precision.',422);
         $row = $this->database->query(<<<'SQL'
 SELECT
  CAST(CAST(? AS DECIMAL(19,4))+CAST(? AS DECIMAL(19,4)) AS DECIMAL(19,4)) new_quantity,
@@ -49,6 +51,7 @@ SQL, [$quantity,$incoming,$quantity,$quantity,$average,$incoming,$cost,$quantity
         $newQuantity=(string)$row['new_quantity'];
         if ($this->compare($quantity,'0.0000') <= 0 && $this->compare($newQuantity,'0.0000') <= 0) $newState=$state==='UNESTABLISHED'?'UNESTABLISHED':'RETAINED';
         else $newState='VALID';
+        if($returnEra && $state==='UNESTABLISHED' && $this->compare($quantity,'0.0000')>0)$newState='UNESTABLISHED';
         return ['quantity'=>$newQuantity,'average'=>(string)$row['new_average'],'state'=>$newState];
     }
 

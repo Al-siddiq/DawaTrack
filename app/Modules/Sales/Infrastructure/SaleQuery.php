@@ -178,17 +178,7 @@ final class SaleQuery
                         "movement_internal_id",
                     ),
                 );
-                $productChain = $this->database
-                    ->query(
-                        "SELECT m.id,m.source_kind,m.quantity_after,m.reversal_of_movement_id,o.source_kind original_source_kind FROM stock_movements m LEFT JOIN stock_movements o ON o.tenant_id=m.tenant_id AND o.shop_id=m.shop_id AND o.id=m.reversal_of_movement_id WHERE m.tenant_id=? AND m.shop_id=? AND m.product_id=? AND m.id<=? ORDER BY m.id",
-                        [
-                            $context->tenantId,
-                            $context->shopId,
-                            $productId,
-                            $last,
-                        ],
-                    )
-                    ->getResultArray();
+                $productChain = (new \App\Modules\Inventory\Application\CommercialCostHistory($this->database))->chain($context->tenantId, $context->shopId, (int) $productId, (int) $last);
                 $states += (new CostStateReconstructor())->beforeStates(
                     $productChain,
                 );

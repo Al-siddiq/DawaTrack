@@ -27,6 +27,9 @@ namespace CodeIgniter\Database {
         }
         public function transBegin(): bool
         {
+            if ($this->fail === "begin") {
+                return false;
+            }
             $this->saved = unserialize(serialize($this->state));
             $this->transDepth = 1;
             return true;
@@ -144,6 +147,9 @@ namespace App\Modules\Identity\Application {
         public function __construct(private object $db, object $audit) {}
         public function allows(int $tenant, int $member, string $code): bool
         {
+            if (in_array($code, $this->db->deniedPermissions ?? [], true)) {
+                return false;
+            }
             return $code === "sale.price_override" ? $this->db->override : true;
         }
     }

@@ -50,7 +50,15 @@ final class CommercialAccess
         foreach ($permissions as $required) {
             $this->read($context, $required);
         }
-        $this->database->transException(true)->transBegin();
+        if ($this->database->transDepth !== 0) {
+            throw new \LogicException(
+                "Commercial mutations require an owning transaction.",
+            );
+        }
+        $this->database->transException(true);
+        if (!$this->database->transBegin()) {
+            throw new \RuntimeException("Commercial mutation could not start.");
+        }
         try {
             $this->database
                 ->query("SELECT id FROM tenants WHERE id=? FOR UPDATE", [

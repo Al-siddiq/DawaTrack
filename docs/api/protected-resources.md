@@ -15,3 +15,8 @@ Repeated commands return existing domain-specific `409` codes or the established
 ## Phase 4 WP3
 
 POST `/api/v1/shop/sales/{uuid}/post` is the explicit ordinary forward DRAFT→POSTED command. GET the same Sale resource for authoritative state/receipt after an uncertain result; existing POSTED retries produce no duplicate effects. No generic posted PATCH/PUT/DELETE is exposed. Actual payments are immutable receipt children; original credit is read through `/sale-credit/{uuid}`. Direct Inventory manual reversal cannot independently compensate Sale/Return stock. Full API, scope/permission and error/retry semantics: [WP3 contract](../modules/phase-04-wp3.md).
+
+
+## WP4-B — 2026-11-05
+
+WP4-B adds authenticated Return draft/list/detail/eligibility/estimate/preview/post/discard routes with current scope and CSRF. See [route/body/error contract](../modules/phase-04-wp4-b.md). No reversal/replacement command is exposed in B.

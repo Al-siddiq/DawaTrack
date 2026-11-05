@@ -28,6 +28,7 @@ final class AuditAction
         'customer.deactivated',
         'sale.draft_discarded',
         'sale.posted',
+        'sale.return_posted',
         'owner.created',
         'reconciliation.opening_started',
         'reconciliation.opening_counted',
