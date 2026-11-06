@@ -149,3 +149,28 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .sale-basket summary { padding: 1rem; font-size: 1.15rem; font-weight: 700; }
 .sale-checkout { position: sticky; bottom: 0; z-index: 3; box-shadow: 0 -.2rem 1rem #0002; max-height: 80vh; overflow-y: auto; }
 @media print { .sale-checkout { position: static; box-shadow: none; max-height: none; } }
+
+/* A total must never obscure the active editor. Pin only the compact confirmation action. */
+.sale-sticky-total { position: static; }
+.sale-checkout { position: static; max-height: none; overflow: visible; box-shadow: none; }
+.sale-confirm-action { position: sticky; bottom: 0; padding-block: .65rem; background: #fff; z-index: 3; }
+.commercial-workspace h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-block: 1rem; }
+.commercial-workspace h2 { font-size: 1.45rem; }
+.commercial-workspace h3 { font-size: 1.15rem; }
+.commercial-workspace .commercial-field label { color: #243d34; }
+.cashier-product-form { max-width: none; }
+.cashier-search-hint { font-size: .95rem; }
+.return-line { padding-block: .75rem; border-bottom: 1px solid #d6e0db; }
+@media (min-width: 64rem) {
+ .cashier-product-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ .cashier-product-form h2, .cashier-product-form .cashier-search-hint { grid-column: 1 / -1; }
+}
+@media print { .sale-confirm-action { position: static; } }
+
+@media print {
+ body.printing-commercial-receipt > * { display: none !important; }
+ body.printing-commercial-receipt > #commercial-print-receipt { display: block !important; position: static; inset: auto; width: 100%; visibility: visible; box-shadow: none; }
+ #commercial-print-receipt * { visibility: visible; }
+ #commercial-print-receipt a { display: none; }
+ #commercial-print-receipt section { break-inside: avoid; }
+}

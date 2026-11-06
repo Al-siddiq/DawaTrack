@@ -17,6 +17,7 @@ const {
     reactive,
     computed,
     onMounted,
+    onUnmounted,
     nextTick,
     watch
 } = window.Vue;
@@ -292,7 +293,9 @@ createApp({
         async function rotateDomain(domain) { try { const response=await run(()=>phaseOneApi.rotateDomain(domain.public_id),'DNS challenge rotated.',loadDomains);Object.assign(dnsChallenge,response.data); } catch (_) {} }
         async function verifyDomain(domain) { try { await run(()=>phaseOneApi.verifyDomain(domain.public_id),'Domain ownership verified.',loadDomains); } catch (_) {} }
 
-        onMounted(load);
+        const navigateHash = () => { if (location.hash.startsWith('#sale-draft')) page.value = 'sale-drafts'; else if (location.hash.startsWith('#sale/') || location.hash === '#sale-history') page.value = 'sale-history'; };
+        onMounted(() => { load(); window.addEventListener('hashchange', navigateHash); });
+        onUnmounted(() => window.removeEventListener('hashchange', navigateHash));
         return {
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
             domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,

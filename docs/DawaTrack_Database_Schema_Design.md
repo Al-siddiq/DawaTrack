@@ -1340,3 +1340,10 @@ This review also confirms gross-profit history survives Product changes, cash ba
 No architectural open issues remain. v1.1 incorporates the approved decisions: negative-to-positive WAC reset, non-unique Product names, configurable retention with no Phase 1 automatic purge, mandatory Opening Cash control, and use of the pinned Shield schema. The custom-domain deferral is expressly superseded by mandatory Phase 1 white-label support.
 
 Until this database blueprint is approved, no migrations, models, services, controllers, UI, tests or strategic implementation roadmap should be produced.
+
+
+## Owner-approved Phase 4 compensation amendment — implemented 2026-11-05, integrated 2026-11-06
+
+The approved WP4 contract distinguishes ordinary new Sales from linked compensation. Both opposite-kind POSTED compensation shapes have NULL new-Sale received/credit-created snapshots; original Sale/Return composition rules remain intact. Header reversal_of_sale_id points to the immediate ordinary source; original_sale_id points to root original Sale. Compensation line.original_sale_item_id points to the immediately compensated line. Physical effect is a REVERSAL Stock Movement linked to the original movement, with sale_item_id NULL. Payment reversal links identify exact inverse actual Cash/Transfer effects. Sale cancellation uses CORRECTION_DECREASE; Return compensation uses positive REVERSAL on the SAME Receivable, never new credit. Replacement is a linked effect-free draft until separately posted.
+
+The ordered App amendment is 2026-11-05-100000_AmendPhaseFourSaleCompensationComposition; prior migrations remain unchanged. Its preflight and used-compensation downgrade guard preserve evidence. The complete approved financial/dependency/provenance rules remain in docs/Phase-4/Phase_4_WP4_Approved_Return_and_Compensation_Contract.md and the detailed proposal it incorporates. D adds no schema. Native migration/constraint/concurrency acceptance remains pending, as recorded in the integrated closure status.

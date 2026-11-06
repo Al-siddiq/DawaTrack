@@ -21,7 +21,7 @@ final class SaleDraftQuery
         $builder = $this->database
             ->table("sales s")
             ->select(
-                "s.public_id,s.status,s.total_amount,s.created_at,s.updated_at,c.display_name customer_name",
+                "s.public_id,s.kind,s.status,s.total_amount,s.created_at,s.updated_at,c.display_name customer_name",
             )
             ->join(
                 "customers c",
@@ -55,7 +55,7 @@ final class SaleDraftQuery
         $row = $this->database
             ->table("sales s")
             ->select(
-                "s.id,s.public_id,s.status,s.occurred_at,s.device_local_offset_minutes,s.total_amount,s.created_at,s.updated_at,c.public_id customer_public_id,c.display_name customer_name,c.status customer_status",
+                "s.id,s.public_id,s.kind,s.status,s.occurred_at,s.device_local_offset_minutes,s.total_amount,s.created_at,s.updated_at,c.public_id customer_public_id,c.display_name customer_name,c.status customer_status",
             )
             ->join(
                 "customers c",
