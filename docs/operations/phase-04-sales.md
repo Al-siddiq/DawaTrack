@@ -22,3 +22,8 @@ Posted financial evidence constrains rollback: preserve database/history and for
 ## WP4-B — 2026-11-05
 
 WP4-B is an authenticated API increment; use [manual/native steps](../manual-verification-phase-04-wp4-b.md). Return quantities reference the original posted Sale, reduce its existing debt first and refund only the remainder within original channels. Cash needs finalized Opening Cash. On uncertain response retrieve GET /api/v1/shop/returns/{sameUUID}; do not create another Return. Operator screens and protected reversal/replacement remain C/D.
+
+
+## WP4-C — 2026-11-06
+
+Use [C manual/native steps](../manual-verification-phase-04-wp4-c.md) for backend correction. Preview exact inverse effects; dependency denial is a protected outcome requiring investigation of linked evidence. Confirm once with permanent UUID/reason. On response loss retrieve source correction-state then compensation detail. Prepare replacement only after source reversal and post separately. Do not disable constraints/delete evidence to bypass A downgrade guards. Browser correction screens remain D.

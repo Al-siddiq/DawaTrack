@@ -45,6 +45,7 @@ final class SaleQuery
                 "s.tenant_id" => $context->tenantId,
                 "s.shop_id" => $context->shopId,
                 "s.kind" => "SALE",
+                "s.reversal_of_sale_id" => null,
                 "s.status" => "POSTED",
             ]);
         if ($search !== null) {
@@ -87,6 +88,7 @@ final class SaleQuery
                 "shop_id" => $context->shopId,
                 "public_id" => $id,
                 "kind" => "SALE",
+                "reversal_of_sale_id" => null,
             ])
             ->get()
             ->getRowArray();
@@ -123,6 +125,7 @@ final class SaleQuery
                 "s.shop_id" => $context->shopId,
                 "s.public_id" => $id,
                 "s.kind" => "SALE",
+                "s.reversal_of_sale_id" => null,
                 "s.status" => "POSTED",
             ])
             ->get()
@@ -259,6 +262,7 @@ final class SaleQuery
                 "r.public_id" => DraftInput::uuid($id),
                 "s.status" => "POSTED",
                 "s.kind" => "SALE",
+                "s.reversal_of_sale_id" => null,
             ])
             ->get()
             ->getRowArray();

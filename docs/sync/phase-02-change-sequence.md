@@ -66,3 +66,8 @@ Approved new resources are `sale` (Sale UUID; lines/actual receipt payments are 
 ## WP4-B — 2026-11-05
 
 Posted normal Return refresh publishes original Sale + Return, movement UUIDs, logical Product position UUIDs, original Receivable and relevant Customer context last in the same transaction after Audit. Drafts reserve/publish no financial effects. Same-identity GET recovery handles uncertain responses; offline business replay remains unavailable.
+
+
+## WP4-C — 2026-11-06
+
+Commercial compensation publishes new/source/root Sale identities, inverse Stock Movements, logical Product positions, original Receivable and Customer context after Audit in one transaction. Replacement preparation has no financial changes; replacement posting refreshes its linked source too. GET correction-state resolves uncertain outcomes without offline replay.

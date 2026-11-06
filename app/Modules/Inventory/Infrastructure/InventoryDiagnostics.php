@@ -88,8 +88,18 @@ SELECT i.id item_id,i.public_id item_public_id,s.public_id sale_public_id,COUNT(
 FROM sale_items i
 JOIN sales s ON s.tenant_id=i.tenant_id AND s.shop_id=i.shop_id AND s.id=i.sale_id
 LEFT JOIN stock_movements m ON m.tenant_id=i.tenant_id AND m.shop_id=i.shop_id AND m.sale_item_id=i.id AND m.source_kind='SALE_ITEM'
-WHERE i.tenant_id=? AND i.shop_id=? AND s.status='POSTED'
+WHERE i.tenant_id=? AND i.shop_id=? AND s.status='POSTED' AND s.reversal_of_sale_id IS NULL
 GROUP BY i.id,i.public_id,s.public_id HAVING movement_count<>1
+ORDER BY i.id LIMIT 100
+SQL, $scope),
+            'compensation_item_coverage' => $this->rows(<<<'SQL'
+SELECT i.id item_id,i.public_id item_public_id,c.public_id compensation_public_id,COUNT(reversed.id) movement_count
+FROM sale_items i JOIN sales c ON c.tenant_id=i.tenant_id AND c.shop_id=i.shop_id AND c.id=i.sale_id
+LEFT JOIN sale_items original ON original.tenant_id=i.tenant_id AND original.shop_id=i.shop_id AND original.id=i.original_sale_item_id AND original.sale_id=c.reversal_of_sale_id
+LEFT JOIN stock_movements m ON m.tenant_id=i.tenant_id AND m.shop_id=i.shop_id AND m.sale_item_id=original.id AND m.source_kind='SALE_ITEM'
+LEFT JOIN stock_movements reversed ON reversed.tenant_id=m.tenant_id AND reversed.shop_id=m.shop_id AND reversed.reversal_of_movement_id=m.id AND reversed.source_kind='REVERSAL'
+WHERE i.tenant_id=? AND i.shop_id=? AND c.status='POSTED' AND c.reversal_of_sale_id IS NOT NULL
+GROUP BY i.id,i.public_id,c.public_id HAVING movement_count<>1
 ORDER BY i.id LIMIT 100
 SQL, $scope),
             'intake_item_coverage' => $this->rows(<<<'SQL'

@@ -20,3 +20,8 @@ POST `/api/v1/shop/sales/{uuid}/post` is the explicit ordinary forward DRAFT→P
 ## WP4-B — 2026-11-05
 
 WP4-B adds authenticated Return draft/list/detail/eligibility/estimate/preview/post/discard routes with current scope and CSRF. See [route/body/error contract](../modules/phase-04-wp4-b.md). No reversal/replacement command is exposed in B.
+
+
+## WP4-C — 2026-11-06
+
+WP4-C adds five authenticated correction preview/post/replacement/state/compensation-detail routes. Both POST kinds require sale.view + sale.reverse; ordinary replacement posting keeps independent sale.record or sale.return authority. Explicit compensation reads avoid masquerading as new Sale credit. See [C contract](../modules/phase-04-wp4-c.md).

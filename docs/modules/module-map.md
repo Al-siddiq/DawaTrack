@@ -45,3 +45,8 @@ WP3 owner acceptance was recorded on 2026-11-04. Sales now also exposes operator
 ## WP4-B — 2026-11-05
 
 Sales now owns original-linked Return draft/settlement/post orchestration; Inventory owns incoming Return stock/cost/provenance. See [WP4-B](phase-04-wp4-b.md). Correction writers and operator UI remain later increments.
+
+
+## WP4-C — 2026-11-06
+
+CommercialReversalService coordinates ordinary Sale/Return compensation and linked replacement; Inventory exclusively restores exact eligible before-state. CommercialCorrectionQuery supplies explicit safe compensation graph and recovery reads. See [WP4-C](phase-04-wp4-c.md).

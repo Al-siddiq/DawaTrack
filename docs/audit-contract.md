@@ -96,3 +96,8 @@ Customer lifecycle uses `customer.created`, `customer.updated`, `customer.deacti
 ## WP4-B — 2026-11-05
 
 `sale.return_posted` is an aggregate SALE/sale action with required reason, original Sale public identity, Return value, refund and debt-reduction totals. Return draft discard reuses sale.draft_discarded with kind RETURN. Posting Audit failure rolls back stock/money/debt/header/change effects. Draft create/save has no financial effects.
+
+
+## WP4-C — 2026-11-06
+
+sale.reversed and sale.replacement_prepared are reasoned aggregate SALE/sale actions with scoped source/root identity. Compensation Audit/publication failures roll back the inverse stock/money/debt operation. Replacement preparation is reasoned draft Audit only; financial effects require separate posting.
