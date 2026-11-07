@@ -55,3 +55,8 @@ Executed: npm dependency installation and frontend build; PHP syntax checking th
 Native PHP/MySQL 8.4 migration execution, exact MySQL arithmetic at runtime, database constraints, concurrency/rollback failure injection, actual authenticated HTTP/CSRF flows and real browser layout/accessibility require development-checkout verification. They are not reported as PASS. Use `docs/manual-verification-phase-04-wp2.md` and record PASS/FAIL/BLOCKED yourself. No owner acceptance is inferred from engineering checks.
 
 No critical defect is known from these checks; runtime verification remains outstanding. WP3 owns authoritative posting/Inventory participant/payments/Receivables/immutable receipts/history. WP4 retains the explicit open compensation interpretation decision from WP1; normal header constraints are not silently relaxed to invent a credit-Return reversal. Phase 4 remains incomplete until all packages and integrated owner acceptance are complete.
+
+
+## Subsequent owner acceptance — 2026-11-03
+
+The owner stated “accepted. proceed to next Work package implementation”. See `docs/acceptance/2026-11-03-phase-04-wp2-owner-acceptance.md`. This dated decision supersedes the historical pending-acceptance status without asserting unreported per-case/environment evidence. WP3 is authorized; WP4 decisions remain separate.

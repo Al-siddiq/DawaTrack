@@ -32,3 +32,7 @@ Phase 3 WP4 closes Product Catalog + Inventory as one Shop capability. `Inventor
 ## Phase 4 WP2
 
 CustomerDebt implements Tenant Customer lifecycle/safe queries; Sales implements strict commercial input and current-Shop normal Sale drafts/estimates. Shared CommercialAccess enforces scope authority, FULL mutation access and root lock ordering. Controllers expose only Customer and draft/lookup/preview commands; Inventory remains authoritative for future posted stock/cost effects. See [WP2 contract](phase-04-wp2.md), [delivery](../Phase-4/Phase_4_Work_Package_2_Delivery_Report.md), and [manual acceptance](../manual-verification-phase-04-wp2.md). WP1 is owner-accepted; WP2 acceptance is pending; Phase 4 remains incomplete.
+
+## Phase 4 WP3
+
+Sales owns forward posting, exact money composition, state/receipt/history queries and confirmation/recovery UI. Inventory's `SaleStockParticipant` owns Sale stock/cost/projection effects inside the caller's prelocked transaction. Historical cost state is reconstructed from existing immutable movement evidence; unknown bases are labeled provisional, with independent `sale.profit.view` masking. CustomerDebt schema holds the one optional Sale Receivable; collection remains Phase 5. WP3 adds no schema and activates no Return/reversal workflow. See [contract](phase-04-wp3.md), [delivery](../Phase-4/Phase_4_Work_Package_3_Delivery_Report.md) and [manual verification](../manual-verification-phase-04-wp3.md). WP2 is owner-accepted; WP3 acceptance and Phase 4 closure remain pending.

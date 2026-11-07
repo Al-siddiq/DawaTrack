@@ -1,3 +1,4 @@
+import { SaleReceipt } from './sale-receipt.js';
 import { apiRequest } from '../api/http-client.js';
 import { has, money, get, send, field, action, submit, feedback, message, pager } from './commercial-ui.js';
 const { h, ref, reactive, computed, onMounted, onUnmounted, nextTick } = window.Vue;
@@ -10,6 +11,7 @@ const localTime = utc => {
 export const SaleDraftPanel = {
     props: { permissions: { type: Array, default: () => [] }, readOnly: { type: Boolean, default: true } },
     setup(props) {
+        const receipt = ref(null), uncertain = ref(false), confirmed = ref(false);
         const rows = ref([]), draft = ref(null), pending = ref(false), error = ref(''), notice = ref(''), online = ref(navigator.onLine), preview = ref(null), heading = ref(null);
         const pagination = reactive({ page: 1, per_page: 20, total: 0, total_pages: 0 });
         const products = ref([]), customers = ref([]), productSearch = ref(''), customerSearch = ref('');
@@ -20,11 +22,12 @@ export const SaleDraftPanel = {
         const record = computed(() => has(props.permissions, 'sale.record') && has(props.permissions, 'sale.view'));
         const override = computed(() => has(props.permissions, 'sale.price_override'));
         const quickCreate = computed(() => has(props.permissions, 'customer.manage') && has(props.permissions, 'customer.view'));
-        const disabled = computed(() => pending.value || props.readOnly || !online.value || !record.value);
+        const unsaved = computed(() => !!draft.value && (header.customer_public_id !== (draft.value.customer_public_id ?? '') || header.occurred_at !== localTime(draft.value.occurred_at) || line.product_public_id !== ''));
+        const disabled = computed(() => pending.value || uncertain.value || props.readOnly || !online.value || !record.value);
         const connection = () => { online.value = navigator.onLine; };
         function resetLine() { Object.assign(line, { public_id: '', retry_id: crypto.randomUUID(), product_public_id: '', quantity: '1', unit_selling_price: '', line_number: '' }); }
         function setDraft(value) {
-            draft.value = value; preview.value = null;
+            draft.value = value; preview.value = null; confirmed.value = false;
             Object.assign(header, { customer_public_id: value.customer_public_id ?? '', occurred_at: localTime(value.occurred_at) });
         }
         async function run(operation) {
@@ -44,7 +47,10 @@ export const SaleDraftPanel = {
         }
         async function open(id) {
             await run(async () => {
-                setDraft(await get(`${base}/${id}`)); resetLine();
+                const value = await get(`/api/v1/shop/sales/${id}`);
+                uncertain.value = false;
+                if (value.status === 'POSTED') { receipt.value = value; history.replaceState(null, '', `#sale/${value.public_id}`); return; }
+                setDraft(value); resetLine();
                 Object.assign(payment, { cash_amount: '0.00', transfer_amount: '0.00', due_date: '' });
                 history.replaceState(null, '', `#sale-draft/${draft.value.public_id}`);
                 if (record.value && online.value) { await loadLookup('products'); await loadLookup('customers'); }
@@ -102,9 +108,23 @@ export const SaleDraftPanel = {
             });
         }
         async function review(event) {
-            event.preventDefault(); if (disabled.value) return;
-            preview.value = null;
+            event.preventDefault(); if (disabled.value || unsaved.value) return;
+            preview.value = null; confirmed.value = false;
             await run(async () => { preview.value = await send(`${base}/${draft.value.public_id}/preview`, 'POST', { cash_amount: payment.cash_amount, transfer_amount: payment.transfer_amount, due_date: payment.due_date || null, expected_updated_at: draft.value.updated_at }); });
+        }
+        async function post() {
+            if (disabled.value || unsaved.value || !preview.value || !confirmed.value) return;
+            const reviewed = preview.value;
+            await run(async () => {
+                try {
+                    const value = await send(`/api/v1/shop/sales/${draft.value.public_id}/post`, 'POST', { expected_updated_at: reviewed.draft_updated_at, cash_amount: reviewed.cash_amount, transfer_amount: reviewed.transfer_amount, due_date: reviewed.due_date });
+                    receipt.value = value; preview.value = null; history.replaceState(null, '', `#sale/${value.public_id}`);
+                    await nextTick(); heading.value?.focus();
+                } catch (e) {
+                    if (e.status === 0 || e.status >= 500 || e.status === 403 || e.status === 404) uncertain.value = true;
+                    preview.value = null; confirmed.value = false; throw e;
+                }
+            });
         }
         async function discard(event) {
             event.preventDefault(); if (disabled.value) return;
@@ -120,32 +140,35 @@ export const SaleDraftPanel = {
         onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
         const select = (id, label, value, update, options) => h('div', { class: 'commercial-field' }, [h('label', { for: id }, label), h('select', { id, class: 'form-select', value, disabled: disabled.value, onChange: event => update(event.target.value) }, options)]);
         return () => h('section', { class: 'workspace commercial-workspace', 'aria-busy': pending.value }, [
-            h('h1', { ref: heading, tabindex: '-1' }, 'Sale drafts'), h('p', 'Prepare an online basket. Totals are estimates. Posting, stock deductions, payment receipts and credit creation arrive in WP3.'),
+            h('h1', { ref: heading, tabindex: '-1' }, receipt.value ? 'Posted Sale' : 'Sale drafts'), h('p', 'Prepare an online basket, review payment and credit, then confirm the permanent Sale.'),
             !online.value && h('p', { class: 'alert alert-warning' }, 'You are offline. Changes are disabled and are not queued.'),
             props.readOnly && h('p', { class: 'alert alert-warning' }, 'Your current access permits viewing only.'),
             ...feedback(error.value, notice.value), pending.value && h('p', { role: 'status' }, 'Please wait…'),
-            !draft.value ? h('section', [
+            receipt.value ? h('section', [h(SaleReceipt, { sale: receipt.value, permissions: props.permissions }), action('Start another Sale', () => { receipt.value = null; draft.value = null; preview.value = null; resetLine(); history.replaceState(null, '', '#sale-drafts'); load(); }, pending.value || !online.value)]) : !draft.value ? h('section', [
                 record.value && action('Create Sale draft', create, disabled.value, 'btn-primary'), action('Refresh drafts', () => load(), pending.value || !online.value),
                 !rows.value.length && !pending.value && h('p', 'No saved Sale drafts.'),
                 ...rows.value.map(row => h('article', { class: 'commercial-card', key: row.public_id }, [h('h2', row.customer_name ?? 'Walk-in Customer'), h('p', `Estimate: ${money(row.total_amount)}`), h('p', `Saved: ${row.updated_at} UTC`), action('Open draft', () => open(row.public_id), pending.value || !online.value)])), pager(pagination, pending.value || !online.value, load),
             ].filter(Boolean)) : h('section', [
-                h('p', { class: 'break-all' }, `Draft reference: ${draft.value.public_id}`), h('p', `Estimate: ${money(draft.value.total_amount)} · ${draft.value.customer_name ?? 'Walk-in Customer'}`),
+                h('p', { class: 'break-all' }, `Draft reference: ${draft.value.public_id}`), h('p', { class: 'sale-sticky-total' }, `Estimate: ${money(draft.value.total_amount)} · ${draft.value.customer_name ?? 'Walk-in Customer'}`),
                 h('p', `Business time: ${draft.value.occurred_at} UTC`),
-                action('Back to drafts', back, pending.value), action('Reload saved draft', () => open(draft.value.public_id), pending.value || !online.value),
+                action('Back to drafts', back, pending.value || uncertain.value), action('Reload saved draft', () => open(draft.value.public_id), pending.value || !online.value),
                 h('p', 'Reload restores the saved basket, Customer and business time. Unsaved edits, cash/transfer preparation and due date reset.'),
                 record.value && h('form', { class: 'commercial-form', onSubmit: saveHeader }, [
                     h('h2', 'Draft details'),
                     field('sale-customer-search', 'Search active Customers by name', customerSearch.value, value => { customerSearch.value = value; }, { disabled: disabled.value, type: 'search', maxlength: 160 }),
                     action('Find Customers', () => run(() => loadLookup('customers')), disabled.value),
-                    select('sale-customer', 'Customer (optional for a fully paid Sale)', header.customer_public_id, value => { header.customer_public_id = value; preview.value = null; }, [h('option', { value: '' }, 'Walk-in / no Customer'),
+                    select('sale-customer', 'Customer (optional for a fully paid Sale)', header.customer_public_id, value => { header.customer_public_id = value; preview.value = null; confirmed.value = false; }, [h('option', { value: '' }, 'Walk-in / no Customer'),
                         draft.value.customer_public_id && !customers.value.some(c => c.public_id === draft.value.customer_public_id) && h('option', { value: draft.value.customer_public_id }, `${draft.value.customer_name} (${draft.value.customer_status})`),
                         ...customers.value.map(customer => h('option', { value: customer.public_id }, customer.display_name))].filter(Boolean)),
                     draft.value.customer_status === 'INACTIVE' && h('p', { class: 'alert alert-warning' }, 'This Customer is inactive. Choose an active Customer or clear the selection before saving.'),
-                    field('sale-occurred', 'Business time (this device’s timezone)', header.occurred_at, value => { header.occurred_at = value; preview.value = null; }, { type: 'datetime-local', step: '1', required: true, disabled: disabled.value }), submit('Save draft details', disabled.value),
+                    field('sale-occurred', 'Business time (this device’s timezone)', header.occurred_at, value => { header.occurred_at = value; preview.value = null; confirmed.value = false; }, { type: 'datetime-local', step: '1', required: true, disabled: disabled.value }), submit('Save draft details', disabled.value),
                 ].filter(Boolean)),
                 quickCreate.value && record.value && h('details', { class: 'commercial-card' }, [h('summary', 'Quick-create Customer'), h('form', { onSubmit: createCustomer }, [field('sale-quick-name', 'New Customer name', quickName.value, value => { quickName.value = value; }, { required: true, maxlength: 160, disabled: disabled.value }), h('p', 'Creates a Customer identity only. Private details can be added in Customers with permission.'), submit('Create Customer', disabled.value)])]),
+                uncertain.value && h('section', { class: 'alert alert-warning', role: 'alert' }, [h('h2', 'Check the Sale outcome'), h('p', 'The posting response was lost or failed. This Sale may already be posted. Check its saved state before any further changes.'), action('Check Sale status', () => open(draft.value.public_id), pending.value || !online.value)]),
                 h('h2', 'Basket'), !draft.value.items.length && h('p', 'No Products in this draft.'),
-                ...draft.value.items.map(item => h('article', { class: 'commercial-card', key: item.public_id }, [h('h3', `${item.line_number}. ${item.product_name}`), h('p', `${item.quantity} ${item.unit_name} × ${money(item.unit_selling_price)} = ${money(item.line_sales_amount)}`), item.product_status !== 'ACTIVE' && h('p', { class: 'alert alert-warning' }, 'Inactive Product: remove or replace this line.'), item.current_selling_price !== item.unit_selling_price && h('p', 'The current Product price differs from this saved quote. Editing without override permission uses the current price.'), record.value && action('Edit line', () => edit(item), disabled.value), record.value && action('Remove line', () => mutate(`/items/${item.public_id}`, 'DELETE', {}, resetLine), disabled.value, 'btn-outline-danger')].filter(Boolean))),
+                h('details', { open: true, class: 'sale-basket' }, [h('summary', `Basket: ${draft.value.items.length} lines`),
+                ...draft.value.items.map(item => h('article', { class: 'commercial-card', key: item.public_id }, [h('h3', `${item.line_number}. ${item.product_name}`), h('p', `${item.quantity} ${item.unit_name} × ${money(item.unit_selling_price)} = ${money(item.line_sales_amount)}`), item.product_status !== 'ACTIVE' && h('p', { class: 'alert alert-warning' }, 'Inactive Product: remove or replace this line.'), item.current_selling_price !== item.unit_selling_price && h('p', 'The current Product price differs from this saved quote. Editing without override permission uses the current price.'), record.value && action('Edit line', () => edit(item), disabled.value), record.value && action('Remove line', () => mutate(`/items/${item.public_id}`, 'DELETE', {}, resetLine), disabled.value, 'btn-outline-danger')].filter(Boolean)))
+                ]),
                 record.value && h('form', { class: 'commercial-form', onSubmit: saveLine }, [
                     h('h2', line.public_id ? 'Edit basket line' : 'Add Product'),
                     field('sale-product-search', 'Search active Products', productSearch.value, value => { productSearch.value = value; }, { type: 'search', disabled: disabled.value, maxlength: 160 }), action('Find Products', () => run(() => loadLookup('products')), disabled.value),
@@ -153,13 +176,13 @@ export const SaleDraftPanel = {
                     field('sale-quantity', 'Quantity (up to 4 decimal places)', line.quantity, value => { line.quantity = value; }, { inputmode: 'decimal', required: true, disabled: disabled.value, maxlength: 20 }),
                     field('sale-price', override.value ? 'Selling price per unit (₦)' : 'Quoted price per unit (₦; current price used on save)', line.unit_selling_price, value => { line.unit_selling_price = value; }, { inputmode: 'decimal', required: true, disabled: disabled.value || !override.value, maxlength: 20 }),
                     field('sale-line-order', 'Line order (optional when adding)', line.line_number, value => { line.line_number = value; }, { type: 'number', min: 1, max: 65535, disabled: disabled.value }),
-                    submit(line.public_id ? 'Save line' : 'Add line', disabled.value || !line.product_public_id), line.public_id && action('Cancel line edit', resetLine, pending.value),
+                    submit(line.public_id ? 'Save line' : 'Add line', disabled.value || !line.product_public_id), line.product_public_id && action(line.public_id ? 'Cancel line edit' : 'Clear unsaved line', resetLine, pending.value),
                 ].filter(Boolean)),
                 record.value && h('form', { class: 'commercial-form', onSubmit: review }, [
-                    h('h2', 'Payment and credit preparation'), h('p', 'Save all basket and Customer edits first. These payment amounts and due date are temporary, reset on reload, and create no financial records.'),
-                    ...[['cash_amount', 'Prepared cash (₦)'], ['transfer_amount', 'Prepared transfer (₦)'], ['due_date', 'Credit due date (optional; Shop calendar date)']].map(([key, label]) => field(`sale-${key}`, label, payment[key], value => { payment[key] = value; preview.value = null; }, { disabled: disabled.value, type: key === 'due_date' ? 'date' : 'text', inputmode: key === 'due_date' ? undefined : 'decimal', maxlength: key === 'due_date' ? undefined : 20 })), submit('Review preparation', disabled.value || !draft.value.items.length),
+                    h('h2', 'Payment and credit preparation'), h('p', 'Save all basket and Customer edits first. Preparation resets on reload. Confirming the Sale creates permanent stock, payment and credit evidence. Cash requires finalized Opening Cash.'),
+                    ...[['cash_amount', 'Prepared cash (₦)'], ['transfer_amount', 'Prepared transfer (₦)'], ['due_date', 'Credit due date (optional; Shop calendar date)']].map(([key, label]) => field(`sale-${key}`, label, payment[key], value => { payment[key] = value; preview.value = null; confirmed.value = false; }, { disabled: disabled.value, type: key === 'due_date' ? 'date' : 'text', inputmode: key === 'due_date' ? undefined : 'decimal', maxlength: key === 'due_date' ? undefined : 20 })), unsaved.value && h('p', { class: 'alert alert-warning' }, 'Save or cancel unsaved draft details and basket lines before reviewing.'), submit('Review preparation', disabled.value || unsaved.value || !draft.value.items.length),
                 ]),
-                preview.value && h('section', { class: 'commercial-card', role: 'status' }, [h('h2', 'Preparation estimate'), h('dl', [['Total', preview.value.total_amount], ['Cash', preview.value.cash_amount], ['Transfer', preview.value.transfer_amount], ['Paid', preview.value.paid_amount], ['Credit', preview.value.credit_amount]].flatMap(([label, value]) => [h('dt', label), h('dd', money(value))])), h('p', `Due date: ${preview.value.due_date ?? 'Not specified'}`), h('p', `Based on saved draft version ${preview.value.draft_updated_at}. No payment or Receivable was saved.`)]),
+                preview.value && h('section', { class: 'commercial-card sale-checkout', role: 'status' }, [h('h2', 'Preparation estimate'), h('dl', [['Total', preview.value.total_amount], ['Cash', preview.value.cash_amount], ['Transfer', preview.value.transfer_amount], ['Paid', preview.value.paid_amount], ['Credit', preview.value.credit_amount]].flatMap(([label, value]) => [h('dt', label), h('dd', money(value))])), h('p', `Due date: ${preview.value.due_date ?? 'Not specified'}`), h('p', `Based on saved draft version ${preview.value.draft_updated_at}. No payment or Receivable has been saved yet.`), h('label', { class: 'commercial-confirmation' }, [h('input', { type: 'checkbox', checked: confirmed.value, disabled: disabled.value, onChange: event => { confirmed.value = event.target.checked; } }), ' I confirm the saved basket, Customer, payment amounts and credit. Posting is permanent.']), action('Confirm and post Sale', post, disabled.value || unsaved.value || !confirmed.value, 'btn-primary')]),
                 record.value && h('form', { class: 'sensitive-action', onSubmit: discard }, [h('h2', 'Discard draft'), field('sale-discard-reason', 'Discard reason', reason.value, value => { reason.value = value; }, { multiline: true, required: true, maxlength: 500, disabled: disabled.value }), submit('Discard draft', disabled.value)]),
             ].filter(Boolean)),
         ].filter(Boolean));

@@ -134,3 +134,18 @@ p { color: var(--dt-muted); line-height: 1.65; }
   .commercial-filters { display: grid; }
   .commercial-workspace .button-row { flex-wrap: wrap; }
 }
+
+.sale-sticky-total { position: sticky; top: .5rem; z-index: 2; padding: 1rem; background: #155d46; color: #fff; border-radius: .5rem; font-size: 1.15rem; font-weight: 700; }
+.commercial-confirmation { display: flex; align-items: center; gap: .75rem; margin-block: 1rem; }
+.commercial-confirmation input { flex: 0 0 1.25rem; }
+#sale-quantity { font-size: 1.3rem; min-height: 3.25rem; }
+.sale-receipt .detail-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+@media print {
+  body * { visibility: hidden; }
+  .sale-receipt, .sale-receipt * { visibility: visible; }
+  .sale-receipt { position: absolute; inset: 0; width: 100%; border: 0; }
+  .sale-receipt button, .sale-receipt a { display: none; }
+}
+.sale-basket summary { padding: 1rem; font-size: 1.15rem; font-weight: 700; }
+.sale-checkout { position: sticky; bottom: 0; z-index: 3; box-shadow: 0 -.2rem 1rem #0002; max-height: 80vh; overflow-y: auto; }
+@media print { .sale-checkout { position: static; box-shadow: none; max-height: none; } }

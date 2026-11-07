@@ -48,3 +48,7 @@ Only an ACTIVE PRIMARY_OWNER can view/control Opening Cash; Staff reconciliation
 ## Phase 4 WP2
 
 New closed-registry codes: `customer.view`, `customer.manage`, `customer.private`, `sale.view`, `sale.price_override`; reuse `sale.record`. Customer view + manage authorize lifecycle writes; private permission additionally controls phone/notes reading, phone search and writing. Omitted private edits preserve stored fields. Sale view + record authorize draft mutation and minimal active identity/Product lookup; price override requires its independent grant. Quick-create additionally requires Customer view + manage. Owners derive known-code permissions; Staff require each active grant. `debt.manage` is not an alternate authority. No COGS/profit field is exposed from drafts. See [exact matrix](../modules/phase-04-wp2.md); no Sale post/return/reverse/collection workflow is introduced here.
+
+## Phase 4 WP3
+
+`sale.record` now authorizes ordinary forward posting when combined with `sale.view`; both are checked inside the owning transaction. New `sale.profit.view` independently permits historical Cost basis/COGS/gross-profit receipt fields, in addition to `sale.view`. Without it cost fields are excluded from Sale queries/responses and masked in the UI. Owner derives known-code authority; Staff grants remain separate from `sale.price_override`, Customer/private, Inventory, reversal and debt permissions. No Return/reversal authority is activated by WP3. See [WP3 matrix](../modules/phase-04-wp3.md).
