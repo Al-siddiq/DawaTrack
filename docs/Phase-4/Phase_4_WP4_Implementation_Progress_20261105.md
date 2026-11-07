@@ -1,6 +1,6 @@
 # WP4 implementation progress — 2026-11-05
 
-Status: Owner-approved contract; WP4-A schema amendment authored; WP4-B Return API implemented for native verification; WP4-C/D and integrated acceptance pending.
+Status: Owner-approved contract; WP4-A schema amendment authored; WP4-B Return API implemented for native verification; WP4-C corrections API implemented for native verification on 2026-11-06; WP4-D and integrated acceptance pending.
 
 The owner approved the full Return/compensation proposal on 2026-11-05. Approval is recorded in PR #21. The approved contract is in Phase_4_WP4_Approved_Return_and_Compensation_Contract.md.
 
@@ -17,5 +17,8 @@ Static source review only. PHP/MySQL 8.4 execution, migration up/down behavior, 
 ## WP4-B implemented
 Return drafts/read/list/original-line lookup, exact original-line allocation, debt-first preview/post, channel caps and Inventory-owned incoming effects are implemented with required sale.return authority, cost masking, Cash guards, aggregate Audit and atomic refresh. See [delivery](Phase_4_WP4_B_Delivery_Report.md), [module/API](../modules/phase-04-wp4-b.md) and [manual/native guide](../manual-verification-phase-04-wp4-b.md). PHP WebAssembly engineering checks pass; native MySQL/HTTP/concurrency verification remains pending. No browser Return screen is claimed in B.
 
+## WP4-C implemented — 2026-11-06
+Protected ordinary Sale/Return reversal, exact inverse money/stock, original-credit cancellation or same-Receivable restoration, linked replacement drafts and explicit read-back/recovery endpoints are implemented. See [C delivery](Phase_4_WP4_C_Delivery_Report.md), [API contract](../modules/phase-04-wp4-c.md), [native checklist](../manual-verification-phase-04-wp4-c.md) and [owner B confirmation/C authorization](../acceptance/2026-11-06-phase-04-wp4-b-owner-confirmation.md). Engineering checks pass; native/MySQL/HTTP/concurrency acceptance remains pending. No C operator screen is claimed.
+
 ## Remaining WP4 scope
-WP4-C compensation-aware Sale/Return reversal and replacement; WP4-D integrated operator UI/receipts/history, complete diagnostics, native concurrency/rollback/browser verification and owner integrated manual acceptance remain required. B already includes permission/Audit/change essentials needed for atomic Return posting. This increment is not WP4 completion or Phase 4 closure.
+WP4-D integrated operator UI/receipts/history, complete commercial diagnostics, native concurrency/rollback/browser verification and owner integrated manual acceptance remain required. B/C already include authority/Audit/change essentials needed for atomic financial posting and safe read-back. This staged delivery is not WP4 completion or Phase 4 closure.

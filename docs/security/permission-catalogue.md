@@ -57,3 +57,8 @@ New closed-registry codes: `customer.view`, `customer.manage`, `customer.private
 ## WP4-B — 2026-11-05
 
 `sale.return` independently grants Return create/update/preview/post/discard and estimate/eligibility together with `sale.view`. Owner derives known-code authority; Staff requires the explicit grant. `sale.reverse` alone does not authorize Return posting. `sale.profit.view` separately gates all cost/COGS/margin fields. FULL active authority is rechecked inside mutations.
+
+
+## WP4-C — 2026-11-06
+
+sale.reverse + sale.view authorize correction preview/post and replacement linkage. sale.return alone cannot reverse; sale.reverse alone cannot post replacement Sale/Return. sale.profit.view still separately gates compensation historical costs/COGS/signed margin. Current FULL/membership/host scope and Cash authority are enforced at confirmation.

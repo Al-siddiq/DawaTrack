@@ -52,12 +52,13 @@ final class SalePostingService
                 // Already-posted retry returns the existing receipt without applying today's Cash guard or inputs again.
                 $existing = $this->database
                     ->table("sales")
-                    ->select("id,status")
+                    ->select("id,status,replacement_for_sale_id")
                     ->where([
                         "tenant_id" => $context->tenantId,
                         "shop_id" => $context->shopId,
                         "public_id" => $id,
                         "kind" => "SALE",
+                        "reversal_of_sale_id" => null,
                     ])
                     ->get()
                     ->getRowArray();
@@ -75,6 +76,39 @@ final class SalePostingService
                     (new CashControlGuard(
                         $this->database,
                     ))->assertCanAffectCash($context);
+                }
+                if (($existing["replacement_for_sale_id"] ?? null) !== null) {
+                    $original = $this->database
+                        ->query(
+                            "SELECT id,kind,status,reversal_of_sale_id FROM sales WHERE tenant_id=? AND shop_id=? AND id=? FOR UPDATE",
+                            [
+                                $context->tenantId,
+                                $context->shopId,
+                                $existing["replacement_for_sale_id"],
+                            ],
+                        )
+                        ->getRowArray();
+                    if (
+                        !$original ||
+                        $original["kind"] !== "SALE" ||
+                        $original["status"] !== "POSTED" ||
+                        $original["reversal_of_sale_id"] !== null ||
+                        !$this->database
+                            ->table("sales")
+                            ->where([
+                                "tenant_id" => $context->tenantId,
+                                "shop_id" => $context->shopId,
+                                "reversal_of_sale_id" => $original["id"],
+                                "status" => "POSTED",
+                            ])
+                            ->countAllResults()
+                    ) {
+                        throw new ApiException(
+                            "REPLACEMENT_REQUIRES_REVERSAL",
+                            "The replacement source must remain a reversed original Sale.",
+                            409,
+                        );
+                    }
                 }
                 $sale = $this->database
                     ->query(
@@ -95,8 +129,7 @@ final class SalePostingService
                 );
                 if (
                     $sale["original_sale_id"] !== null ||
-                    $sale["reversal_of_sale_id"] !== null ||
-                    $sale["replacement_for_sale_id"] !== null
+                    $sale["reversal_of_sale_id"] !== null
                 ) {
                     throw new ApiException(
                         "SALE_STATE_CONFLICT",
@@ -389,6 +422,24 @@ final class SalePostingService
                     "sale",
                     $id,
                 );
+                if ($sale["replacement_for_sale_id"] !== null) {
+                    $originalPublic = $this->database
+                        ->table("sales")
+                        ->select("public_id")
+                        ->where([
+                            "tenant_id" => $context->tenantId,
+                            "shop_id" => $context->shopId,
+                            "id" => $sale["replacement_for_sale_id"],
+                        ])
+                        ->get()
+                        ->getRowArray()["public_id"];
+                    $changes[] = new ChangeCommand(
+                        $context->tenantId,
+                        $context->shopId,
+                        "sale",
+                        $originalPublic,
+                    );
+                }
                 $this->changes->publish($changes); // Last lock boundary; caller commits everything together.
             },
         );

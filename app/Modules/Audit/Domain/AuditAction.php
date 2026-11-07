@@ -29,6 +29,8 @@ final class AuditAction
         'sale.draft_discarded',
         'sale.posted',
         'sale.return_posted',
+        'sale.reversed',
+        'sale.replacement_prepared',
         'owner.created',
         'reconciliation.opening_started',
         'reconciliation.opening_counted',

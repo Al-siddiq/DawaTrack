@@ -541,9 +541,30 @@ final class ReturnService
                             ])
                             ->get()
                             ->getRowArray()["public_id"];
+                $saleIds = [$root["public_id"], $row["public_id"]];
+                if ($row["replacement_for_sale_id"] !== null) {
+                    $source = $this->db
+                        ->table("sales")
+                        ->select("public_id")
+                        ->where([
+                            "tenant_id" => $c->tenantId,
+                            "shop_id" => $c->shopId,
+                            "id" => $row["replacement_for_sale_id"],
+                        ])
+                        ->get()
+                        ->getRowArray();
+                    if (!$source) {
+                        throw new ApiException(
+                            "COMMERCIAL_EVIDENCE_INVALID",
+                            "The replacement source is missing.",
+                            409,
+                        );
+                    }
+                    $saleIds[] = $source["public_id"];
+                }
                 $this->events->publish(
                     $c,
-                    [$root["public_id"], $row["public_id"]],
+                    $saleIds,
                     $movements,
                     $products,
                     $q["credit"],

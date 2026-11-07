@@ -74,7 +74,7 @@ final class DiagnoseSales extends BaseCommand
             "Each category is limited to 100 anomalies. No data was repaired.",
         );
         CLI::write(
-            "Current checks cover normal Sale/Return evidence; pending WP4 compensation policy/closure is not certified.",
+            "Current sales checks cover normal Sale/Return evidence. Use inventory:diagnose for indirect compensation movement coverage; full WP4-D diagnostics and integrated acceptance remain pending.",
         );
         CLI::write(
             "Phase 5 payment allocations are not included in the adjusted-obligation check.",
