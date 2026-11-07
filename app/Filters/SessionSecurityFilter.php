@@ -30,7 +30,7 @@ final class SessionSecurityFilter implements FilterInterface
             auth()->logout();
             session()->destroy();
 
-            if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+            if (\App\Libraries\Http\RequestPath::isApi($request)) {
                 return ApiResponse::error(Services::response(), 'SESSION_EXPIRED', 'Your access has changed. Please sign in again.', Services::requestContext()->requestId(), 401);
             }
 
@@ -52,7 +52,7 @@ final class SessionSecurityFilter implements FilterInterface
         auth()->logout();
         session()->destroy();
 
-        if (str_starts_with($request->getUri()->getPath(), 'api/')) {
+        if (\App\Libraries\Http\RequestPath::isApi($request)) {
             return ApiResponse::error(
                 Services::response(),
                 'SESSION_EXPIRED',

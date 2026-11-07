@@ -11,6 +11,7 @@ final class AuditResource
     private const TYPES = [
         'platform_admin_authentication',
         'product',
+        'reconciliation_session',
         'shop',
         'shop_brand_asset',
         'shop_branding_profile',

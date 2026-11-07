@@ -39,3 +39,8 @@ Primary Owner activity history is role-authorized through `ShopContext`; Staff h
 `inventory.adjust` authorizes damaged, expired, Owner stock use, missing/loss and signed Correction. `inventory.reverse` independently authorizes Movement/Intake reversal and sensitive replacement linkage. Inactive Products remain eligible for these accountability commands. Every command requires FULL access and a reason.
 
 Phase 3 closure review confirms no implication between `product.manage`, `inventory.adjust`, `inventory.intake`, and `inventory.reverse` for Staff. `inventory.view` controls Product/stock/Intake/movement reads. The read-only `inventory:diagnose` command is an operator CLI, not a Shop permission or route.
+
+
+## Phase 4 WP1 Opening Cash authority
+
+Only an ACTIVE PRIMARY_OWNER can view/control Opening Cash; Staff reconciliation grants do not authorize first-baseline setup. Mutations require FULL access and active membership rechecked under lock. READ_ONLY permits Owner reads; BLOCKED/CLOSED deny. Later Customer/Sale/Return permissions will be registered in their owning package. MFA freshness now derives only from a successfully completed Shield Email2FA verify action, never redirect generation.

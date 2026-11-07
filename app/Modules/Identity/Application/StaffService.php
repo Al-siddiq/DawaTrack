@@ -153,13 +153,14 @@ final class StaffService
                 metadata: ['before' => ['status' => $membership['status']], 'after' => ['status' => $targetStatus]],
             ));
             (new ChangeSequenceService($this->database, service('requestContext')))->publish([new ChangeCommand($context->tenantId, $context->shopId, 'tenant_membership', $membership['public_id'], $active ? ChangeKind::UPSERT : ChangeKind::DEACTIVATE)]);
-            $this->database->transCommit();
+            if (! $this->database->transCommit()) throw new \RuntimeException('Staff state commit failed.');
         } catch (Throwable $exception) {
             $this->database->transRollback();
             throw $exception;
         } finally {
             $this->releaseMembershipLock();
         }
+        if (! $active) $this->sessionRevocation->revokeAll((int) $membership['user_id']);
     }
 
     /** @return array{temporary_password: string} */
@@ -194,14 +195,15 @@ final class StaffService
                     resourceType: 'tenant_membership',
                     resourcePublicId: $membership['public_id'],
                     reason: $reason,
-                    metadata: ['sessions_invalidated' => true, 'force_reset_requested' => method_exists($user, 'forcePasswordReset')],
+                    metadata: ['access_invalidated' => true, 'force_reset_requested' => method_exists($user, 'forcePasswordReset')],
                 ));
-                $this->database->transCommit();
+                if (! $this->database->transCommit()) throw new \RuntimeException('Credential reset commit failed.');
             } catch (Throwable $exception) {
                 $this->database->transRollback();
                 throw $exception;
             }
 
+            $this->sessionRevocation->revokeAll((int) $membership['user_id']);
             return ['temporary_password' => $temporaryPassword];
         } finally {
             $this->releaseMembershipLock();
@@ -313,7 +315,7 @@ final class StaffService
     {
         $this->database->table('auth_remember_tokens')->where('user_id', $userId)->delete();
         $this->database->table('auth_identities')->where('user_id', $userId)->where('type', 'magic-link')->delete();
-        $this->sessionRevocation->revokeAll($userId);
+
     }
 
     private function temporaryPassword(): string

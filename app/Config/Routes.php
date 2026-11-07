@@ -32,6 +32,13 @@ service('auth')->routes($routes, ['except' => ['register', 'logout']]);
 $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('health/live', 'Api\HealthController::live', ['as' => 'api.health.live']);
     $routes->get('health/ready', 'Api\HealthController::ready', ['as' => 'api.health.ready']);
+    $routes->get('shop/opening-cash', 'Api\OpeningCashController::state', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash', 'Api\OpeningCashController::start', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash/(:segment)/count', 'Api\OpeningCashController::count/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash/(:segment)/commit-count', 'Api\OpeningCashController::commitCount/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash/(:segment)/review', 'Api\OpeningCashController::review/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash/(:segment)/finalize', 'Api\OpeningCashController::finalize/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/opening-cash/(:segment)/abort', 'Api\OpeningCashController::abort/$1', ['filter' => 'authenticated']);
     $routes->get('shop/context', 'Api\ShopController::contextInfo', ['filter' => 'authenticated']);
     $routes->get('shop/products', 'Api\ProductController::index', ['filter' => 'authenticated']);
     $routes->post('shop/products', 'Api\ProductController::create', ['filter' => 'authenticated']);

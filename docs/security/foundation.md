@@ -15,3 +15,8 @@ Phase 2 WP1 centralizes Audit authority validation. Tenant evidence requires a v
 One lowercase UUIDv4 correlates each request/command across response metadata/header, relevant logs, and Audit. Audit metadata is rejected when it exceeds structural or total-size limits or contains forbidden secret/request-body/binary keys. These failures abort the owning transaction rather than degrading evidence.
 
 Phase 2 WP3 keeps normal Platform Audit and Tenant-support Audit separate. Normal viewing requires `platform.audit` and recent MFA and cannot silently apply Tenant filters. Support viewing requires `platform.audit_support`, an explicit server-resolved Tenant/Shop, a required reason, and committed SUPPORT evidence before results. The continuation is bound to the same administrator and expires after 15 minutes; it creates no Tenant membership, impersonated identity, or durable support session. Audit query output is redacted, scope-limited, bounded, and rate-limited; foreign identifiers remain non-enumerating.
+
+
+## Phase 4 WP1 stabilization
+
+Shield Email2FA verify establishes recent Admin MFA only after successful action completion; redirect visits cannot refresh it. Intake draft mutations lock/recheck the same header as posting. Staff reset Audit uses approved access-invalidated metadata; cache revocation occurs only after successful DB commit, preserving rollback semantics. Cache durability/recovery response normalization remain separately tracked; no blanket claim of complete security remediation is made. DNS verification compares the challenge hash at final update; platform hostname policy uses DAWATRACK_PLATFORM_DOMAIN.

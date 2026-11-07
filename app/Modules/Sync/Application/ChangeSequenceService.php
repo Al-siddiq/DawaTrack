@@ -23,6 +23,7 @@ final class ChangeSequenceService
         'shop_domain',
         'subscription',
         'product',
+        'reconciliation_session',
         'stock_position',
         'stock_intake',
         'stock_movement',

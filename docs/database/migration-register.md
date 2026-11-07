@@ -56,3 +56,8 @@ Apply after Phase 2. Roll back Stock Positions before Products. `last_movement_i
 ## Phase 3 WP4 closure
 
 No migration is owned by WP4. Static review retains the six Phase 3 migration/raw-SQL pairs. Phase 4 owns the deferred scoped Sale Item FK only after `sale_items` exists; Phase 7 owns the deferred reconciliation variance FK.
+
+
+## Phase 4 WP1
+
+Two ordered App migrations: `2026-11-02-100000_CreatePhaseFourReconciliationSessions` and `2026-11-02-100100_CreatePhaseFourReconciliationFinancialCounts`. Full v1.1 session/count definitions; existing/self scope FKs only, no future Device/Sales dependencies. Paired SQL: `docs/database/sql/phase-04/20261102100000_reconciliation_sessions.sql` and `20261102100100_reconciliation_financial_counts.sql`. Existing Phase 3 evidence is untouched. Development rollback reverses counts then sessions; verify batches before rollback.

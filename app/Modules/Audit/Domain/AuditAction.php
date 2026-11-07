@@ -24,6 +24,13 @@ final class AuditAction
         'domain.verified',
         'identity.password_changed',
         'owner.created',
+        'reconciliation.opening_started',
+        'reconciliation.opening_counted',
+        'reconciliation.opening_committed',
+        'reconciliation.opening_reviewed',
+        'reconciliation.opening_finalized',
+        'reconciliation.opening_aborted',
+
         'permission.granted',
         'permission.revoked',
         'product.created',

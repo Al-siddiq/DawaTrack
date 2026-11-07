@@ -445,7 +445,6 @@ class Auth extends ShieldAuth
     {
         $user = auth()->user();
         if ($user !== null && $user->inGroup('platform_admin')) {
-            service('platformMfa')->establish((int) $user->id);
             session()->remove('authentication_area');
 
             $destination = (string) (session()->getTempdata('beforeLoginUrl') ?? '/platform-admin');

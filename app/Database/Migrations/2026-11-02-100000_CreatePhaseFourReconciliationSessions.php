@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+namespace App\Database\Migrations;
+use CodeIgniter\Database\Migration;
+final class CreatePhaseFourReconciliationSessions extends Migration
+{
+    public function up(): void
+    {
+        $this->db->query("SET time_zone = '+00:00'");
+        $this->db->query(
+            <<<'SQL'
+            CREATE TABLE reconciliation_sessions (
+             id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+             public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+             tenant_id BIGINT UNSIGNED NOT NULL, shop_id BIGINT UNSIGNED NOT NULL,
+             scope VARCHAR(12) NOT NULL, control_kind VARCHAR(12) NOT NULL DEFAULT 'STANDARD',
+             status VARCHAR(24) NOT NULL DEFAULT 'COUNTING',
+             cash_period_starts_at DATETIME(6) NULL, stock_period_starts_at DATETIME(6) NULL,
+             cutoff_at DATETIME(6) NOT NULL, cutoff_change_sequence BIGINT UNSIGNED NOT NULL,
+             sync_generation_id BIGINT UNSIGNED NOT NULL,
+             started_by_user_id INT UNSIGNED NOT NULL, started_at DATETIME(6) NOT NULL,
+             counts_committed_by_user_id INT UNSIGNED NULL, counts_committed_at DATETIME(6) NULL,
+             finalized_by_user_id INT UNSIGNED NULL, finalized_at DATETIME(6) NULL,
+             aborted_by_user_id INT UNSIGNED NULL, aborted_at DATETIME(6) NULL, abort_reason VARCHAR(500) NULL,
+             previous_cash_session_id BIGINT UNSIGNED NULL, previous_stock_session_id BIGINT UNSIGNED NULL,
+             notes VARCHAR(500) NULL, created_at DATETIME(6) NOT NULL, updated_at DATETIME(6) NOT NULL,
+             CONSTRAINT uq_reconciliation_sessions_public UNIQUE (public_id),
+             CONSTRAINT uq_reconciliation_sessions_scope UNIQUE (tenant_id,shop_id,id),
+             INDEX ix_reconciliation_sessions_cutoff (tenant_id,shop_id,status,cutoff_at),
+             INDEX ix_reconciliation_sessions_finalized (tenant_id,shop_id,finalized_at),
+             CONSTRAINT ck_reconciliation_sessions_uuid CHECK (public_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'),
+             CONSTRAINT ck_reconciliation_sessions_scope CHECK (scope IN ('CASH','STOCK','FULL')),
+             CONSTRAINT ck_reconciliation_sessions_kind CHECK (control_kind IN ('OPENING','STANDARD')),
+             CONSTRAINT ck_reconciliation_sessions_status CHECK (status IN ('COUNTING','COUNTS_COMMITTED','REVIEW','FINALIZED','ABORTED')),
+             CONSTRAINT ck_reconciliation_sessions_opening CHECK (control_kind <> 'OPENING' OR (scope='CASH' AND previous_cash_session_id IS NULL AND previous_stock_session_id IS NULL AND stock_period_starts_at IS NULL)),
+             CONSTRAINT ck_reconciliation_sessions_commit CHECK (status NOT IN ('COUNTS_COMMITTED','REVIEW','FINALIZED') OR (counts_committed_at IS NOT NULL AND counts_committed_by_user_id IS NOT NULL)),
+             CONSTRAINT ck_reconciliation_sessions_finalized CHECK ((status='FINALIZED' AND finalized_at IS NOT NULL AND finalized_by_user_id IS NOT NULL) OR (status<>'FINALIZED' AND finalized_at IS NULL AND finalized_by_user_id IS NULL)),
+             CONSTRAINT ck_reconciliation_sessions_abort CHECK ((status='ABORTED' AND aborted_at IS NOT NULL AND aborted_by_user_id IS NOT NULL AND abort_reason IS NOT NULL AND CHAR_LENGTH(TRIM(abort_reason))>0) OR (status<>'ABORTED' AND aborted_at IS NULL AND aborted_by_user_id IS NULL AND abort_reason IS NULL)),
+             CONSTRAINT fk_reconciliation_sessions_shop FOREIGN KEY (tenant_id,shop_id) REFERENCES shops(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_generation FOREIGN KEY (sync_generation_id) REFERENCES sync_generations(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_starter FOREIGN KEY (started_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_committer FOREIGN KEY (counts_committed_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_finalizer FOREIGN KEY (finalized_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_aborter FOREIGN KEY (aborted_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_previous_cash FOREIGN KEY (tenant_id,shop_id,previous_cash_session_id) REFERENCES reconciliation_sessions(tenant_id,shop_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+             CONSTRAINT fk_reconciliation_sessions_previous_stock FOREIGN KEY (tenant_id,shop_id,previous_stock_session_id) REFERENCES reconciliation_sessions(tenant_id,shop_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            SQL
+            ,
+        );
+    }
+    public function down(): void
+    {
+        $this->db->query("DROP TABLE reconciliation_sessions");
+    }
+}

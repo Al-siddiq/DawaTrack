@@ -37,3 +37,8 @@ Explicit authenticated Shop routes support Intake list/detail, Draft create/head
 Explicit commands record allow-listed manual movement/Correction, reverse one Movement, reverse one eligible current-suffix Intake, and create a reasoned replacement Draft. Replacement creation accepts `RECEIPT` or `OPENING`; Receipt is normal and Opening remains subject to the same locked eligibility rule as ordinary Opening. Draft operations emit no Audit/change publication. Posting makes the relationship authoritative. Clients cannot submit scope, source kind/FKs, actor, cost basis, or before/after snapshots. Stable conflicts include `INVALID_MOVEMENT_TYPE`, `INVALID_MOVEMENT_SIGN`, `INVALID_INTAKE_KIND`, `MOVEMENT_ALREADY_REVERSED`, `REVERSAL_OF_REVERSAL_NOT_ALLOWED`, `INTAKE_ALREADY_REVERSED`, `INTAKE_REVERSAL_NOT_CURRENT`, `REPLACEMENT_REQUIRES_REVERSAL`, and `INTAKE_REPLACEMENT_EXISTS`.
 
 Phase 3 collection reads are bounded. Products, Stock Intakes and Product stock history accept positive `page`/capped `per_page` and return `meta.pagination`; ordering includes a stable internal-ID tie breaker while external identity remains UUID. Product `stock_state` accepts `ALL`, `LOW`, or `NEGATIVE`. Internal IDs are never returned as resource identity.
+
+
+## Phase 4 WP1 Opening Cash
+
+Owner-only `/api/v1/shop/opening-cash` state/start and explicit count/commit-count/review/finalize/abort commands. Exact decimal strings, standard envelopes, scoped UUIDs, CSRF and no-store responses. See [integration contracts](../Phase-4/Phase_4_WP1_Integration_Contracts.md). No Sale endpoint exists yet.
