@@ -1,12 +1,4 @@
 #!/bin/sh
+# Compatibility entry point for existing Unix callers; npm uses Node directly.
 set -eu
-mkdir -p public/assets/vendor/vue public/assets/vendor/dexie public/assets/js
-node scripts/compile-shop-template.mjs
-cp node_modules/vue/dist/vue.runtime.global.prod.js public/assets/vendor/vue/vue.runtime.global.prod.js
-cp node_modules/vue/dist/vue.global.prod.js public/assets/vendor/vue/vue.global.prod.js
-cp node_modules/dexie/dist/dexie.min.js public/assets/vendor/dexie/dexie.min.js
-rm -rf public/assets/js/shop public/assets/js/admin public/assets/js/auth public/assets/js/shared public/assets/js/api public/assets/js/components
-cp -R resources/js/shop resources/js/admin resources/js/auth resources/js/shared resources/js/api resources/js/components public/assets/js/
-rm -f public/assets/js/shop/template.html
-
-rm -f public/assets/js/shop/*.bak
+exec node "$(dirname "$0")/build-frontend-assets.mjs"

@@ -14,7 +14,7 @@ php spark serve
 
 Open `/`, `/auth`, `/platform-admin`, `/api/v1/health/live`, and `/api/v1/health/ready`. See [configuration](docs/configuration.md), [API conventions](docs/api/conventions.md), [module ownership](docs/modules/module-map.md), and [security foundation](docs/security/foundation.md).
 
-Frontend code is authored in `resources/`. `npm run build` compiles Bootstrap/Sass to static CSS and copies pinned Vue/Dexie plus application ES modules into `public/assets`; it does not bundle JavaScript.
+Frontend code is authored in `resources/`. `npm run build` compiles Bootstrap/Sass to static CSS and copies pinned Vue/Dexie plus application ES modules into `public/assets`; it does not bundle JavaScript. Asset generation uses Node filesystem APIs and works without a Unix shell on Windows Command Prompt. Bootstrap/Sass deprecation warnings are non-fatal; a successful build ends with `Frontend assets built.`
 
 ## Phase 1 operational scope
 
