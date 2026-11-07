@@ -101,3 +101,8 @@ Customer lifecycle uses `customer.created`, `customer.updated`, `customer.deacti
 ## WP4-C — 2026-11-06
 
 sale.reversed and sale.replacement_prepared are reasoned aggregate SALE/sale actions with scoped source/root identity. Compensation Audit/publication failures roll back the inverse stock/money/debt operation. Replacement preparation is reasoned draft Audit only; financial effects require separate posting.
+
+
+## WP4-D — 2026-11-06
+
+D adds no financial Audit action: it uses the approved B/C aggregate actions and reasons, independently rechecked by the backend. Receipt/history/diagnostics reads create no business Audit or change effects. Uncertain outcomes use same-identity retrieval; preview/print are not posting. Diagnostic snapshot failures do not repair or mutate evidence.

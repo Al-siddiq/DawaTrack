@@ -27,3 +27,8 @@ WP4-B is an authenticated API increment; use [manual/native steps](../manual-ver
 ## WP4-C — 2026-11-06
 
 Use [C manual/native steps](../manual-verification-phase-04-wp4-c.md) for backend correction. Preview exact inverse effects; dependency denial is a protected outcome requiring investigation of linked evidence. Confirm once with permanent UUID/reason. On response loss retrieve source correction-state then compensation detail. Prepare replacement only after source reversal and post separately. Do not disable constraints/delete evidence to bypass A downgrade guards. Browser correction screens remain D.
+
+
+## WP4-D — 2026-11-06
+
+Use [integrated operator guide](../manual-verification-phase-04-wp4-d.md): Record Sale with numbered Product/basket/payment steps; Sale history → original receipt → Return Products → save/calculate/review/confirm; protected reversal/replacement from posted receipt. Resume Return drafts with record-type filter. Retrieve same identity after uncertain results. Print only selected permission-filtered receipt. sales:diagnose samples 18 SQL categories plus historical cost state in a read-only snapshot; inventory:diagnose proves physical movement coverage. Investigate findings, never auto-repair. Phase 4 remains pending integrated acceptance.

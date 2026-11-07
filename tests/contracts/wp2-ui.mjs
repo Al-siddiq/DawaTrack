@@ -32,7 +32,7 @@ let app=createApp(CustomerPanel,{permissions:['customer.view','customer.manage']
 const button=label=>[...document.querySelectorAll('button')].find(button=>button.textContent===label);
 button('Create Customer').click();await settle();assert(document.querySelector('#customer-name'));assert.equal(document.querySelector('#customer-phone'),null);assert.equal(document.querySelector('#customer-notes'),null);app.unmount();
 const {SaleDraftPanel}=await import(`${repo}/resources/js/components/sale-draft-panel.js`);
-app=createApp(SaleDraftPanel,{permissions:['sale.view','sale.record'],readOnly:false});app.mount('#test');await settle();button('Create Sale draft').click();await settle();
+app=createApp(SaleDraftPanel,{permissions:['sale.view','sale.record'],readOnly:false});app.mount('#test');await settle();button('Start new Sale').click();await settle();
 assert(location.hash===`#sale-draft/${uuid}`);assert(document.body.textContent.includes('No Products in this draft.'));
 function input(id,value,event='input'){const el=document.getElementById(id);assert(el,id);el.value=value;el.dispatchEvent(new window.Event(event,{bubbles:true}));}
 input('sale-product',product,'change');input('sale-quantity','1.5');document.getElementById('sale-quantity').closest('form').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));await settle();assert(document.body.textContent.includes('₦150.00'));
@@ -41,8 +41,8 @@ assert.equal(calls.find(c=>c.path.endsWith('/preview')).body.expected_updated_at
 input('sale-cash_amount','80.00');await settle();assert(!document.body.textContent.includes('Preparation estimate'));
 button('Reload saved draft').click();await settle();assert.equal(document.getElementById('sale-cash_amount').value,'0.00');assert.equal(document.getElementById('sale-due_date').value,'');assert(document.body.textContent.includes('Paracetamol'));
 button('Edit line').click();await settle();stale=true;input('sale-quantity','2');document.getElementById('sale-quantity').closest('form').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));await settle();assert(document.querySelector('[role=alert]').textContent.includes('Reload'));assert.equal(document.getElementById('sale-quantity').value,'2');
-Object.defineProperty(window.navigator,'onLine',{value:false,configurable:true});window.dispatchEvent(new window.Event('offline'));await settle();assert(button('Save line').disabled);assert(button('Review preparation').disabled);
+Object.defineProperty(window.navigator,'onLine',{value:false,configurable:true});window.dispatchEvent(new window.Event('offline'));await settle();assert(button('Save basket item').disabled);assert(button('Review Sale').disabled);
 assert(!calls.some(c=>c.path.endsWith('/post')));app.unmount();
 Object.defineProperty(window.navigator,'onLine',{value:true,configurable:true});
-app=createApp(SaleDraftPanel,{permissions:['sale.view'],readOnly:true});app.mount('#test');await settle();assert(!button('Add line'));assert(!button('Discard draft'));assert(!button('Review preparation'));app.unmount();
+app=createApp(SaleDraftPanel,{permissions:['sale.view'],readOnly:true});app.mount('#test');await settle();assert(!button('Add to basket'));assert(!button('Discard draft'));assert(!button('Review Sale'));app.unmount();
 console.log('PASS: mocked DOM customer privacy; persistent draft identity; exact-string basket input; versioned preview; transient reset; stale error retention; offline/read-only controls; no posting. This is not browser or HTTP acceptance.');

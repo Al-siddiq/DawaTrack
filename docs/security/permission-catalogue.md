@@ -62,3 +62,8 @@ New closed-registry codes: `customer.view`, `customer.manage`, `customer.private
 ## WP4-C — 2026-11-06
 
 sale.reverse + sale.view authorize correction preview/post and replacement linkage. sale.return alone cannot reverse; sale.reverse alone cannot post replacement Sale/Return. sale.profit.view still separately gates compensation historical costs/COGS/signed margin. Current FULL/membership/host scope and Cash authority are enforced at confirmation.
+
+
+## WP4-D — 2026-11-06
+
+Integrated UI controls follow sale.return/sale.reverse/sale.record independently, and cost rendering/printing also requires sale.profit.view. Backend authority remains decisive. Read-only/offline/pending/unknown-outcome controls prevent client commands, without granting offline posting. Customer-private fields are not added to commercial history.

@@ -78,3 +78,8 @@ No migration is applied or introduced by the readiness change. The [proposed Ret
 ## Phase 4 WP4 — approved compensation composition amendment
 
 Owner approved the debt-first Return/refund, historical-cost provenance, linked compensation and dependency-protected reversal/replacement contract on 2026-11-05. WP4-A adds migration 2026-11-05-100000 AmendPhaseFourSaleCompensationComposition with paired SQL phase-04/20261105100000_amend_sale_compensation_composition.sql. It preflights unexpected ordinary SALE rows referencing original_sale_id, changes only ck_sales_composition, and refuses rollback while posted SALE-shaped compensation rows exist. No business evidence is rewritten. Native MySQL 8.4 execution is still required; do not apply on production based solely on static review. Return writers, reversal/replacement, UI/evidence and integrated acceptance remain outstanding.
+
+
+## WP4-D — 2026-11-06
+
+D introduces no migration or table/column. Apply A 2026-11-05-100000 after accepted WP2 ordering through Spark once; preserve its preflight and used-compensation downgrade refusal. No old applied migration/paired SQL is rewritten. Native fresh/upgrade/repeat/rollback verification remains in the final checklist.

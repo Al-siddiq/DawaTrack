@@ -466,8 +466,9 @@ export function render(_ctx, _cache) {
           (_ctx.page==='sale-history' && _ctx.context.capabilities.view_sale_drafts)
             ? (_openBlock(), _createBlock(_component_SaleHistoryPanel, {
                 key: 2,
-                permissions: _ctx.context.permissions
-              }, null, 8 /* PROPS */, ["permissions"]))
+                permissions: _ctx.context.permissions,
+                "read-only": _ctx.readOnly
+              }, null, 8 /* PROPS */, ["permissions", "read-only"]))
             : _createCommentVNode("v-if", true),
           (_ctx.page==='sale-drafts' && _ctx.context.capabilities.view_sale_drafts)
             ? (_openBlock(), _createBlock(_component_SaleDraftPanel, {

@@ -1,6 +1,6 @@
 # WP4 implementation progress — 2026-11-05
 
-Status: Owner-approved contract; WP4-A schema amendment authored; WP4-B Return API implemented for native verification; WP4-C corrections API implemented for native verification on 2026-11-06; WP4-D and integrated acceptance pending.
+Status: Owner-approved contract; WP4-A schema amendment authored; WP4-B Return API implemented for native verification; WP4-C corrections API implemented for native verification on 2026-11-06; WP4-D implementation candidate delivered on 2026-11-06; integrated native/visual acceptance pending.
 
 The owner approved the full Return/compensation proposal on 2026-11-05. Approval is recorded in PR #21. The approved contract is in Phase_4_WP4_Approved_Return_and_Compensation_Contract.md.
 
@@ -20,5 +20,8 @@ Return drafts/read/list/original-line lookup, exact original-line allocation, de
 ## WP4-C implemented — 2026-11-06
 Protected ordinary Sale/Return reversal, exact inverse money/stock, original-credit cancellation or same-Receivable restoration, linked replacement drafts and explicit read-back/recovery endpoints are implemented. See [C delivery](Phase_4_WP4_C_Delivery_Report.md), [API contract](../modules/phase-04-wp4-c.md), [native checklist](../manual-verification-phase-04-wp4-c.md) and [owner B confirmation/C authorization](../acceptance/2026-11-06-phase-04-wp4-b-owner-confirmation.md). Engineering checks pass; native/MySQL/HTTP/concurrency acceptance remains pending. No C operator screen is claimed.
 
-## Remaining WP4 scope
-WP4-D integrated operator UI/receipts/history, complete commercial diagnostics, native concurrency/rollback/browser verification and owner integrated manual acceptance remain required. B/C already include authority/Audit/change essentials needed for atomic financial posting and safe read-back. This staged delivery is not WP4 completion or Phase 4 closure.
+## WP4-D integrated candidate — 2026-11-06
+Operator Return/correction screens, unified receipts/history, Sale usability fixes and compensation-aware diagnostics are implemented. See [D delivery](Phase_4_WP4_D_Delivery_Report.md), [integration contract](../modules/phase-04-wp4-d.md), [final manual matrix](../manual-verification-phase-04-wp4-d.md) and [closure status](Phase_4_Integrated_Closure_Status.md). C confirmation/D authorization is recorded separately. Source/doubles/DOM checks pass; native MySQL/HTTP/concurrency and blocked live-browser checks remain required.
+
+## Remaining acceptance work
+Record actual integrated native/browser outcomes, resolve defects, rerun affected checks and obtain explicit owner acceptance. No planned implementation area is silently moved to Phase 5. Phase 4 remains NOT CLOSED until its verification/owner gates are complete; delivery does not merge or deploy the dependency stack.

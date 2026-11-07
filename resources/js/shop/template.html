@@ -12,7 +12,7 @@
     <OpeningCashPanel v-if="page==='opening-cash' && context.capabilities.manage_opening_cash" :read-only="readOnly" />
 
     <CustomerPanel v-if="page==='customers' && context.capabilities.view_customers" :permissions="context.permissions" :read-only="readOnly" />
-    <SaleHistoryPanel v-if="page==='sale-history' && context.capabilities.view_sale_drafts" :permissions="context.permissions" />
+    <SaleHistoryPanel v-if="page==='sale-history' && context.capabilities.view_sale_drafts" :permissions="context.permissions" :read-only="readOnly" />
     <SaleDraftPanel v-if="page==='sale-drafts' && context.capabilities.view_sale_drafts" :permissions="context.permissions" :read-only="readOnly" />
 
     <section v-if="page==='home'" class="welcome-panel">

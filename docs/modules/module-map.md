@@ -50,3 +50,8 @@ Sales now owns original-linked Return draft/settlement/post orchestration; Inven
 ## WP4-C — 2026-11-06
 
 CommercialReversalService coordinates ordinary Sale/Return compensation and linked replacement; Inventory exclusively restores exact eligible before-state. CommercialCorrectionQuery supplies explicit safe compensation graph and recovery reads. See [WP4-C](phase-04-wp4-c.md).
+
+
+## WP4-D — 2026-11-06
+
+The operator UI now composes B Return and C correction commands through unified Sale/Return/compensation reads. Sales/Inventory write ownership is unchanged. [D integration contract](phase-04-wp4-d.md) and [final native checklist](../manual-verification-phase-04-wp4-d.md) describe the delivered surface and acceptance boundary.

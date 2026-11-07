@@ -1,0 +1,26 @@
+// Integrated real Vue components in jsdom, mocked API. No browser layout/database/authentication claims.
+const { JSDOM }=await import(process.env.WP4_JSDOM_MODULE??'jsdom');
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const repo=new URL('../../',import.meta.url).pathname.replace(/\/$/,'');
+const dom=new JSDOM('<main><div id="test"></div></main>',{url:'https://shop.test/',runScripts:'outside-only'});const {window}=dom;
+for(const key of ['window','document','navigator','location','history','HTMLElement','Element','SVGElement','FormData'])Object.defineProperty(globalThis,key,{value:key==='window'?window:window[key],configurable:true});
+window.eval(fs.readFileSync(`${repo}/node_modules/vue/dist/vue.runtime.global.prod.js`,'utf8'));
+const test=fs.readFileSync(new URL('./wp4-d-browser.mjs',import.meta.url),'utf8');
+let mock=test.slice(test.indexOf('  let draft=null'),test.indexOf('  const btn=name'));
+mock=mock.replace("await page.route('**/api/v1/shop/**',async route=>{", "window.fetch = async (input,options={})=> { const route={request:()=>({url:()=>new URL(input,location.origin).href,method:()=>options.method??'GET',postData:()=>options.body}),fulfill:({json})=>Response.json(json),abort:()=>{throw new TypeError('Simulated response loss');}};");
+mock=mock.replaceAll('await route.fulfill({json:','return route.fulfill({json:').trim().replace(/\}\);$/,'};');
+new Function('window','location','Response','assert',"const S='11234567-89ab-4cde-8fab-0123456789ab',I='21234567-89ab-4cde-8fab-0123456789ab';"+mock+';window.counts=()=>({posts,reversals,created});')(window,location,Response,assert);
+globalThis.fetch=window.fetch;
+const {createApp,nextTick}=window.Vue;const {SaleHistoryPanel}=await import(`${repo}/resources/js/components/sale-history-panel.js`);
+const settle=async()=>{await new Promise(r=>setTimeout(r,20));await nextTick();await new Promise(r=>setTimeout(r,20));};
+const btn=name=>[...document.querySelectorAll('button')].find(b=>b.textContent===name);
+const fill=(id,text)=>{const node=document.getElementById(id);assert(node,id);node.value=text;node.dispatchEvent(new window.Event('input',{bubbles:true}));};
+const submit=id=>document.getElementById(id).closest('form').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));
+const check=()=>{const n=document.querySelector('.commercial-confirmation input');n.checked=true;n.dispatchEvent(new window.Event('change',{bubbles:true}));};
+const app=createApp(SaleHistoryPanel,{permissions:['sale.view','sale.return','sale.reverse','sale.profit.view'],readOnly:false});app.mount('#test');await settle();
+btn('View receipt').click();await settle();assert(document.body.textContent.includes('Sale receipt'));btn('Return Products from this Sale').click();await settle();assert(document.body.textContent.includes('1. Choose returned quantities'), document.body.textContent);
+fill('return-qty-21234567-89ab-4cde-8fab-0123456789ab','2');submit('return-qty-21234567-89ab-4cde-8fab-0123456789ab');await settle();assert(!btn('Calculate settlement').disabled,'Canonical saved quantity must clear dirty state after read-back');btn('Calculate settlement').click();await settle();fill('return-cash','200.00');fill('return-reason','Customer returned selected medicine.');submit('return-cash');await settle();assert(btn('Confirm and post Return').disabled);check();await settle();btn('Confirm and post Return').click();await settle();assert(btn('Save returned quantities').disabled);btn('Check Return status').click();await settle();assert(document.body.textContent.includes('Return receipt'));assert.equal(window.counts().posts,1);
+fill('commercial-correction-reason','Reverse incorrect Return evidence.');btn('Review reversal').click();await settle();check();await settle();btn('Confirm reversal').click();await settle();assert(btn('Check reversal status'));btn('Check reversal status').click();await settle();assert(document.body.textContent.includes('Reversal receipt'));assert.equal(window.counts().reversals,1);
+let printMarkup='';window.print=()=>{printMarkup=document.querySelector('#commercial-print-receipt').outerHTML;};btn('Print receipt').click();assert(printMarkup.includes('Reversal receipt'));assert(printMarkup.includes('open=""'));assert(!printMarkup.includes('Related records and corrections'));assert(!document.querySelector('#commercial-print-receipt'));
+btn('View compensated operation').click();await settle();fill('commercial-correction-reason','Prepare a separately reviewed replacement.');await settle();btn('Create linked replacement draft').click();await settle();assert(document.body.textContent.includes('1. Choose returned quantities'), document.body.textContent);assert.equal(document.getElementById('return-qty-21234567-89ab-4cde-8fab-0123456789ab').value,'2.0000');app.unmount();
+console.log('PASS: integrated Vue history → Return save/read-back → settlement → lost-response recovery → reversal recovery → replacement wrapper/read-back; dirty-state hydration and isolated print cleanup. jsdom/mocked APIs only.');
