@@ -116,3 +116,21 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .opening-cash-evidence dd { margin:0; }
 .opening-cash-history { padding:1rem; margin-block:1rem; border:1px solid #d5d9e0; border-radius:.5rem; }
 .opening-cash-workspace button { margin:.25rem; white-space:normal; }
+
+.commercial-workspace { max-width: 72rem; margin-inline: auto; overflow-wrap: anywhere; }
+.commercial-form, .commercial-card { padding: 1.25rem; margin-block: 1rem; border: 1px solid #d6e0db; border-radius: .75rem; background: #fff; }
+.commercial-form, .commercial-field { display: grid; gap: .65rem; }
+.commercial-form { gap: 1rem; max-width: 44rem; }
+.commercial-field { min-width: 0; }
+.commercial-field label { font-weight: 600; }
+.commercial-field textarea { min-height: 6rem; }
+.commercial-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-block: 1.5rem; }
+.commercial-card .btn { margin: .25rem; }
+.commercial-card dd { margin-bottom: .75rem; }
+.commercial-workspace button, .commercial-workspace input, .commercial-workspace select { min-height: 2.75rem; }
+.commercial-workspace :focus-visible { outline: 3px solid #155d46; outline-offset: 3px; }
+@media (max-width: 40rem) {
+  .commercial-form, .commercial-card { padding: .85rem; }
+  .commercial-filters { display: grid; }
+  .commercial-workspace .button-row { flex-wrap: wrap; }
+}

@@ -1,6 +1,8 @@
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
+import { CustomerPanel } from '../components/customer-panel.js';
+import { SaleDraftPanel } from '../components/sale-draft-panel.js';
 import { OpeningCashPanel } from '../components/opening-cash-panel.js';
 import { useReasonDialog } from '../components/reason-dialog.js';
 import { AuditPanel } from '../components/audit-panel.js';
@@ -20,10 +22,10 @@ const {
 
 createApp({
     render,
-    components: { AuditPanel, OpeningCashPanel },
+    components: { AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel },
 
     setup() {
-        const page = ref('home');
+        const page = ref(location.hash.startsWith('#sale-draft') ? 'sale-drafts' : 'home');
         const loading = ref(true);
         const busy = ref(false);
         const error = ref('');
@@ -53,6 +55,8 @@ createApp({
         const allNavigation = [
             { id: 'home', label: 'Home', capability: null },
             { id: 'opening-cash', label: 'Opening Cash', capability: 'manage_opening_cash' },
+            { id: 'customers', label: 'Customers', capability: 'view_customers' },
+            { id: 'sale-drafts', label: 'Sale drafts', capability: 'view_sale_drafts' },
             { id: 'products', label: 'Products & stock', capability: 'view_inventory' },
             { id: 'intakes', label: 'Stock coming in', capability: 'view_inventory' },
             { id: 'staff', label: 'Staff', capability: 'manage_staff' },

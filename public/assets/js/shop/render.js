@@ -20,7 +20,7 @@ const _hoisted_3 = {
 }
 const _hoisted_4 = ["onClick"]
 const _hoisted_5 = {
-  key: 1,
+  key: 3,
   class: "welcome-panel"
 }
 const _hoisted_6 = { class: "eyebrow" }
@@ -32,7 +32,7 @@ const _hoisted_9 = {
 }
 const _hoisted_10 = { class: "badge-list" }
 const _hoisted_11 = {
-  key: 2,
+  key: 4,
   class: "workspace intake-workspace"
 }
 const _hoisted_12 = { class: "workspace-heading" }
@@ -130,7 +130,7 @@ const _hoisted_53 = {
   role: "alert"
 }
 const _hoisted_54 = {
-  key: 3,
+  key: 5,
   class: "workspace product-workspace"
 }
 const _hoisted_55 = { class: "workspace-heading" }
@@ -244,7 +244,7 @@ const _hoisted_98 = {
   role: "alert"
 }
 const _hoisted_99 = {
-  key: 4,
+  key: 6,
   class: "workspace"
 }
 const _hoisted_100 = {
@@ -300,7 +300,7 @@ const _hoisted_118 = {
 const _hoisted_119 = { key: 0 }
 const _hoisted_120 = { key: 1 }
 const _hoisted_121 = {
-  key: 5,
+  key: 7,
   class: "workspace"
 }
 const _hoisted_122 = ["onUpdate:modelValue", "type", "required"]
@@ -310,7 +310,7 @@ const _hoisted_123 = {
 }
 const _hoisted_124 = ["disabled"]
 const _hoisted_125 = {
-  key: 6,
+  key: 8,
   class: "workspace"
 }
 const _hoisted_126 = { class: "brand-preview" }
@@ -333,7 +333,7 @@ const _hoisted_133 = { class: "record-grid" }
 const _hoisted_134 = { class: "record-card" }
 const _hoisted_135 = ["src"]
 const _hoisted_136 = {
-  key: 7,
+  key: 9,
   class: "workspace"
 }
 const _hoisted_137 = { class: "record-grid" }
@@ -362,7 +362,7 @@ const _hoisted_146 = {
 const _hoisted_147 = { class: "break-all" }
 const _hoisted_148 = { class: "break-all" }
 const _hoisted_149 = {
-  key: 8,
+  key: 10,
   class: "workspace"
 }
 const _hoisted_150 = { class: "detail-grid" }
@@ -377,12 +377,12 @@ const _hoisted_153 = {
 }
 const _hoisted_154 = { class: "record-grid" }
 const _hoisted_155 = {
-  key: 10,
+  key: 12,
   class: "toast-notice",
   role: "status"
 }
 const _hoisted_156 = {
-  key: 11,
+  key: 13,
   class: "alert alert-danger",
   role: "alert"
 }
@@ -391,12 +391,12 @@ const _hoisted_158 = { key: 1 }
 const _hoisted_159 = { key: 2 }
 const _hoisted_160 = ["disabled"]
 const _hoisted_161 = {
-  key: 13,
+  key: 15,
   class: "toast-notice",
   role: "status"
 }
 const _hoisted_162 = {
-  key: 14,
+  key: 16,
   class: "alert alert-danger",
   role: "alert"
 }
@@ -421,6 +421,8 @@ const _hoisted_172 = ["disabled"]
 
 export function render(_ctx, _cache) {
   const _component_OpeningCashPanel = _resolveComponent("OpeningCashPanel")
+  const _component_CustomerPanel = _resolveComponent("CustomerPanel")
+  const _component_SaleDraftPanel = _resolveComponent("SaleDraftPanel")
   const _component_audit_panel = _resolveComponent("audit-panel")
 
   return (_openBlock(), _createElementBlock("div", null, [
@@ -452,6 +454,20 @@ export function render(_ctx, _cache) {
                 key: 0,
                 "read-only": _ctx.readOnly
               }, null, 8 /* PROPS */, ["read-only"]))
+            : _createCommentVNode("v-if", true),
+          (_ctx.page==='customers' && _ctx.context.capabilities.view_customers)
+            ? (_openBlock(), _createBlock(_component_CustomerPanel, {
+                key: 1,
+                permissions: _ctx.context.permissions,
+                "read-only": _ctx.readOnly
+              }, null, 8 /* PROPS */, ["permissions", "read-only"]))
+            : _createCommentVNode("v-if", true),
+          (_ctx.page==='sale-drafts' && _ctx.context.capabilities.view_sale_drafts)
+            ? (_openBlock(), _createBlock(_component_SaleDraftPanel, {
+                key: 2,
+                permissions: _ctx.context.permissions,
+                "read-only": _ctx.readOnly
+              }, null, 8 /* PROPS */, ["permissions", "read-only"]))
             : _createCommentVNode("v-if", true),
           (_ctx.page==='home')
             ? (_openBlock(), _createElementBlock("section", _hoisted_5, [
@@ -1777,7 +1793,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.page==='audit' && _ctx.context.capabilities.view_audit)
             ? (_openBlock(), _createBlock(_component_audit_panel, {
-                key: 9,
+                key: 11,
                 mode: "owner"
               }))
             : _createCommentVNode("v-if", true),
@@ -1789,7 +1805,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.inventoryActions.movement)
             ? (_openBlock(), _createElementBlock("div", {
-                key: 12,
+                key: 14,
                 class: "dialog-backdrop",
                 onClick: _cache[73] || (_cache[73] = _withModifiers((...args) => (_ctx.inventoryActions.closeMovement && _ctx.inventoryActions.closeMovement(...args)), ["self"]))
               }, [
@@ -1855,7 +1871,7 @@ export function render(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           (_ctx.dialog.open)
             ? (_openBlock(), _createElementBlock("div", {
-                key: 15,
+                key: 17,
                 class: "dialog-backdrop",
                 onClick: _cache[78] || (_cache[78] = _withModifiers((...args) => (_ctx.closeDialog && _ctx.closeDialog(...args)), ["self"]))
               }, [

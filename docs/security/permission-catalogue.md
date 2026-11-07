@@ -44,3 +44,7 @@ Phase 3 closure review confirms no implication between `product.manage`, `invent
 ## Phase 4 WP1 Opening Cash authority
 
 Only an ACTIVE PRIMARY_OWNER can view/control Opening Cash; Staff reconciliation grants do not authorize first-baseline setup. Mutations require FULL access and active membership rechecked under lock. READ_ONLY permits Owner reads; BLOCKED/CLOSED deny. Later Customer/Sale/Return permissions will be registered in their owning package. MFA freshness now derives only from a successfully completed Shield Email2FA verify action, never redirect generation.
+
+## Phase 4 WP2
+
+New closed-registry codes: `customer.view`, `customer.manage`, `customer.private`, `sale.view`, `sale.price_override`; reuse `sale.record`. Customer view + manage authorize lifecycle writes; private permission additionally controls phone/notes reading, phone search and writing. Omitted private edits preserve stored fields. Sale view + record authorize draft mutation and minimal active identity/Product lookup; price override requires its independent grant. Quick-create additionally requires Customer view + manage. Owners derive known-code permissions; Staff require each active grant. `debt.manage` is not an alternate authority. No COGS/profit field is exposed from drafts. See [exact matrix](../modules/phase-04-wp2.md); no Sale post/return/reverse/collection workflow is introduced here.

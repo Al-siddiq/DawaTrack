@@ -7,3 +7,7 @@ Posted or finalized evidence never receives generic CRUD mutation routes. A futu
 Route shape does not supply authority. Tenant scope is server-derived, Platform authority stays separate, and resource UUIDs are not authorization.
 
 Repeated commands return existing domain-specific `409` codes or the established `CONFLICT` envelope. DawaTrack does not promise generic response replay before Phase 10 and does not accept an unapproved generic `idempotency_key`.
+
+## Phase 4 WP2
+
+[Customer and Sale draft contract](../modules/phase-04-wp2.md): Customer masters have focused create/update/deactivate commands, safe private-field masking and atomic Audit/change publication. Every draft write locks the normal Sale parent, proves DRAFT and compares the expected version. Draft removal/discard cannot modify POSTED evidence. Payment preview is read-only/transient; actual Sale posting/payments/credit remain WP3. No generic posted Sales CRUD or payment/Receivable writes exist.

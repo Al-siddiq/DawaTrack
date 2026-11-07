@@ -83,3 +83,7 @@ Phase 3 closure confirms Product create/update/deactivate, threshold, Intake pos
 ## Phase 4 WP1 Opening Cash
 
 Closed vocabulary adds `reconciliation.opening_started`, `.opening_counted`, `.opening_committed`, `.opening_reviewed`, `.opening_finalized`, `.opening_aborted` under RECONCILIATION with `reconciliation_session` resource. Each authoritative transition appends Audit and aggregate change atomically. Reasons required; GET and exact terminal retries create no event. Credential reset uses bounded `access_invalidated` metadata; sensitive session/token keys remain forbidden.
+
+## Phase 4 WP2
+
+Customer lifecycle uses `customer.created`, `customer.updated`, `customer.deactivated`, category DEBT/resource `customer`. Metadata lists affected field names rather than phone/notes payloads. Fixed create/update reasons describe ordinary actions; deactivation requires an operator reason. Saved-draft discard is material: `sale.draft_discarded`, category SALE/resource `sale`, required reason, line count and estimated total. Ordinary draft create/edit/read and payment preview append no business evidence. Customer writes and discard Audit are atomic with their mutations; failed/rejected commands do not report successful events. The full contract is in `docs/modules/phase-04-wp2.md`.

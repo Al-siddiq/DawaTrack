@@ -61,3 +61,7 @@ No migration is owned by WP4. Static review retains the six Phase 3 migration/ra
 ## Phase 4 WP1
 
 Two ordered App migrations: `2026-11-02-100000_CreatePhaseFourReconciliationSessions` and `2026-11-02-100100_CreatePhaseFourReconciliationFinancialCounts`. Full v1.1 session/count definitions; existing/self scope FKs only, no future Device/Sales dependencies. Paired SQL: `docs/database/sql/phase-04/20261102100000_reconciliation_sessions.sql` and `20261102100100_reconciliation_financial_counts.sql`. Existing Phase 3 evidence is untouched. Development rollback reverses counts then sessions; verify batches before rollback.
+
+## Phase 4 WP2
+
+Seven ordered App migrations after WP1: `2026-11-03-100000` Customers, `100100` Sales, `100200` Sale Items, `100300` Sale Payments, `100400` Receivables, `100500` Receivable Adjustments, `100600` deferred scoped `stock_movements.sale_item_id` FK. Each has paired SQL under `phase-04/20261103*.sql`; see the [WP2 delivery register](../Phase-4/Phase_4_Work_Package_2_Delivery_Report.md) for exact filenames/apply/rollback instructions. Six full v1.1 commercial tables; only Customer and DRAFT workflows exposed. Reverse dependency order starts by dropping the late FK. Inspect batch boundaries; MySQL DDL implicitly commits. Native MySQL apply/rollback verification remains an owner development-checkout task.

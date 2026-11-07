@@ -28,3 +28,7 @@ Phase 3 WP4 closes Product Catalog + Inventory as one Shop capability. `Inventor
 ## Phase 4 WP1
 
 `Modules/Reconciliation` owns Opening Cash commands/query and the caller-transaction CashControlGuard. `Modules/Sales/Application/CommercialDecimal` supplies only exact calculation primitives; no Sales posting is implemented. OpeningCashController maps transport; OpeningCashPanel is a runtime-rendered Vue component. See Phase-4 integration contracts and the Owner manual verification checklist.
+
+## Phase 4 WP2
+
+CustomerDebt implements Tenant Customer lifecycle/safe queries; Sales implements strict commercial input and current-Shop normal Sale drafts/estimates. Shared CommercialAccess enforces scope authority, FULL mutation access and root lock ordering. Controllers expose only Customer and draft/lookup/preview commands; Inventory remains authoritative for future posted stock/cost effects. See [WP2 contract](phase-04-wp2.md), [delivery](../Phase-4/Phase_4_Work_Package_2_Delivery_Report.md), and [manual acceptance](../manual-verification-phase-04-wp2.md). WP1 is owner-accepted; WP2 acceptance is pending; Phase 4 remains incomplete.
