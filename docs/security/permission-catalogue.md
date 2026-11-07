@@ -52,3 +52,8 @@ New closed-registry codes: `customer.view`, `customer.manage`, `customer.private
 ## Phase 4 WP3
 
 `sale.record` now authorizes ordinary forward posting when combined with `sale.view`; both are checked inside the owning transaction. New `sale.profit.view` independently permits historical Cost basis/COGS/gross-profit receipt fields, in addition to `sale.view`. Without it cost fields are excluded from Sale queries/responses and masked in the UI. Owner derives known-code authority; Staff grants remain separate from `sale.price_override`, Customer/private, Inventory, reversal and debt permissions. No Return/reversal authority is activated by WP3. See [WP3 matrix](../modules/phase-04-wp3.md).
+
+
+## WP4-B — 2026-11-05
+
+`sale.return` independently grants Return create/update/preview/post/discard and estimate/eligibility together with `sale.view`. Owner derives known-code authority; Staff requires the explicit grant. `sale.reverse` alone does not authorize Return posting. `sale.profit.view` separately gates all cost/COGS/margin fields. FULL active authority is rechecked inside mutations.

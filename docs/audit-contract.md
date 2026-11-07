@@ -91,3 +91,8 @@ Customer lifecycle uses `customer.created`, `customer.updated`, `customer.deacti
 ## Phase 4 WP3
 
 `sale.posted`, SALE category/resource sale, records one aggregate forward transaction with actor, fixed reason, total/paid/credit, line count, historical total COGS and unestablished-cost line count. Business FKs link immutable payments/Receivable and each Sale Item movement; correlation groups effects without replacing those relationships. Posting Audit and all changes commit with header/items/stock/payment/credit; any failure rolls back the entire command. Repeating the same posted UUID and read queries append no false success. Cost metadata is part of existing Owner/authorized Audit visibility, not a new Staff cost read route. See `docs/modules/phase-04-wp3.md`.
+
+
+## WP4-B — 2026-11-05
+
+`sale.return_posted` is an aggregate SALE/sale action with required reason, original Sale public identity, Return value, refund and debt-reduction totals. Return draft discard reuses sale.draft_discarded with kind RETURN. Posting Audit failure rolls back stock/money/debt/header/change effects. Draft create/save has no financial effects.

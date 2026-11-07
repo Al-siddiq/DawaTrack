@@ -17,3 +17,8 @@ Posted financial evidence constrains rollback: preserve database/history and for
 ## WP4 independent commercial diagnostics
 
 `php spark sales:diagnose TENANT_PUBLIC_UUID SHOP_PUBLIC_UUID` resolves one explicit Shop/Tenant and runs bounded normal Sale/Return checks in an owned REPEATABLE READ, READ ONLY transaction. No repair, Audit or change publication occurs. It checks line totals/arithmetic, original receipt/credit identity, scope and nonnegative adjusted obligations, plus normal Return source/settlement/effective limits. Existing `inventory:diagnose` remains the stock-projection companion. These are sampled read-only checks, not a certification of pending compensation rules or Phase 4 closure. Phase 5 collection allocations are not included. See the WP4 readiness report for manual checks and the concrete pending owner decision.
+
+
+## WP4-B — 2026-11-05
+
+WP4-B is an authenticated API increment; use [manual/native steps](../manual-verification-phase-04-wp4-b.md). Return quantities reference the original posted Sale, reduce its existing debt first and refund only the remainder within original channels. Cash needs finalized Opening Cash. On uncertain response retrieve GET /api/v1/shop/returns/{sameUUID}; do not create another Return. Operator screens and protected reversal/replacement remain C/D.

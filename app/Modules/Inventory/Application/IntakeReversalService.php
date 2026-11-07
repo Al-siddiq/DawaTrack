@@ -47,7 +47,7 @@ foreach($originals as $m)$grouped[(int)$m['product_id']][]=$m;
 $beforeStates=[];
 
  foreach($productIds as $pid) {
-$chain=$this->database->table('stock_movements m')->select('m.*,om.source_kind original_source_kind')->join('stock_movements om','om.id=m.reversal_of_movement_id','left')->where(['m.tenant_id'=>$context->tenantId,'m.shop_id'=>$context->shopId,'m.product_id'=>$pid])->orderBy('m.id','ASC')->get()->getResultArray();
+$chain=(new CommercialCostHistory($this->database))->chain($context->tenantId,$context->shopId,$pid,null,true);
 $expected=array_map(static fn($m)=>(int)$m['id'],$grouped[$pid]);
 $actual=array_map(static fn($m)=>(int)$m['id'],array_slice($chain,-count($expected)));
 if($actual!==$expected||(int)$positionMap[$pid]['last_movement_id']!==end($expected))throw new ApiException('INTAKE_REVERSAL_NOT_CURRENT','Later stock activity prevents a safe direct Intake reversal. Record a Correction and replacement instead.',409);

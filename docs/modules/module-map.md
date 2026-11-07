@@ -40,3 +40,8 @@ Sales owns forward posting, exact money composition, state/receipt/history queri
 ## Phase 4 WP4 readiness
 
 WP3 owner acceptance was recorded on 2026-11-04. Sales now also exposes operator-only `sales:diagnose` with a scoped, owned read-only snapshot and bounded normal-evidence invariant samples. The explicit compensation-header/Return policy decision is prepared for review; dependent financial writers/UI remain unimplemented. This is not WP4 or Phase 4 completion. See [readiness](../Phase-4/Phase_4_WP4_Implementation_Readiness_and_Decision.md) and [proposed contract](../Phase-4/Phase_4_WP4_Proposed_Return_and_Compensation_Contract.md).
+
+
+## WP4-B — 2026-11-05
+
+Sales now owns original-linked Return draft/settlement/post orchestration; Inventory owns incoming Return stock/cost/provenance. See [WP4-B](phase-04-wp4-b.md). Correction writers and operator UI remain later increments.

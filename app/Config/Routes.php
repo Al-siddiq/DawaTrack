@@ -44,6 +44,15 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('shop/customers/(:segment)', 'Api\CustomerController::show/$1', ['filter' => 'authenticated']);
     $routes->put('shop/customers/(:segment)', 'Api\CustomerController::update/$1', ['filter' => 'authenticated']);
     $routes->post('shop/customers/(:segment)/deactivate', 'Api\CustomerController::deactivate/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/sales/(:segment)/returns', 'Api\ReturnController::create/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/sales/(:segment)/returnable-lines', 'Api\ReturnController::eligible/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/returns', 'Api\ReturnController::index', ['filter' => 'authenticated']);
+    $routes->get('shop/returns/(:segment)', 'Api\ReturnController::detail/$1', ['filter' => 'authenticated']);
+    $routes->put('shop/returns/(:segment)', 'Api\ReturnController::update/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/returns/(:segment)/estimate', 'Api\ReturnController::estimate/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/returns/(:segment)/preview', 'Api\ReturnController::preview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/returns/(:segment)/post', 'Api\ReturnController::post/$1', ['filter' => 'authenticated']);
+    $routes->delete('shop/returns/(:segment)', 'Api\ReturnController::discard/$1', ['filter' => 'authenticated']);
     $routes->get('shop/sales', 'Api\SaleController::index', ['filter' => 'authenticated']);
     $routes->get('shop/sales/(:segment)', 'Api\SaleController::show/$1', ['filter' => 'authenticated']);
     $routes->post('shop/sales/(:segment)/post', 'Api\SaleController::post/$1', ['filter' => 'authenticated']);

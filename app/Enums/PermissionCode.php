@@ -18,6 +18,7 @@ enum PermissionCode: string
     case SalePriceOverride = 'sale.price_override';
     case SaleProfitView = 'sale.profit.view';
     case SaleRecord = 'sale.record';
+    case SaleReturn = 'sale.return';
     case SaleReverse = 'sale.reverse';
     case DebtManage = 'debt.manage';
     case DebtPaymentRecord = 'debt.payment.record';

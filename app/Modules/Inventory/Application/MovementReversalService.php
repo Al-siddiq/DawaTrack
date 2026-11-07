@@ -25,7 +25,7 @@ $this->projection=new InventoryProjection($database);
  public function reverse(ShopContext $context,string $originalPublicId,string $reason): string{$this->authorize($context);
 $reason=SensitiveReason::require($reason);
 $this->database->transException(true)->transBegin();
-try{$original=$this->database->query('SELECT * FROM stock_movements WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$context->shopId,strtolower($originalPublicId)])->getRowArray();
+try{$original=$this->database->query('SELECT * FROM stock_movements WHERE tenant_id=? AND shop_id=? AND public_id=?',[$context->tenantId,$context->shopId,strtolower($originalPublicId)])->getRowArray();
 if(!$original)throw new ApiException('MOVEMENT_NOT_FOUND','The Stock Movement was not found.',404);
 if($original['movement_type']==='REVERSAL')throw new ApiException('REVERSAL_OF_REVERSAL_NOT_ALLOWED','Use a Correction instead of reversing a reversal.',409);
 if($original['source_kind']==='SALE_ITEM')throw new ApiException('COMMERCIAL_MOVEMENT_PROTECTED','Sale and Return stock evidence must be corrected through its commercial workflow.',409);
@@ -33,6 +33,8 @@ if($original['source_kind']!=='MANUAL')throw new ApiException('MOVEMENT_REVERSAL
 $existing=$this->database->table('stock_movements')->where('reversal_of_movement_id',$original['id'])->countAllResults();
 if($existing)throw new ApiException('MOVEMENT_ALREADY_REVERSED','This Stock Movement has already been reversed.',409);
 $product=$this->database->query('SELECT id,public_id FROM products WHERE tenant_id=? AND id=? FOR UPDATE',[$context->tenantId,$original['product_id']])->getRowArray();
+$this->database->query('SELECT id FROM stock_movements WHERE tenant_id=? AND shop_id=? AND id=? FOR UPDATE',[$context->tenantId,$context->shopId,$original['id']]);
+if($this->database->table('stock_movements')->where('reversal_of_movement_id',$original['id'])->countAllResults())throw new ApiException('MOVEMENT_ALREADY_REVERSED','This Stock Movement has already been reversed.',409);
 $position=$this->database->query('SELECT * FROM stock_positions WHERE tenant_id=? AND shop_id=? AND id=? FOR UPDATE',[$context->tenantId,$context->shopId,$original['stock_position_id']])->getRowArray();
 if(!$product||!$position)throw new ApiException('INVENTORY_STATE_CONFLICT','The current stock state is unavailable.',409);
 $delta=str_starts_with((string)$original['quantity_delta'],'-')?ltrim((string)$original['quantity_delta'],'-'):'-'.(string)$original['quantity_delta'];

@@ -61,3 +61,8 @@ Customer lifecycle publishes the approved Tenant-owned `customer` aggregate (`sh
 ## Phase 4 WP3 resource extension
 
 Approved new resources are `sale` (Sale UUID; lines/actual receipt payments are aggregate children) and `receivable` (Receivable UUID, original Sale credit obligation). Posting publishes these with per-movement `stock_movement` identities, one logical `stock_position` Product UUID per distinct Product, and a Tenant-scoped `customer` context UPSERT when credit is created. There is no arbitrary standalone payment resource or mutable stored Customer balance. Refresh paths are GET `/sales/{uuid}`, `/sale-credit/{uuid}`, existing safe Customer reads and permitted Inventory reads. Publication happens last inside the one posting transaction, after domain effects and Audit. Exact posted repeats publish nothing; drafts/preview remain effect-free. No device/offline/receipt transport is enabled. See [effect matrix](../modules/phase-04-wp3.md).
+
+
+## WP4-B — 2026-11-05
+
+Posted normal Return refresh publishes original Sale + Return, movement UUIDs, logical Product position UUIDs, original Receivable and relevant Customer context last in the same transaction after Audit. Drafts reserve/publish no financial effects. Same-identity GET recovery handles uncertain responses; offline business replay remains unavailable.
