@@ -47,3 +47,7 @@ WP4-C protected reversal/replacement API is implemented for native verification 
 ## WP4-D — 2026-11-06
 
 WP4-D integrates the Return/correction operator workflow, unified history/receipts, Sale usability fixes and complete commercial diagnostic categories. [D delivery](docs/Phase-4/Phase_4_WP4_D_Delivery_Report.md), [manual verification with P4-01–P4-33 register](docs/manual-verification-phase-04-wp4-d.md) and [closure status](docs/Phase-4/Phase_4_Integrated_Closure_Status.md) are available. Implementation is a closure candidate; native/visual owner verification remains pending and Phase 4 is NOT CLOSED.
+
+## UI refactor developer reference
+
+The approved UI programme and UI2-A foundation are documented in [docs/ui/README.md](docs/ui/README.md). UI2-A supplies local icon assets, opt-in visual tokens and enhanced design examples; it does not replace current task screens. Follow the reference's manual verification steps before recording package acceptance.

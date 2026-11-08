@@ -174,3 +174,7 @@ p { color: var(--dt-muted); line-height: 1.65; }
  #commercial-print-receipt a { display: none; }
  #commercial-print-receipt section { break-inside: avoid; }
 }
+
+// UI2-A: opt-in foundation; no legacy layout selectors are overridden.
+@import "ui/tokens";
+@import "ui/foundation";

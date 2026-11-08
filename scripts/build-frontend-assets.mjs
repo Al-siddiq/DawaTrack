@@ -7,6 +7,8 @@ import { execFileSync } from 'node:child_process';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const at = (...parts) => path.join(root, ...parts);
 
+execFileSync(process.execPath, [at('scripts', 'build-ui-icons.mjs')], { cwd: root, stdio: 'inherit' });
+
 execFileSync(process.execPath, [at('scripts', 'compile-shop-template.mjs')], {
     cwd: root,
     stdio: 'inherit',

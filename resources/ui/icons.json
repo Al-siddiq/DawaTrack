@@ -1,0 +1,16 @@
+{
+  "library": "bootstrap-icons",
+  "version": "1.13.2",
+  "icons": {
+    "home": "house", "sell": "basket", "stock": "box-seam", "customers": "people",
+    "menu": "list", "sales": "receipt", "back": "arrow-left", "next": "arrow-right",
+    "add": "plus-lg", "search": "search", "edit": "pencil", "remove": "trash",
+    "return": "arrow-return-left", "cancel-record": "x-circle", "print": "printer", "close": "x-lg",
+    "settings": "gear", "cash": "cash-stack", "staff": "person-badge", "appearance": "palette",
+    "web-address": "globe", "plan": "card-checklist", "activity": "clock-history",
+    "account": "person-circle", "sign-out": "box-arrow-right", "expand": "chevron-down",
+    "success": "check-circle", "warning": "exclamation-triangle", "error": "exclamation-circle",
+    "info": "info-circle", "refresh": "arrow-clockwise", "visibility": "eye",
+    "visibility-off": "eye-slash", "shop": "shop"
+  }
+}
