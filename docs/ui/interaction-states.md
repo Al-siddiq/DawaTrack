@@ -1,6 +1,6 @@
 # Interaction states and invariants
 
-A provides visual examples, not production business-state rewrites. The approved strategy §§6–8 contains the full contract. These requirements govern B/C and task migration.
+B delivers shared components and selected real integrations, without rewriting domain state transitions. The approved strategy §§6–8 contains the full contract. These requirements govern B/C and task migration.
 
 - **Loading reads:** show the affected region and clear text; preserve usable existing content/navigation. No entire-app lock for a small search. Stale read results must not overwrite a later search.
 - **Saving:** disable the actual submitting operation; show “Saving sale…” or its real task wording plus a spinner; keep the action width stable. Avoid both click and submit dispatching the same operation. Server duplicate safety remains authoritative.
@@ -13,4 +13,4 @@ A provides visual examples, not production business-state rewrites. The approved
 - **Accordions/disclosures:** optional extra information only; keep essential totals/errors/actions outside. Secondary-action disclosure uses normal links/buttons unless implementing a full ARIA menu pattern.
 - **Motion:** remove nonessential motion under reduced-motion preference; keep status words and static cues. No animated decoration or fake progress.
 
-UI2-A reference safeguards: every state is clearly identified as an example; saving uses a 2.5-second local timer; dialogs never call an endpoint; native `<dialog>` supplies background isolation; success closes after 9 seconds except while hovered/focused. These timings do not enter production business logic. Full component recovery, dirty-state handling, body scroll, request integration and screen-reader/device validation are B/C obligations.
+UI2-B reference safeguards: examples mount the real components but use sample records and local delays. They never call business endpoints. UiDialog owns native focus/background/scroll behavior, beforeClose allows dirty-state refusal, UiAlert owns its opt-in success timer, and useUiList ignores stale read results. These local fixture delays never enter production saves. Actual domain recovery remains the caller's current authoritative status flow. Screen-reader/device and all application lifecycle acceptance require manual verification.

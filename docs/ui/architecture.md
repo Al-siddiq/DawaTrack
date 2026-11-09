@@ -33,3 +33,7 @@ Application CSP is unchanged. External same-origin sprite `<use>` requires brows
 ## Next integration rules
 
 UI2-B builds focused components around shared behavior; reconcile current `commercial-ui.js`, reason-dialog and screen helpers rather than creating a second uncontrolled system. Vue owns overlay/open/busy state. Bootstrap CSS may style controls; Bootstrap JS must not independently mutate the same DOM. UI2-C adopts shells and registry; UI-3 migrates task screens. Neither stage may move business rules into presentation components or change server authority.
+
+## UI2-B adoption
+
+UI2-B adds `primitives.js`, `overlay.js`, `disclosure.js`, `records.js`, `tasks.js` and a barrel export under the existing UI directory. New CSS classes remain opt-in; the shared button reserves both resting/busy text widths with a CSS grid (no CSP-sensitive inline sizing). Existing commercial helpers now adapt to shared controls; Customers uses the read-only list helper, uncertain sale status uses UiStatusPanel, and Staff confirmation uses UiDialog. The old parallel Staff focus trap is removed. Other bespoke task overlays remain UI-3 obligations. No endpoint, service, schema, permission or exact-money contract is changed.

@@ -1,3 +1,4 @@
+import { UiStatusPanel } from './ui/index.js';
 import { SaleReceipt } from './sale-receipt.js';
 import { apiRequest } from '../api/http-client.js';
 import { has, money, get, send, field, action, submit, feedback, message, pager } from './commercial-ui.js';
@@ -166,7 +167,7 @@ export const SaleDraftPanel = {
                 ].filter(Boolean))
                 ]),
                 quickCreate.value && record.value && h('details', { class: 'commercial-card' }, [h('summary', 'Quick-create Customer'), h('form', { onSubmit: createCustomer }, [field('sale-quick-name', 'New Customer name', quickName.value, value => { quickName.value = value; }, { required: true, maxlength: 160, disabled: disabled.value }), h('p', 'Creates a Customer identity only. Private details can be added in Customers with permission.'), submit('Create Customer', disabled.value)])]),
-                uncertain.value && h('section', { class: 'alert alert-warning', role: 'alert' }, [h('h2', 'Check the Sale outcome'), h('p', 'The posting response was lost or failed. This Sale may already be posted. Check its saved state before any further changes.'), action('Check Sale status', () => open(draft.value.public_id), pending.value || !online.value)]),
+                uncertain.value && h(UiStatusPanel, { state: 'unknown', message: 'The response was lost or failed. This sale may already be saved. Check its saved state before any further changes.', checking: pending.value, canCheck: online.value, onCheckStatus: () => open(draft.value.public_id) }),
                 record.value && h('form', { class: 'commercial-form cashier-product-form', onSubmit: saveLine }, [
                     h('h2', line.public_id ? 'Edit basket item' : '1. Add Products'),
                     field('sale-product-search', 'Search active Products', productSearch.value, value => { productSearch.value = value; }, { type: 'search', disabled: disabled.value, maxlength: 160 }), action('Find Products', () => run(() => loadLookup('products')), disabled.value),
