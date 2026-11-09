@@ -1,5 +1,7 @@
 <?php
-$brand = dawatrack_auth_brand();
+helper('ui');
+$adminEntry = session('authentication_area') === 'platform_admin';
+$brand = $adminEntry ? null : dawatrack_auth_brand();
 
 $cspNonce = service('cspNonce')->value();
 
@@ -13,7 +15,7 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 
     <meta
         name="theme-color"
@@ -39,6 +41,7 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
     <style nonce="<?= esc($cspNonce, 'attr') ?>">
         :root {
             --dt-primary: <?= esc($primaryColour) ?>;
+            --ui-primary: <?= esc(dt_ui_brand_primary($primaryColour)) ?>;
             --dt-ink: <?= esc($secondaryColour) ?>;
             --dt-accent: <?= esc($accentColour) ?>;
             --dt-background: <?= esc($backgroundColour) ?>;
@@ -59,7 +62,7 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
     </style>
 </head>
 
-<body class="auth-page">
+<body class="auth-page ui-auth-entry ui-scope">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <main id="main-content" class="auth-shell" tabindex="-1">
     <section class="auth-card" aria-labelledby="auth-heading">
@@ -70,7 +73,7 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
                 <span class="brand-mark" aria-hidden="true"><?= esc(mb_substr($brand['brand_display_name'] ?? 'D', 0, 1)) ?></span>
             <?php endif ?>
             <div>
-                <div class="eyebrow">Secure access</div>
+                <div class="eyebrow"><?= $adminEntry ? 'Admin workspace' : 'Shop sign-in' ?></div>
                 <strong><?= esc($brand['brand_display_name'] ?? 'DawaTrack') ?></strong>
             </div>
         </header>
@@ -95,5 +98,6 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
         <?= $this->renderSection('main') ?>
     </section>
 </main>
+<script type="module" src="/assets/js/auth/entry.js"></script>
 </body>
 </html>

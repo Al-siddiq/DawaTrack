@@ -40,6 +40,7 @@ final class ShopController extends BaseController
 
             return $this->ok([
                 'role' => $context->role,
+                'current_user' => ['display_name' => (string) (auth()->user()?->username ?? 'Signed-in user')],
                 'shop' => $shop,
                 'permissions' => $permissions,
                 'capabilities' => [

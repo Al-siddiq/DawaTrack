@@ -1,10 +1,21 @@
+import { WorkspaceShell } from '../components/ui/workspace-shell.js';
+import { UiAlert, UiLoading, UiButton, UiEmptyState } from '../components/ui/index.js';
+import { adminPages, readWorkspacePresentation } from '../shared/workspace-registry.js';
+import { useWorkspaceNavigation } from '../shared/workspace-navigation.js';
 import { phaseOneApi } from '../api/phase-one.js';
 import { AuditPanel } from '../components/audit-panel.js';
 
-const { createApp, reactive, ref, h } = window.Vue;
+const { createApp, reactive, ref, h, computed, watch, onMounted } = window.Vue;
 
 createApp({
     setup() {
+        const presentation = readWorkspacePresentation(document.getElementById('admin-app'));
+        const can = permission => presentation.permissions.includes(permission);
+        const navigation = computed(() => adminPages.filter(item => can(item.permission)));
+        const workspaceNavigation = useWorkspaceNavigation({ items: navigation, fallback: 'shops' });
+        workspaceNavigation.initialize();
+        const page = workspaceNavigation.currentId;
+        const pageLoading = ref(false);
         const step = ref(1);
         const busy = ref(false);
         const error = ref('');
@@ -842,6 +853,7 @@ createApp({
         }
 
         function renderSubscriptionForm(tenant) {
+            if (!can('platform.subscriptions') || page.value !== 'plans') return null;
             const data =
                 operationForm(tenant);
 
@@ -1095,6 +1107,7 @@ createApp({
         }
 
         function renderLifecycleButtons(tenant) {
+            if (!can('platform.tenants') || page.value !== 'shops') return null;
             return h(
                 'div',
                 {
@@ -1331,7 +1344,7 @@ createApp({
                                             id:
                                                 'tenant-operations',
                                         },
-                                        'Tenant, Shop and subscriptions'
+                                        page.value === 'plans' ? 'Plans' : 'Shops'
                                     ),
                                 ]
                             ),
@@ -1363,110 +1376,34 @@ createApp({
             );
         }
 
-        loadDomains();
-        loadOperations();
-
-        return () =>
-            h(
-                'div',
-                {
-                    class:
-                        'workspace',
-                },
-                [
-                    h(
-                        'header',
-                        [
-                            h(
-                                'div',
-                                {
-                                    class:
-                                        'eyebrow',
-                                },
-                                'Platform administration'
-                            ),
-
-                            h(
-                                'h1',
-                                'Onboard a Shop'
-                            ),
-
-                            h(
-                                'p',
-                                'Create the Owner, Tenant, Shop, brand, platform address and Trial in one audited transaction.'
-                            ),
-                        ]
-                    ),
-
-                    h(
-                        'ol',
-                        {
-                            class:
-                                'step-indicator',
-
-                            'aria-label':
-                                'Onboarding progress',
-                        },
-                        [
-                            h(
-                                'li',
-                                {
-                                    class: {
-                                        active:
-                                            step.value
-                                            === 1,
-                                    },
-                                },
-                                'Details'
-                            ),
-
-                            h(
-                                'li',
-                                {
-                                    class: {
-                                        active:
-                                            step.value
-                                            === 2,
-                                    },
-                                },
-                                'Review'
-                            ),
-
-                            h(
-                                'li',
-                                {
-                                    class: {
-                                        active:
-                                            step.value
-                                            === 3,
-                                    },
-                                },
-                                'Complete'
-                            ),
-                        ]
-                    ),
-
-                    error.value
-                        ? h(
-                            'div',
-                            {
-                                class:
-                                    'alert alert-danger',
-
-                                role:
-                                    'alert',
-                            },
-                            `${error.value} No partial account was retained.`
-                        )
-                        : null,
-
-                    renderOnboardingForm(),
-                    renderReview(),
-                    renderComplete(),
-                    renderDomains(),
-                    renderOperations(),
-                    h(AuditPanel, { mode: 'platform', tenants: tenants.value }),
-                ]
-            );
+        async function loadPage(id) {
+            pageLoading.value = true;
+            clearErrors();
+            try {
+                if (id === 'domains' && can('platform.domains')) await loadDomains();
+                else if (['shops', 'plans', 'activity'].includes(id) && can('platform.access')) await loadOperations();
+            } finally { pageLoading.value = false; }
+        }
+        watch(page, (id, previous) => { if (previous === 'onboard') form.owner_password = ''; loadPage(id); });
+        onMounted(() => loadPage(page.value));
+        return () => h(WorkspaceShell, {
+            title: workspaceNavigation.current.value?.label || 'Admin', area: 'Admin',
+            brandName: 'DawaTrack', userName: presentation.userName, roleLabel: 'Platform administrator',
+            items: navigation.value, currentId: page.value, navigation: workspaceNavigation,
+            trackEdits: !!workspaceNavigation.current.value?.trackEdits,
+        }, { default: () => [
+            !navigation.value.length && h(UiAlert, { severity: 'error', message: 'We could not load Admin navigation. Reload this page to refresh your access.', dismissible: false }),
+            error.value && h(UiAlert, { severity: 'error', message: error.value, dismissible: false }),
+            pageLoading.value && h(UiLoading, { label: 'Loading this section…' }),
+            page.value === 'onboard' && can('platform.onboard') && h('section', { class: 'workspace' }, [
+                h('h2', 'Add a shop'), h('p', 'Enter the shop and Owner details, review them, then create the account.'),
+                h('ol', { class: 'step-indicator', 'aria-label': 'Add shop progress' }, ['Details', 'Review', 'Complete'].map((label, index) => h('li', { class: { active: step.value === index + 1 } }, label))),
+                renderOnboardingForm(), renderReview(), renderComplete(),
+            ]),
+            page.value === 'domains' && !pageLoading.value && can('platform.domains') && renderDomains(),
+            ['shops', 'plans'].includes(page.value) && can('platform.access') && !pageLoading.value && renderOperations(),
+            ['shops', 'plans'].includes(page.value) && can('platform.access') && !pageLoading.value && !error.value && !tenants.value.length && h(UiEmptyState, { title: 'No shops to show', message: can('platform.onboard') ? 'Choose Add shop to create a shop account.' : 'Shop accounts will appear here when available.' }),
+            page.value === 'activity' && can('platform.audit') && h(AuditPanel, { mode: 'platform', tenants: tenants.value }),
+        ].filter(Boolean) });
     },
 }).mount('#admin-app');
