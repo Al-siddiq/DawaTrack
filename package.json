@@ -1,1 +1,17 @@
-{"private":true,"scripts":{"build:css":"sass --style=compressed --no-source-map resources/css/app.scss public/assets/css/app.css","build:assets":"node scripts/build-frontend-assets.mjs","build":"npm run build:css && npm run build:assets"},"devDependencies":{"bootstrap":"5.3.8","dexie":"4.2.1","sass":"1.93.2","vue":"3.5.44"}}
+{
+  "private": true,
+  "scripts": {
+    "build:css": "sass --style=compressed --no-source-map resources/css/app.scss public/assets/css/app.css",
+    "build:assets": "node scripts/build-frontend-assets.mjs",
+    "build": "npm run build:css && npm run build:assets",
+    "ui:reference": "node scripts/build-ui-reference.mjs",
+    "ui:preview": "node scripts/serve-ui-reference.mjs"
+  },
+  "devDependencies": {
+    "bootstrap": "5.3.8",
+    "bootstrap-icons": "1.13.2",
+    "dexie": "4.2.1",
+    "sass": "1.93.2",
+    "vue": "3.5.44"
+  }
+}

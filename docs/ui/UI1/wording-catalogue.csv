@@ -1,0 +1,97 @@
+id,context,current_or_internal,usage_rule,proposed_copy
+COPY-001,Navigation and access,Dashboard,"Task shortcuts, not unimplemented report metrics",Home
+COPY-002,Navigation and access,Tenant,Admin context only; Shop remains the operating outlet,Business account
+COPY-003,Navigation and access,Primary Owner,Role label only; keep backend identity unchanged,Shop owner
+COPY-004,Navigation and access,Record Sale,Destination,Sell
+COPY-005,Navigation and access,Sale drafts,An unfinished sale is not a completed sale,Unfinished sales
+COPY-006,Navigation and access,Create Sale draft,Create necessary server draft behind this action; do not auto-post,New sale
+COPY-007,Navigation and access,Products & stock,Includes existing stock-delivery entry,Stock
+COPY-008,Navigation and access,Stock coming in,Action within Stock,Add stock
+COPY-009,Navigation and access,Stock Intake,History/detail noun,Stock delivery
+COPY-010,Navigation and access,Opening stock,Setup only; preserve eligibility,Starting stock
+COPY-011,Navigation and access,Opening Cash,"Existing setup baseline, not daily cash reset",Starting cash
+COPY-012,Navigation and access,Branding,Owner-only current capability,Shop appearance
+COPY-013,Navigation and access,Domains,Owner setup; hide technical status in Details where possible,Web address
+COPY-014,Navigation and access,Subscription,Do not change billing rules,Plan
+COPY-015,Navigation and access,Audit,Read-only who/what/when; no delete control,Activity
+COPY-016,Navigation and access,Shop settings,Business contact/profile; distinguish appearance,Shop details
+COPY-017,Navigation and access,Effective permissions,"Staff settings only, not ordinary Home",What this person can do
+COPY-018,Navigation and access,FULL,Normally quiet; no permanent full-width success banner,You can make changes
+COPY-019,Navigation and access,READ_ONLY,Keep reason and allowed next action visible,View only
+COPY-020,Navigation and access,BLOCKED,Use safe reason and permitted next step,You cannot open this shop right now
+COPY-021,Navigation and access,CLOSED,Do not imply records were deleted,This shop account is closed
+COPY-022,Sales,Draft,Prefer Unfinished sale for record status,Not saved as a completed sale
+COPY-023,Sales,Posted,Separate record status from payment status,Completed
+COPY-024,Sales,Post sale,Final explicit financial action after review,Save sale
+COPY-025,Sales,Review preparation,No effects yet,Review sale
+COPY-026,Sales,Add line,Product + quantity,Add to basket
+COPY-027,Sales,Line order,Advanced optional field only,Basket order
+COPY-028,Sales,Unit selling price,Use the actual Product unit; no automatic unit conversion,Price per pack
+COPY-029,Sales,Quantity up to 4 decimal places,Accept allowed fractions; give an example only when relevant,How many packs?
+COPY-030,Sales,Prepared cash,Only money applied to this sale; change is not an extra payment,Cash received
+COPY-031,Sales,Prepared transfer,Cash and Transfer remain distinct,Transfer received
+COPY-032,Sales,Credit amount,Not a payment method,Customer still owes
+COPY-033,Sales,Credit due date,Use Shop calendar rules,When should they pay? (optional)
+COPY-034,Sales,Customer required,Example amount must come from server review,"Choose a customer because ₦3,000 is still owed."
+COPY-035,Sales,Discard draft,Reason where required; separate from completed-sale correction,Discard unfinished sale
+COPY-036,Sales,Walk-in / no Customer,Allow for fully paid sales,No customer selected
+COPY-037,Sales,Business time,Device-local entry; display Shop time clearly when different,Sale date and time
+COPY-038,Sales,Save draft details,Not final sale posting,Save details
+COPY-039,Sales,Reload saved draft,Warn before replacing unsaved edits,Reload saved sale
+COPY-040,Sales,Posted successfully,Permanent receipt remains available,Sale saved
+COPY-041,Sales,Immutable receipt,Protected history explained in correction flow,Saved receipt
+COPY-042,Sales,Public UUID,Short display only; full reference available in More details,Reference
+COPY-043,Sales,Correlation ID,"Help details, not primary task content",Support reference
+COPY-044,Money and stock,Debtors,"Later collection navigation is Phase 5, not displayed now",Customers who owe
+COPY-045,Money and stock,Receivable,Do not invent a second debt record,Amount owed for this sale
+COPY-046,Money and stock,Outstanding balance,Always show who owes whom,Still to pay
+COPY-047,Money and stock,Settled,"Payment status, not sale completion status",Paid in full
+COPY-048,Money and stock,Partially paid,Show amount still owed,Partly paid
+COPY-049,Money and stock,Debt allocation,Phase 5 wording reserve only,Which sales this payment covers
+COPY-050,Money and stock,Gross profit,Only sale.profit.view; never claim net profit,Profit before shop costs
+COPY-051,Money and stock,COGS,Authorized details only,Cost of the products sold
+COPY-052,Money and stock,Cost basis unestablished,Never call this verified profit,The cost is not confirmed. This profit estimate may be incomplete.
+COPY-053,Money and stock,Negative stock,Do not block otherwise valid sales merely due to negative stock,The recorded stock is below zero. Check the stock records.
+COPY-054,Money and stock,Stock Position,Distinguish system records from actual physical count,Recorded stock
+COPY-055,Money and stock,Movement ledger,Preserve immutable evidence,Stock history
+COPY-056,Money and stock,Reconciliation variance,Later full checking workflow; no blame implied,Difference between the count and the records
+COPY-057,Returns and feedback,Return preparation,Original Sale lines only,Review returned products
+COPY-058,Returns and feedback,Return quantity,Never exceed current effective eligibility,How many are being returned?
+COPY-059,Returns and feedback,RETURN_REDUCTION,Not money received,Amount owed reduced
+COPY-060,Returns and feedback,Refund amount,Actual Cash/Transfer split still required,Money to return to the customer
+COPY-061,Returns and feedback,Cash refund,Actual money effect,Cash returned
+COPY-062,Returns and feedback,Transfer refund,Actual money effect,Transfer returned
+COPY-063,Returns and feedback,Compensation,Keep original link and explicit effects,Correction record
+COPY-064,Returns and feedback,Reverse sale,Only when all approved inverse effects are confirmed,Cancel this completed sale
+COPY-065,Returns and feedback,Reverse Return,Show cash received back and debt restored where applicable,Cancel this return
+COPY-066,Returns and feedback,Existing debt restored,Same original Receivable,The customer owes this amount again
+COPY-067,Returns and feedback,CORRECTION_DECREASE,"Original credit cancellation, not a payment",Original amount owed cancelled
+COPY-068,Returns and feedback,Replacement,Separate new unfinished record and confirmation,Corrected sale / corrected return
+COPY-069,Returns and feedback,Reversal of reversal denied,No generic delete or automatic Undo,This correction cannot be cancelled here. Open the original record for the available options.
+COPY-070,Returns and feedback,Stock dependency,Show permitted linked records; do not suggest bypassing guards,Later stock records affect this sale. Check those records before correcting it.
+COPY-071,Returns and feedback,Historical snapshots,Current Product price must not replace history,Prices recorded when the sale was made
+COPY-072,Returns and feedback,Reason required,Keep required reason and Audit,Why are you making this change?
+COPY-073,Returns and feedback,Finalized Opening Cash required,Owner action; Staff gets Ask your shop owner,Record the shop’s starting cash before saving a cash sale.
+COPY-074,Returns and feedback,No products in draft,Clear action,Your basket is empty. Add a product to start.
+COPY-075,Returns and feedback,No matching records,Preserve search,No matches found. Try another name or clear the filters.
+COPY-076,Returns and feedback,Request pending,Disable repeated financial confirmation,Saving… Please wait.
+COPY-077,Errors and support,Invalid amount,Use zero-allowed wording for fields that permit zero,"Enter an amount greater than zero, for example ₦500."
+COPY-078,Errors and support,Invalid cash baseline,Starting cash permits zero,Enter zero or the amount of cash counted.
+COPY-079,Errors and support,Refund mismatch,Amounts from current server review,"Return ₦2,000 in total. Cash and transfer must add up to ₦2,000."
+COPY-080,Errors and support,Excess payment,No wallet/advance or new change-calculation scope,Record only the amount paid for this sale. Do not include change given back.
+COPY-081,Errors and support,Version conflict,Retain entries; do not silently overwrite,This record changed. Reload it and check your entries before saving.
+COPY-082,Errors and support,Network error after post,Persistent; no blind new UUID/repost,We could not confirm that this sale was saved. Check its status before trying again.
+COPY-083,Errors and support,Success toast,"8-10 seconds, close button, pause while interacting; receipt persists",Changes saved.
+COPY-084,Errors and support,Permission denied,Never grant access through the UI,You are not allowed to do this. Ask your shop owner for help.
+COPY-085,Errors and support,Session expired,Existing session/security flow,Please sign in again to continue.
+COPY-086,Errors and support,Offline,Current phase; do not promise offline queuing,You are offline. New sales cannot be saved right now.
+COPY-087,Errors and support,Empty customers,Create action only with customer.manage,No customers yet. Add a customer when you need to record their details.
+COPY-088,Errors and support,Deactivate customer,Explain history remains; no delete,Stop using this customer record
+COPY-089,Errors and support,Lifecycle,Admin only,Account status
+COPY-090,Errors and support,Onboard Tenant,Retain separate business-account and shop fields,Add shop
+COPY-091,Errors and support,Activate Tenant,Actual approved lifecycle restrictions still apply,Reopen account access
+COPY-092,Errors and support,TLS ready,Details preserve precise platform status,Secure web address ready
+COPY-093,Errors and support,MFA,Do not remove second-factor step,Security check
+COPY-094,Errors and support,Source evidence,Keep protected links,Original record
+COPY-095,Errors and support,Sync generation,Not user task vocabulary,Support details
+COPY-096,Errors and support,Server unavailable,Do not assert save failure if outcome is unknown,We cannot reach DawaTrack. Check the connection and try the status check.

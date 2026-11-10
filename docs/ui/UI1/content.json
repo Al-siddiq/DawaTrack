@@ -1,0 +1,939 @@
+{
+  "navigation": [
+    {
+      "area": "Shop",
+      "group": "Work",
+      "label": "Home",
+      "current_target": "home",
+      "gate": "Authenticated current Shop member",
+      "placement": "Sidebar + bottom",
+      "behavior": "Task shortcuts; no invented reporting totals"
+    },
+    {
+      "area": "Shop",
+      "group": "Work",
+      "label": "Sell",
+      "current_target": "sale-drafts",
+      "gate": "sale.view; sale.record for writing",
+      "placement": "Sidebar + bottom",
+      "behavior": "Open new/own unambiguous unfinished basket; saved-sale chooser otherwise"
+    },
+    {
+      "area": "Shop",
+      "group": "Work",
+      "label": "Stock",
+      "current_target": "products",
+      "gate": "inventory.view",
+      "placement": "Sidebar + bottom",
+      "behavior": "Search recorded stock; Product and delivery actions retain separate grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Work",
+      "label": "Customers",
+      "current_target": "customers",
+      "gate": "customer.view",
+      "placement": "Sidebar + bottom",
+      "behavior": "Search/view records; customer.manage and customer.private remain separate"
+    },
+    {
+      "area": "Shop",
+      "group": "Work",
+      "label": "Sales",
+      "current_target": "sale-history",
+      "gate": "sale.view",
+      "placement": "Sidebar + Menu",
+      "behavior": "Search completed sales, saved returns, returns and corrections"
+    },
+    {
+      "area": "Shop",
+      "group": "Stock tasks",
+      "label": "Add stock",
+      "current_target": "intakes",
+      "gate": "inventory.view; inventory.intake for writing",
+      "placement": "Inside Stock",
+      "behavior": "Receive stock using existing intake draft/review/confirmation"
+    },
+    {
+      "area": "Shop",
+      "group": "Stock tasks",
+      "label": "Starting stock",
+      "current_target": "intakes:OPENING",
+      "gate": "Existing opening-stock eligibility and inventory.intake",
+      "placement": "Inside Stock setup",
+      "behavior": "One allowed opening basis; not a daily reset"
+    },
+    {
+      "area": "Shop",
+      "group": "Records",
+      "label": "Starting cash",
+      "current_target": "opening-cash",
+      "gate": "Existing PRIMARY_OWNER capability",
+      "placement": "Sidebar + Menu; setup shortcut when needed",
+      "behavior": "One existing starting-cash baseline; do not create a new daily cash session"
+    },
+    {
+      "area": "Shop",
+      "group": "Records",
+      "label": "Activity",
+      "current_target": "audit",
+      "gate": "Existing PRIMARY_OWNER view_audit capability",
+      "placement": "Sidebar + Menu",
+      "behavior": "Existing scoped read-only activity; historical evidence is protected"
+    },
+    {
+      "area": "Shop",
+      "group": "Manage shop",
+      "label": "Staff",
+      "current_target": "staff",
+      "gate": "Existing PRIMARY_OWNER manage_staff",
+      "placement": "Sidebar + Menu",
+      "behavior": "Retain present backend authority; no new Staff grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Manage shop",
+      "label": "Shop details",
+      "current_target": "settings",
+      "gate": "Existing PRIMARY_OWNER manage_shop_settings",
+      "placement": "Sidebar + Menu",
+      "behavior": "Retain present backend authority; no new Staff grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Manage shop",
+      "label": "Shop appearance",
+      "current_target": "branding",
+      "gate": "Existing PRIMARY_OWNER manage_branding",
+      "placement": "Sidebar + Menu",
+      "behavior": "Retain present backend authority; no new Staff grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Manage shop",
+      "label": "Web address",
+      "current_target": "domains",
+      "gate": "Existing PRIMARY_OWNER manage_domains",
+      "placement": "Sidebar + Menu",
+      "behavior": "Retain present backend authority; no new Staff grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Manage shop",
+      "label": "Plan",
+      "current_target": "subscription",
+      "gate": "Existing PRIMARY_OWNER view_subscription",
+      "placement": "Sidebar + Menu",
+      "behavior": "Retain present backend authority; no new Staff grants"
+    },
+    {
+      "area": "Shop",
+      "group": "Account",
+      "label": "Change password",
+      "current_target": "/change-password",
+      "gate": "Existing authenticated security flow",
+      "placement": "User menu",
+      "behavior": "Retain current password/security requirements"
+    },
+    {
+      "area": "Shop",
+      "group": "Account",
+      "label": "Sign out",
+      "current_target": "/logout",
+      "gate": "Existing authenticated flow",
+      "placement": "User menu",
+      "behavior": "Warn about unsaved work where appropriate; do not claim a pending sale failed"
+    },
+    {
+      "area": "Shop",
+      "group": "Navigation",
+      "label": "Menu",
+      "current_target": "UI drawer; no business endpoint",
+      "gate": "Filtered authorized destinations",
+      "placement": "Bottom fifth control",
+      "behavior": "Open navigation drawer; does not change role or authority"
+    },
+    {
+      "area": "Shop",
+      "group": "Sale tasks",
+      "label": "Return products",
+      "current_target": "sales/{id}/returns",
+      "gate": "sale.view + sale.return",
+      "placement": "Completed original Sale",
+      "behavior": "Original-line quantities; debt-first settlement; explicit save"
+    },
+    {
+      "area": "Shop",
+      "group": "Sale tasks",
+      "label": "Correct this record",
+      "current_target": "sales/{id}/reversal-preview and reverse",
+      "gate": "sale.view + sale.reverse",
+      "placement": "Completed ordinary Sale/Return action menu",
+      "behavior": "Show exact money/stock/debt effects and reason before confirmation"
+    },
+    {
+      "area": "Shop",
+      "group": "Sale tasks",
+      "label": "Make a corrected sale / return",
+      "current_target": "sales/{id}/replacement",
+      "gate": "sale.view + sale.reverse to prepare; ordinary grant to post",
+      "placement": "Reversed source details",
+      "behavior": "Separate linked unfinished record; never silently repost"
+    },
+    {
+      "area": "Admin",
+      "group": "Platform",
+      "label": "Shops",
+      "current_target": "platform operations: tenants",
+      "gate": "platform.access",
+      "placement": "Separate Admin sidebar/drawer",
+      "behavior": "Current implemented services only; no Shop selling or stock mutation"
+    },
+    {
+      "area": "Admin",
+      "group": "Platform",
+      "label": "Add shop",
+      "current_target": "platform/tenants",
+      "gate": "platform.onboard",
+      "placement": "Separate Admin sidebar/drawer",
+      "behavior": "Current implemented services only; no Shop selling or stock mutation"
+    },
+    {
+      "area": "Admin",
+      "group": "Platform",
+      "label": "Plans",
+      "current_target": "platform operations: subscriptions",
+      "gate": "platform.subscriptions",
+      "placement": "Separate Admin sidebar/drawer",
+      "behavior": "Current implemented services only; no Shop selling or stock mutation"
+    },
+    {
+      "area": "Admin",
+      "group": "Platform",
+      "label": "Web addresses",
+      "current_target": "platform/domains",
+      "gate": "platform.domains",
+      "placement": "Separate Admin sidebar/drawer",
+      "behavior": "Current implemented services only; no Shop selling or stock mutation"
+    },
+    {
+      "area": "Admin",
+      "group": "Platform",
+      "label": "Activity",
+      "current_target": "platform/audit-events",
+      "gate": "platform.audit",
+      "placement": "Separate Admin sidebar/drawer",
+      "behavior": "Current implemented services only; no Shop selling or stock mutation"
+    },
+    {
+      "area": "Admin",
+      "group": "Owner details",
+      "label": "Shop owner",
+      "current_target": "Owner details within existing onboarding/Shop account context",
+      "gate": "Existing approved Admin authority only",
+      "placement": "Within Shop details",
+      "behavior": "No standalone Owners destination until supported workflow is confirmed"
+    },
+    {
+      "area": "Authentication",
+      "group": "Entry",
+      "label": "Sign in",
+      "current_target": "/auth and configured Shield email/password login",
+      "gate": "Resolved current branded Shop",
+      "placement": "Separate branded entry",
+      "behavior": "Keep email sign-in shown in current login view; no public registration"
+    },
+    {
+      "area": "Authentication",
+      "group": "Recovery",
+      "label": "Get help signing in",
+      "current_target": "Configured existing recovery + controlled Owner/Admin help",
+      "gate": "Existing security policy",
+      "placement": "Sign-in help",
+      "behavior": "No password revelation or public role switch"
+    },
+    {
+      "area": "Authentication",
+      "group": "Admin",
+      "label": "Admin sign-in and security check",
+      "current_target": "/platform-admin/login and /platform-admin/mfa",
+      "gate": "Existing Admin session + MFA",
+      "placement": "Separate entry",
+      "behavior": "Never remove MFA or borrow a Shop identity"
+    }
+  ],
+  "copy": [
+    {
+      "id": "COPY-001",
+      "context": "Navigation and access",
+      "current_or_internal": "Dashboard",
+      "usage_rule": "Task shortcuts, not unimplemented report metrics",
+      "proposed_copy": "Home"
+    },
+    {
+      "id": "COPY-002",
+      "context": "Navigation and access",
+      "current_or_internal": "Tenant",
+      "usage_rule": "Admin context only; Shop remains the operating outlet",
+      "proposed_copy": "Business account"
+    },
+    {
+      "id": "COPY-003",
+      "context": "Navigation and access",
+      "current_or_internal": "Primary Owner",
+      "usage_rule": "Role label only; keep backend identity unchanged",
+      "proposed_copy": "Shop owner"
+    },
+    {
+      "id": "COPY-004",
+      "context": "Navigation and access",
+      "current_or_internal": "Record Sale",
+      "usage_rule": "Destination",
+      "proposed_copy": "Sell"
+    },
+    {
+      "id": "COPY-005",
+      "context": "Navigation and access",
+      "current_or_internal": "Sale drafts",
+      "usage_rule": "An unfinished sale is not a completed sale",
+      "proposed_copy": "Unfinished sales"
+    },
+    {
+      "id": "COPY-006",
+      "context": "Navigation and access",
+      "current_or_internal": "Create Sale draft",
+      "usage_rule": "Create necessary server draft behind this action; do not auto-post",
+      "proposed_copy": "New sale"
+    },
+    {
+      "id": "COPY-007",
+      "context": "Navigation and access",
+      "current_or_internal": "Products & stock",
+      "usage_rule": "Includes existing stock-delivery entry",
+      "proposed_copy": "Stock"
+    },
+    {
+      "id": "COPY-008",
+      "context": "Navigation and access",
+      "current_or_internal": "Stock coming in",
+      "usage_rule": "Action within Stock",
+      "proposed_copy": "Add stock"
+    },
+    {
+      "id": "COPY-009",
+      "context": "Navigation and access",
+      "current_or_internal": "Stock Intake",
+      "usage_rule": "History/detail noun",
+      "proposed_copy": "Stock delivery"
+    },
+    {
+      "id": "COPY-010",
+      "context": "Navigation and access",
+      "current_or_internal": "Opening stock",
+      "usage_rule": "Setup only; preserve eligibility",
+      "proposed_copy": "Starting stock"
+    },
+    {
+      "id": "COPY-011",
+      "context": "Navigation and access",
+      "current_or_internal": "Opening Cash",
+      "usage_rule": "Existing setup baseline, not daily cash reset",
+      "proposed_copy": "Starting cash"
+    },
+    {
+      "id": "COPY-012",
+      "context": "Navigation and access",
+      "current_or_internal": "Branding",
+      "usage_rule": "Owner-only current capability",
+      "proposed_copy": "Shop appearance"
+    },
+    {
+      "id": "COPY-013",
+      "context": "Navigation and access",
+      "current_or_internal": "Domains",
+      "usage_rule": "Owner setup; hide technical status in Details where possible",
+      "proposed_copy": "Web address"
+    },
+    {
+      "id": "COPY-014",
+      "context": "Navigation and access",
+      "current_or_internal": "Subscription",
+      "usage_rule": "Do not change billing rules",
+      "proposed_copy": "Plan"
+    },
+    {
+      "id": "COPY-015",
+      "context": "Navigation and access",
+      "current_or_internal": "Audit",
+      "usage_rule": "Read-only who/what/when; no delete control",
+      "proposed_copy": "Activity"
+    },
+    {
+      "id": "COPY-016",
+      "context": "Navigation and access",
+      "current_or_internal": "Shop settings",
+      "usage_rule": "Business contact/profile; distinguish appearance",
+      "proposed_copy": "Shop details"
+    },
+    {
+      "id": "COPY-017",
+      "context": "Navigation and access",
+      "current_or_internal": "Effective permissions",
+      "usage_rule": "Staff settings only, not ordinary Home",
+      "proposed_copy": "What this person can do"
+    },
+    {
+      "id": "COPY-018",
+      "context": "Navigation and access",
+      "current_or_internal": "FULL",
+      "usage_rule": "Normally quiet; no permanent full-width success banner",
+      "proposed_copy": "You can make changes"
+    },
+    {
+      "id": "COPY-019",
+      "context": "Navigation and access",
+      "current_or_internal": "READ_ONLY",
+      "usage_rule": "Keep reason and allowed next action visible",
+      "proposed_copy": "View only"
+    },
+    {
+      "id": "COPY-020",
+      "context": "Navigation and access",
+      "current_or_internal": "BLOCKED",
+      "usage_rule": "Use safe reason and permitted next step",
+      "proposed_copy": "You cannot open this shop right now"
+    },
+    {
+      "id": "COPY-021",
+      "context": "Navigation and access",
+      "current_or_internal": "CLOSED",
+      "usage_rule": "Do not imply records were deleted",
+      "proposed_copy": "This shop account is closed"
+    },
+    {
+      "id": "COPY-022",
+      "context": "Sales",
+      "current_or_internal": "Draft",
+      "usage_rule": "Prefer Unfinished sale for record status",
+      "proposed_copy": "Not saved as a completed sale"
+    },
+    {
+      "id": "COPY-023",
+      "context": "Sales",
+      "current_or_internal": "Posted",
+      "usage_rule": "Separate record status from payment status",
+      "proposed_copy": "Completed"
+    },
+    {
+      "id": "COPY-024",
+      "context": "Sales",
+      "current_or_internal": "Post sale",
+      "usage_rule": "Final explicit financial action after review",
+      "proposed_copy": "Save sale"
+    },
+    {
+      "id": "COPY-025",
+      "context": "Sales",
+      "current_or_internal": "Review preparation",
+      "usage_rule": "No effects yet",
+      "proposed_copy": "Review sale"
+    },
+    {
+      "id": "COPY-026",
+      "context": "Sales",
+      "current_or_internal": "Add line",
+      "usage_rule": "Product + quantity",
+      "proposed_copy": "Add to basket"
+    },
+    {
+      "id": "COPY-027",
+      "context": "Sales",
+      "current_or_internal": "Line order",
+      "usage_rule": "Advanced optional field only",
+      "proposed_copy": "Basket order"
+    },
+    {
+      "id": "COPY-028",
+      "context": "Sales",
+      "current_or_internal": "Unit selling price",
+      "usage_rule": "Use the actual Product unit; no automatic unit conversion",
+      "proposed_copy": "Price per pack"
+    },
+    {
+      "id": "COPY-029",
+      "context": "Sales",
+      "current_or_internal": "Quantity up to 4 decimal places",
+      "usage_rule": "Accept allowed fractions; give an example only when relevant",
+      "proposed_copy": "How many packs?"
+    },
+    {
+      "id": "COPY-030",
+      "context": "Sales",
+      "current_or_internal": "Prepared cash",
+      "usage_rule": "Only money applied to this sale; change is not an extra payment",
+      "proposed_copy": "Cash received"
+    },
+    {
+      "id": "COPY-031",
+      "context": "Sales",
+      "current_or_internal": "Prepared transfer",
+      "usage_rule": "Cash and Transfer remain distinct",
+      "proposed_copy": "Transfer received"
+    },
+    {
+      "id": "COPY-032",
+      "context": "Sales",
+      "current_or_internal": "Credit amount",
+      "usage_rule": "Not a payment method",
+      "proposed_copy": "Customer still owes"
+    },
+    {
+      "id": "COPY-033",
+      "context": "Sales",
+      "current_or_internal": "Credit due date",
+      "usage_rule": "Use Shop calendar rules",
+      "proposed_copy": "When should they pay? (optional)"
+    },
+    {
+      "id": "COPY-034",
+      "context": "Sales",
+      "current_or_internal": "Customer required",
+      "usage_rule": "Example amount must come from server review",
+      "proposed_copy": "Choose a customer because ₦3,000 is still owed."
+    },
+    {
+      "id": "COPY-035",
+      "context": "Sales",
+      "current_or_internal": "Discard draft",
+      "usage_rule": "Reason where required; separate from completed-sale correction",
+      "proposed_copy": "Discard unfinished sale"
+    },
+    {
+      "id": "COPY-036",
+      "context": "Sales",
+      "current_or_internal": "Walk-in / no Customer",
+      "usage_rule": "Allow for fully paid sales",
+      "proposed_copy": "No customer selected"
+    },
+    {
+      "id": "COPY-037",
+      "context": "Sales",
+      "current_or_internal": "Business time",
+      "usage_rule": "Device-local entry; display Shop time clearly when different",
+      "proposed_copy": "Sale date and time"
+    },
+    {
+      "id": "COPY-038",
+      "context": "Sales",
+      "current_or_internal": "Save draft details",
+      "usage_rule": "Not final sale posting",
+      "proposed_copy": "Save details"
+    },
+    {
+      "id": "COPY-039",
+      "context": "Sales",
+      "current_or_internal": "Reload saved draft",
+      "usage_rule": "Warn before replacing unsaved edits",
+      "proposed_copy": "Reload saved sale"
+    },
+    {
+      "id": "COPY-040",
+      "context": "Sales",
+      "current_or_internal": "Posted successfully",
+      "usage_rule": "Permanent receipt remains available",
+      "proposed_copy": "Sale saved"
+    },
+    {
+      "id": "COPY-041",
+      "context": "Sales",
+      "current_or_internal": "Immutable receipt",
+      "usage_rule": "Protected history explained in correction flow",
+      "proposed_copy": "Saved receipt"
+    },
+    {
+      "id": "COPY-042",
+      "context": "Sales",
+      "current_or_internal": "Public UUID",
+      "usage_rule": "Short display only; full reference available in More details",
+      "proposed_copy": "Reference"
+    },
+    {
+      "id": "COPY-043",
+      "context": "Sales",
+      "current_or_internal": "Correlation ID",
+      "usage_rule": "Help details, not primary task content",
+      "proposed_copy": "Support reference"
+    },
+    {
+      "id": "COPY-044",
+      "context": "Money and stock",
+      "current_or_internal": "Debtors",
+      "usage_rule": "Later collection navigation is Phase 5, not displayed now",
+      "proposed_copy": "Customers who owe"
+    },
+    {
+      "id": "COPY-045",
+      "context": "Money and stock",
+      "current_or_internal": "Receivable",
+      "usage_rule": "Do not invent a second debt record",
+      "proposed_copy": "Amount owed for this sale"
+    },
+    {
+      "id": "COPY-046",
+      "context": "Money and stock",
+      "current_or_internal": "Outstanding balance",
+      "usage_rule": "Always show who owes whom",
+      "proposed_copy": "Still to pay"
+    },
+    {
+      "id": "COPY-047",
+      "context": "Money and stock",
+      "current_or_internal": "Settled",
+      "usage_rule": "Payment status, not sale completion status",
+      "proposed_copy": "Paid in full"
+    },
+    {
+      "id": "COPY-048",
+      "context": "Money and stock",
+      "current_or_internal": "Partially paid",
+      "usage_rule": "Show amount still owed",
+      "proposed_copy": "Partly paid"
+    },
+    {
+      "id": "COPY-049",
+      "context": "Money and stock",
+      "current_or_internal": "Debt allocation",
+      "usage_rule": "Phase 5 wording reserve only",
+      "proposed_copy": "Which sales this payment covers"
+    },
+    {
+      "id": "COPY-050",
+      "context": "Money and stock",
+      "current_or_internal": "Gross profit",
+      "usage_rule": "Only sale.profit.view; never claim net profit",
+      "proposed_copy": "Profit before shop costs"
+    },
+    {
+      "id": "COPY-051",
+      "context": "Money and stock",
+      "current_or_internal": "COGS",
+      "usage_rule": "Authorized details only",
+      "proposed_copy": "Cost of the products sold"
+    },
+    {
+      "id": "COPY-052",
+      "context": "Money and stock",
+      "current_or_internal": "Cost basis unestablished",
+      "usage_rule": "Never call this verified profit",
+      "proposed_copy": "The cost is not confirmed. This profit estimate may be incomplete."
+    },
+    {
+      "id": "COPY-053",
+      "context": "Money and stock",
+      "current_or_internal": "Negative stock",
+      "usage_rule": "Do not block otherwise valid sales merely due to negative stock",
+      "proposed_copy": "The recorded stock is below zero. Check the stock records."
+    },
+    {
+      "id": "COPY-054",
+      "context": "Money and stock",
+      "current_or_internal": "Stock Position",
+      "usage_rule": "Distinguish system records from actual physical count",
+      "proposed_copy": "Recorded stock"
+    },
+    {
+      "id": "COPY-055",
+      "context": "Money and stock",
+      "current_or_internal": "Movement ledger",
+      "usage_rule": "Preserve immutable evidence",
+      "proposed_copy": "Stock history"
+    },
+    {
+      "id": "COPY-056",
+      "context": "Money and stock",
+      "current_or_internal": "Reconciliation variance",
+      "usage_rule": "Later full checking workflow; no blame implied",
+      "proposed_copy": "Difference between the count and the records"
+    },
+    {
+      "id": "COPY-057",
+      "context": "Returns and feedback",
+      "current_or_internal": "Return preparation",
+      "usage_rule": "Original Sale lines only",
+      "proposed_copy": "Review returned products"
+    },
+    {
+      "id": "COPY-058",
+      "context": "Returns and feedback",
+      "current_or_internal": "Return quantity",
+      "usage_rule": "Never exceed current effective eligibility",
+      "proposed_copy": "How many are being returned?"
+    },
+    {
+      "id": "COPY-059",
+      "context": "Returns and feedback",
+      "current_or_internal": "RETURN_REDUCTION",
+      "usage_rule": "Not money received",
+      "proposed_copy": "Amount owed reduced"
+    },
+    {
+      "id": "COPY-060",
+      "context": "Returns and feedback",
+      "current_or_internal": "Refund amount",
+      "usage_rule": "Actual Cash/Transfer split still required",
+      "proposed_copy": "Money to return to the customer"
+    },
+    {
+      "id": "COPY-061",
+      "context": "Returns and feedback",
+      "current_or_internal": "Cash refund",
+      "usage_rule": "Actual money effect",
+      "proposed_copy": "Cash returned"
+    },
+    {
+      "id": "COPY-062",
+      "context": "Returns and feedback",
+      "current_or_internal": "Transfer refund",
+      "usage_rule": "Actual money effect",
+      "proposed_copy": "Transfer returned"
+    },
+    {
+      "id": "COPY-063",
+      "context": "Returns and feedback",
+      "current_or_internal": "Compensation",
+      "usage_rule": "Keep original link and explicit effects",
+      "proposed_copy": "Correction record"
+    },
+    {
+      "id": "COPY-064",
+      "context": "Returns and feedback",
+      "current_or_internal": "Reverse sale",
+      "usage_rule": "Only when all approved inverse effects are confirmed",
+      "proposed_copy": "Cancel this completed sale"
+    },
+    {
+      "id": "COPY-065",
+      "context": "Returns and feedback",
+      "current_or_internal": "Reverse Return",
+      "usage_rule": "Show cash received back and debt restored where applicable",
+      "proposed_copy": "Cancel this return"
+    },
+    {
+      "id": "COPY-066",
+      "context": "Returns and feedback",
+      "current_or_internal": "Existing debt restored",
+      "usage_rule": "Same original Receivable",
+      "proposed_copy": "The customer owes this amount again"
+    },
+    {
+      "id": "COPY-067",
+      "context": "Returns and feedback",
+      "current_or_internal": "CORRECTION_DECREASE",
+      "usage_rule": "Original credit cancellation, not a payment",
+      "proposed_copy": "Original amount owed cancelled"
+    },
+    {
+      "id": "COPY-068",
+      "context": "Returns and feedback",
+      "current_or_internal": "Replacement",
+      "usage_rule": "Separate new unfinished record and confirmation",
+      "proposed_copy": "Corrected sale / corrected return"
+    },
+    {
+      "id": "COPY-069",
+      "context": "Returns and feedback",
+      "current_or_internal": "Reversal of reversal denied",
+      "usage_rule": "No generic delete or automatic Undo",
+      "proposed_copy": "This correction cannot be cancelled here. Open the original record for the available options."
+    },
+    {
+      "id": "COPY-070",
+      "context": "Returns and feedback",
+      "current_or_internal": "Stock dependency",
+      "usage_rule": "Show permitted linked records; do not suggest bypassing guards",
+      "proposed_copy": "Later stock records affect this sale. Check those records before correcting it."
+    },
+    {
+      "id": "COPY-071",
+      "context": "Returns and feedback",
+      "current_or_internal": "Historical snapshots",
+      "usage_rule": "Current Product price must not replace history",
+      "proposed_copy": "Prices recorded when the sale was made"
+    },
+    {
+      "id": "COPY-072",
+      "context": "Returns and feedback",
+      "current_or_internal": "Reason required",
+      "usage_rule": "Keep required reason and Audit",
+      "proposed_copy": "Why are you making this change?"
+    },
+    {
+      "id": "COPY-073",
+      "context": "Returns and feedback",
+      "current_or_internal": "Finalized Opening Cash required",
+      "usage_rule": "Owner action; Staff gets Ask your shop owner",
+      "proposed_copy": "Record the shop’s starting cash before saving a cash sale."
+    },
+    {
+      "id": "COPY-074",
+      "context": "Returns and feedback",
+      "current_or_internal": "No products in draft",
+      "usage_rule": "Clear action",
+      "proposed_copy": "Your basket is empty. Add a product to start."
+    },
+    {
+      "id": "COPY-075",
+      "context": "Returns and feedback",
+      "current_or_internal": "No matching records",
+      "usage_rule": "Preserve search",
+      "proposed_copy": "No matches found. Try another name or clear the filters."
+    },
+    {
+      "id": "COPY-076",
+      "context": "Returns and feedback",
+      "current_or_internal": "Request pending",
+      "usage_rule": "Disable repeated financial confirmation",
+      "proposed_copy": "Saving… Please wait."
+    },
+    {
+      "id": "COPY-077",
+      "context": "Errors and support",
+      "current_or_internal": "Invalid amount",
+      "usage_rule": "Use zero-allowed wording for fields that permit zero",
+      "proposed_copy": "Enter an amount greater than zero, for example ₦500."
+    },
+    {
+      "id": "COPY-078",
+      "context": "Errors and support",
+      "current_or_internal": "Invalid cash baseline",
+      "usage_rule": "Starting cash permits zero",
+      "proposed_copy": "Enter zero or the amount of cash counted."
+    },
+    {
+      "id": "COPY-079",
+      "context": "Errors and support",
+      "current_or_internal": "Refund mismatch",
+      "usage_rule": "Amounts from current server review",
+      "proposed_copy": "Return ₦2,000 in total. Cash and transfer must add up to ₦2,000."
+    },
+    {
+      "id": "COPY-080",
+      "context": "Errors and support",
+      "current_or_internal": "Excess payment",
+      "usage_rule": "No wallet/advance or new change-calculation scope",
+      "proposed_copy": "Record only the amount paid for this sale. Do not include change given back."
+    },
+    {
+      "id": "COPY-081",
+      "context": "Errors and support",
+      "current_or_internal": "Version conflict",
+      "usage_rule": "Retain entries; do not silently overwrite",
+      "proposed_copy": "This record changed. Reload it and check your entries before saving."
+    },
+    {
+      "id": "COPY-082",
+      "context": "Errors and support",
+      "current_or_internal": "Network error after post",
+      "usage_rule": "Persistent; no blind new UUID/repost",
+      "proposed_copy": "We could not confirm that this sale was saved. Check its status before trying again."
+    },
+    {
+      "id": "COPY-083",
+      "context": "Errors and support",
+      "current_or_internal": "Success toast",
+      "usage_rule": "8-10 seconds, close button, pause while interacting; receipt persists",
+      "proposed_copy": "Changes saved."
+    },
+    {
+      "id": "COPY-084",
+      "context": "Errors and support",
+      "current_or_internal": "Permission denied",
+      "usage_rule": "Never grant access through the UI",
+      "proposed_copy": "You are not allowed to do this. Ask your shop owner for help."
+    },
+    {
+      "id": "COPY-085",
+      "context": "Errors and support",
+      "current_or_internal": "Session expired",
+      "usage_rule": "Existing session/security flow",
+      "proposed_copy": "Please sign in again to continue."
+    },
+    {
+      "id": "COPY-086",
+      "context": "Errors and support",
+      "current_or_internal": "Offline",
+      "usage_rule": "Current phase; do not promise offline queuing",
+      "proposed_copy": "You are offline. New sales cannot be saved right now."
+    },
+    {
+      "id": "COPY-087",
+      "context": "Errors and support",
+      "current_or_internal": "Empty customers",
+      "usage_rule": "Create action only with customer.manage",
+      "proposed_copy": "No customers yet. Add a customer when you need to record their details."
+    },
+    {
+      "id": "COPY-088",
+      "context": "Errors and support",
+      "current_or_internal": "Deactivate customer",
+      "usage_rule": "Explain history remains; no delete",
+      "proposed_copy": "Stop using this customer record"
+    },
+    {
+      "id": "COPY-089",
+      "context": "Errors and support",
+      "current_or_internal": "Lifecycle",
+      "usage_rule": "Admin only",
+      "proposed_copy": "Account status"
+    },
+    {
+      "id": "COPY-090",
+      "context": "Errors and support",
+      "current_or_internal": "Onboard Tenant",
+      "usage_rule": "Retain separate business-account and shop fields",
+      "proposed_copy": "Add shop"
+    },
+    {
+      "id": "COPY-091",
+      "context": "Errors and support",
+      "current_or_internal": "Activate Tenant",
+      "usage_rule": "Actual approved lifecycle restrictions still apply",
+      "proposed_copy": "Reopen account access"
+    },
+    {
+      "id": "COPY-092",
+      "context": "Errors and support",
+      "current_or_internal": "TLS ready",
+      "usage_rule": "Details preserve precise platform status",
+      "proposed_copy": "Secure web address ready"
+    },
+    {
+      "id": "COPY-093",
+      "context": "Errors and support",
+      "current_or_internal": "MFA",
+      "usage_rule": "Do not remove second-factor step",
+      "proposed_copy": "Security check"
+    },
+    {
+      "id": "COPY-094",
+      "context": "Errors and support",
+      "current_or_internal": "Source evidence",
+      "usage_rule": "Keep protected links",
+      "proposed_copy": "Original record"
+    },
+    {
+      "id": "COPY-095",
+      "context": "Errors and support",
+      "current_or_internal": "Sync generation",
+      "usage_rule": "Not user task vocabulary",
+      "proposed_copy": "Support details"
+    },
+    {
+      "id": "COPY-096",
+      "context": "Errors and support",
+      "current_or_internal": "Server unavailable",
+      "usage_rule": "Do not assert save failure if outcome is unknown",
+      "proposed_copy": "We cannot reach DawaTrack. Check the connection and try the status check."
+    }
+  ]
+}

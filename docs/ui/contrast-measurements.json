@@ -1,0 +1,47 @@
+{
+  "scope": "Static baseline pairs only; actual branding/focus/device acceptance pending",
+  "pairs": [
+    {
+      "pair": "primary on white",
+      "foreground": "#155d46",
+      "background": "#ffffff",
+      "contrast": 7.82,
+      "minimum": 4.5
+    },
+    {
+      "pair": "ink on background",
+      "foreground": "#20342a",
+      "background": "#f3f6f4",
+      "contrast": 12.17,
+      "minimum": 4.5
+    },
+    {
+      "pair": "muted on background",
+      "foreground": "#5d7066",
+      "background": "#f3f6f4",
+      "contrast": 4.86,
+      "minimum": 4.5
+    },
+    {
+      "pair": "danger on danger surface",
+      "foreground": "#a92c35",
+      "background": "#fff0ef",
+      "contrast": 6.12,
+      "minimum": 4.5
+    },
+    {
+      "pair": "warning on warning surface",
+      "foreground": "#765309",
+      "background": "#fff5d9",
+      "contrast": 6.41,
+      "minimum": 4.5
+    },
+    {
+      "pair": "control border on white",
+      "foreground": "#718479",
+      "background": "#ffffff",
+      "contrast": 3.98,
+      "minimum": 3
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+// Foundation tokens are independent of legacy --dt-* branding. UI2-C adopts them.
+:root {
+  --ui-primary: #155d46;
+  --ui-on-primary: #ffffff;
+  --ui-ink: #20342a;
+  --ui-muted: #5d7066;
+  --ui-background: #f3f6f4;
+  --ui-surface: #ffffff;
+  --ui-border: #dce5df;
+  --ui-control-border: #718479;
+  --ui-selected: #e6f1eb;
+  --ui-danger: #a92c35;
+  --ui-danger-surface: #fff0ef;
+  --ui-warning: #765309;
+  --ui-warning-surface: #fff5d9;
+  --ui-focus: #155d46;
+  --ui-space-1: .25rem;
+  --ui-space-2: .5rem;
+  --ui-space-3: .75rem;
+  --ui-space-4: 1rem;
+  --ui-space-6: 1.5rem;
+  --ui-text-body: 1rem;
+  --ui-text-help: .875rem;
+  --ui-text-nav: .75rem;
+  --ui-text-heading: 1.5rem;
+  --ui-radius-control: .5rem;
+  --ui-radius-card: .75rem;
+  --ui-target: 2.75rem;
+  --ui-icon-small: 1rem;
+  --ui-icon-action: 1.25rem;
+  --ui-icon-navigation: 1.5rem;
+  --ui-duration: 160ms;
+  --ui-shadow: 0 .5rem 1.5rem rgb(32 52 42 / 12%);
+  --ui-layer-sticky: 100;
+  --ui-layer-scrim: 200;
+  --ui-layer-overlay: 300;
+  --ui-layer-alert: 400;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --ui-duration: 0ms; }
+}
