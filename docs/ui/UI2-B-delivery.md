@@ -1,3 +1,5 @@
+> Accepted by the Owner on 9 November 2026 after manual review; see acceptance/2026-11-09-ui2-b-owner-acceptance.md. Engineering results/limits below are the historical delivery record.
+
 # UI2-B — Shared interaction components and state behavior
 
 **Date:** 9 November 2026. **Branch:** `codex/ui2-b-shared-components-20261109`. **Base:** UI2-A `031e4105036500c5acc89f104084652b0f66b06e` (PR #28). **Status:** implemented for manual review, Owner acceptance pending.

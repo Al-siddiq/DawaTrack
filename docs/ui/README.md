@@ -1,6 +1,6 @@
 # DawaTrack UI developer reference
 
-**Current package: UI2-B — implemented for review; Owner acceptance pending.** Plan approved 8 November 2026; the Owner authorized B on 9 November. B depends on A PR #28. UI2-C, task migrations and final programme acceptance remain planned. No existing production page is switched to the new shell in UI2-A.
+**Current package: UI2-C — implemented for review; C acceptance pending.** The Owner confirmed manual review and acceptance of UI2-B on 9 November 2026. C depends on B PR #29 (and A #28). UI-3 task migration and final programme acceptance remain separate.
 
 ## Review the delivered foundation
 
@@ -13,7 +13,7 @@ npm run ui:preview
 
 Open **http://127.0.0.1:4173** on the same computer. This read-only loopback documentation server has no application API or customer data. Stop it with Ctrl+C. Use **Screen designs** to inspect all 18 enhanced desktop/phone specimens, **Interaction examples** for proposed loading/overlay/feedback states, and **Icon catalogue** for all 34 shipped symbols. Interaction examples now mount the actual shared components with local fixtures. Their delayed/sample operations are not financial operations.
 
-The application keeps its current overall layout. B now integrates shared commercial controls, customer list/loading, uncertain-sale status and Staff confirmation; C introduces the new shell and UI-3 migrates remaining task bodies.
+UI2-C now changes the actual Shop/Admin/Auth layout and navigation. Open the normal XAMPP development address for C verification. The local reference is still a design/component gallery, not a live business app. UI-3 migrates remaining task bodies and wording.
 
 ## Reference index
 
@@ -35,6 +35,10 @@ The application keeps its current overall layout. B now integrates shared commer
 | [Decisions](decisions.md) | Exact decisions and justified mockup clarifications |
 | [UI2-A delivery](UI2-A-delivery.md) | Historical foundation evidence |
 | [UI2-B delivery](UI2-B-delivery.md) | Shared-component scope, evidence and limits |
+| [Workspace shells](workspace-shells.md) | Current registries, hashes, guards, Home, branding, Admin and Auth contracts |
+| [UI2-C delivery](UI2-C-delivery.md) | Integrated shell scope and engineering limits |
+| [UI2-C checklist](manual-verification-ui2-c.md) | Actual Shop/Admin/Auth manual verification |
+| [UI2-B acceptance](acceptance/2026-11-09-ui2-b-owner-acceptance.md) | Owner manual acceptance record |
 | [UI2-B checklist](manual-verification-ui2-b.md) | Real component and application integration verification |
 
 ## Maintenance rules

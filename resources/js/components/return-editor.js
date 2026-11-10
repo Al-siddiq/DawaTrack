@@ -1,3 +1,4 @@
+import { useNavigationGuard } from '../shared/workspace-navigation.js';
 import { get, send, money, field, action, submit, feedback, message, has } from './commercial-ui.js';
 const { h, ref, reactive, computed, watch, onMounted, onUnmounted } = window.Vue;
 export const ReturnEditor = {
@@ -8,6 +9,7 @@ export const ReturnEditor = {
         const canWrite = computed(() => has(props.permissions, 'sale.return') && !props.readOnly && online.value && !pending.value && !unknown.value);
         const canonical = value => { const text = String(value ?? '').trim(); return /^0(?:\.0+)?$/.test(text) ? '' : text; };
         const dirty = computed(() => (props.record.original_items ?? []).some(o => canonical(quantities[o.public_id]) !== canonical(props.record.items.find(i => i.original_sale_item_public_id === o.public_id)?.quantity)));
+        useNavigationGuard(() => unknown.value ? { hard: true, message: 'Check the saved return status before leaving this task.' } : dirty.value || review.value || reason.value.trim() || discardReason.value.trim() ? { message: 'Your return edits are not saved. Keep editing, or leave these edits behind.' } : null);
         function hydrate() { for (const o of props.record.original_items ?? []) { const line = props.record.items.find(i => i.original_sale_item_public_id === o.public_id); quantities[o.public_id] = line?.quantity ?? ''; ids[o.public_id] = line?.public_id ?? crypto.randomUUID(); } estimate.value = null; review.value = null; confirmed.value = false; }
         watch(() => props.record, hydrate, { immediate: true });
         const connection = () => { online.value = navigator.onLine; };

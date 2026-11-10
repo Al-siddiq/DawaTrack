@@ -14,7 +14,7 @@ http.createServer((request, response) => {
     catch { response.writeHead(400).end(); return; }
     if (pathname === '/') pathname = '/docs/ui/reference/index.html';
     if (pathname.startsWith('/assets/ui/')) pathname = '/public' + pathname;
-    const allowed = ['/docs/ui/', '/public/assets/css/', '/public/assets/ui/', '/public/assets/js/components/ui/', '/public/assets/vendor/vue/'];
+    const allowed = ['/docs/ui/', '/public/assets/css/', '/public/assets/ui/', '/public/assets/js/components/ui/', '/public/assets/js/shared/', '/public/assets/js/api/', '/public/assets/vendor/vue/'];
     const file = path.resolve(root, `.${pathname}`);
     const extension = path.extname(file);
     const canonical = '/' + path.relative(root, file).split(path.sep).join('/');

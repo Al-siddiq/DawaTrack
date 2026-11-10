@@ -16,6 +16,15 @@ $cspNonce = service('cspNonce')->value();
     nonce="<?= esc($cspNonce, 'attr') ?>"
 ></style>
 
-<div id="shop-app"></div>
+<?php
+$user = auth()->user();
+$platformPermissions = [];
+?>
+<div id="shop-app"
+    data-brand-name="<?= esc($brand['brand_display_name'] ?? 'DawaTrack', 'attr') ?>"
+    data-brand-logo="<?= esc($brand['assets']['LOGO'] ?? '', 'attr') ?>"
+    data-user-name="<?= esc((string) ($user?->username ?? 'Signed-in user'), 'attr') ?>"
+    data-permissions="<?= esc(json_encode($platformPermissions), 'attr') ?>"
+></div>
 
 <?= $this->endSection() ?>

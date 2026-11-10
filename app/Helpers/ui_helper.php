@@ -28,3 +28,20 @@ if (! function_exists('dt_ui_icon')) {
             . $accessible . '><use href="' . $escape($url) . '"></use></svg>';
     }
 }
+
+if (! function_exists('dt_ui_brand_primary')) {
+    /** Use a conservative contrast threshold for white actions and the selected-nav surface. */
+    function dt_ui_brand_primary(string $candidate): string
+    {
+        if (! preg_match('/^#[0-9a-f]{6}$/i', $candidate)) {
+            return '#155D46';
+        }
+        $channels = [];
+        foreach ([1, 3, 5] as $offset) {
+            $value = hexdec(substr($candidate, $offset, 2)) / 255;
+            $channels[] = $value <= 0.04045 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
+        }
+        $luminance = 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+        return 1.05 / ($luminance + 0.05) >= 5.5 ? $candidate : '#155D46';
+    }
+}

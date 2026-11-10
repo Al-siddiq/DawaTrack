@@ -1,3 +1,4 @@
+import { useNavigationGuard } from '../shared/workspace-navigation.js';
 import { UiLoading, UiRecordList, UiInformationPanel, useUiList } from './ui/index.js';
 import { apiRequest } from '../api/http-client.js';
 import { has, get, send, field, action, submit, feedback, message, pager } from './commercial-ui.js';
@@ -16,6 +17,7 @@ export const CustomerPanel = {
         const pagination = list.pagination;
         const form = reactive({ public_id: crypto.randomUUID(), display_name: '', phone: '', notes: '' });
         const reason = ref('');
+        useNavigationGuard(() => editing.value || reason.value.trim() ? { message: 'Your customer edits are not saved. Keep editing, or leave without saving them.' } : null);
         const manage = computed(() => has(props.permissions, 'customer.manage') && has(props.permissions, 'customer.view'));
         const privateDetails = computed(() => has(props.permissions, 'customer.private'));
         const disabled = computed(() => pending.value || list.pending.value || props.readOnly || !online.value || !manage.value);

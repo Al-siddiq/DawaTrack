@@ -1,3 +1,4 @@
+import { useNavigationGuard, announceWorkspaceHash as replaceLocation } from '../shared/workspace-navigation.js';
 import { UiStatusPanel } from './ui/index.js';
 import { SaleReceipt } from './sale-receipt.js';
 import { apiRequest } from '../api/http-client.js';
@@ -12,6 +13,8 @@ const localTime = utc => {
 export const SaleDraftPanel = {
     props: { permissions: { type: Array, default: () => [] }, readOnly: { type: Boolean, default: true } },
     setup(props) {
+        let alive = true;
+        const announceWorkspaceHash = hash => { if (alive) replaceLocation(hash); };
         const receipt = ref(null), uncertain = ref(false), confirmed = ref(false);
         const rows = ref([]), draft = ref(null), pending = ref(false), error = ref(''), notice = ref(''), online = ref(navigator.onLine), preview = ref(null), heading = ref(null);
         const pagination = reactive({ page: 1, per_page: 20, total: 0, total_pages: 0 });
@@ -26,6 +29,15 @@ export const SaleDraftPanel = {
         const unsaved = computed(() => !!draft.value && (header.customer_public_id !== (draft.value.customer_public_id ?? '') || header.occurred_at !== localTime(draft.value.occurred_at) || line.product_public_id !== ''));
         const disabled = computed(() => pending.value || uncertain.value || props.readOnly || !online.value || !record.value);
         const connection = () => { online.value = navigator.onLine; };
+        useNavigationGuard(({ hash }) => pending.value && hash.startsWith('#sale-draft') ? { hard: true, message: 'Wait for this record to finish loading before opening another sale.' } : uncertain.value ? { hard: true, message: 'Check the saved sale status before leaving this task.' }
+            : unsaved.value || (draft.value && (payment.cash_amount !== '0.00' || payment.transfer_amount !== '0.00' || payment.due_date || preview.value))
+                ? { message: 'Your latest basket or payment edits are not saved. Keep editing, or leave these edits behind.' } : null);
+        const hashChange = () => {
+            const match = location.hash.match(/^#sale-draft\/([a-f0-9-]{36})$/);
+            if (match && match[1] !== draft.value?.public_id) open(match[1]);
+            else if (location.hash === '#sale-drafts' && (draft.value || receipt.value)) { receipt.value = null; back(); }
+            else if (location.hash === '#sale-drafts/new') { if (!disabled.value) create(); else { announceWorkspaceHash('#sale-drafts'); load(); } }
+        };
         function resetLine() { Object.assign(line, { public_id: '', retry_id: crypto.randomUUID(), product_public_id: '', quantity: '1', unit_selling_price: '', line_number: '' }); }
         function setDraft(value) {
             draft.value = value; preview.value = null; confirmed.value = false;
@@ -48,12 +60,12 @@ export const SaleDraftPanel = {
         }
         async function open(id) {
             await run(async () => {
-                const value = await get(`/api/v1/shop/sales/${id}`);
+                const value = await get(`/api/v1/shop/sales/${id}`); if (!alive) return;
                 uncertain.value = false;
-                if (value.status === 'POSTED') { receipt.value = value; history.replaceState(null, '', `#sale/${value.public_id}`); return; }
+                if (value.status === 'POSTED') { receipt.value = value; announceWorkspaceHash(`#sale/${value.public_id}`); return; }
                 setDraft(value); resetLine();
                 Object.assign(payment, { cash_amount: '0.00', transfer_amount: '0.00', due_date: '' });
-                history.replaceState(null, '', `#sale-draft/${draft.value.public_id}`);
+                announceWorkspaceHash(`#sale-draft/${draft.value.public_id}`);
                 if (record.value && online.value) { await loadLookup('products'); await loadLookup('customers'); }
                 await nextTick(); heading.value?.focus();
             });
@@ -63,7 +75,7 @@ export const SaleDraftPanel = {
             await run(async () => {
                 setDraft(await send(base, 'POST', { public_id: newId.value })); newId.value = crypto.randomUUID(); resetLine();
                 Object.assign(payment, { cash_amount: '0.00', transfer_amount: '0.00', due_date: '' });
-                history.replaceState(null, '', `#sale-draft/${draft.value.public_id}`);
+                announceWorkspaceHash(`#sale-draft/${draft.value.public_id}`);
                 await loadLookup('products'); await loadLookup('customers'); notice.value = 'Online draft created. This is not a posted Sale.';
             });
         }
@@ -119,7 +131,7 @@ export const SaleDraftPanel = {
             await run(async () => {
                 try {
                     const value = await send(`/api/v1/shop/sales/${draft.value.public_id}/post`, 'POST', { expected_updated_at: reviewed.draft_updated_at, cash_amount: reviewed.cash_amount, transfer_amount: reviewed.transfer_amount, due_date: reviewed.due_date });
-                    receipt.value = value; preview.value = null; history.replaceState(null, '', `#sale/${value.public_id}`);
+                    receipt.value = value; preview.value = null; announceWorkspaceHash(`#sale/${value.public_id}`);
                     await nextTick(); heading.value?.focus();
                 } catch (e) {
                     if (e.status === 0 || e.status >= 500 || e.status === 403 || e.status === 404) uncertain.value = true;
@@ -129,23 +141,24 @@ export const SaleDraftPanel = {
         }
         async function discard(event) {
             event.preventDefault(); if (disabled.value) return;
-            await run(async () => { await send(`${base}/${draft.value.public_id}`, 'DELETE', { expected_updated_at: draft.value.updated_at, reason: reason.value }); draft.value = null; preview.value = null; reason.value = ''; resetLine(); history.replaceState(null, '', '#sale-drafts'); notice.value = 'Draft discarded. No stock, payment or debt entries were created.'; });
+            await run(async () => { await send(`${base}/${draft.value.public_id}`, 'DELETE', { expected_updated_at: draft.value.updated_at, reason: reason.value }); draft.value = null; preview.value = null; reason.value = ''; resetLine(); announceWorkspaceHash('#sale-drafts'); notice.value = 'Draft discarded. No stock, payment or debt entries were created.'; });
             if (!draft.value) await load();
         }
-        function back() { draft.value = null; preview.value = null; resetLine(); history.replaceState(null, '', '#sale-drafts'); load(); }
+        function back() { draft.value = null; preview.value = null; resetLine(); announceWorkspaceHash('#sale-drafts'); load(); }
         onMounted(() => {
             window.addEventListener('online', connection); window.addEventListener('offline', connection);
             const match = location.hash.match(/^#sale-draft\/([a-f0-9-]{36})$/);
-            if (match) open(match[1]); else load();
+            if (match) open(match[1]); else if (location.hash === '#sale-drafts/new') { if (!disabled.value) create(); else { announceWorkspaceHash('#sale-drafts'); load(); } } else load();
+            window.addEventListener('hashchange', hashChange);
         });
-        onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
+        onUnmounted(() => { alive = false; window.removeEventListener('hashchange', hashChange); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
         const select = (id, label, value, update, options) => h('div', { class: 'commercial-field' }, [h('label', { for: id }, label), h('select', { id, class: 'form-select', value, disabled: disabled.value, onChange: event => update(event.target.value) }, options)]);
         return () => h('section', { class: 'workspace commercial-workspace', 'aria-busy': pending.value }, [
             h('h1', { ref: heading, tabindex: '-1' }, receipt.value ? 'Posted Sale' : 'Sale drafts'), h('p', 'Prepare an online basket, review payment and credit, then confirm the permanent Sale.'),
             !online.value && h('p', { class: 'alert alert-warning' }, 'You are offline. Changes are disabled and are not queued.'),
             props.readOnly && h('p', { class: 'alert alert-warning' }, 'Your current access permits viewing only.'),
             ...feedback(error.value, notice.value), pending.value && h('p', { role: 'status' }, 'Please wait…'),
-            receipt.value ? h('section', [h(SaleReceipt, { sale: receipt.value, permissions: props.permissions }), action('Open Sale history and Returns', () => { location.hash = `#sale/${receipt.value.public_id}`; window.dispatchEvent(new Event('hashchange')); }, pending.value || !online.value), action('Start another Sale', () => { receipt.value = null; draft.value = null; preview.value = null; resetLine(); history.replaceState(null, '', '#sale-drafts'); load(); }, pending.value || !online.value)]) : !draft.value ? h('section', [
+            receipt.value ? h('section', [h(SaleReceipt, { sale: receipt.value, permissions: props.permissions }), action('Open Sale history and Returns', () => { location.hash = `#sale/${receipt.value.public_id}`; window.dispatchEvent(new Event('hashchange')); }, pending.value || !online.value), action('Start another Sale', () => { receipt.value = null; draft.value = null; preview.value = null; resetLine(); announceWorkspaceHash('#sale-drafts'); load(); }, pending.value || !online.value)]) : !draft.value ? h('section', [
                 record.value && action('Start new Sale', create, disabled.value, 'btn-primary'), action('Refresh drafts', () => load(), pending.value || !online.value),
                 !rows.value.length && !pending.value && h('p', 'No saved Sale drafts.'),
                 ...rows.value.map(row => h('article', { class: 'commercial-card', key: row.public_id }, [h('h2', row.customer_name ?? 'Walk-in Customer'), h('p', `Estimate: ${money(row.total_amount)}`), h('p', `Saved: ${row.updated_at} UTC`), action('Open draft', () => open(row.public_id), pending.value || !online.value)])), pager(pagination, pending.value || !online.value, load),

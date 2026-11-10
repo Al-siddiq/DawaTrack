@@ -16,3 +16,10 @@ Keep a new row for future justified design differences, measured budget/version 
 | UI-D09 | 2026-11-09 | User said “Excellent. Proceed to UI2-B”; authorizes B without inventing native/manual results | B authorized; package acceptance pending |
 | UI-D10 | 2026-11-09 | Keep legacy commercial success notices persistent until caller-specific copy/next-step review; only explicit ordinary success auto-dismisses | Implemented compatibility policy |
 | UI-D11 | 2026-11-09 | Use native controlled dialogs with one active owner; preserve Staff reason/security behavior and remove the parallel legacy focus trap there | Implemented B; remaining bespoke task overlays tracked for UI-3 |
+
+| UI-D12 | 2026-11-09 | Owner explicitly confirmed manual review/acceptance of B and authorized C | Accepted B; C review pending |
+| UI-D13 | 2026-11-09 | Use guarded fragment/history navigation with existing sale IDs, not Vue Router; domain-owned replacements announce the same identity | Implemented C |
+| UI-D14 | 2026-11-09 | Correct blocked-mode navigation by filtering the existing Owner capability before offering Activity; no backend authority changed | Implemented C |
+| UI-D15 | 2026-11-09 | Do not invent general My account/password-management routes; preserve mandatory password-change and secure sign-out | Implemented C |
+| UI-D16 | 2026-11-09 | Phone bar reserves measured height; overlay keyboards may hide it while header Menu remains accessible; native validation required | Implemented C |
+| UI-D17 | 2026-11-09 | Conservative brand primary contrast plus stable neutral surfaces; logo/name retain white-label identity | Implemented C |

@@ -1,6 +1,6 @@
 # Shared component reference — UI2-B
 
-**State:** implemented for review, 9 November 2026. UI2-A remains the dependency. Browser, keyboard, screen-reader and Owner acceptance are not inferred from compilation. Full shell integration is UI2-C; complete task-screen migration is UI-3.
+**UI2-B state:** manually accepted by the Owner on 9 November 2026; see the acceptance record. UI2-A remains the dependency. Browser, keyboard, screen-reader and Owner acceptance are not inferred from compilation. Full shell integration is UI2-C; complete task-screen migration is UI-3.
 
 All exports are in `resources/js/components/ui/index.js`, copied unchanged to `public/assets/js/components/ui/`. Use normal Vue `setup()` with `window.Vue`, render functions and the current production runtime. No runtime templates, UI framework or DOM-replacement icon runtime is introduced.
 
@@ -108,3 +108,7 @@ Use [UI2-B manual verification](manual-verification-ui2-b.md) and [delivery repo
 Keep source/generated public JS and compiled renderer/CSS coherent. New icons use A's allowlist/generator; no new icon runtime. Update this interface reference, manual cases and coverage register in the same PR as component changes. Do not reintroduce ad hoc focus traps and conflicting global handlers around shared dialogs.
 
 New production/shared default wording is tracked as COPY-097 through COPY-122 in the wording register; all original 96 entries are retained. Reference-only fixture instructions are not production messages. Dynamic “Close {title}” and pagination labels follow these component patterns.
+
+## UI2-C shell component
+
+`WorkspaceShell` is imported directly from `components/ui/workspace-shell.js` to keep the UI barrel free of a self-import cycle. Its controlled inputs are title, parent, backHash, brandName, logo, userName, roleLabel, area, authorized items, bottomItems, currentId/currentGroup, navigation controller and trackEdits. Its default slot is the current task. It delegates all navigation decisions to the controller and B dialog/sheet primitives; it never authorizes a business write. `WorkspaceHome` emits navigate(hash) and reads only existing authorized Home datasets. See workspace-shells.md for the complete C contract and verification limits.
