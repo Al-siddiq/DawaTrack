@@ -12,3 +12,7 @@
 | UI-D08 | 2026-11-08 | Interaction examples illustrate B contracts, not completed shared behaviors or real saves | Documented explicitly |
 
 Keep a new row for future justified design differences, measured budget/version changes and acceptance. Never mark a manual Owner decision from an engineer's inference.
+
+| UI-D09 | 2026-11-09 | User said “Excellent. Proceed to UI2-B”; authorizes B without inventing native/manual results | B authorized; package acceptance pending |
+| UI-D10 | 2026-11-09 | Keep legacy commercial success notices persistent until caller-specific copy/next-step review; only explicit ordinary success auto-dismisses | Implemented compatibility policy |
+| UI-D11 | 2026-11-09 | Use native controlled dialogs with one active owner; preserve Staff reason/security behavior and remove the parallel legacy focus trap there | Implemented B; remaining bespoke task overlays tracked for UI-3 |

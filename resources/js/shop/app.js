@@ -1,3 +1,4 @@
+import { UiDialog, UiButton, UiAlert } from '../components/ui/index.js';
 import { SaleHistoryPanel } from '../components/sale-history-panel.js';
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
@@ -24,7 +25,7 @@ const {
 
 createApp({
     render,
-    components: { AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
         const page = ref(location.hash.startsWith('#sale-draft') ? 'sale-drafts' : location.hash.startsWith('#sale/') || location.hash === '#sale-history' ? 'sale-history' : 'home');
@@ -50,7 +51,6 @@ createApp({
         const reasonDialog = useReasonDialog({ reactive, ref, nextTick });
         const dialog = reasonDialog.state;
         const dialogReason = reasonDialog.reasonInput;
-        const dialogElement = reasonDialog.dialogElement;
         const temporaryCredential = ref('');
         const staffForm = reactive({ name: '', email: '', password: '', reason: '' });
 
@@ -242,6 +242,7 @@ createApp({
         }
 
         async function confirmDialog() {
+            if (dialog.pending) return;
             const reason = reasonDialog.validate();
             if (reason === null) return;
             const member = dialog.member;
@@ -300,9 +301,9 @@ createApp({
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
             domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
-            permissionSearch, permissionGroups, dialog, dialogReason, dialogElement, temporaryCredential, createStaff,
+            permissionSearch, permissionGroups, dialog, dialogReason, temporaryCredential, createStaff,
             loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
-            uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions, handleDialogKeydown: reasonDialog.handleKeydown,
+            uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions,
         };
     },
 }).mount('#shop-app');
