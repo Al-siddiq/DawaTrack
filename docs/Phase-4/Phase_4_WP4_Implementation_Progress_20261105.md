@@ -1,6 +1,6 @@
 # WP4 implementation progress — 2026-11-05
 
-Status: Owner-approved contract; WP4-A schema amendment authored; WP4-B Return API implemented for native verification; WP4-C corrections API implemented for native verification on 2026-11-06; WP4-D implementation candidate delivered on 2026-11-06; integrated native/visual acceptance pending.
+Status updated 2026-11-07: **Phase 4 owner manually tested, accepted and closed; implementation merged into main.** See [integrated acceptance](../acceptance/2026-11-07-phase-04-integrated-owner-acceptance.md). Earlier dated sections below retain delivery-time verification boundaries.
 
 The owner approved the full Return/compensation proposal on 2026-11-05. Approval is recorded in PR #21. The approved contract is in Phase_4_WP4_Approved_Return_and_Compensation_Contract.md.
 
@@ -23,5 +23,5 @@ Protected ordinary Sale/Return reversal, exact inverse money/stock, original-cre
 ## WP4-D integrated candidate — 2026-11-06
 Operator Return/correction screens, unified receipts/history, Sale usability fixes and compensation-aware diagnostics are implemented. See [D delivery](Phase_4_WP4_D_Delivery_Report.md), [integration contract](../modules/phase-04-wp4-d.md), [final manual matrix](../manual-verification-phase-04-wp4-d.md) and [closure status](Phase_4_Integrated_Closure_Status.md). C confirmation/D authorization is recorded separately. Source/doubles/DOM checks pass; native MySQL/HTTP/concurrency and blocked live-browser checks remain required.
 
-## Remaining acceptance work
-Record actual integrated native/browser outcomes, resolve defects, rerun affected checks and obtain explicit owner acceptance. No planned implementation area is silently moved to Phase 5. Phase 4 remains NOT CLOSED until its verification/owner gates are complete; delivery does not merge or deploy the dependency stack.
+## Final integrated acceptance — 2026-11-07
+The owner reports reviewing/manual testing everything and explicitly accepting the delivery, then merging its PR stack. GitHub merge status and main content are verified. See [closure status](Phase_4_Integrated_Closure_Status.md) for the accepted main baseline and next-phase boundary. Earlier pending owner-acceptance statements are historical; independent native/visual test results are not invented. Phase 5 planning/implementation requires its separate scope and authorization.
