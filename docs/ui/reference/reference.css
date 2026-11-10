@@ -42,3 +42,9 @@
  .reference-body main { padding: 1rem; }
  .reference-sheet { margin: auto 0 0; width: 100%; max-width: none; max-height: 85dvh; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); border-radius: 1rem 1rem 0 0; }
 }
+.component-example > form { display: grid; gap: 1rem; }
+.component-example .ui-navigation--bottom { min-width: 0; }
+.component-example .ui-navigation-item { padding-inline: .125rem; }
+.component-example .ui-dialog .ui-button { min-inline-size: 0; }
+.component-example > .ui-button { justify-self: start; }
+.component-example .ui-dropdown { max-width: 100%; }

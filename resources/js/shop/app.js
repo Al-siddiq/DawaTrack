@@ -1,3 +1,9 @@
+import { WorkspaceShell } from '../components/ui/workspace-shell.js';
+import { WorkspaceHome } from '../components/workspace-home.js';
+import { UiLoading, UiInformationPanel } from '../components/ui/index.js';
+import { permittedShopPages, readWorkspacePresentation } from '../shared/workspace-registry.js';
+import { useWorkspaceNavigation } from '../shared/workspace-navigation.js';
+import { UiDialog, UiButton, UiAlert } from '../components/ui/index.js';
 import { SaleHistoryPanel } from '../components/sale-history-panel.js';
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
@@ -24,10 +30,11 @@ const {
 
 createApp({
     render,
-    components: { AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
-        const page = ref(location.hash.startsWith('#sale-draft') ? 'sale-drafts' : location.hash.startsWith('#sale/') || location.hash === '#sale-history' ? 'sale-history' : 'home');
+        const presentation = readWorkspacePresentation(document.getElementById('shop-app'));
+        const contextReady = ref(false);
         const loading = ref(true);
         const busy = ref(false);
         const error = ref('');
@@ -50,31 +57,22 @@ createApp({
         const reasonDialog = useReasonDialog({ reactive, ref, nextTick });
         const dialog = reasonDialog.state;
         const dialogReason = reasonDialog.reasonInput;
-        const dialogElement = reasonDialog.dialogElement;
         const temporaryCredential = ref('');
         const staffForm = reactive({ name: '', email: '', password: '', reason: '' });
 
-        const allNavigation = [
-            { id: 'home', label: 'Home', capability: null },
-            { id: 'opening-cash', label: 'Opening Cash', capability: 'manage_opening_cash' },
-            { id: 'customers', label: 'Customers', capability: 'view_customers' },
-            { id: 'sale-drafts', label: 'Record Sale', capability: 'view_sale_drafts' },
-            { id: 'sale-history', label: 'Sale history', capability: 'view_sale_drafts' },
-            { id: 'products', label: 'Products & stock', capability: 'view_inventory' },
-            { id: 'intakes', label: 'Stock coming in', capability: 'view_inventory' },
-            { id: 'staff', label: 'Staff', capability: 'manage_staff' },
-            { id: 'settings', label: 'Shop settings', capability: 'manage_shop_settings' },
-            { id: 'branding', label: 'Branding', capability: 'manage_branding' },
-            { id: 'domains', label: 'Domains', capability: 'manage_domains' },
-            { id: 'subscription', label: 'Subscription', capability: 'view_subscription' },
-            { id: 'audit', label: 'Activity', capability: 'view_audit' },
-        ];
-        const navigation = computed(() => {
-            if (['BLOCKED', 'CLOSED'].includes(access.mode)) {
-                return allNavigation.filter((item) => ['home', 'audit'].includes(item.id));
-            }
-            return allNavigation.filter((item) => !item.capability || context.capabilities[item.capability]);
-        });
+        const navigation = computed(() => contextReady.value ? permittedShopPages(context, access.mode) : []);
+        const workspaceNavigation = useWorkspaceNavigation({ items: navigation });
+        const page = workspaceNavigation.currentId;
+        const currentNav = workspaceNavigation.current;
+        const bottomNavigation = computed(() => [
+            ...[['home', 'home'], ['sale-drafts', 'sell'], ['products', 'stock'], ['customers', 'customers']]
+                .filter(([id]) => navigation.value.some(item => item.id === id))
+                .map(([id, group]) => { const item = navigation.value.find(item => item.id === id); return { ...item, id: group }; }),
+            ...(contextReady.value ? [{ id: 'menu', label: 'Menu', icon: 'menu' }] : []),
+        ]);
+        const backHash = computed(() => workspaceNavigation.hash.value.startsWith('#sale-draft/') ? '#sale-drafts'
+            : workspaceNavigation.hash.value.startsWith('#sale/') ? '#sale-history'
+            : currentNav.value?.parentId === 'products' ? '#products' : '');
         const readOnly = computed(() => access.mode !== 'FULL');
         const products = reactive(useProducts({ ref, reactive, computed }, access, context));
         const intakes = reactive(useIntakes({ ref, reactive, computed }, access, context, products));
@@ -153,22 +151,15 @@ createApp({
 
         async function load() {
             loading.value = true;
+            contextReady.value = false;
             clearFeedback();
             try {
                 const response = await phaseOneApi.context();
                 Object.assign(context, response.data);
                 Object.assign(access, response.data.access);
-                const requests = [];
-                if (!['BLOCKED', 'CLOSED'].includes(access.mode)) {
-                    if (context.capabilities.manage_staff) requests.push(loadStaff());
-                    if (context.capabilities.manage_shop_settings) requests.push(loadSettings());
-                    if (context.capabilities.manage_branding) requests.push(loadBranding());
-                    if (context.capabilities.manage_domains) requests.push(loadDomains());
-                    if (context.capabilities.view_subscription) requests.push(loadSubscription());
-                }
-                await Promise.all(requests);
-                if (context.capabilities.view_inventory) { await products.load(); await intakes.load(); }
-                if (!navigation.value.some((item) => item.id === page.value)) page.value = 'home';
+                contextReady.value = true;
+                workspaceNavigation.initialize();
+                await loadPage(page.value);
             } catch (exception) {
                 error.value = exception.message;
             } finally {
@@ -242,6 +233,7 @@ createApp({
         }
 
         async function confirmDialog() {
+            if (dialog.pending) return;
             const reason = reasonDialog.validate();
             if (reason === null) return;
             const member = dialog.member;
@@ -293,16 +285,41 @@ createApp({
         async function rotateDomain(domain) { try { const response=await run(()=>phaseOneApi.rotateDomain(domain.public_id),'DNS challenge rotated.',loadDomains);Object.assign(dnsChallenge,response.data); } catch (_) {} }
         async function verifyDomain(domain) { try { await run(()=>phaseOneApi.verifyDomain(domain.public_id),'Domain ownership verified.',loadDomains); } catch (_) {} }
 
-        const navigateHash = () => { if (location.hash.startsWith('#sale-draft')) page.value = 'sale-drafts'; else if (location.hash.startsWith('#sale/') || location.hash === '#sale-history') page.value = 'sale-history'; };
-        onMounted(() => { load(); window.addEventListener('hashchange', navigateHash); });
-        onUnmounted(() => window.removeEventListener('hashchange', navigateHash));
+        async function loadPage(id) {
+            if (!contextReady.value || !navigation.value.some(item => item.id === id)) return;
+            try {
+                if (id === 'staff') await loadStaff();
+                else if (id === 'settings') await loadSettings();
+                else if (id === 'branding') await loadBranding();
+                else if (id === 'domains') await loadDomains();
+                else if (id === 'subscription') await loadSubscription();
+                else if (id === 'products') await products.load();
+                else if (id === 'intakes') await intakes.load();
+            } catch (failure) { error.value = failure.message; }
+        }
+        watch(page, (id, previous) => { if (id !== previous && !loading.value) { clearFeedback(); loadPage(id); } });
+        let refreshingAccess = false;
+        async function refreshAccess() {
+            if (!contextReady.value || refreshingAccess || document.hidden) return;
+            refreshingAccess = true;
+            try {
+                const response = await phaseOneApi.context();
+                Object.assign(context, response.data);
+                Object.assign(access, response.data.access);
+                if (!navigation.value.some(item => item.id === page.value)) workspaceNavigation.initialize();
+            } catch (failure) { error.value = failure.message; }
+            finally { refreshingAccess = false; }
+        }
+        onMounted(() => { load(); window.addEventListener('focus', refreshAccess); window.addEventListener('visibilitychange', refreshAccess); });
+        onUnmounted(() => { window.removeEventListener('focus', refreshAccess); window.removeEventListener('visibilitychange', refreshAccess); });
         return {
+            presentation, contextReady, workspaceNavigation, currentNav, bottomNavigation, backHash, load,
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
             domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
-            permissionSearch, permissionGroups, dialog, dialogReason, dialogElement, temporaryCredential, createStaff,
+            permissionSearch, permissionGroups, dialog, dialogReason, temporaryCredential, createStaff,
             loadPermissions, openDialog, closeDialog, confirmDialog, saveSettings, saveBranding,
-            uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions, handleDialogKeydown: reasonDialog.handleKeydown,
+            uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions,
         };
     },
 }).mount('#shop-app');

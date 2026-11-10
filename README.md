@@ -51,3 +51,7 @@ WP4-D integrates the Return/correction operator workflow, unified history/receip
 ## UI refactor developer reference
 
 The approved UI programme and UI2-A foundation are documented in [docs/ui/README.md](docs/ui/README.md). UI2-A supplies local icon assets, opt-in visual tokens and enhanced design examples; it does not replace current task screens. Follow the reference's manual verification steps before recording package acceptance.
+
+UI2-B adds shared interaction components and selected commercial/Customer/Staff integrations. See [component contracts](docs/ui/components.md) and [UI2-B manual checks](docs/ui/manual-verification-ui2-b.md). Full shell integration remains UI2-C.
+
+UI2-C integrates the actual responsive Shop/Admin/Auth shells, guarded navigation and task Home. Open the normal development Shop to review it; use [workspace contracts](docs/ui/workspace-shells.md) and the [UI2-C manual checklist](docs/ui/manual-verification-ui2-c.md). The Owner’s UI2-B manual acceptance is recorded under docs/ui/acceptance.

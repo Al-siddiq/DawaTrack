@@ -1,6 +1,6 @@
 # DawaTrack UI developer reference
 
-**Current package: UI2-A — implemented for review; Owner acceptance pending.** Plan approved 8 November 2026. UI2-B, UI2-C, task migrations and final acceptance remain planned. No existing production page is switched to the new shell in UI2-A.
+**Current package: UI2-C brand refinement — implemented for review.** The Owner confirmed testing and acceptance of UI2-C on 10 November 2026; the additional colour refinement awaits review. The Owner confirmed manual review and acceptance of UI2-B on 9 November 2026. C depends on B PR #29 (and A #28). UI-3 task migration and final programme acceptance remain separate.
 
 ## Review the delivered foundation
 
@@ -11,9 +11,9 @@ npm run ui:reference
 npm run ui:preview
 ```
 
-Open **http://127.0.0.1:4173** on the same computer. This read-only loopback documentation server has no application API or customer data. Stop it with Ctrl+C. Use **Screen designs** to inspect all 18 enhanced desktop/phone specimens, **Interaction examples** for proposed loading/overlay/feedback states, and **Icon catalogue** for all 34 shipped symbols. Example state transitions are deliberately local demonstrations, not reusable production components or financial operations.
+Open **http://127.0.0.1:4173** on the same computer. This read-only loopback documentation server has no application API or customer data. Stop it with Ctrl+C. Use **Screen designs** to inspect all 18 enhanced desktop/phone specimens, **Interaction examples** for proposed loading/overlay/feedback states, and **Icon catalogue** for all 34 shipped symbols. Interaction examples now mount the actual shared components with local fixtures. Their delayed/sample operations are not financial operations.
 
-The application itself still looks as before: UI2-C introduces the new shell, and UI-3 migrates task bodies after UI2-B's reusable components are accepted.
+UI2-C now changes the actual Shop/Admin/Auth layout and navigation. Open the normal XAMPP development address for C verification. The local reference is still a design/component gallery, not a live business app. UI-3 migrates remaining task bodies and wording.
 
 ## Reference index
 
@@ -33,10 +33,18 @@ The application itself still looks as before: UI2-C introduces the new shell, an
 | [Manual verification](manual-verification.md) | UI2-A setup, checks, expected results and results template |
 | [Release and rollback](release-and-rollback.md) | Cross-platform builds, fingerprinted assets, coherent deployments |
 | [Decisions](decisions.md) | Exact decisions and justified mockup clarifications |
-| [Delivery report](UI2-A-delivery.md) | Implemented scope, evidence and limitations |
+| [UI2-A delivery](UI2-A-delivery.md) | Historical foundation evidence |
+| [UI2-B delivery](UI2-B-delivery.md) | Shared-component scope, evidence and limits |
+| [Workspace shells](workspace-shells.md) | Current registries, hashes, guards, Home, branding, Admin and Auth contracts |
+| [Brand refinement](brand-refinement.md) | Colour contract, implementation and focused manual checks |
+| [UI2-C acceptance](acceptance/2026-11-10-ui2-c-owner-acceptance.md) | Owner confirmation of the delivered layout/navigation |
+| [UI2-C delivery](UI2-C-delivery.md) | Integrated shell scope and engineering limits |
+| [UI2-C checklist](manual-verification-ui2-c.md) | Actual Shop/Admin/Auth manual verification |
+| [UI2-B acceptance](acceptance/2026-11-09-ui2-b-owner-acceptance.md) | Owner manual acceptance record |
+| [UI2-B checklist](manual-verification-ui2-b.md) | Real component and application integration verification |
 
 ## Maintenance rules
 
 Edit source, regenerate output and commit both where the repository tracks generated assets. Do not edit `public/assets` or `icon-catalogue.js` / `UiIconCatalogue.php` directly. Every change to the allowlist must rebuild icons and review examples. Never regenerate the human-maintained requirement/acceptance columns over review results. Update documentation in the same PR as the implementation.
 
-The 18 designs are representative, not a substitute for the full task inventory. The 96 copy entries are not marked migrated merely because their text appears in a reference. The Owner's prior Phase 4 acceptance remains intact; new UI acceptance is recorded separately and only after manual confirmation.
+The 18 designs are representative, not a substitute for the full task inventory. The 96 copy entries are not marked migrated merely because their text appears in a reference. The requirements register records package-level C acceptance separately from unreported per-case results and remaining UI3/UI4 work. The Owner's prior Phase 4 acceptance remains intact; new UI acceptance is recorded separately and only after manual confirmation.

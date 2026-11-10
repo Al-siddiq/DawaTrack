@@ -1,13 +1,16 @@
+import { useNavigationGuard } from '../shared/workspace-navigation.js';
 import { get, send, money, field, action, feedback, message, has } from './commercial-ui.js';
 const { h, ref, computed, onMounted, onUnmounted } = window.Vue;
 export const CommercialActions = {
     props: { sale: Object, permissions: { type: Array, default: () => [] }, readOnly: Boolean }, emits: ['open', 'busy'],
     setup(props, { emit }) {
+        let alive = true;
         const pending = ref(false), error = ref(''), review = ref(null), reason = ref(''), confirmed = ref(false), unknown = ref(false), unknownKind = ref('REVERSAL'), online = ref(navigator.onLine);
+        useNavigationGuard(() => unknown.value ? { hard: true, message: 'Check the saved operation status before leaving this task.' } : reason.value.trim() || review.value ? { message: 'This correction is not saved. Keep reviewing, or leave these entries behind.' } : null);
         const returnId = ref(crypto.randomUUID()), reverseId = ref(crypto.randomUUID()), replacementId = ref(crypto.randomUUID());
         const disabled = computed(() => pending.value || props.readOnly || !online.value || unknown.value);
         const connection = () => { online.value = navigator.onLine; };
-        onMounted(() => { window.addEventListener('online', connection); window.addEventListener('offline', connection); }); onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
+        onMounted(() => { window.addEventListener('online', connection); window.addEventListener('offline', connection); }); onUnmounted(() => { alive = false; window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
         async function run(fn) { if (pending.value) return; pending.value = true; emit('busy', true); error.value = ''; try { await fn(); } catch (e) { error.value = message(e); } finally { pending.value = false; emit('busy', false); } }
         async function startReturn() { if (disabled.value) return; await run(async () => { try { const value = await send(`/api/v1/shop/sales/${props.sale.public_id}/returns`, 'POST', { public_id: returnId.value }); emit('open', value); } catch (e) { markUnknown(e, 'RETURN_DRAFT'); throw e; } }); }
         async function preview() { if (disabled.value) return; await run(async () => { review.value = await send(`/api/v1/shop/sales/${props.sale.public_id}/reversal-preview`, 'POST', {}); confirmed.value = false; }); }
@@ -24,7 +27,7 @@ export const CommercialActions = {
             unknown.value = false; emit('open', value);
         }); }
         async function replace() { if (disabled.value || !reason.value.trim()) return; await run(async () => {
-            try { const value = await send(`/api/v1/shop/sales/${props.sale.public_id}/replacement`, 'POST', { public_id: replacementId.value, reason: reason.value }); if (value.kind === 'SALE' && value.status === 'DRAFT') location.hash = `#sale-draft/${value.public_id}`; else emit('open', value.draft ?? value); }
+            try { const value = await send(`/api/v1/shop/sales/${props.sale.public_id}/replacement`, 'POST', { public_id: replacementId.value, reason: reason.value }); if (!alive) return; reason.value = ''; review.value = null; if (value.kind === 'SALE' && value.status === 'DRAFT') location.hash = `#sale-draft/${value.public_id}`; else emit('open', value.draft ?? value); }
             catch (e) { markUnknown(e, 'REPLACEMENT'); throw e; }
         }); }
         const link = (label, id) => action(label, () => run(async () => emit('open', await get(`/api/v1/shop/sales/${id}`))), pending.value || !online.value);
