@@ -1,0 +1,55 @@
+// UI3-A task bodies only. Owner/Admin/Auth task migration remains UI3-B.
+.trading-screen { display: grid; gap: 1rem; min-width: 0; max-width: 80rem; margin-inline: auto; background: transparent; }
+.trading-screen > h1 { margin: 0; font-size: 1.5rem; }
+.trading-screen h2, .trading-screen h3, .trading-screen p { margin-block: 0 .5rem; }
+.trading-screen .commercial-form, .trading-screen .commercial-card { max-width: none; margin: 0; padding: 1rem; border-color: var(--ui-border); }
+.trading-screen .commercial-form { display: grid; gap: .85rem; }
+.trading-screen .commercial-filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,12rem),1fr)); gap: .75rem; margin: 0; padding: 1rem; background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: .75rem; align-items: end; }
+.trading-screen .commercial-field { gap: .35rem; }
+.trading-screen .ui-field label { color: var(--ui-ink); }
+.trading-screen .ui-actions { margin-block: .5rem; }
+.trading-screen .ui-button { min-inline-size: 0; }
+.trading-screen .ui-record-list { gap: .75rem; }
+.trading-screen .commercial-card > .ui-button { margin-inline-end: .5rem; margin-block-start: .5rem; }
+.trading-task-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; }
+.trading-task-header h2 { margin: 0; }
+.trading-grid { display: grid; gap: 1rem; align-items: start; min-width: 0; }
+.trading-stack { display: grid; gap: 1rem; min-width: 0; }
+.trading-facts { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,10rem),1fr)); gap: .75rem; margin: .5rem 0; }
+.trading-facts > div { min-width: 0; padding: .65rem .75rem; border-radius: .5rem; background: var(--ui-background); overflow-wrap: anywhere; }
+.trading-facts dt { font-size: .875rem; color: var(--ui-muted); font-weight: 400; }
+.trading-facts dd { margin: .25rem 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.trading-screen details { padding: .75rem 1rem; border: 1px solid var(--ui-border); border-radius: .75rem; background: white; }
+.trading-screen summary { min-height: 2.75rem; display: list-item; align-content: center; font-weight: 600; cursor: pointer; color: var(--ui-primary); }
+.trading-screen details[open] > summary { margin-bottom: .75rem; }
+.trading-screen .sale-sticky-total { position: static; background: var(--ui-selected); color: var(--ui-primary); font-size: 1rem; padding: .85rem 1rem; border-inline-start: 3px solid var(--ui-primary); margin: 0; }
+.trading-screen .sale-confirm-action { position: static; padding: 0; background: transparent; box-shadow: none; }
+.trading-screen .sale-confirm-action .ui-button { width: 100%; }
+.trading-screen .sale-basket { padding: .75rem; }
+.trading-screen .sale-basket .commercial-card + .commercial-card { margin-top: .5rem; }
+.trading-screen .cashier-product-form { grid-template-columns: minmax(0,1fr); }
+.trading-screen .commercial-confirmation { padding: .75rem; background: var(--ui-selected); border-radius: .5rem; align-items: flex-start; }
+.trading-screen .commercial-confirmation input { min-height: 1.25rem; margin-top: .2rem; }
+.trading-record-meta { font-size: .8125rem; color: var(--ui-muted); overflow-wrap: anywhere; }
+.trading-danger-zone { border-inline-start: 3px solid var(--ui-danger) !important; }
+.trading-screen .sale-receipt { display: grid; gap: 1rem; }
+.trading-screen .receipt-private { border: 1px dashed var(--ui-control-border); }
+.trading-screen .receipt-line { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem 1rem; padding-block: .75rem; border-bottom: 1px solid var(--ui-border); }
+.trading-screen .receipt-line > h3 { grid-column: 1 / -1; }
+@media (min-width: 1000px) {
+ .trading-grid { grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 1fr); }
+ .trading-screen .cashier-product-form { grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .trading-screen .cashier-product-form :is(h2,.cashier-search-hint) { grid-column: 1 / -1; }
+}
+@media (max-width: 575px) {
+ .trading-screen .commercial-card, .trading-screen .commercial-form { padding: .85rem; }
+ .trading-screen .ui-actions > .ui-button { flex: 1 1 auto; }
+ .trading-facts { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media print {
+ #commercial-print-receipt { font-family: system-ui,sans-serif; font-size: 11pt; color: #000; background: #fff; }
+ #commercial-print-receipt :is(button,.receipt-private,.receipt-stock-evidence,.ui-alert) { display: none !important; }
+ #commercial-print-receipt :is(.commercial-card,.receipt-line) { break-inside: avoid; padding: .5rem 0; border: 0; }
+ #commercial-print-receipt .trading-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; }
+ #commercial-print-receipt .trading-facts dd { margin: 0; }
+}

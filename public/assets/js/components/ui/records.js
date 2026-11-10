@@ -45,7 +45,7 @@ export const UiRecordList = {
 export const UiStatusPanel = {
     props: { state: { type: String, default: 'ready' }, message: { type: String, default: '' }, checking: Boolean, canCheck: { type: Boolean, default: true } },
     emits: ['check-status'],
-    setup(props, { slots }) {
+    setup(props, { slots, emit }) {
         return () => {
             if (props.state === 'ready') return null;
             if (props.state === 'loading') return h(UiLoading, { label: props.message || 'Loading…' });

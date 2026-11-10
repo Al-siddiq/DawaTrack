@@ -1,4 +1,5 @@
 import { money, action, has } from './commercial-ui.js';
+import { facts, note, stateLabel } from './trading-ui.js';
 const { h, ref } = window.Vue;
 export const SaleReceipt = {
     props: { sale: { type: Object, required: true }, permissions: { type: Array, default: () => [] } },
@@ -8,33 +9,31 @@ export const SaleReceipt = {
             if (!receipt.value) return;
             const copy = receipt.value.cloneNode(true);
             copy.id = 'commercial-print-receipt';
-            copy.querySelectorAll('button').forEach(node => node.remove());
+            // A customer copy never includes internal cost/profit or stock evidence, even for an Owner.
+            copy.querySelectorAll('button,.receipt-private,.receipt-stock-evidence,.ui-alert').forEach(node => node.remove());
             copy.querySelectorAll('details').forEach(node => { node.open = true; });
             document.body.append(copy); document.body.classList.add('printing-commercial-receipt');
             try { window.print(); } finally { copy.remove(); document.body.classList.remove('printing-commercial-receipt'); }
         }
         return () => {
             const sale = props.sale;
-            const correction = sale.operation_type === 'COMPENSATION';
-            const isReturn = sale.kind === 'RETURN' && !correction;
+            const cancellation = sale.operation_type === 'COMPENSATION';
+            const returned = sale.kind === 'RETURN' && !cancellation;
             const profit = sale.profit_visible && has(props.permissions, 'sale.profit.view');
             return h('article', { ref: receipt, class: 'sale-receipt commercial-card' }, [
-                h('header', [h('h2', correction ? 'Reversal receipt' : isReturn ? 'Return receipt' : 'Sale receipt'), h('p', { role: 'status', class: 'alert alert-success' }, 'Posted successfully. This receipt is permanent.'), h('p', { class: 'break-all' }, `Reference: ${sale.public_id}`)]),
-                sale.reversal_public_id && h('p', { class: 'alert alert-warning' }, 'This operation has been reversed. Its original evidence is retained.'), sale.reason && h('p', `Reason: ${sale.reason}`),
-                h('dl', { class: 'detail-grid' }, [h('div', [h('dt', 'Customer'), h('dd', sale.customer_name ?? 'Walk-in Customer')]), h('div', [h('dt', 'Posted by'), h('dd', sale.posted_by_name ?? 'Recorded user')]), h('div', [h('dt', 'Business time (UTC)'), h('dd', sale.occurred_at)]), h('div', [h('dt', 'Posted (UTC)'), h('dd', sale.posted_at)])]),
-                ...sale.items.map(item => h('section', { class: 'commercial-card', key: item.public_id }, [h('h3', item.product_name), h('p', `${item.quantity} ${item.unit_name} × ${money(item.unit_selling_price)} = ${money(item.line_sales_amount)}`),
-                    profit && h('p', `Historical Cost basis: ${money(item.unit_cost_snapshot)} per unit · COGS: ${money(item.line_cogs_amount)} · Original margin attributed (before expenses): ${money(item.gross_profit)}`),
-                    profit && h('p', item.cost_basis_state === 'UNESTABLISHED' ? 'Cost basis unestablished: this profit figure is provisional.' : `Historical cost state: ${item.cost_basis_state}`),
-                    h('a', { href: `#stock-proof-${item.movement_public_id}`, onClick: event => { event.preventDefault(); const evidence = document.getElementById(`stock-proof-${item.movement_public_id}`); if (evidence) { evidence.closest('details').open = true; evidence.focus(); } } }, 'Stock evidence'),
-                ].filter(Boolean))),
-                h('h3', `Total: ${money(sale.total_amount)}`), h('h3', isReturn ? 'Refunds paid' : correction ? 'Compensating money movements' : 'Payments received'),
-                !sale.payments.length && h('p', 'No money movement for this operation.'),
-                ...sale.payments.map(payment => h('p', { key: payment.public_id }, `${payment.channel}: ${money(payment.amount)} · ${payment.direction}`)),
-                sale.received_amount_snapshot != null && h('p', `Paid: ${money(sale.received_amount_snapshot)} · Credit created: ${money(sale.credit_created_amount_snapshot)}`), ...(sale.credit_adjustments ?? []).map(a => h('p', { key: a.public_id }, `${a.adjustment_type === 'REVERSAL' ? 'Existing debt restored' : a.adjustment_type === 'CORRECTION_DECREASE' ? 'Original credit cancelled' : 'Existing debt reduced'}: ${money(String(a.amount_delta).replace(/^-/, ''))}`)),
-                sale.receivable && h('section', { class: 'commercial-card' }, [h('h3', 'Sale credit'), h('p', `Original credit: ${money(sale.receivable.original_amount)}`), h('p', `Due date: ${sale.receivable.due_date ?? 'Not specified'}`), h('p', { class: 'break-all' }, `Credit reference: ${sale.receivable.public_id}`), h('p', 'This is the original Sale obligation. Collections and Customer statements belong to the next phase.')]),
-                profit && h('section', { class: 'commercial-card' }, [h('h3', 'Historical margin'), h('p', `COGS: ${money(sale.total_cogs_amount)}`), h('p', `Gross profit effect (before expenses): ${money(sale.gross_profit_effect ?? sale.gross_profit)}`), sale.profit_provisional && h('p', { class: 'alert alert-warning' }, 'Provisional profit: one or more cost bases were unestablished when this Sale posted. It is not verified profit.')].filter(Boolean)),
-                h('details', { open: false }, [h('summary', 'Linked stock evidence'), ...sale.items.map(item => h('section', { id: `stock-proof-${item.movement_public_id}`, tabindex: '-1', class: 'commercial-card' }, [h('h4', item.product_name), h('p', { class: 'break-all' }, `Movement: ${item.movement_public_id ?? 'Evidence unavailable'}`), h('p', `${item.quantity_before} → ${item.quantity_after} ${item.unit_name}`), String(item.quantity_after).startsWith('-') && h('p', { class: 'alert alert-warning' }, 'Stock left is below zero. Resolve the stock discrepancy through the accountable Inventory workflow.'), h('p', `Posted: ${item.movement_posted_at} UTC`)]))]),
-                action('Print receipt', printReceipt, false, 'btn-outline-secondary'),
+                h('header', [h('h2', cancellation ? 'Cancellation receipt' : returned ? 'Return receipt' : 'Sale receipt'), h('p', 'Saved. Keep this receipt for your records.'), h('p', { class: 'trading-record-meta' }, `Receipt number: ${sale.public_id}`)]),
+                sale.reversal_public_id && note('This record was cancelled. The original receipt is kept.', 'warning'),
+                sale.reason && h('p', `Reason: ${sale.reason}`),
+                facts([['Customer', sale.customer_name || 'Walk-in customer'], ['Recorded by', sale.posted_by_name || 'Shop user'], ['Sale time (UTC)', sale.occurred_at], ['Saved at (UTC)', sale.posted_at]]),
+                ...sale.items.map(item => h('section', { class: 'receipt-line', key: item.public_id }, [h('h3', item.product_name), h('span', `${item.quantity} ${item.unit_name} × ${money(item.unit_selling_price)}`), h('strong', money(item.line_sales_amount))])),
+                h('h3', `Total: ${money(sale.total_amount)}`),
+                h('section', [h('h3', returned ? 'Money paid back' : cancellation ? 'Money changes from this cancellation' : 'Payment'), !sale.payments.length && h('p', 'No money changed hands.'), ...sale.payments.map(payment => h('p', { key: payment.public_id }, `${stateLabel(payment.channel)}: ${money(payment.amount)} · ${stateLabel(payment.direction)}`))]),
+                sale.received_amount_snapshot != null && facts([['Amount paid', money(sale.received_amount_snapshot)], ['Left to pay from this sale', money(sale.credit_created_amount_snapshot)]]),
+                ...(sale.credit_adjustments || []).map(a => h('p', { key: a.public_id }, `${a.adjustment_type === 'REVERSAL' ? 'Amount owed put back' : a.adjustment_type === 'CORRECTION_DECREASE' ? 'Amount owed cancelled' : 'Amount owed reduced'}: ${money(String(a.amount_delta).replace(/^-/, ''))}`)),
+                sale.receivable && h('section', [h('h3', 'Amount left to pay'), facts([['From this sale', money(sale.receivable.original_amount)], ['Agreed payment date', sale.receivable.due_date || 'Not set']]), h('p', { class: 'trading-record-meta' }, `Payment record: ${sale.receivable.public_id}`), h('p', 'This shows the amount first left unpaid on this sale. It is not an updated customer balance.')]),
+                profit && h('details', { class: 'receipt-private' }, [h('summary', 'Shop only: cost and profit'), h('p', 'Hidden on the customer’s printed receipt.'), ...sale.items.map(item => h('section', { key: item.public_id }, [h('h3', item.product_name), facts([['Cost per unit when sold', money(item.unit_cost_snapshot)], ['Total cost', money(item.line_cogs_amount)], ['Profit before shop expenses', money(item.gross_profit)]]), item.cost_basis_state === 'UNESTABLISHED' && note('The cost had not been recorded when this was sold. Treat this profit as an estimate.', 'warning')])), facts([['Total cost when sold', money(sale.total_cogs_amount)], ['Change in profit before expenses', money(sale.gross_profit_effect ?? sale.gross_profit)]]), sale.profit_provisional && note('Some costs were not recorded at the time. This profit is an estimate.', 'warning')]),
+                h('details', { class: 'receipt-stock-evidence' }, [h('summary', 'Shop only: stock changes'), ...sale.items.map(item => h('section', { class: 'commercial-card', key: item.public_id }, [h('h3', item.product_name), h('p', `${item.quantity_before} → ${item.quantity_after} ${item.unit_name}`), h('p', { class: 'trading-record-meta' }, `Stock record: ${item.movement_public_id || 'Not available'}`), h('p', `Saved: ${item.movement_posted_at} UTC`), String(item.quantity_after).startsWith('-') && note('The recorded stock is below zero. Check and correct the stock record.', 'warning')]))]),
+                action('Print customer receipt', printReceipt, false, 'btn-outline-primary', { icon: 'print' }),
             ].filter(Boolean));
         };
     },

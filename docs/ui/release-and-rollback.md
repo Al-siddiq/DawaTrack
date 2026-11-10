@@ -29,3 +29,9 @@ Build the B branch including its A dependency; do not deploy B JS/template chang
 ## UI2-C deployment boundary
 
 Ship the changed PHP layouts/helper/entry metadata together with compiled Shop render, Shop/Admin/Auth/shared/component modules, CSS and existing icon assets. Native auth routes/CSRF/MFA are unchanged, but missing the new entry.js or UI helper is a release defect. No migration is introduced. The existing Service Worker currently performs no fetch interception; do not add business-data caching as an asset-refresh workaround. Rehearse coherent release/rollback and browser-history/unfinished-record recovery through C01–C29. The component gallery is not the actual Shop.
+
+## UI3-A integration and deployment boundary
+
+The delivery targets main `5ff9ae8`, which contained UI2-A only. Its first commit integrates the accepted B/C/refinement source; its second delivers UI3-A. Merge this PR directly into main. Do not assume closed stacked PRs reached main, and do not merge UI3-A back into an old UI2 feature branch. Inspect the resulting main tree before release.
+
+Ship the entire compatible PHP/JS/CSS/icons release, including the new products/intakes/trading modules and rebuilt Shop render. No migration. Keep a complete previous release. Verify saved-record status recovery, stock sheet/confirmation, original baskets and customer-safe receipt print after rollout. Roll back complete code/assets without reversing business records. UI3-A manual review is pending; UI3-B and final UI4 handover remain.

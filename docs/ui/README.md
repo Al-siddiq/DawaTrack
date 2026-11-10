@@ -1,6 +1,10 @@
 # DawaTrack UI developer reference
 
-**Current package: UI2-C brand refinement — implemented for review.** The Owner confirmed testing and acceptance of UI2-C on 10 November 2026; the additional colour refinement awaits review. The Owner confirmed manual review and acceptance of UI2-B on 9 November 2026. C depends on B PR #29 (and A #28). UI-3 task migration and final programme acceptance remain separate.
+**Current package: UI3-A — trading screen redesign, implemented for review.** UI2-C and its brand refinement were accepted by the Owner. Main contained only UI2-A after the stacked merges, so this branch includes an explicit integration of the accepted B/C/refinement prerequisite. UI3-A manual acceptance, UI3-B and UI4 remain outstanding.
+
+## Review UI3-A in the actual application
+
+Follow [UI3-A manual verification](manual-verification-ui3-a.md) using the normal XAMPP Shop address. See [delivery scope and integration](UI3-A-delivery.md) and [trading developer reference](trading-screens.md). No migration is needed. The component gallery below remains a design reference, not the live app or proof of business acceptance.
 
 ## Review the delivered foundation
 

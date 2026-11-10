@@ -1,3 +1,5 @@
+import { ProductsPanel } from '../components/products-panel.js';
+import { IntakesPanel } from '../components/intakes-panel.js';
 import { WorkspaceShell } from '../components/ui/workspace-shell.js';
 import { WorkspaceHome } from '../components/workspace-home.js';
 import { UiLoading, UiInformationPanel } from '../components/ui/index.js';
@@ -30,7 +32,7 @@ const {
 
 createApp({
     render,
-    components: { WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
         const presentation = readWorkspacePresentation(document.getElementById('shop-app'));

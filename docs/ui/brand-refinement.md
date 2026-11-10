@@ -1,6 +1,6 @@
 # UI2-C brand colour refinement
 
-**Date:** 10 November 2026. **Branch:** `codex/ui2-c-brand-refinement-20261110`. **Base:** UI2-C #30, commit `25af0ef5f73c1878a4048bcd74e6d172fcfd5aca`. **Refinement acceptance:** pending. Original UI2-C acceptance is recorded separately.
+**Date:** 10 November 2026. **Branch:** `codex/ui2-c-brand-refinement-20261110`. **Base:** UI2-C #30, commit `25af0ef5f73c1878a4048bcd74e6d172fcfd5aca`. **Refinement acceptance:** confirmed by Owner on 10 November 2026; see `acceptance/2026-11-10-ui2-brand-owner-acceptance.md`. Original UI2-C acceptance is recorded separately.
 
 ## Colour contract
 

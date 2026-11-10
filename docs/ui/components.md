@@ -112,3 +112,7 @@ New production/shared default wording is tracked as COPY-097 through COPY-122 in
 ## UI2-C shell component
 
 `WorkspaceShell` is imported directly from `components/ui/workspace-shell.js` to keep the UI barrel free of a self-import cycle. Its controlled inputs are title, parent, backHash, brandName, logo, userName, roleLabel, area, authorized items, bottomItems, currentId/currentGroup, navigation controller and trackEdits. Its default slot is the current task. It delegates all navigation decisions to the controller and B dialog/sheet primitives; it never authorizes a business write. `WorkspaceHome` emits navigate(hash) and reads only existing authorized Home datasets. See workspace-shells.md for the complete C contract and verification limits.
+
+## UI3-A task integrations
+
+Trading panels use the existing shared components with `components/trading-ui.js` helpers for labeled selects, server-valued facts, stable error summaries and guarded local confirmation. `ProductsPanel`/`IntakesPanel` replace inventory task markup; saved receipt printing explicitly strips internal nodes. See [trading reference](trading-screens.md). `UiStatusPanel.setup` now captures `emit` so its existing `check-status` event is callable. This fixes the recovery action exposed by the sale-handler review; its API is unchanged.

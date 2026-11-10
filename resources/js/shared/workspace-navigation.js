@@ -12,18 +12,21 @@ export function announceWorkspaceHash(hash) {
     window.dispatchEvent(new Event('dt:location'));
 }
 
+/** Shared read-only inspection for guarded transitions inside a trading task. */
+export function inspectWorkspaceIssues(targetHash = location.hash) {
+    if (activeMutationCount()) return [{ hard: true, message: 'A change is being saved. Wait for the result before leaving this task.' }];
+    return [...guards].map(check => {
+        try { return check({ hash: targetHash }); }
+        catch { return { hard: true, message: 'Wait for this task to finish updating before leaving.' }; }
+    }).filter(Boolean);
+}
+
 export function useWorkspaceNavigation({ items, fallback = 'home' }) {
     const currentId = ref(fallback), pending = ref(null), message = ref(''), currentHash = ref(location.hash);
     let replaying = false, alive = true, securityLeaving = false;
     const current = computed(() => items.value.find(item => item.id === currentId.value));
     const resolve = hash => items.value.find(item => item.hash === hash || item.prefixes?.some(prefix => hash.startsWith(prefix)));
-    function blockers(targetHash = location.hash) {
-        if (activeMutationCount()) return [{ hard: true, message: 'A change is being saved. Wait for the result before leaving this task.' }];
-        return [...guards].map(check => {
-            try { return check({ hash: targetHash }); }
-            catch { return { hard: true, message: 'Wait for this task to finish updating before leaving.' }; }
-        }).filter(Boolean);
-    }
+    const blockers = inspectWorkspaceIssues;
     async function apply(hash, replace = false, announce = true) {
         const item = resolve(hash);
         if (!item) { message.value = 'This page is not available with your current access.'; return; }
