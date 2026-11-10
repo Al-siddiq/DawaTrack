@@ -48,7 +48,7 @@ export const WorkspaceHome = {
             ]),
         ]);
         function shortcut(title, description, icon, hash) {
-            return h('a', { href: hash, class: 'ui-home-shortcut', onClick: event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); go(hash); } } }, [h(UiIcon, { name: icon, size: 'navigation' }), h('strong', title), h('span', description)]);
+            return h('a', { href: hash, class: ['ui-home-shortcut', { 'ui-home-shortcut--primary': hash === '#sale-drafts/new' }], onClick: event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); go(hash); } } }, [h(UiIcon, { name: icon, size: 'navigation' }), h('strong', title), h('span', description)]);
         }
     },
 };

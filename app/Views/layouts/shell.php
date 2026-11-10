@@ -23,6 +23,7 @@ $workspace = in_array($entryScript ?? '', ['assets/js/shop/app.js', 'assets/js/a
     $accentColour     = $brand['accent_colour'] ?? '#F0A202';
     $backgroundColour = $brand['background_colour'] ?? '#F4F7F5';
     $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
+    $uiPalette = dt_ui_brand_palette($primaryColour, $accentColour);
     ?>
 
     <style nonce="<?= esc($cspNonce, 'attr') ?>">
@@ -34,7 +35,9 @@ $workspace = in_array($entryScript ?? '', ['assets/js/shop/app.js', 'assets/js/a
              * The shared stylesheet consumes these CSS custom properties.
              */
             --dt-primary: <?= esc($primaryColour) ?>;
-            --ui-primary: <?= esc(dt_ui_brand_primary($primaryColour)) ?>;
+            <?php foreach ($uiPalette as $token => $colour): ?>
+            --ui-<?= esc($token) ?>: <?= esc($colour) ?>;
+            <?php endforeach ?>
             --dt-ink: <?= esc($secondaryColour) ?>;
             --dt-accent: <?= esc($accentColour) ?>;
             --dt-background: <?= esc($backgroundColour) ?>;

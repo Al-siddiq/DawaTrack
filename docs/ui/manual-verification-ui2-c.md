@@ -1,6 +1,6 @@
 # UI2-C manual verification
 
-**Branch:** `codex/ui2-c-workspace-shells-20261109`. **Dependency:** accepted UI2-B PR #29 (itself stacked on #28). **Status:** pending Owner verification. No database migration is introduced.
+**Branch:** `codex/ui2-c-workspace-shells-20261109`. **Dependency:** accepted UI2-B PR #29 (itself stacked on #28). **Status:** Owner confirmed testing/acceptance of the delivered UI2-C on 10 November 2026. Per-case outcomes/device details were not supplied; the table retains its original unfilled result cells and is not evidence of individual passes. See the acceptance record and separate brand-refinement checks. No database migration is introduced.
 
 ## Prepare the development checkout
 
@@ -48,4 +48,4 @@ Use a test Shop with Owner, restricted Staff, test customers/products, unfinishe
 | C28 | Recheck accepted Phase 4 cash/transfer/debt/returns/correction paths | Same financial/stock/audit/identity rules; task migration remains UI-3, not new business behavior | Pending |
 | C29 | Reload/long-lived tab/staged deployment and rollback | Coherent HTML/JS/CSS/sprite release, no mixed renderer or missing asset; no data rollback | Pending |
 
-Owner acceptance is recorded only after confirmation. UI-3 still covers remaining task-body presentation/copy migration; C acceptance does not declare the whole UI programme complete.
+Owner acceptance of the original UI2-C is recorded in `acceptance/2026-11-10-ui2-c-owner-acceptance.md`; this table does not invent per-case results. UI-3 still covers remaining task-body presentation/copy migration; C acceptance does not declare the whole UI programme complete.
