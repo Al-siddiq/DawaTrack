@@ -1,11 +1,9 @@
 # Phase 4 integrated closure status
 
-As of 2026-11-07: **CLOSED — OWNER MANUALLY TESTED AND ACCEPTED; IMPLEMENTATION MERGED INTO MAIN.**
+As of 2026-11-06: **implementation candidate delivered; Phase 4 NOT CLOSED / integrated owner acceptance pending.**
 
-After reviewing and manually testing the complete delivery, the owner explicitly accepted Phase 4 and reported merging its stacked PRs. GitHub confirms implementation PRs #17–#22 and #24–#26 are merged. Observed main baseline is `09789e8aab48b5d62b546ecf538e491867b5fedf`, with tracked content matching the delivered WP4-D candidate.
+WP1 Opening Cash, WP2 Customer/drafts and WP3 forward posting retain their recorded owner acceptance. WP4's financial/schema contract was approved; A schema, B Return API and C correction API are authored. The owner confirmed C and authorized D. D now integrates operator screens, receipts/history, diagnostics and the final verification package.
 
-The [integrated owner acceptance record](../acceptance/2026-11-07-phase-04-integrated-owner-acceptance.md) contains the owner's exact statement, merged PR provenance, accepted scope and evidence attribution. Prior WP1–WP3 acceptance remains valid; the final decision now covers integrated WP4 A/B/C/D and the P4-01–P4-33 scope.
+Engineering contracts, mocked DOM workflow and source/asset checks pass within their stated limits. Native MySQL migration/constraints/concurrency/rollback and authenticated HTTP checks remain unreported/unexecuted here. Live browser layout/accessibility/print checks are blocked in this workspace and remain required. Prior confirmation authorizes the next increment; it does not manufacture those results.
 
-This is owner-reported manual acceptance, not a new independent native test run. Historical engineering limits, blocked assistant browser execution and absence of supplied per-case/environment logs remain documented. Pending owner-acceptance wording in earlier delivery reports describes their publication-time status and is superseded by this record. No production deployment is inferred.
-
-Phase 5 Debt Collection and Customer Statements is the next roadmap phase. It requires its own scoped planning/authorization; no later-phase work is implicitly implemented by this closure. The final manual guide remains available as a regression checklist.
+Use docs/manual-verification-phase-04-wp4-d.md to record each P4-01–P4-33 outcome with environment, tested commit, observation and evidence. Resolve failures/blocked gates and repeat affected checks. Only explicit owner integrated acceptance can close Phase 4. No Return/correction/payment/UI/permission/rollback/concurrency requirement is deferred to Phase 5 to achieve closure. No merge/deployment is implied.
