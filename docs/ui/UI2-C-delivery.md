@@ -1,6 +1,6 @@
 # UI2-C — Shop, Admin and Auth shells/navigation
 
-**Date:** 9 November 2026. **Branch:** `codex/ui2-c-workspace-shells-20261109`. **Base:** accepted UI2-B `aaa93d9c3bb984ea973fbad91250662865c9e899`, PR #29. **C acceptance:** pending.
+**Date:** 9 November 2026. **Branch:** `codex/ui2-c-workspace-shells-20261109`. **Base:** accepted UI2-B `aaa93d9c3bb984ea973fbad91250662865c9e899`, PR #29. **C acceptance:** confirmed by Owner on 10 November 2026; see [acceptance record](acceptance/2026-11-10-ui2-c-owner-acceptance.md). Additional [brand refinement](brand-refinement.md) awaits review.
 
 ## Implemented
 

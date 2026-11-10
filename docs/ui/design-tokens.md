@@ -30,3 +30,9 @@ Static reference color pairs have measured contrast in `contrast-measurements.js
 UI2-C responsive targets: below 768px compact, 768–1199px drawer/intermediate, from 1200px persistent sidebar if content fits. Keep thresholds centrally defined in the eventual shell; they are not active shell CSS in A. Header/bottom safe areas and keyboard accommodation must derive from real layout height. No desktop duplicate bottom bar.
 
 Keep 44px targets, visible words plus status icons, normal text contrast at least 4.5:1 and large text/non-text control contrast at least 3:1 as applicable. Brand colors must have an accessible fallback. Reduced motion removes spinner rotation and retains readable status. Do not claim verification for dynamic branding until that UI exists and is checked.
+
+## UI2-C brand refinement (10 November 2026)
+
+The server now emits validated `--ui-brand`, `--ui-primary`, `--ui-primary-hover`, `--ui-selected`, `--ui-hover-surface`, `--ui-focus` and `--ui-accent` in the existing nonce-authorized style. `dt_ui_brand_primary` remains a compatibility wrapper. `--ui-success` / `--ui-success-surface` stay semantic green, independent of Shop branding. These override the static defaults above; the static reference contrast file is not dynamic-theme verification.
+
+See [brand refinement](brand-refinement.md) for derivation, restrained application rules and manual checks. `_brand.scss` applies to actual workspace/entry roots so legacy Bootstrap primary actions receive the same palette without opting their whole task bodies into `.ui-scope` or changing their layout.

@@ -10,6 +10,7 @@ $secondaryColour  = $brand['secondary_colour'] ?? '#17231F';
 $accentColour     = $brand['accent_colour'] ?? '#F0A202';
 $backgroundColour = $brand['background_colour'] ?? '#F4F7F5';
 $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
+$uiPalette = dt_ui_brand_palette($primaryColour, $accentColour);
 ?>
 <!doctype html>
 <html lang="en">
@@ -41,7 +42,9 @@ $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
     <style nonce="<?= esc($cspNonce, 'attr') ?>">
         :root {
             --dt-primary: <?= esc($primaryColour) ?>;
-            --ui-primary: <?= esc(dt_ui_brand_primary($primaryColour)) ?>;
+            <?php foreach ($uiPalette as $token => $colour): ?>
+            --ui-<?= esc($token) ?>: <?= esc($colour) ?>;
+            <?php endforeach ?>
             --dt-ink: <?= esc($secondaryColour) ?>;
             --dt-accent: <?= esc($accentColour) ?>;
             --dt-background: <?= esc($backgroundColour) ?>;

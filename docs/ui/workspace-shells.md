@@ -1,6 +1,6 @@
 # UI2-C workspace shells and navigation reference
 
-**Date:** 9 November 2026. **State:** implemented for review; Owner acceptance pending. Dependency: accepted UI2-B commit `aaa93d9c3bb984ea973fbad91250662865c9e899`, PR #29.
+**Date:** 9 November 2026. **State:** original UI2-C accepted by Owner on 10 November 2026; additional brand refinement awaits review. Dependency: accepted UI2-B commit `aaa93d9c3bb984ea973fbad91250662865c9e899`, PR #29.
 
 ## Architecture and entry points
 
@@ -77,10 +77,10 @@ The header/side/bottom layout uses moderate type and spacing. At 1200px+ the sid
 
 Keyboard behavior uses `interactive-widget=resizes-content` where supported and visualViewport sizing where an overlay keyboard reduces the view. On those overlay-keyboard layouts the bottom bar hides while typing, with header Menu still reachable; content remains scrollable. Actual Android/iOS/Windows/zoom behavior requires native verification.
 
-The existing Shop context response now includes the optional presentation field `current_user.display_name`, so refreshed current-user details do not depend on stale initial markup. No password/email/token or membership authority is added. Server-resolved branding/logo remains. A validated brand primary is used only at a conservative white-text contrast threshold that also protects the selected-nav surface; otherwise the accessible default is used. Logo/name remain visible independently. Print excludes new navigation and preserves the accepted receipt-specific print flow.
+The existing Shop context response now includes the optional presentation field `current_user.display_name`, so refreshed current-user details do not depend on stale initial markup. No password/email/token or membership authority is added. Server-resolved branding/logo remains. The presentation palette is now derived by `dt_ui_brand_palette`: valid brand hues are darkened when needed for readable actions, with related pale active/hover surfaces. Invalid values use safe defaults. See `brand-refinement.md` for the precise colour contract. Logo/name remain visible independently. Print excludes new navigation and preserves the accepted receipt-specific print flow.
 
 Auth remains server-rendered, with visible Shop/Admin area and current branding. Entry enhancement uses no Vue compiler and reads no password value: it adds show/hide controls, protects repeated native form submission and restores buttons/masks on BFCache return. CSRF fields, required password policy, configured recovery availability, email sign-in, forced password change, route/session boundaries and Admin MFA are unchanged. Recovery links are displayed only when their existing configuration enables the flow.
 
 ## Integration limits
 
-UI2-C completes the shared shell/navigation foundation. Existing task bodies still contain legacy wording/layout to migrate in UI-3; those are not hidden or falsely counted as redesigned. All new paths and base styling are real production integration, not the A/B specimen gallery. Native HTTP, CSP, device, keyboard/screen-reader, print and full business regression require the accompanying manual checklist before C acceptance.
+UI2-C completes the shared shell/navigation foundation. Existing task bodies still contain legacy wording/layout to migrate in UI-3; those are not hidden or falsely counted as redesigned. All new paths and base styling are real production integration, not the A/B specimen gallery. Native HTTP, CSP, device, keyboard/screen-reader, print and full business regression are covered by the accompanying manual checklist. Owner acceptance is recorded separately without inventing per-case evidence.

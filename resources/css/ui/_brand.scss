@@ -1,0 +1,42 @@
+// Restrained brand touchpoints. Keep content surfaces neutral and status colours semantic.
+// Production shell roots are explicit: legacy task bodies are not opted into all ui-scope styles.
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) :focus-visible { outline: 3px solid var(--ui-focus); outline-offset: 3px; }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .btn:focus-visible { box-shadow: none; }
+.ui-alert--success, .ui-information-panel--success { color: var(--ui-success); background: var(--ui-success-surface); }
+.ui-workspace-header, .ui-entry-header { border-top: 3px solid var(--ui-brand); }
+.ui-workspace-brand { padding-bottom: .75rem; border-bottom: 2px solid var(--ui-accent); }
+.ui-auth-entry .auth-brand { padding-bottom: .75rem; border-bottom: 2px solid var(--ui-accent); }
+.ui-auth-entry .auth-card { border-top: 3px solid var(--ui-brand); }
+.ui-auth-entry .auth-brand .brand-mark { background: var(--ui-primary); color: var(--ui-on-primary); }
+.ui-auth-entry .auth-brand .eyebrow { color: var(--ui-primary); }
+.ui-navigation-item.is-active { box-shadow: inset 3px 0 0 var(--ui-primary); }
+.ui-navigation--bottom .ui-navigation-item.is-active { box-shadow: inset 0 3px 0 var(--ui-primary); }
+.ui-home-shortcut--primary { border-top: 3px solid var(--ui-primary); background: var(--ui-selected); }
+.ui-home-shortcut--primary > strong { color: var(--ui-primary); }
+.ui-home-shortcut > .ui-icon { box-sizing: content-box; padding: .5rem; border-radius: .65rem; background: var(--ui-selected); }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) :is(input[type="checkbox"], input[type="radio"]) { accent-color: var(--ui-primary); }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .form-check-input:checked { background-color: var(--ui-primary); border-color: var(--ui-primary); }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .form-control:focus, :is(.ui-app-shell, .ui-entry, .ui-auth-entry) .form-select:focus, :is(.ui-app-shell, .ui-entry, .ui-auth-entry) .form-check-input:focus { border-color: var(--ui-primary); box-shadow: none; }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .btn-primary {
+  --bs-btn-bg: var(--ui-primary); --bs-btn-color: var(--ui-on-primary); --bs-btn-border-color: var(--ui-primary);
+  --bs-btn-hover-bg: var(--ui-primary-hover); --bs-btn-hover-color: var(--ui-on-primary); --bs-btn-hover-border-color: var(--ui-primary-hover);
+  --bs-btn-active-bg: var(--ui-primary-hover); --bs-btn-active-color: var(--ui-on-primary); --bs-btn-active-border-color: var(--ui-primary-hover);
+  --bs-btn-disabled-bg: var(--ui-primary); --bs-btn-disabled-color: var(--ui-on-primary); --bs-btn-disabled-border-color: var(--ui-primary);
+}
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .btn-outline-primary {
+  --bs-btn-color: var(--ui-primary); --bs-btn-border-color: var(--ui-primary);
+  --bs-btn-hover-bg: var(--ui-selected); --bs-btn-hover-color: var(--ui-primary); --bs-btn-hover-border-color: var(--ui-primary);
+  --bs-btn-active-bg: var(--ui-selected); --bs-btn-active-color: var(--ui-primary); --bs-btn-active-border-color: var(--ui-primary);
+  --bs-btn-disabled-color: var(--ui-primary); --bs-btn-disabled-border-color: var(--ui-primary);
+}
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .btn-link, .ui-auth-entry .auth-card a:not(.btn):not(.ui-button) { color: var(--ui-primary); }
+:is(.ui-app-shell, .ui-entry, .ui-auth-entry) .step-indicator li.active { color: var(--ui-on-primary); background: var(--ui-primary); }
+@media (hover: hover) {
+  .ui-button:not(:disabled):not([aria-disabled="true"]):not(.ui-button--secondary):not(.ui-button--plain):not(.ui-button--danger):not(.ui-button--danger-secondary):hover { background: var(--ui-primary-hover); border-color: var(--ui-primary-hover); }
+  .ui-button--secondary:not(:disabled):not([aria-disabled="true"]):hover { background: var(--ui-selected); }
+  .ui-navigation-item:not(.is-active):hover, .ui-home-shortcut:not(.ui-home-shortcut--primary):hover { background: var(--ui-hover-surface); }
+  .ui-home-shortcut--primary:hover { border-color: var(--ui-primary); }
+}
+@media print {
+  .ui-auth-entry .auth-card, .ui-entry-header { border-top: 0; }
+}
