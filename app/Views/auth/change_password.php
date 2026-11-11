@@ -1,3 +1,4 @@
+<?php helper('ui'); ?>
 <?= $this->extend('auth/layout') ?>
 
 <?= $this->section('main') ?>
@@ -7,7 +8,7 @@
         Security requirement
     </div>
 
-    <h1 id="auth-heading">
+    <h1 id="auth-heading" tabindex="-1">
         Choose a new password
     </h1>
 
@@ -20,7 +21,7 @@
     method="post"
     action="<?= esc(service('sameOriginUrl')->to('change-password'), 'attr') ?>"
     class="auth-form"
-    novalidate
+    data-busy-label="Saving new password…"
 >
     <?= csrf_field() ?>
 
@@ -67,7 +68,7 @@
 
     <button
         type="submit"
-        class="btn btn-primary"
+        class="ui-button"
     >
         Change password
     </button>

@@ -1,3 +1,7 @@
-<?php $brand = dawatrack_auth_brand(); ?>
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Please wait · DawaTrack</title><link rel="stylesheet" href="/assets/css/app.css"></head>
-<body class="auth-page"><main class="auth-shell"><section class="auth-card"><h1 id="auth-heading">Please wait</h1><p>Too many security-sensitive attempts were received. Wait <?= esc((string) $retryAfter) ?> seconds before trying again.</p><a class="btn btn-primary" href="<?= esc(service('sameOriginUrl')->to('auth'), 'attr') ?>">Return to secure access</a></section></main></body></html>
+<?php helper('ui'); ?>
+<?= $this->extend('auth/layout') ?>
+<?= $this->section('main') ?>
+<h1 id="auth-heading" tabindex="-1">Please wait before trying again</h1>
+<p>There have been too many attempts. Wait <?= esc((string) $retryAfter) ?> seconds before trying again.</p>
+<a class="ui-button" href="<?= esc(service('sameOriginUrl')->to('auth'), 'attr') ?>">Return to sign in</a>
+<?= $this->endSection() ?>
