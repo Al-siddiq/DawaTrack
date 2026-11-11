@@ -1,8 +1,12 @@
+<?php
+helper('ui');
+$workspace = in_array($entryScript ?? '', ['assets/js/shop/app.js', 'assets/js/admin/app.js'], true);
+?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
     <meta name="theme-color" content="<?= esc($brand['theme_colour'] ?? '#155D46') ?>">
     <meta name="csrf-header" content="<?= esc(config('Security')->headerName) ?>">
     <meta name="csrf-token" content="<?= esc(csrf_hash()) ?>">
@@ -19,6 +23,7 @@
     $accentColour     = $brand['accent_colour'] ?? '#F0A202';
     $backgroundColour = $brand['background_colour'] ?? '#F4F7F5';
     $loginBackground  = $brand['assets']['LOGIN_BACKGROUND'] ?? null;
+    $uiPalette = dt_ui_brand_palette($primaryColour, $accentColour);
     ?>
 
     <style nonce="<?= esc($cspNonce, 'attr') ?>">
@@ -30,6 +35,9 @@
              * The shared stylesheet consumes these CSS custom properties.
              */
             --dt-primary: <?= esc($primaryColour) ?>;
+            <?php foreach ($uiPalette as $token => $colour): ?>
+            --ui-<?= esc($token) ?>: <?= esc($colour) ?>;
+            <?php endforeach ?>
             --dt-ink: <?= esc($secondaryColour) ?>;
             --dt-accent: <?= esc($accentColour) ?>;
             --dt-background: <?= esc($backgroundColour) ?>;
@@ -99,24 +107,30 @@
         }
     </style>
 </head>
-<body>
-<a class="skip-link" href="#main-content">Skip to main content</a>
-<header class="app-header">
-    <a class="brand" href="<?= site_url('/') ?>" aria-label="DawaTrack home">
-        <?php if (! empty($brand['assets']['LOGO'])): ?><img class="brand-logo" src="<?= esc($brand['assets']['LOGO']) ?>" alt=""><?php else: ?><span class="brand-mark" aria-hidden="true"><?= esc(mb_substr($brand['brand_display_name'] ?? 'D', 0, 1)) ?></span><?php endif ?>
-        <span><?= esc($brand['brand_display_name'] ?? 'DawaTrack') ?></span>
+<body class="<?= $workspace ? 'ui-application' : 'ui-entry' ?>">
+<a class="skip-link" href="<?= $workspace ? '#workspace-content' : '#main-content' ?>">Skip to main content</a>
+<?php if ($workspace): ?>
+<style id="workspace-layout-style" nonce="<?= esc($cspNonce, 'attr') ?>"></style>
+<div id="main-content" class="ui-workspace-mount">
+    <?= $this->renderSection('content') ?>
+</div>
+<?php else: ?>
+<header class="ui-entry-header">
+    <a href="<?= esc(dt_url('/'), 'attr') ?>" class="ui-entry-brand">
+        <?php if (! empty($brand['assets']['LOGO'])): ?><img class="brand-logo" src="<?= esc($brand['assets']['LOGO']) ?>" alt=""><?php endif ?>
+        <strong><?= esc($brand['brand_display_name'] ?? 'DawaTrack') ?></strong>
     </a>
-    <span class="area-label"><?= esc($pageTitle) ?></span>
 </header>
-<main id="main-content" class="shell-container" tabindex="-1">
+<main id="main-content" class="ui-entry-main" tabindex="-1">
     <?= $this->renderSection('content') ?>
 </main>
-<footer class="app-footer">Secure business operations foundation</footer>
+<?php endif ?>
 
-<?php if (! empty($entryScript)): ?>
+<?php if ($workspace): ?>
     <script src="/assets/vendor/vue/vue.runtime.global.prod.js" defer></script>
     <script type="module" src="/<?= esc(ltrim($entryScript, '/'), 'attr') ?>" ></script>
 <?php endif ?>
+<?php if (! $workspace): ?><script type="module" src="/assets/js/auth/entry.js"></script><?php endif ?>
 <script
     type="module"
     src="/assets/js/shared/register-service-worker.js"

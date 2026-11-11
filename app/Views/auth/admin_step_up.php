@@ -1,5 +1,5 @@
 <?php $this->extend('layouts/shell'); ?>
-<?php $this->setVar('entryScript', 'assets/js/auth/app.js') ?>
+<?php $this->setVar('entryScript', null) ?>
 <?= $this->section('content') ?>
 <section class="auth-card" aria-labelledby="auth-heading">
     <div class="eyebrow">Platform security</div>

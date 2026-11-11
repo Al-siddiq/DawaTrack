@@ -30,3 +30,7 @@ WP4-C adds five authenticated correction preview/post/replacement/state/compensa
 ## WP4-D — 2026-11-06
 
 GET /api/v1/shop/sales supports ALL/SALE/RETURN/COMPENSATION/DRAFT_RETURN record filters; GET /sales/{uuid} normalizes supported Sale/Return/compensation/draft detail. Data list + meta.pagination remains stable. B/C explicit commands and reads remain supported. Original Return choices require sale.return; safe readers receive saved lines only. See [D read contract](../modules/phase-04-wp4-d.md).
+
+## UI2-C context presentation extension
+
+The existing authenticated/scoped `GET /api/v1/shop/context` response additionally includes `current_user: { display_name: string }`. This is the currently authenticated user’s display name only, for refreshed workspace identity presentation. Existing role/capability/access fields and all service authorization are unchanged. No password, token, email, new user lookup or new mutation endpoint is exposed. Clients may continue ignoring this additive field.

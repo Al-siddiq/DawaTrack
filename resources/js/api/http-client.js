@@ -1,3 +1,15 @@
+let activeMutations = 0;
+export const activeMutationCount = () => activeMutations;
+function mutationState(delta) {
+    activeMutations += delta;
+
+}
+
+function securityRedirect(path) {
+    window.dispatchEvent(new Event('dt:security-redirect'));
+    window.location.assign(path);
+}
+
 export class ApiError extends Error {
     constructor({ code, message, status, details = {}, requestId = null }) {
         super(message);
@@ -21,6 +33,9 @@ export async function apiRequest(path, options = {}) {
     if (options.body && !(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
     if (csrfHeader && csrfToken && !['GET', 'HEAD'].includes(options.method ?? 'GET')) headers.set(csrfHeader, csrfToken);
 
+    const sourceForm = document.activeElement?.closest?.('form') ?? null;
+    const mutating = !['GET', 'HEAD'].includes((options.method ?? 'GET').toUpperCase());
+    if (mutating) mutationState(1);
     try {
         const response = await fetch(path, { ...options, credentials: 'same-origin', headers, signal: options.signal ?? controller.signal });
         const refreshedCsrfToken = csrfHeader ? response.headers.get(csrfHeader) : null;
@@ -28,16 +43,17 @@ export async function apiRequest(path, options = {}) {
         if (refreshedCsrfToken && csrfMeta) csrfMeta.content = refreshedCsrfToken;
         const payload = await response.json().catch(() => null);
         if (response.status === 401) {
-            window.location.assign('/auth?expired=1');
+            securityRedirect('/auth?expired=1');
             throw new ApiError({ code: payload?.error?.code ?? 'SESSION_EXPIRED', message: 'Your session has expired. Please sign in again.', status: 401 });
         }
         if (payload?.error?.code === 'MFA_REQUIRED') {
-            window.location.assign('/platform-admin/mfa');
+            securityRedirect('/platform-admin/mfa');
             throw new ApiError({ code: 'MFA_REQUIRED', message: payload.error.message, status: 403 });
         }
         if (!response.ok || !payload?.success) {
             throw new ApiError({ code: payload?.error?.code ?? 'HTTP_ERROR', message: payload?.error?.message ?? 'The request could not be completed.', status: response.status, details: payload?.error?.details, requestId: payload?.meta?.request_id ?? response.headers.get('X-Request-ID') });
         }
+        if (mutating && sourceForm) window.dispatchEvent(new CustomEvent('dt:form-saved', { detail: { form: sourceForm } }));
         return payload;
     } catch (error) {
         if (error instanceof ApiError) throw error;
@@ -45,5 +61,6 @@ export async function apiRequest(path, options = {}) {
         throw new ApiError({ code: 'NETWORK_ERROR', message: 'DawaTrack could not reach the server.', status: 0 });
     } finally {
         window.clearTimeout(timeout);
+        if (mutating) mutationState(-1);
     }
 }

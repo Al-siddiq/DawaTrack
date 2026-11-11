@@ -1,6 +1,12 @@
-// Foundation tokens are independent of legacy --dt-* branding. UI2-C adopts them.
+// Server-resolved Shop palette overrides these safe defaults in nonce-authorized styles.
 :root {
+  --ui-brand: #155d46;
   --ui-primary: #155d46;
+  --ui-primary-hover: #12523e;
+  --ui-hover-surface: #f6f9f8;
+  --ui-accent: #f0a202;
+  --ui-success: #155d46;
+  --ui-success-surface: #e6f1eb;
   --ui-on-primary: #ffffff;
   --ui-ink: #20342a;
   --ui-muted: #5d7066;
