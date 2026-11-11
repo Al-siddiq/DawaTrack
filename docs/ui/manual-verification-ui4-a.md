@@ -1,5 +1,7 @@
 # UI4-A final manual programme gate
 
+> **Current status, 11 November 2026:** Owner accepted the UI programme and reported merge/rollout complete. [Final decision](acceptance/2026-11-11-ui-programme-owner-closure.md) and [closure ledger](programme-closure.md) supersede pre-review Pending wording below. Historical engineering limits and unreported individual results remain unchanged.
+
 **Branch:** `codex/ui4-a-verification-handover-20261111`. **Status:** native results and final acceptance pending. No migration. The branch includes accepted UI3-B missing from main.
 
 ```bash

@@ -1,5 +1,7 @@
 # UI4 release and rollback handover
 
+> **Current status, 11 November 2026:** Owner accepted the UI programme and reported merge/rollout complete. [Final decision](acceptance/2026-11-11-ui-programme-owner-closure.md) and [closure ledger](programme-closure.md) supersede pre-review Pending wording below. Historical engineering limits and unreported individual results remain unchanged.
+
 This is an operational guide for the reviewed candidate. No hosting environment or deployment is connected here, so no deployment/rollback pass is claimed. Complete `releases/ui4-a-release-decision.csv` for the actual environment.
 
 ## 1. Verify the integration target

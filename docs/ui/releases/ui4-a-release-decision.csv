@@ -1,16 +1,16 @@
 item,value,evidence
-reviewed_candidate_commit,Pending,
-artifact_content_sha256,Pending,
-main_commit_after_merge,Pending,
-target_environment,Pending,
-previous_complete_release,Pending,
-native_M01_M18_results,Pending,
-blocking_defect_disposition,Pending,
-staging_deploy_result,Pending,
-actual_cache_CSP_headers,Pending,
-old_tab_result,Pending,
-rollback_rehearsal_result,Pending,
-owner_release_decision,Pending,
-production_switch_result,Pending,
-operator_and_datetime,Pending,
-final_programme_acceptance,Pending,
+reviewed_candidate_commit,c09184e7ba4a66c5d0745f3007cec3800a221d37,PR #37 head; Owner final acceptance
+artifact_content_sha256,ad3384f5807db0edfa89dd277eb31febfee0c2d50a49b703ae87351bec582c1f,Committed reviewed inventory; not a measured production checksum
+main_commit_after_merge,b41425f905100a728a4c6167d5df936702a8502a,GitHub PR #37 merged into main
+target_environment,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+previous_complete_release,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+native_M01_M18_results,Programme accepted; individual results not supplied,Do not infer eighteen per-case passes
+blocking_defect_disposition,No outstanding defect reported with final acceptance,Not an assertion of zero undiscovered defects
+staging_deploy_result,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+actual_cache_CSP_headers,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+old_tab_result,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+rollback_rehearsal_result,Not supplied,Owner reported overall rollout; no separate observation supplied for this field
+owner_release_decision,Accepted; rollout reported complete,"Owner: reviewed, accepted, merged and rolled out"
+production_switch_result,Rolled out — Owner reported,Host and deployed checksum not independently observed
+operator_and_datetime,Not supplied,Recording date 2026-11-11 is not deployment timestamp
+final_programme_acceptance,Accepted and closed — 2026-11-11 Africa/Lagos,docs/ui/acceptance/2026-11-11-ui-programme-owner-closure.md

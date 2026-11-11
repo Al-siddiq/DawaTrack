@@ -1,5 +1,7 @@
 # UI4-A — Programme verification and release handover
 
+> **Current status, 11 November 2026:** Owner accepted the UI programme and reported merge/rollout complete. [Final decision](acceptance/2026-11-11-ui-programme-owner-closure.md) and [closure ledger](programme-closure.md) supersede pre-review Pending wording below. Historical engineering limits and unreported individual results remain unchanged.
+
 **Date:** 11 November 2026 (Africa/Lagos). **Branch:** `codex/ui4-a-verification-handover-20261111`. **Base main:** `3a290f38bc047fe9eedea0a3626e093e07a3c491`. **Integrated accepted B:** `3e13f2f1db7d86c1b2be00cbda2915113d5c521f`. **UI4 acceptance / deployment:** pending.
 
 ## Delivered work
