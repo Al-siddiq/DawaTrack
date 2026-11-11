@@ -120,3 +120,7 @@ Trading panels use the existing shared components with `components/trading-ui.js
 ## UI3-B management integrations
 
 OwnerPanel receives the reactive ownerTools adapter; Starting cash retains its original FSM; Activity uses UiSheet and the original support/cursor contracts. AdminApp uses the existing operation API and shared fields/decision helpers. Native Auth uses local PHP screens and progressive enhancement, not Vue. See [Owner/Admin/Auth reference](owner-admin-auth.md). No parallel UI framework or external icon source.
+
+## UI4 correction-link contract
+
+UiErrorSummary opens native details around a target, dispatches bubbling `dt:reveal-field`, waits for a Vue tick and then focuses/scrolls. UiAccordion handles that owned event by expanding and emitting update:expanded. Controlled accordion owners must honor that event, as they honor ordinary toggle updates. Host behavior was checked; native keyboard/AT verification remains M07/M08.

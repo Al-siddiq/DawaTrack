@@ -1,6 +1,14 @@
 # Disable directory browsing
 Options -Indexes
 
+# UI modules/styles use stable paths. Revalidate them after an atomic code release.
+# Fingerprinted icon sprites keep their separate immutable identity.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(?:js|css)$">
+        Header always set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
 # ----------------------------------------------------------------------
 # Rewrite engine
 # ----------------------------------------------------------------------

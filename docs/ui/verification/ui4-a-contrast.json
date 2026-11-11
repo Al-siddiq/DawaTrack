@@ -1,0 +1,53 @@
+{
+  "scope": "Exact default CSS token pairs only. Dynamic brand, image, focus adjacency and actual device contrast still need native review.",
+  "pairs": [
+    {
+      "foreground": "primary",
+      "background": "on-primary",
+      "contrast": 7.818,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "primary",
+      "background": "selected",
+      "contrast": 6.756,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "ink",
+      "background": "background",
+      "contrast": 12.168,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "muted",
+      "background": "surface",
+      "contrast": 5.283,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "danger",
+      "background": "danger-surface",
+      "contrast": 6.12,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "warning",
+      "background": "warning-surface",
+      "contrast": 6.414,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "control-border",
+      "background": "surface",
+      "contrast": 3.978,
+      "minimum": 3
+    },
+    {
+      "foreground": "focus",
+      "background": "surface",
+      "contrast": 7.818,
+      "minimum": 3
+    }
+  ]
+}

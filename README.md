@@ -59,3 +59,5 @@ UI2-C integrates the actual responsive Shop/Admin/Auth shells, guarded navigatio
 UI3-A trading-screen delivery and the missing accepted UI2 integration are documented in `docs/ui/UI3-A-delivery.md`. Use `docs/ui/manual-verification-ui3-a.md` for actual XAMPP review and `docs/ui/trading-screens.md` for maintenance contracts.
 
 UI3-B Owner/Admin/Auth scope, dependency and manual handover: `docs/ui/UI3-B-delivery.md`, `docs/ui/manual-verification-ui3-b.md` and `docs/ui/owner-admin-auth.md`.
+
+UI4-A verification/release handover: `docs/ui/UI4-A-delivery.md`, `programme-closure.md`, `manual-verification-ui4-a.md`, `release-handover.md` and `developer-handover.md`. Native programme/deployment evidence remains separate from source/build verification.

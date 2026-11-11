@@ -1,0 +1,11 @@
+# Keep reviewed release text bytes stable on Windows and Linux; binaries stay binary.
+app/** text=auto eol=lf
+public/** text=auto eol=lf
+resources/** text=auto eol=lf
+scripts/*.mjs text eol=lf
+docs/ui/** text=auto eol=lf
+composer.json text eol=lf
+composer.lock text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+.gitattributes text eol=lf

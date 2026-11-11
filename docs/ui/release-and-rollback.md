@@ -39,3 +39,7 @@ Ship the entire compatible PHP/JS/CSS/icons release, including the new products/
 ## UI3-B release boundary
 
 B is stacked on UI3-A #35, not main at delivery. Merge #35 into main first, retarget B to main and verify the resulting tree. Ship Auth.php's three local view mappings and their PHP views together with layouts, Auth entry, Shop/Admin/components, generated renderer, CSS and local icons. No migration. Never deploy the mappings without their views. Verify actual Shield MFA/activation/recovery/password/session and Admin access through the native test environment. Restore the entire compatible prior code/assets on rollback; preserve all business records. UI4 final release/rollback acceptance remains outstanding.
+
+## UI4-A authoritative handover
+
+Use [release-handover.md](release-handover.md) for the concrete current runbook, inventory commands, canonical archive/line endings, host revalidation, staging/old-tab/rollback checks and decision record. UI4 brings the accepted B tree to main explicitly; it does not assume #36 reached main. Actual deployment/final native evidence remains pending.

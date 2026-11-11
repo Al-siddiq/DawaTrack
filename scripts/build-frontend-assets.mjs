@@ -16,12 +16,22 @@ execFileSync(process.execPath, [at('scripts', 'compile-shop-template.mjs')], {
 
 for (const [source, destination] of [
     ['node_modules/vue/dist/vue.runtime.global.prod.js', 'public/assets/vendor/vue/vue.runtime.global.prod.js'],
-    ['node_modules/vue/dist/vue.global.prod.js', 'public/assets/vendor/vue/vue.global.prod.js'],
     ['node_modules/dexie/dist/dexie.min.js', 'public/assets/vendor/dexie/dexie.min.js'],
 ]) {
     const target = at(destination);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.copyFileSync(at(source), target);
+}
+
+// Native Auth no longer mounts the old placeholder or requires Vue's runtime compiler.
+fs.rmSync(at('public/assets/vendor/vue/vue.global.prod.js'), { force: true });
+for (const [source, destination] of [
+    ['node_modules/vue/LICENSE', 'public/assets/vendor/vue/LICENSE.txt'],
+    ['node_modules/dexie/LICENSE', 'public/assets/vendor/dexie/LICENSE.txt'],
+    ['node_modules/bootstrap/LICENSE', 'public/assets/vendor/bootstrap/LICENSE.txt'],
+]) {
+    fs.mkdirSync(path.dirname(at(destination)), { recursive: true });
+    fs.copyFileSync(at(source), at(destination));
 }
 
 for (const directory of ['shop', 'admin', 'auth', 'shared', 'api', 'components']) {

@@ -5,7 +5,9 @@
     "build:assets": "node scripts/build-frontend-assets.mjs",
     "build": "npm run build:css && npm run build:assets",
     "ui:reference": "node scripts/build-ui-reference.mjs",
-    "ui:preview": "node scripts/serve-ui-reference.mjs"
+    "ui:preview": "node scripts/serve-ui-reference.mjs",
+    "ui:release": "node scripts/build-ui-release-manifest.mjs",
+    "ui:release:check": "node scripts/build-ui-release-manifest.mjs --check"
   },
   "devDependencies": {
     "bootstrap": "5.3.8",
