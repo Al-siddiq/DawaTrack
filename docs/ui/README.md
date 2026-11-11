@@ -1,6 +1,10 @@
 # DawaTrack UI developer reference
 
-**Current package: UI3-A — trading screen redesign, implemented for review.** UI2-C and its brand refinement were accepted by the Owner. Main contained only UI2-A after the stacked merges, so this branch includes an explicit integration of the accepted B/C/refinement prerequisite. UI3-A manual acceptance, UI3-B and UI4 remain outstanding.
+**Current package: UI3-B — Owner/Admin/Auth screens, implemented for review.** B is stacked on UI3-A #35, which remained open at implementation. Authorization to start B is recorded without inventing UI3-A manual acceptance. UI3-A/B manual acceptance and UI4 final programme verification remain outstanding.
+
+## Review UI3-B in the actual application
+
+Use the normal XAMPP Shop/Admin addresses and [UI3-B manual verification](manual-verification-ui3-b.md). See [delivery](UI3-B-delivery.md) and [Owner/Admin/Auth reference](owner-admin-auth.md). No migration. Merge UI3-A #35 into main first, then retarget the B PR to main; do not merge into an old UI2 feature branch.
 
 ## Review UI3-A in the actual application
 

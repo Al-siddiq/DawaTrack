@@ -1,0 +1,31 @@
+.management-screen { gap: 1rem; }
+.management-screen > h2 { margin: 0; }
+.management-screen .permission-group { padding: .75rem; margin-block: .5rem; }
+.management-screen .permission-option { border-bottom: 1px solid var(--ui-border); }
+.management-screen .permission-option input { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; min-height: 1.25rem; margin-top: .2rem; }
+.management-screen .brand-preview { padding: 1rem; gap: .5rem; border: 1px solid var(--ui-border); }
+.management-screen .trading-record-meta, .management-screen dd { overflow-wrap: anywhere; }
+.management-secret { padding: 1rem; border: 2px solid var(--ui-warning); border-radius: .75rem; color: var(--ui-warning); background: var(--ui-warning-surface); overflow-wrap: anywhere; }
+.management-secret .credential-value { display: block; padding: .75rem; font: 1.1rem ui-monospace,monospace; color: var(--ui-ink); background: white; user-select: all; }
+.management-secret p { color: inherit; }
+.management-screen .step-indicator { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .875rem; }
+.management-screen .step-indicator li { padding: .5rem .75rem; }
+.management-screen .audit-metadata { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .875rem; }
+.management-screen .audit-filters { grid-template-columns: repeat(auto-fit,minmax(min(100%,12rem),1fr)); }
+.ui-auth-entry .auth-form { gap: .5rem; }
+.ui-auth-entry .auth-form > label { margin-top: .5rem; }
+.ui-auth-entry .auth-form > .ui-button { margin-top: .75rem; }
+.ui-auth-entry .auth-card > h1 { margin: 0 0 .75rem; }
+.ui-auth-entry .auth-error-summary { margin-block: 1rem; }
+.ui-auth-entry .auth-error-summary a { color: inherit; }
+.ui-auth-entry .auth-message { justify-content: space-between; gap: .75rem; align-items: center; }
+.ui-auth-entry .auth-message > button { flex: 0 0 auto; }
+.ui-auth-entry .auth-code { letter-spacing: .15em; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+@media (min-width: 900px) {
+ .management-screen .commercial-form { grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .management-screen .commercial-form > :is(h2,h3,p,.ui-information-panel,.ui-error-summary,.ui-actions,.ui-accordion) { grid-column: 1 / -1; }
+ .management-screen .ui-dialog .commercial-form { grid-template-columns: minmax(0,1fr); }
+}
+@media print { .management-secret { display: none !important; } }
+.ui-auth-entry .ui-button { display: inline-flex; }
+.ui-auth-entry .auth-card :is(input,button,a) { scroll-margin-block: 1rem; }

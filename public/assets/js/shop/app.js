@@ -1,3 +1,5 @@
+import { OwnerPanel } from '../components/owner-panel.js';
+import { permissionLabel } from '../components/management-ui.js';
 import { ProductsPanel } from '../components/products-panel.js';
 import { IntakesPanel } from '../components/intakes-panel.js';
 import { WorkspaceShell } from '../components/ui/workspace-shell.js';
@@ -30,15 +32,15 @@ const {
     watch
 } = window.Vue;
 
-createApp({
+export const ShopApp = {
     render,
-    components: { ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { OwnerPanel, ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
         const presentation = readWorkspacePresentation(document.getElementById('shop-app'));
         const contextReady = ref(false);
         const loading = ref(true);
-        const busy = ref(false);
+        const busy = ref(false), ownerLoading = ref(false);
         const error = ref('');
         const notice = ref('');
         const context = reactive({ role: '', permissions: [], capabilities: {}, shop: {} });
@@ -134,14 +136,14 @@ createApp({
             ['name', 'Shop name', 'text', true], ['contact_phone', 'Phone', 'tel'],
             ['contact_email', 'Email', 'email'], ['address_line_1', 'Address', 'text', true],
             ['address_line_2', 'Address line 2'], ['city_town', 'City/town', 'text', true],
-            ['state_region', 'State', 'text', true], ['timezone_name', 'Timezone', 'text', true],
+            ['state_region', 'State', 'text', true], ['timezone_name', 'Local time zone', 'text', true],
         ].map(([key, label, type, required]) => ({ key, label, type, required }));
         const brandFields = [
-            ['brand_display_name', 'Brand name'], ['tagline', 'Tagline'], ['public_description', 'Description'],
-            ['primary_colour', 'Primary colour', true], ['secondary_colour', 'Secondary colour', true],
-            ['accent_colour', 'Accent colour', true], ['theme_colour', 'Theme colour', true],
-            ['background_colour', 'Background colour', true], ['application_title', 'Application title'],
-            ['pwa_full_name', 'PWA full name'], ['pwa_short_name', 'PWA short name'],
+            ['brand_display_name', 'Shop display name'], ['tagline', 'Tagline'], ['public_description', 'Description'],
+            ['primary_colour', 'Main brand colour', true], ['secondary_colour', 'Secondary brand colour', true],
+            ['accent_colour', 'Small accent colour', true], ['theme_colour', 'Browser bar colour', true],
+            ['background_colour', 'Page background colour', true], ['application_title', 'Browser page title'],
+            ['pwa_full_name', 'Installed app name'], ['pwa_short_name', 'Short app name'],
         ].map(([key, label, colour]) => ({ key, label, colour }));
         const assetTypes = ['LOGO', 'FAVICON', 'PWA_ICON_192', 'PWA_ICON_512', 'LOGIN_BACKGROUND'];
 
@@ -267,28 +269,32 @@ createApp({
         }
 
         async function saveSettings() {
-            try { await run(() => phaseOneApi.saveSettings(settings), 'Shop settings saved.', loadSettings); } catch (_) {}
+            try { await run(() => phaseOneApi.saveSettings(settings), 'Shop details saved.', loadSettings); } catch (_) {}
         }
         async function saveBranding() {
-            try { await run(() => phaseOneApi.saveBranding(branding), 'Branding saved.', loadBranding); } catch (_) {}
+            try { await run(() => phaseOneApi.saveBranding(branding), 'Shop appearance saved. Reload to see it everywhere.', loadBranding); } catch (_) {}
         }
-        async function uploadAsset() {
+        async function uploadAsset(selectedFile = null) {
             const form = new FormData();
             form.append('asset_type', assetType.value);
-            form.append('asset', asset.value.files[0]);
-            try { await run(() => phaseOneApi.uploadAsset(form), 'Brand asset replaced.', loadBranding); } catch (_) {}
+            const image = selectedFile || asset.value?.files?.[0];
+            if (!image) { error.value = 'Choose an image first.'; return; }
+            form.append('asset', image);
+            try { await run(() => phaseOneApi.uploadAsset(form), 'Shop image updated.', loadBranding); } catch (_) {}
         }
         async function requestDomain() {
             try {
-                const response = await run(() => phaseOneApi.requestDomain({ hostname: hostname.value }), 'Domain verification requested.', loadDomains);
+                const response = await run(() => phaseOneApi.requestDomain({ hostname: hostname.value }), 'Address setup details are ready. Copy the value below.', loadDomains);
                 Object.assign(dnsChallenge, response.data);
             } catch (_) {}
         }
-        async function rotateDomain(domain) { try { const response=await run(()=>phaseOneApi.rotateDomain(domain.public_id),'DNS challenge rotated.',loadDomains);Object.assign(dnsChallenge,response.data); } catch (_) {} }
-        async function verifyDomain(domain) { try { await run(()=>phaseOneApi.verifyDomain(domain.public_id),'Domain ownership verified.',loadDomains); } catch (_) {} }
+        async function rotateDomain(domain) { try { const response=await run(()=>phaseOneApi.rotateDomain(domain.public_id),'A new address setup value is ready. Copy it below.',loadDomains);Object.assign(dnsChallenge,response.data); } catch (_) {} }
+        async function verifyDomain(domain) { try { await run(()=>phaseOneApi.verifyDomain(domain.public_id),'Address ownership checked.',loadDomains); } catch (_) {} }
 
         async function loadPage(id) {
             if (!contextReady.value || !navigation.value.some(item => item.id === id)) return;
+            const ownerPage = ['staff','settings','branding','domains','subscription'].includes(id);
+            if (ownerPage) ownerLoading.value = true;
             try {
                 if (id === 'staff') await loadStaff();
                 else if (id === 'settings') await loadSettings();
@@ -298,8 +304,9 @@ createApp({
                 else if (id === 'products') await products.load();
                 else if (id === 'intakes') await intakes.load();
             } catch (failure) { error.value = failure.message; }
+            finally { if (ownerPage) ownerLoading.value = false; }
         }
-        watch(page, (id, previous) => { if (id !== previous && !loading.value) { clearFeedback(); loadPage(id); } });
+        watch(page, (id, previous) => { if (id !== previous && !loading.value) { staffForm.password = ''; if (previous === 'domains') delete dnsChallenge.dns_record_value; clearFeedback(); loadPage(id); } });
         let refreshingAccess = false;
         async function refreshAccess() {
             if (!contextReady.value || refreshingAccess || document.hidden) return;
@@ -314,8 +321,9 @@ createApp({
         }
         onMounted(() => { load(); window.addEventListener('focus', refreshAccess); window.addEventListener('visibilitychange', refreshAccess); });
         onUnmounted(() => { window.removeEventListener('focus', refreshAccess); window.removeEventListener('visibilitychange', refreshAccess); });
+        const ownerTools = reactive({ staff, settings, branding, assets, domains, subscription, hostname, dnsChallenge, assetType, assetTypes, staffForm, fieldErrors, permissionStates, permissionSearch, busy, ownerLoading, settingFields, brandFields, permissionGroups, createStaff, loadPermissions, openDialog, saveSettings, saveBranding, uploadAsset, requestDomain, rotateDomain, verifyDomain, reload: () => loadPage(page.value) });
         return {
-            presentation, contextReady, workspaceNavigation, currentNav, bottomNavigation, backHash, load,
+            ownerTools, permissionLabel, presentation, contextReady, workspaceNavigation, currentNav, bottomNavigation, backHash, load,
             page, loading, busy, error, notice, context, access, staff, settings, branding, assets,
             domains, subscription, hostname, dnsChallenge, asset, assetType, navigation, readOnly, owner,
             previewStyle, settingFields, brandFields, assetTypes, staffForm, fieldErrors, permissionStates,
@@ -324,4 +332,5 @@ createApp({
             uploadAsset, requestDomain, rotateDomain, verifyDomain, products, intakes, inventoryActions,
         };
     },
-}).mount('#shop-app');
+};
+if (document.getElementById('shop-app')) createApp(ShopApp).mount('#shop-app');

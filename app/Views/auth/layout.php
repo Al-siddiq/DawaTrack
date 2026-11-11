@@ -1,6 +1,6 @@
 <?php
 helper('ui');
-$adminEntry = session('authentication_area') === 'platform_admin';
+$adminEntry = ($adminEntryOverride ?? false) || session('authentication_area') === 'platform_admin';
 $brand = $adminEntry ? null : dawatrack_auth_brand();
 
 $cspNonce = service('cspNonce')->value();
@@ -82,17 +82,17 @@ $uiPalette = dt_ui_brand_palette($primaryColour, $accentColour);
         </header>
 
         <?php if (session('error') !== null): ?>
-            <div class="alert alert-danger" role="alert"><?= esc(session('error')) ?></div>
+            <div class="ui-error-summary auth-error-summary" role="alert" tabindex="-1"><?= esc(session('error')) ?></div>
         <?php endif ?>
         <?php if (session('message') !== null): ?>
-            <div class="alert alert-success" role="status"><?= esc(session('message')) ?></div>
+            <div class="ui-alert ui-alert--success auth-message" role="status"><?= esc(session('message')) ?></div>
         <?php endif ?>
         <?php if (session('errors') !== null): ?>
-            <div class="alert alert-danger" role="alert">
+            <div class="ui-error-summary auth-error-summary" role="alert" tabindex="-1">
                 <p class="mb-1">Please correct the following:</p>
                 <ul class="mb-0">
-                    <?php foreach ((array) session('errors') as $error): ?>
-                        <li><?= esc($error) ?></li>
+                    <?php foreach ((array) session('errors') as $field => $error): ?>
+                        <li data-error-field="<?= esc((string) $field, 'attr') ?>"><?= esc($error) ?></li>
                     <?php endforeach ?>
                 </ul>
             </div>
