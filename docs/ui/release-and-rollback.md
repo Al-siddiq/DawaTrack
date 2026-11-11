@@ -35,3 +35,7 @@ Ship the changed PHP layouts/helper/entry metadata together with compiled Shop r
 The delivery targets main `5ff9ae8`, which contained UI2-A only. Its first commit integrates the accepted B/C/refinement source; its second delivers UI3-A. Merge this PR directly into main. Do not assume closed stacked PRs reached main, and do not merge UI3-A back into an old UI2 feature branch. Inspect the resulting main tree before release.
 
 Ship the entire compatible PHP/JS/CSS/icons release, including the new products/intakes/trading modules and rebuilt Shop render. No migration. Keep a complete previous release. Verify saved-record status recovery, stock sheet/confirmation, original baskets and customer-safe receipt print after rollout. Roll back complete code/assets without reversing business records. UI3-A manual review is pending; UI3-B and final UI4 handover remain.
+
+## UI3-B release boundary
+
+B is stacked on UI3-A #35, not main at delivery. Merge #35 into main first, retarget B to main and verify the resulting tree. Ship Auth.php's three local view mappings and their PHP views together with layouts, Auth entry, Shop/Admin/components, generated renderer, CSS and local icons. No migration. Never deploy the mappings without their views. Verify actual Shield MFA/activation/recovery/password/session and Admin access through the native test environment. Restore the entire compatible prior code/assets on rollback; preserve all business records. UI4 final release/rollback acceptance remains outstanding.

@@ -1,7 +1,7 @@
 <?php helper('ui'); ?>
 <?= $this->extend(config('Auth')->views['layout']) ?>
 <?= $this->section('main') ?>
-<h1 id="auth-heading">Sign in</h1>
+<h1 id="auth-heading" tabindex="-1">Sign in</h1>
 <p>Use your account email address and password.</p>
 <form action="<?= esc(dt_url('login'), 'attr') ?>" method="post" class="auth-form" data-busy-label="Signing in…">
     <?= csrf_field() ?>

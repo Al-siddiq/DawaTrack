@@ -1,25 +1,3 @@
 <!doctype html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
-
-    <title><?= lang('Errors.whoops') ?></title>
-
-    <style>
-        <?= preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.css')) ?>
-    </style>
-</head>
-<body>
-
-    <div class="container text-center">
-
-        <h1 class="headline"><?= lang('Errors.whoops') ?></h1>
-
-        <p class="lead"><?= lang('Errors.weHitASnag') ?></p>
-
-    </div>
-
-</body>
-
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Please check the saved status · DawaTrack</title><link rel="stylesheet" href="/assets/css/app.css"></head>
+<body class="ui-entry ui-scope"><a class="skip-link" href="#main-content">Skip to main content</a><main id="main-content" class="ui-entry-main" tabindex="-1"><section class="ui-panel"><h1>Something went wrong</h1><p>We could not finish showing this page. If you were saving a sale, payment or stock change, check the saved record before trying again.</p><a class="ui-button" href="/">Return to DawaTrack</a></section></main></body></html>
