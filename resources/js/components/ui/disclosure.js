@@ -7,7 +7,7 @@ export const UiAccordion = {
     setup(props, { emit, slots }) {
         const internal = ref(props.defaultExpanded), id = `accordion-${useId()}`;
         const open = computed(() => props.expanded ?? internal.value);
-        return () => h('section', { class: 'ui-accordion' }, [
+        return () => h('section', { class: 'ui-accordion', 'onDt:reveal-field': () => { internal.value = true; emit('update:expanded', true); } }, [
             h(`h${Math.min(6, Math.max(2, props.level))}`, [h('button', { type: 'button', id: `${id}-trigger`, 'aria-expanded': String(open.value), 'aria-controls': id, onClick: () => { internal.value = !open.value; emit('update:expanded', internal.value); } }, [props.title, h(UiIcon, { name: 'expand' })])]),
             h('div', { id, hidden: !open.value, class: 'ui-accordion-content', 'aria-labelledby': `${id}-trigger` }, slots.default?.()),
         ]);

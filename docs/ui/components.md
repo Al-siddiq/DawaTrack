@@ -116,3 +116,11 @@ New production/shared default wording is tracked as COPY-097 through COPY-122 in
 ## UI3-A task integrations
 
 Trading panels use the existing shared components with `components/trading-ui.js` helpers for labeled selects, server-valued facts, stable error summaries and guarded local confirmation. `ProductsPanel`/`IntakesPanel` replace inventory task markup; saved receipt printing explicitly strips internal nodes. See [trading reference](trading-screens.md). `UiStatusPanel.setup` now captures `emit` so its existing `check-status` event is callable. This fixes the recovery action exposed by the sale-handler review; its API is unchanged.
+
+## UI3-B management integrations
+
+OwnerPanel receives the reactive ownerTools adapter; Starting cash retains its original FSM; Activity uses UiSheet and the original support/cursor contracts. AdminApp uses the existing operation API and shared fields/decision helpers. Native Auth uses local PHP screens and progressive enhancement, not Vue. See [Owner/Admin/Auth reference](owner-admin-auth.md). No parallel UI framework or external icon source.
+
+## UI4 correction-link contract
+
+UiErrorSummary opens native details around a target, dispatches bubbling `dt:reveal-field`, waits for a Vue tick and then focuses/scrolls. UiAccordion handles that owned event by expanding and emitting update:expanded. Controlled accordion owners must honor that event, as they honor ordinary toggle updates. Host behavior was checked; native keyboard/AT verification remains M07/M08.

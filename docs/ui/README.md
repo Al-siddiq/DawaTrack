@@ -1,6 +1,16 @@
 # DawaTrack UI developer reference
 
-**Current package: UI3-A — trading screen redesign, implemented for review.** UI2-C and its brand refinement were accepted by the Owner. Main contained only UI2-A after the stacked merges, so this branch includes an explicit integration of the accepted B/C/refinement prerequisite. UI3-A manual acceptance, UI3-B and UI4 remain outstanding.
+**Current package: UI4-A — engineering verification and release handover delivered; final native programme gate pending.** The Owner accepted the integrated UI3-B candidate. #36 had merged into the UI3-A branch, so this candidate explicitly brings accepted B to main before the UI4 fixes. No native device/email/MySQL/deployment pass or final programme acceptance is invented.
+
+## UI4-A handover
+
+Start with [delivery and limitations](UI4-A-delivery.md), [programme closure](programme-closure.md), [final manual gate](manual-verification-ui4-a.md), [release/rollback guide](release-handover.md) and [developer handover](developer-handover.md). `verification/` contains source/design reconciliation, measured engineering evidence, defects and the manual result template. `releases/` contains the content inventory and pending release decision. No migration. The UI4 PR targets **main directly**; it includes accepted B missing from main.
+
+Use valid prior manual observations for unchanged paths, then verify new print/disclosure/cache fixes and missing programme cases. Source delivery and package acceptance are separate from actual device/hosting evidence.
+
+## Review UI3-B in the actual application
+
+Use the normal XAMPP Shop/Admin addresses and [UI3-B manual verification](manual-verification-ui3-b.md). See [delivery](UI3-B-delivery.md) and [Owner/Admin/Auth reference](owner-admin-auth.md). No migration. Merge UI3-A #35 into main first, then retarget the B PR to main; do not merge into an old UI2 feature branch.
 
 ## Review UI3-A in the actual application
 

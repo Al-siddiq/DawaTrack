@@ -47,6 +47,8 @@
  .trading-facts { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media print {
+ // Browser Ctrl+P must apply the same privacy boundary as the filtered receipt clone.
+ .sale-receipt :is(.receipt-private, .receipt-stock-evidence, .ui-alert) { display: none !important; }
  #commercial-print-receipt { font-family: system-ui,sans-serif; font-size: 11pt; color: #000; background: #fff; }
  #commercial-print-receipt :is(button,.receipt-private,.receipt-stock-evidence,.ui-alert) { display: none !important; }
  #commercial-print-receipt :is(.commercial-card,.receipt-line) { break-inside: avoid; padding: .5rem 0; border: 0; }

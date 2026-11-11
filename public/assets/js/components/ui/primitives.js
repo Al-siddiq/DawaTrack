@@ -61,10 +61,17 @@ export const UiErrorSummary = {
         watch(() => props.errors, async errors => {
             if (errors.length && props.focusOnChange) { await nextTick(); element.value?.focus(); }
         }, { deep: true, immediate: true });
-        function focusField(event, id) {
+        async function focusField(event, id) {
             const target = document.getElementById(id);
             if (!target) return;
-            event.preventDefault(); target.focus(); target.scrollIntoView({ block: 'center' });
+            event.preventDefault();
+            // A correction link must reveal a field before moving keyboard focus to it.
+            for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+                if (parent.tagName === 'DETAILS') parent.open = true;
+            }
+            target.dispatchEvent(new CustomEvent('dt:reveal-field', { bubbles: true }));
+            await nextTick();
+            target.focus(); target.scrollIntoView({ block: 'center' });
         }
         return () => props.errors.length ? h('section', { ref: element, tabindex: '-1', class: 'ui-error-summary', 'aria-labelledby': titleId }, [
             h('h3', { id: titleId }, props.title),

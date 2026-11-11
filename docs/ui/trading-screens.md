@@ -55,3 +55,7 @@ Authorization still requires both `profit_visible` and `sale.profit.view` for co
 ## Maintenance and deferred work
 
 No migrations or backend commercial code change in UI3-A. Update source/public copies through `npm run build`, developer docs, wording and coverage registers together. Merge the delivery against main with its explicit missing-UI2 prerequisite. UI3-B and UI4 remain distinct packages; no Phase 5 implementation begins here.
+
+## UI4 direct Print privacy
+
+Global receipt print selectors now hide private cost/profit/internal stock sections even when the user chooses browser Print/Ctrl+P rather than the app button. The clone still removes those nodes. Both native paths/paper sizes require M15 evidence; a source fix is not a native print pass.

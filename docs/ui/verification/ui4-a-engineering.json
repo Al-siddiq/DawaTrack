@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-11",
+  "timezone": "Africa/Lagos",
+  "scope": "Engineering evidence only; native programme and deployment acceptance are separate.",
+  "base_main_commit": "3a290f38bc047fe9eedea0a3626e093e07a3c491",
+  "accepted_ui3_b_commit": "3e13f2f1db7d86c1b2be00cbda2915113d5c521f",
+  "integrated_prerequisite_tree": "8289a3729862ecf33178572a841172148291d902",
+  "environment": {
+    "os": "Linux",
+    "kernel": "6.18.57",
+    "node": "v24.22.1",
+    "npm": "11.9.0",
+    "php": "unavailable",
+    "native_browser": "Chromium startup denied: socket() failed: Operation not permitted (1)"
+  },
+  "commands": {
+    "npm ci": "completed; 38 packages installed from lock",
+    "npm run build": "completed; known Sass/Bootstrap deprecation warnings remain",
+    "npm run ui:reference": "completed; 18 design references generated",
+    "repeat npm run build + ui:release:check": "same content identity",
+    "archive_equivalent_without_git_check": "passed inventory check on recorded files; not a deployment",
+    "isolated_artifact_corruption": "Verifier rejected deliberately changed CSS in disposable artifact copy; reviewed source unchanged."
+  },
+  "javascript": {
+    "published_modules": 41,
+    "local_import_reexport_edges": 113,
+    "source_public_parity": "matched",
+    "syntax": "checked",
+    "unused_legacy_auth_placeholder": "removed",
+    "active_vue_runtime": "runtime-only; compiler-enabled vendor removed"
+  },
+  "php_grammar": {
+    "files": 229,
+    "grammar": "8.3",
+    "tool": "php-parser 3.7.0 in scratch only",
+    "native_execution": false
+  },
+  "host_adapter": {
+    "trading_render_calls": 15,
+    "management_disclosure_render_calls": 17,
+    "actual_sale_handlers": "single POST, uncertain response, same-ID recovery and reviewed strings passed with mocked replies",
+    "actual_receipt_clone": "private nodes removed; reference/total retained with host-node adapter",
+    "actual_hidden_field_link": "native details and shared accordion revealed before focus in host adapter",
+    "not_established": [
+      "native DOM focus containment",
+      "CSP/HTTP/CSRF/MFA/email",
+      "MySQL/concurrency/rollback",
+      "responsive/device/accessibility",
+      "native print and deployment"
+    ]
+  },
+  "contrast": "8 default CSS token pairs meet stated thresholds; see ui4-a-contrast.json. Dynamic/adjacent/native review remains pending.",
+  "financial_backend_diff": "No changes in app/Modules or app/Database vs pre-UI baseline 09789e8; API change is Shop context presentation name only.",
+  "artifact": {
+    "content_sha256": "ad3384f5807db0edfa89dd277eb31febfee0c2d50a49b703ae87351bec582c1f",
+    "files": 355,
+    "file_bytes": 2293570,
+    "icon": {
+      "version": "1.13.2",
+      "sprite": "/assets/ui/icons-d7166178293927a5.svg",
+      "sha256": "d7166178293927a586188d646c9879f353e85063bb5ccf5c68948297f02c862c",
+      "bytes": 17008,
+      "gzipBytes": 5102
+    }
+  },
+  "source_reconciliation": {
+    "requirements": 46,
+    "navigation_entries": 29,
+    "inventory_rows": 35,
+    "representative_designs": 18,
+    "copy_entries": 538,
+    "original_copy_ids": 96
+  },
+  "native_gate": "Pending actual M01-M18 outcomes or valid prior evidence references; Owner UI3-B acceptance recorded separately."
+}
