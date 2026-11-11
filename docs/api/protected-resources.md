@@ -34,3 +34,8 @@ GET /api/v1/shop/sales supports ALL/SALE/RETURN/COMPENSATION/DRAFT_RETURN record
 ## UI2-C context presentation extension
 
 The existing authenticated/scoped `GET /api/v1/shop/context` response additionally includes `current_user: { display_name: string }`. This is the currently authenticated user’s display name only, for refreshed workspace identity presentation. Existing role/capability/access fields and all service authorization are unchanged. No password, token, email, new user lookup or new mutation endpoint is exposed. Clients may continue ignoring this additive field.
+
+
+## Phase 5 WP1 debt reads
+
+Authenticated current-Shop `GET /api/v1/shop/debts`, `GET /api/v1/shop/customers/{uuid}/debt` and `GET /api/v1/shop/debt-bills/{uuid}` require both customer.view and debt.view, independently of legacy debt.manage. Standard private/no-store envelope and current scope/access checks apply. No WP1 debt mutation route exists. See [request/response/error contract](../Phase-5/Phase_5_WP1_Integration_Contracts.md#4-implemented-read-api).

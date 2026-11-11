@@ -8,7 +8,7 @@ The Owner has reported manual acceptance and merge of Phase 4, and has now **rev
 
 The implemented foundation covers identity, tenancy, subscriptions, permissions, Audit/change sequence, Products/Inventory, Opening Cash, Customers, Sales/payments/credit, Returns and linked commercial corrections. Debt collection, Financial Movements, full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work. The existing service worker does not provide offline business operation.
 
-**Next: Phase 5 — Debt Collection and Customer Statements.** The [four-package implementation plan](docs/Phase-5/Phase_5_Implementation_Plan.md), [requirements matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) and [manual acceptance plan](docs/Phase-5/Phase_5_Manual_Acceptance_Plan.md) are ready for Owner approval. This documentation change does not implement Phase 5 or change the database.
+**Current: Phase 5 WP1 — Debt foundation and live balances, delivered for manual verification.** The [four-package implementation plan](docs/Phase-5/Phase_5_Implementation_Plan.md), [requirements matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) and [manual acceptance plan](docs/Phase-5/Phase_5_Manual_Acceptance_Plan.md) are Owner-approved. [WP1 delivery](docs/Phase-5/Phase_5_WP1_Delivery_Report.md), [integration contracts](docs/Phase-5/Phase_5_WP1_Integration_Contracts.md) and [native manual guide](docs/manual-verification-phase-05-wp1.md) describe the implemented read-only balances and two new migrations. WP1 acceptance remains pending; WP2–WP4 collection/correction/statement commands have not started.
 
 ## Start locally
 

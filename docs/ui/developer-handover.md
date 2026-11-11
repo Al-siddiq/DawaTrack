@@ -36,3 +36,8 @@ Receipt privacy applies to both the filtered clone and browser-native Print; int
 Legacy unused Auth placeholder modules and the compiler-enabled Vue vendor file are removed. `build-frontend-assets.mjs` copies the runtime Vue/Dexie assets plus Vue, Dexie and Bootstrap licence notices. Do not accidentally reintroduce the placeholder or load two Vue runtimes. The local component gallery remains a reference with fixtures, not a live Shop.
 
 Raw-byte manifests intentionally identify one content set and do not certify PHP vendor/environment/uploads/database or a production deployment. `.gitattributes` and clean archives support stable text bytes; never destroy a developer's local edits to fix a checksum mismatch. Actual origin/CDN cache/CSP behavior is still an operational/native check.
+
+
+## Phase 5 WP1 maintenance addendum
+
+CustomerPanel delegates debt hashes to `components/customer-debt-panel.js` through existing workspace navigation. The component reads only GET endpoints, aborts/ignores superseded reads and clears data on failed/offline refresh; no balance cache or mutation controller is introduced. Server `DebtQuery` uses one read-only snapshot and exact signed SQL projection. See [WP1 contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md). The operational inventory script now supports `--output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.json` so later releases do not overwrite the accepted UI4 artifact record. Pass the same option when checking a package inventory. Existing default remains the historical UI4 inventory.

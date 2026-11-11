@@ -9,7 +9,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const at = value => path.resolve(root, value);
 const digest = buffer => crypto.createHash('sha256').update(buffer).digest('hex');
 const checking = process.argv.includes('--check');
-const outputPath = at('docs/ui/releases/ui4-a-artifact-manifest.json');
+const outputRelative = process.argv.find(value => value.startsWith('--output='))?.slice('--output='.length)
+    || 'docs/ui/releases/ui4-a-artifact-manifest.json';
+const outputPath = at(outputRelative);
+if (!outputPath.startsWith(`${at('docs')}${path.sep}`) || !outputPath.endsWith('.json')) throw Error('Release inventory output must be a JSON file under docs/.');
 // A Git archive has no .git directory. Verify its recorded file list without requiring Git.
 const expected = checking ? JSON.parse(fs.readFileSync(outputPath, 'utf8')) : null;
 const tracked = checking && !fs.existsSync(at('.git'))

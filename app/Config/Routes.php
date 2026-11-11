@@ -39,6 +39,9 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/opening-cash/(:segment)/review', 'Api\OpeningCashController::review/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/finalize', 'Api\OpeningCashController::finalize/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/abort', 'Api\OpeningCashController::abort/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/debts', 'Api\DebtController::index', ['filter' => 'authenticated']);
+    $routes->get('shop/customers/(:segment)/debt', 'Api\DebtController::customer/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/debt-bills/(:segment)', 'Api\DebtController::bill/$1', ['filter' => 'authenticated']);
     $routes->get('shop/customers', 'Api\CustomerController::index', ['filter' => 'authenticated']);
     $routes->post('shop/customers', 'Api\CustomerController::create', ['filter' => 'authenticated']);
     $routes->get('shop/customers/(:segment)', 'Api\CustomerController::show/$1', ['filter' => 'authenticated']);

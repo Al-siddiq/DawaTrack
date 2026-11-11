@@ -52,6 +52,7 @@ final class ShopController extends BaseController
                     'manage_opening_cash' => $context->role === 'PRIMARY_OWNER',
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
                     'view_customers' => $hasPermission('customer.view'),
+                    'view_debt' => $hasPermission('customer.view') && $hasPermission('debt.view'),
                     'view_sale_drafts' => $hasPermission('sale.view'),
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),

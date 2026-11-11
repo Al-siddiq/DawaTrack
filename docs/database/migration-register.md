@@ -83,3 +83,17 @@ Owner approved the debt-first Return/refund, historical-cost provenance, linked 
 ## WP4-D — 2026-11-06
 
 D introduces no migration or table/column. Apply A 2026-11-05-100000 after accepted WP2 ordering through Spark once; preserve its preflight and used-compensation downgrade refusal. No old applied migration/paired SQL is rewritten. Native fresh/upgrade/repeat/rollback verification remains in the final checklist.
+
+
+## Phase 5 WP1 — debt foundation
+
+Apply after all accepted Phase 4 migrations. Two new ordered migrations only:
+
+| Order | Migration | Equivalent MySQL SQL | Purpose |
+|---:|---|---|---|
+| 24 | `2026-11-11-190000_CreatePhaseFiveDebtPayments` | `phase-05/20261111190000_debt_payments.sql` | Immutable scoped Cash/Transfer collection parent and linked inverse identity |
+| 25 | `2026-11-11-190100_CreatePhaseFiveDebtPaymentAllocations` | `phase-05/20261111190100_debt_payment_allocations.sql` | Positive allocation evidence; scoped payment/Receivable FKs and unique payment/bill |
+
+No previous migration/table is edited or recreated. Existing `receivable_adjustments` is reused. Shield actor FK remains `INT UNSIGNED`; domain IDs are `BIGINT UNSIGNED`. No aggregate CHECK is claimed: allocation sums, same-Customer attribution and matching compensations are owning-service invariants. WP1 exposes no collection writer.
+
+Native MySQL apply/constraint verification remains an Owner development gate. DDL implicitly commits; identify/back up the database before applying. Do not execute raw SQL in addition to Spark migrations. If unrecorded DDL leaves a partial table, inspect/recover a disposable copy instead of forging migration history. Rollback only empty new-table development copies in child→parent order; never delete accepted financial evidence to undo deployment. See [WP1 setup/manual guide](../manual-verification-phase-05-wp1.md) and [contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md).

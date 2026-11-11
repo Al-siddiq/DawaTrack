@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Database\Migrations;
+
+use CodeIgniter\Database\Migration;
+
+final class CreatePhaseFiveDebtPayments extends Migration
+{
+    public function up(): void
+    {
+        $this->db->query("SET time_zone = '+00:00'");
+        $this->db->query(<<<'SQL'
+CREATE TABLE debt_payments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    public_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    tenant_id BIGINT UNSIGNED NOT NULL,
+    shop_id BIGINT UNSIGNED NOT NULL,
+    customer_id BIGINT UNSIGNED NOT NULL,
+    channel VARCHAR(12) NOT NULL,
+    amount DECIMAL(19,2) NOT NULL,
+    external_reference VARCHAR(120) NULL,
+    occurred_at DATETIME(6) NOT NULL,
+    posted_at DATETIME(6) NOT NULL,
+    created_by_user_id INT UNSIGNED NOT NULL,
+    reversal_of_debt_payment_id BIGINT UNSIGNED NULL,
+    correlation_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NULL,
+    created_at DATETIME(6) NOT NULL,
+    CONSTRAINT uq_debt_payments_public UNIQUE (public_id),
+    CONSTRAINT uq_debt_payments_scope UNIQUE (tenant_id,shop_id,id),
+    CONSTRAINT uq_debt_payments_reversal UNIQUE (reversal_of_debt_payment_id),
+    INDEX ix_debt_payments_customer (tenant_id,shop_id,customer_id,posted_at,id),
+    INDEX ix_debt_payments_channel (tenant_id,shop_id,channel,posted_at),
+    CONSTRAINT ck_debt_payments_uuid CHECK (public_id REGEXP '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'),
+    CONSTRAINT ck_debt_payments_channel CHECK (channel IN ('CASH','TRANSFER')),
+    CONSTRAINT ck_debt_payments_amount CHECK (amount>0),
+    CONSTRAINT fk_debt_payments_shop FOREIGN KEY (tenant_id,shop_id) REFERENCES shops(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    CONSTRAINT fk_debt_payments_customer FOREIGN KEY (tenant_id,customer_id) REFERENCES customers(tenant_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    CONSTRAINT fk_debt_payments_actor FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    CONSTRAINT fk_debt_payments_reversal FOREIGN KEY (tenant_id,shop_id,reversal_of_debt_payment_id) REFERENCES debt_payments(tenant_id,shop_id,id) ON UPDATE RESTRICT ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+SQL);
+    }
+
+    public function down(): void
+    {
+        if ($this->db->table('debt_payments')->countAllResults() > 0) {
+            throw new \RuntimeException('Refusing to remove protected debt_payments evidence. Roll back code without deleting financial history.');
+        }
+        $this->db->query("DROP TABLE debt_payments");
+    }
+}

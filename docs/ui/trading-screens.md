@@ -59,3 +59,8 @@ No migrations or backend commercial code change in UI3-A. Update source/public c
 ## UI4 direct Print privacy
 
 Global receipt print selectors now hide private cost/profit/internal stock sections even when the user chooses browser Print/Ctrl+P rather than the app button. The clone still removes those nodes. Both native paths/paper sizes require M15 evidence; a source fix is not a native print pass.
+
+
+## Phase 5 WP1 — Customers balances
+
+`CustomerPanel` accepts current workspace hash and emits guarded `navigate`; `CustomerDebtPanel` renders read-only balances/list/bill routes inside the existing Customers destination. Source Sale navigation is conditional on sale.view. Future collection/correction controls are absent. Native WP1 manual acceptance is separate from the accepted UI programme: [manual guide](../manual-verification-phase-05-wp1.md).

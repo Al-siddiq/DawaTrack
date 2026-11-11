@@ -16,7 +16,7 @@
 | Final manual decision | Owner reports reviewed and accepted | Acceptance record; individual M01–M18 details not supplied |
 | Merge and rollout | Merge verified; rollout reported complete by Owner | PR #37; `releases/ui4-a-release-decision.csv` |
 | Detailed hosting/device evidence | Not individually supplied; no Pass invented | Historical manual result template and release decision explain missing fields |
-| Phase 5 entry | UI entry decision satisfied; planning authorized | [Phase 5 plan](../Phase-5/Phase_5_Implementation_Plan.md); implementation awaits plan approval |
+| Phase 5 entry | UI entry satisfied; Phase 5 plan approved, WP1 only authorized | [Phase 5 plan](../Phase-5/Phase_5_Implementation_Plan.md); WP1 manual acceptance pending |
 
 ## What closure means
 
@@ -24,4 +24,4 @@ The approved UI programme is accepted and closed. Further UI defects discovered 
 
 The 18 SVG designs remain representative references, not production screenshots. Source reconciliation, engineering checks, Owner acceptance and reported rollout retain their separate provenance. Existing reports describe their state at delivery time; this ledger and final acceptance record state the current decision.
 
-No detailed case result, exact production configuration, production checksum, deployment timestamp or rollback rehearsal is manufactured. No requirement to repeat all previously accepted workflows is introduced. The next work is a four-package Phase 5 plan with manual acceptance gates.
+No detailed case result, exact production configuration, production checksum, deployment timestamp or rollback rehearsal is manufactured. No requirement to repeat all previously accepted workflows is introduced. The four-package Phase 5 plan is Owner-approved; WP1 is delivered for its separate manual gate. The accepted UI4 scope and its historical evidence are unchanged.

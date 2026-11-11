@@ -55,3 +55,8 @@ CommercialReversalService coordinates ordinary Sale/Return compensation and link
 ## WP4-D — 2026-11-06
 
 The operator UI now composes B Return and C correction commands through unified Sale/Return/compensation reads. Sales/Inventory write ownership is unchanged. [D integration contract](phase-04-wp4-d.md) and [final native checklist](../manual-verification-phase-04-wp4-d.md) describe the delivered surface and acceptance boundary.
+
+
+## Phase 5 WP1 — live debt reads and shared adjustment participant
+
+CustomerDebt now owns `DebtQuery`, `ReceivableBalanceQuery`, `DebtSchema`, `DebtReadSnapshot` and `ReceivableAdjustmentParticipant`. The query projects signed adjustment/allocation evidence into live current-Shop balances without stored balance/status. The snapshot covers counts/totals/pages; missing tables fail explicitly. CommercialEvents delegates existing adjustment insertion to the internal participant; Sales keeps its owning transaction, source validation, Audit and changes. WP1 routes are GET-only; collection/correction/statement writers remain later packages. See [contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md) and [manual verification](../manual-verification-phase-05-wp1.md).
