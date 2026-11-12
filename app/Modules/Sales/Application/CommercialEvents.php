@@ -60,28 +60,11 @@ final class CommercialEvents
         string $correlation,
         ?int $reversal = null,
     ): void {
-        if ($delta === "0.00" || $delta === "-0.00") {
-            return;
-        }
-        $this->db
-            ->table("receivable_adjustments")
-            ->insert([
-                "public_id" => Uuid::v4(),
-                "tenant_id" => $c->tenantId,
-                "shop_id" => $c->shopId,
-                "receivable_id" => $credit["id"],
-                "sale_id" => $sale,
-                "adjustment_type" => $type,
-                "amount_delta" => $delta,
-                "reason" => $reason,
-                "reversal_of_adjustment_id" => $reversal,
-                "occurred_at" => $occurred,
-                "posted_at" => $now,
-                "created_by_user_id" => $c->userId,
-                "correlation_id" => $correlation,
-                "created_at" => $now,
-            ]);
+        (new \App\Modules\CustomerDebt\Application\ReceivableAdjustmentParticipant($this->db))->append(
+            $c, $credit, $sale, $type, $delta, $reason, $occurred, $now, $correlation, $reversal,
+        );
     }
+
     public function audit(
         ShopContext $c,
         string $action,

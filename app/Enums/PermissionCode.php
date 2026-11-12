@@ -20,6 +20,10 @@ enum PermissionCode: string
     case SaleRecord = 'sale.record';
     case SaleReturn = 'sale.return';
     case SaleReverse = 'sale.reverse';
+    case DebtView = 'debt.view';
+    case DebtPaymentAllocate = 'debt.payment.allocate';
+    case DebtAdjust = 'debt.adjust';
+    case DebtPaymentReverse = 'debt.payment.reverse';
     case DebtManage = 'debt.manage';
     case DebtPaymentRecord = 'debt.payment.record';
     case ReconciliationView = 'reconciliation.view';

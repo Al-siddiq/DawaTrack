@@ -1,6 +1,6 @@
 # Phase 5 — Debt Collection and Customer Statements
 
-**Date:** 11 November 2026 (Africa/Lagos). **Status:** proposed for Owner approval; no Phase 5 implementation is delivered by this documentation change. **Reviewed baseline:** main `b41425f905100a728a4c6167d5df936702a8502a` (UI4-A PR #37 merged). **Delivery model:** four sequential work packages, each runnable, documented and manually accepted before the next begins.
+**Date:** 11 November 2026 (Africa/Lagos). **Status:** Owner approved on 11 November 2026; WP1 implementation authorized only. See [approval](../acceptance/2026-11-11-phase-05-plan-owner-approval.md) and [WP1 delivery](Phase_5_WP1_Delivery_Report.md). WP1 manual acceptance remains pending. **Reviewed baseline:** main `b41425f905100a728a4c6167d5df936702a8502a` (UI4-A PR #37 merged). **Delivery model:** four sequential work packages, each runnable, documented and manually accepted before the next begins.
 
 ## 1. Authority and entry position
 
@@ -44,9 +44,9 @@ Phase 5 completes collection of existing sale credit. It does not add another Sa
 
 Four is the smallest reasonable split: shared balance/schema contracts precede money; correction/return dependency work deserves its own financial acceptance gate; full running statements depend on every event type. Each package includes its own backend/API/UI/security/docs/manual checks. WP4 is not reserved for finishing missing WP1–WP3 features.
 
-## 4. Financial and integration decisions proposed for approval
+## 4. Approved financial and integration decisions
 
-These decisions make the plan concrete. Approving the plan approves these bounded contracts; implementation must document exact payloads, error codes, indexes and transaction participants in WP1 before dependent writers are delivered. If source analysis proves a schema/business conflict, report it with a proposed resolution before implementing that dependent behaviour.
+The Owner approved these bounded contracts with the plan; implementation must document exact payloads, error codes, indexes and transaction participants in WP1 before dependent writers are delivered. If source analysis proves a schema/business conflict, report it with a proposed resolution before implementing that dependent behaviour.
 
 ### Balances and signs
 
@@ -62,7 +62,7 @@ Outstanding may not become negative. Settlement is based on current outstanding:
 
 Default allocation uses oldest accepted bill first, stable `(posted_at,id)` ascending as the schema's allocation rule. Backdated occurrence time does not reorder accepted debt. Explicit selection may span bills for this Customer/current Shop only, with positive exact amounts summing to the payment. Reject duplicates, excess, zero/negative/float/overprecision values and empty/no-balance selection.
 
-The roadmap mentions due/age/ID locking while schema §10.4 specifies `(posted_at,id)`. Recommended reconciliation: use **one canonical `(posted_at,id)` database lock order for every touched Receivable**, independent of presentation/due sorting; due date is a visible indicator, not a different deadlock-prone locking order. This clarification requires plan approval and is recorded in the WP1 contract.
+The roadmap mentions due/age/ID locking while schema §10.4 specifies `(posted_at,id)`. Recommended reconciliation: use **one canonical `(posted_at,id)` database lock order for every touched Receivable**, independent of presentation/due sorting; due date is a visible indicator, not a different deadlock-prone locking order. This clarification is approved with the plan and recorded in the WP1 contract.
 
 Retain the existing tenant → Shop → active-membership guard before domain locks, Cash guard before domain effects, compatible original commercial/Product/position ordering for return paths, then stable Receivable/payment/adjustment locks. Serialize all relevant writers through the existing Shop boundary; permission/access/membership are rechecked inside it. Recompute balances under lock. Audit and domain effects share the transaction; publish server changes last under the existing generation lock, with no later domain-lock acquisition. Document collection-versus-return and correction-versus-collection lock traces. A concurrency loser gets a useful refresh/review result, never a silent reallocation from a stale preview.
 
@@ -96,7 +96,7 @@ Date filters use accepted posting time converted to Shop-local dates, labelled �
 
 Customer identity is Tenant-owned; balances, collections, statements and access are current-Shop scoped. No cross-Shop dashboard is added. Private phone/notes retain `customer.private`; no costs/profit/internal numeric IDs leak through debt pages, receipts, Print, lookup or API errors. Customer is a business record, not a new login/portal role. Platform Admin receives no ordinary Shop collection authority.
 
-## 5. Permission proposal
+## 5. Approved permission separation
 
 | Action | Required Staff grants (Owner derives known-code authority) |
 |---|---|
@@ -187,6 +187,6 @@ No production data repair, destructive rollback, deployment or business mutation
 
 ## 10. Approval and progression
 
-**Now:** UI programme closure is recorded from Owner confirmation; this Phase 5 plan is ready for review.
+**Now:** UI programme closure is recorded and this Phase 5 plan is Owner-approved. WP1 has been implemented for manual verification; its acceptance is not presumed.
 
-**After approval:** implement WP1 only, with its native manual handover. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.
+**Current authorized scope:** WP1 only, with its native manual handover. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.

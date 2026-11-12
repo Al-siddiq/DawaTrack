@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-11",
+  "timezone": "Africa/Lagos",
+  "package": "Phase 5 WP1",
+  "owner_acceptance": "Pending manual verification",
+  "base_main": "b41425f905100a728a4c6167d5df936702a8502a",
+  "approved_plan_commit": "a5f625dabf3cf88f6e2b56e654d83bea2fd7f207",
+  "scope": "Read-only live debt balances, schema, permissions, shared internal adjustment participant and integration contracts; no collection/adjustment/statement command routes",
+  "observed_checks": [
+    {
+      "command": "npm run build",
+      "result": "Passed; Frontend assets built.",
+      "icons": {
+        "symbols": 34,
+        "raw_bytes": 17008,
+        "gzip_bytes": 5102
+      },
+      "warnings": "Existing Bootstrap/Sass deprecations; no dependency/lock change"
+    },
+    {
+      "check": "PHP grammar parser",
+      "files": 237,
+      "grammar_version": "8.3",
+      "result": "Passed",
+      "native_php_execution": false
+    },
+    {
+      "check": "Published JavaScript parse/local graph",
+      "modules": 42,
+      "local_edges": 118,
+      "result": "Passed"
+    },
+    {
+      "check": "Migration/raw SQL exact up-statement parity",
+      "pairs": 2,
+      "result": "Passed",
+      "native_mysql_execution": false
+    },
+    {
+      "check": "Scratch mocked Vue host render",
+      "variants": 10,
+      "get_requests": 8,
+      "mutations": 0,
+      "vue_warnings": 0,
+      "result": "Passed",
+      "native_browser_http_accessibility": false
+    },
+    {
+      "check": "Actual shared projection SQL on scratch SQLite synthetic integer fixtures",
+      "scenarios": 9,
+      "result": "Passed",
+      "limitation": "Not MySQL; no DECIMAL boundary, PHP, concurrency or rollback acceptance"
+    },
+    {
+      "command": "node scripts/build-ui-release-manifest.mjs --check --output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.json",
+      "result": "Passed",
+      "files": 365,
+      "sha256": "1480203991f226152c45fa2efb9910570be689fe43a587740763f415e2743834"
+    },
+    {
+      "command": "git diff --check",
+      "result": "Passed"
+    },
+    {
+      "check": "Package --output inventory option in clean archive copy without Git; reject output outside docs",
+      "result": "Passed",
+      "deployment": false
+    }
+  ],
+  "native_not_executed": [
+    "PHP runtime",
+    "MySQL migrations/FKs/CHECKs/DECIMAL/down refusal",
+    "Authenticated HTTP/access/security",
+    "Live query plans",
+    "Concurrency/transaction rollback",
+    "Real browser/device/keyboard/assistive technology",
+    "Deployment/production checksum"
+  ],
+  "manual_gate": "P5-01–P5-10; all results initially Pending",
+  "framework_added": false,
+  "deployed": false,
+  "retained_future_gates": "Real collection/inverse/collected-return/statement flows remain WP2/WP3/WP4; no posted payment fixture fabricated for WP1 acceptance",
+  "owner_supplied_evidence": [
+    {
+      "date": "2026-11-12",
+      "source": "Owner screenshot node 8.png",
+      "environment": "Windows/XAMPP development checkout",
+      "reviewed_fix_commit": "ae3ab7207bc8edd94211d6c785fdcb6da37a71dd",
+      "result": "Line-ending/inventory blocker resolved in reported checkout",
+      "files_restored": 119,
+      "manifest_regenerated": false,
+      "repair_check": "Matched recorded inventory",
+      "subsequent_normal_check": "Matched recorded inventory",
+      "recorded_files": 365,
+      "content_sha256": "1480203991f226152c45fa2efb9910570be689fe43a587740763f415e2743834",
+      "assistant_independently_executed": false,
+      "wp1_application_acceptance": "Not established by screenshot; remains pending",
+      "detail": "Phase_5_WP1_Windows_Inventory_Followup.md"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 
 Use [developer handover](developer-handover.md), [release/rollback guide](release-handover.md) and the existing component/navigation/wording references below for maintenance. The release decision now records the Owner's final acceptance and reported rollout separately from unknown hosting details. Prior delivery reports and manual checklists are historical references, not current Pending programme decisions.
 
-The [Phase 5 implementation plan](../Phase-5/Phase_5_Implementation_Plan.md) proposes four manually accepted packages for live debt balances, collection, corrections/return integration and customer statements. It is prepared for approval; Phase 5 code has not started.
+The [Phase 5 implementation plan](../Phase-5/Phase_5_Implementation_Plan.md) proposes four manually accepted packages for live debt balances, collection, corrections/return integration and customer statements. The Owner approved it and authorized WP1 only. [WP1 delivery](../Phase-5/Phase_5_WP1_Delivery_Report.md) and [manual guide](../manual-verification-phase-05-wp1.md) cover the new read-only Customer balances. WP1 acceptance remains pending.
 
 ## Review the delivered foundation
 
@@ -54,3 +54,8 @@ UI2-C now changes the actual Shop/Admin/Auth layout and navigation. Open the nor
 Edit source, regenerate output and commit both where the repository tracks generated assets. Do not edit `public/assets` or `icon-catalogue.js` / `UiIconCatalogue.php` directly. Every change to the allowlist must rebuild icons and review examples. Never regenerate the human-maintained requirement/acceptance columns over review results. Update documentation in the same PR as the implementation.
 
 The 18 designs are representative, not a substitute for the full task inventory. The 96 copy entries are not marked migrated merely because their text appears in a reference. The requirements register retains historical source/per-case columns and records the final programme decision separately. The Owner's prior Phase 4 acceptance remains intact; new UI acceptance is recorded separately and only after manual confirmation.
+
+
+## Phase 5 WP1 extension
+
+Customers now has a contextual **Money customers owe** view, Customer bill list and bill detail; no extra bottom destination or collection button. Uses existing shared components, guarded hashes, local cash/back/search/refresh icons and plain-language labels. `customer.view` + `debt.view` are required on server and component. The existing UI programme acceptance is unchanged; WP1 receives its own manual acceptance. [Implementation and future integration contract](../Phase-5/Phase_5_WP1_Integration_Contracts.md).

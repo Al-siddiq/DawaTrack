@@ -9,14 +9,50 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const at = value => path.resolve(root, value);
 const digest = buffer => crypto.createHash('sha256').update(buffer).digest('hex');
 const checking = process.argv.includes('--check');
-const outputPath = at('docs/ui/releases/ui4-a-artifact-manifest.json');
+const fixLineEndings = process.argv.includes('--fix-line-endings');
+if (fixLineEndings && !checking) throw Error('--fix-line-endings requires --check and a recorded inventory.');
+const outputRelative = process.argv.find(value => value.startsWith('--output='))?.slice('--output='.length)
+    || 'docs/ui/releases/ui4-a-artifact-manifest.json';
+const outputPath = at(outputRelative);
+if (!outputPath.startsWith(`${at('docs')}${path.sep}`) || !outputPath.endsWith('.json')) throw Error('Release inventory output must be a JSON file under docs/.');
 // A Git archive has no .git directory. Verify its recorded file list without requiring Git.
 const expected = checking ? JSON.parse(fs.readFileSync(outputPath, 'utf8')) : null;
 const tracked = checking && !fs.existsSync(at('.git'))
     ? expected.files.map(file => file.path)
     : execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
-if (checking) for (const file of expected.files) if (!fs.existsSync(at(file.path))) throw Error(`Missing reviewed release file: ${file.path}`);
 const current = tracked.filter(file => fs.existsSync(at(file)));
+const selected = current.filter(file => /^(app\/|public\/|resources\/(js|css|ui)\/)/.test(file) || ['.gitattributes', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json'].includes(file));
+
+// A clean Git status can hide CRLF checkout conversion. Keep raw-byte verification;
+// repair only when removing CR from CRLF exactly recovers the reviewed bytes/hash.
+if (checking) {
+    const recorded = new Map(expected.files.map(file => [file.path, file]));
+    const selectedSet = new Set(selected);
+    const lineEndings = [], differences = [];
+    for (const file of expected.files) {
+        if (!fs.existsSync(at(file.path))) { differences.push(`MISSING ${file.path}`); continue; }
+        if (!selectedSet.has(file.path)) { differences.push(`NOT_TRACKED ${file.path}`); continue; }
+        const buffer = fs.readFileSync(at(file.path));
+        if (buffer.length === file.bytes && digest(buffer) === file.sha256) continue;
+        const text = buffer.toString('utf8');
+        const normalized = Buffer.from(text.replace(/\r\n/g, '\n'), 'utf8');
+        const recoverable = !buffer.includes(0) && Buffer.from(text, 'utf8').equals(buffer)
+            && normalized.length === file.bytes && digest(normalized) === file.sha256;
+        if (recoverable) lineEndings.push({ path: file.path, normalized });
+        else differences.push(`CHANGED ${file.path} (content differs beyond CRLF line endings)`);
+    }
+    for (const file of selected) if (!recorded.has(file)) differences.push(`ADDED ${file}`);
+    if (differences.length || (lineEndings.length && !fixLineEndings)) {
+        const details = [...differences, ...lineEndings.map(file => `LINE_ENDINGS_ONLY ${file.path}`)];
+        for (const detail of details.slice(0, 25)) console.error(detail);
+        if (details.length > 25) console.error(`... ${details.length - 25} more differing files.`);
+        console.error(`Content/set differences: ${differences.length}; CRLF-only files: ${lineEndings.length}. No files were changed.`);
+        if (!differences.length) throw Error('Only Windows CRLF checkout bytes differ. Run this same --check command with --fix-line-endings to restore the exact recorded LF bytes. Do not regenerate the inventory.');
+        throw Error('Release inventory differs from the recorded candidate. Review the listed content/set changes. Line-ending repair cannot approve changed content.');
+    }
+    for (const file of lineEndings) fs.writeFileSync(at(file.path), file.normalized);
+    if (lineEndings.length) console.log(`Restored exact recorded LF bytes in ${lineEndings.length} files; no inventory regenerated.`);
+}
 const required = ['public/assets/css/app.css', 'public/assets/vendor/vue/vue.runtime.global.prod.js', 'public/assets/vendor/vue/LICENSE.txt', 'public/assets/vendor/dexie/LICENSE.txt', 'public/assets/vendor/bootstrap/LICENSE.txt', 'public/assets/ui/bootstrap-icons-LICENSE.txt', 'app/Views/auth/email_2fa_show.php', 'app/Views/auth/email_2fa_verify.php', 'app/Views/auth/email_activate_show.php'];
 for (const file of required) if (!fs.existsSync(at(file))) throw Error(`Missing release file: ${file}. Run npm run build and stage added release files.`);
 const sourceModules = current.filter(file => file.startsWith('resources/js/') && file.endsWith('.js'));
@@ -42,7 +78,6 @@ const packageData = JSON.parse(fs.readFileSync(at('package.json'), 'utf8'));
 const lock = JSON.parse(fs.readFileSync(at('package-lock.json'), 'utf8'));
 for (const [name, version] of Object.entries(packageData.devDependencies)) if (lock.packages[`node_modules/${name}`]?.version !== version) throw Error(`Dependency pin differs from lock: ${name}`);
 const activeEntrypoints = ['public/assets/js/shop/app.js', 'public/assets/js/admin/app.js', 'public/assets/js/auth/entry.js'];
-const selected = current.filter(file => /^(app\/|public\/|resources\/(js|css|ui)\/)/.test(file) || ['.gitattributes', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json'].includes(file));
 for (const file of required) if (!selected.includes(file)) throw Error(`New release file not staged: ${file}`);
 const files = selected.sort().map(file => {
     const buffer = fs.readFileSync(at(file));
