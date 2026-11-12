@@ -49,3 +49,8 @@ Start with [WP1 manual guide](../manual-verification-phase-05-wp1.md) and [P5-01
 Native partial collection/inverse states become reachable through actual commands in WP2/WP3. WP1 does not seed fake posted payments for acceptance. Its shared query and display support them now, while subsequent packages retain their actual workflow gates.
 
 No deployment, production migration, merge or acceptance is performed on behalf of the Owner by this handover. After explicit WP1 acceptance, proceed to WP2 only.
+
+
+## 12 November 2026 — Windows inventory follow-up
+
+Owner testing identified clean Git checkouts with CRLF physical bytes. Four sampled screenshot hashes were reproduced exactly. The verifier now distinguishes CRLF-only from actual content/set differences and offers explicit checksum-constrained `--check --fix-line-endings` repair, preserving the original artifact manifest. See [diagnosis/recovery/evidence](Phase_5_WP1_Windows_Inventory_Followup.md). Simulated CRLF repair and negative content/missing/BOM cases pass within their stated Linux-only limits. No business/schema change or WP1 acceptance is implied.

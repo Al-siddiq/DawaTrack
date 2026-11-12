@@ -20,6 +20,18 @@ npm run ui:release:check -- --output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.
 
 These commands work in Windows Command Prompt; no `sh` is required. The new App migrations are `2026-11-11-190000` and `2026-11-11-190100`. Both new tables must be present. Do not run paired raw SQL as well as migrations. A successful build ends `Frontend assets built.`; historical Sass/Bootstrap deprecation warnings alone are not a failure. If you use an archive, use the reviewed clean source archive to preserve canonical line endings and follow the existing release guide for Composer/environment/assets.
 
+### If a clean Windows checkout fails the inventory check
+
+Pull the WP1 follow-up, then run the same check with `--fix-line-endings`. It restores only CRLF files whose LF bytes exactly match the recorded hash; real content changes still fail without rewriting any files. Do not regenerate the inventory to make this error disappear.
+
+```bash
+git pull --ff-only
+npm run ui:release:check -- --output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.json --fix-line-endings
+npm run ui:release:check -- --output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.json
+```
+
+See [confirmed Windows byte diagnosis and repair](Phase-5/Phase_5_WP1_Windows_Inventory_Followup.md). No Node upgrade, database reset or extra migration is needed for this line-ending issue.
+
 Use your normal configured Shop address, sign in as Owner and hard reload. Choose **Customers → Money customers owe**. The bottom navigation remains unchanged. From a selected Customer record, the same button opens that person's bills. Staff needs **View customer records** plus **View money customers owe**, granted by Owner in Staff settings. Merely granting the legacy debt permission is insufficient.
 
 A setup message instead of balances means the application update is incomplete. Check migration status and both new tables; do not read the message as a zero balance. Existing Customer records, Sales/Returns and original receipts must still work after migration.
