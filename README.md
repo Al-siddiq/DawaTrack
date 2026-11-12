@@ -10,7 +10,7 @@ Accepted application candidate: `970ad2e39fdc7ae2a1201c985bc8d54d6952152e` (PR #
 
 PRs #39–#42 were still open/unmerged and main at `b41425f905100a728a4c6167d5df936702a8502a` when closure was checked. Integration and production deployment are separate decisions, not performed by this documentation closure. The earlier UI programme acceptance/rollout remains recorded in its [own closure ledger](docs/ui/programme-closure.md).
 
-The next roadmap boundary is **Phase 6 — Financial Movements and Cash Accountability**, with a separately approved package plan before implementation. Full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work; the service worker does not provide offline business operation. [Operational release/key/rollback handover](docs/operations/phase-05-statements-release.md) and [release decision register](docs/Phase-5/Phase_5_Release_Decision.csv) remain current.
+The next roadmap boundary is **Phase 6 — Financial Movements and Cash Accountability**, with a separately approved package plan before implementation. **Phase 6 — Financial Movements and Cash Accountability** has a proposed four-package implementation plan, requirements matrix and manual acceptance plan; it is awaiting explicit Owner approval. No Phase 6 implementation is authorized by the planning proposal. Full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work; the service worker does not provide offline business operation. [Phase 6 implementation plan](docs/Phase-6/Phase_6_Implementation_Plan.md) · [Manual acceptance plan](docs/Phase-6/Phase_6_Manual_Acceptance_Plan.md) · [Requirements matrix](docs/Phase-6/Phase_6_Requirements_Matrix.csv). [Operational release/key/rollback handover](docs/operations/phase-05-statements-release.md) and [release decision register](docs/Phase-5/Phase_5_Release_Decision.csv) remain current.
 
 ## Start locally
 
@@ -41,6 +41,7 @@ Frontend source lives in `resources/`. `npm run build` compiles CSS and copies p
 | [Phase 4 plan](docs/Phase-4/Phase_4_Comprehensive_Analysis_and_Four_Work_Package_Plan.md) | Historical package scope, contracts and acceptance approach |
 | [Phase 4 operations](docs/operations/phase-04-sales.md) | Sale/Return/correction operational contracts |
 | [Phase 5 plan](docs/Phase-5/Phase_5_Implementation_Plan.md) | Accepted four-package programme and manual gates; Phase 5 closed |
+| [Phase 6 plan](docs/Phase-6/Phase_6_Implementation_Plan.md) | Proposed four-package Financial Movements programme; awaiting Owner approval |
 
 Historical delivery reports describe their state when authored. Later explicit Owner acceptance supersedes earlier Pending decision wording; it does not manufacture historical per-case evidence. Delivery remains package-by-package, with Owner manual acceptance before progression. Engineering checks support that process rather than replacing it.
 
