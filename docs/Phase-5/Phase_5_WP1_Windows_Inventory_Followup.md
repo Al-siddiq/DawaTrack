@@ -42,3 +42,17 @@ No reinstall, database reset, new migration or manifest regeneration is needed f
 Scratch-only simulation converted 356 recorded text files to CRLF in a clean artifact copy. Normal check diagnosed the differences without changing anything; explicit repair restored all 365 recorded files byte-for-byte, and the subsequent raw check passed. Mixed real CSS change + CRLF was rejected without rewriting either file; missing file and UTF-8 BOM change were also rejected. The recorded manifest was unchanged. This ran on Linux/Node with simulated Windows bytes, **not native Windows execution or application acceptance**. No automated test framework was added.
 
 WP1 manual results remain pending. Resume P5-01–P5-10 after the inventory matches; this utility fix does not start WP2 or record premature acceptance.
+
+
+## Owner-provided Windows result — 12 November 2026
+
+The Owner supplied screenshot `node 8.png` showing the actual Windows/XAMPP development checkout:
+
+- `git pull --ff-only` advanced the WP1 branch from `49ff5d3` to fix commit `ae3ab72`.
+- The explicit repair reported: `Restored exact recorded LF bytes in 119 files; no inventory regenerated.`
+- The repair command then matched `1480203991f226152c45fa2efb9910570be689fe43a587740763f415e2743834 (365 files)`.
+- A second normal `--check` without the repair option matched the same recorded inventory and returned to the command prompt without an error.
+
+**Disposition:** the reported Windows line-ending/inventory blocker is resolved for this checkout. This is Owner-provided native Windows command evidence, separate from the earlier Linux simulation; it was not independently executed by the assistant. Different counts (119 in this checkout versus 356 deliberately converted in the simulation) reflect which files needed repair, not a changed release.
+
+No source/application change, manifest regeneration, Node upgrade or database reset is needed based on this output. Continue the existing WP1 application checklist P5-01–P5-10. The screenshot does not establish native migration results, business-flow/permission correctness or whole-WP1 acceptance, and does not authorize WP2 by itself. Those result fields remain pending.

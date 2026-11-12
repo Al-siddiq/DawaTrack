@@ -79,5 +79,23 @@
   "manual_gate": "P5-01–P5-10; all results initially Pending",
   "framework_added": false,
   "deployed": false,
-  "retained_future_gates": "Real collection/inverse/collected-return/statement flows remain WP2/WP3/WP4; no posted payment fixture fabricated for WP1 acceptance"
+  "retained_future_gates": "Real collection/inverse/collected-return/statement flows remain WP2/WP3/WP4; no posted payment fixture fabricated for WP1 acceptance",
+  "owner_supplied_evidence": [
+    {
+      "date": "2026-11-12",
+      "source": "Owner screenshot node 8.png",
+      "environment": "Windows/XAMPP development checkout",
+      "reviewed_fix_commit": "ae3ab7207bc8edd94211d6c785fdcb6da37a71dd",
+      "result": "Line-ending/inventory blocker resolved in reported checkout",
+      "files_restored": 119,
+      "manifest_regenerated": false,
+      "repair_check": "Matched recorded inventory",
+      "subsequent_normal_check": "Matched recorded inventory",
+      "recorded_files": 365,
+      "content_sha256": "1480203991f226152c45fa2efb9910570be689fe43a587740763f415e2743834",
+      "assistant_independently_executed": false,
+      "wp1_application_acceptance": "Not established by screenshot; remains pending",
+      "detail": "Phase_5_WP1_Windows_Inventory_Followup.md"
+    }
+  ]
 }
