@@ -1,6 +1,9 @@
 # Phase 5 WP4 — native statement and integrated acceptance
 
-Candidate: `codex/phase-5-wp4-statements-closure-20261112`, based on accepted WP3 `9e81e769af4b588858de8f522a0ef62022331e11`. Record actual `git rev-parse HEAD`, environment, role/grants, Shop/timezone and device/browser in [WP4 results](Phase-5/Phase_5_WP4_Manual_Results.csv). **P5-37–P5-48 remain Pending.** [Full contracts](Phase-5/Phase_5_WP4_Integration_Contracts.md) · [operations](operations/phase-05-statements-release.md) · [integrated48-case register](Phase-5/Phase_5_Integrated_Manual_Results.csv).
+**Closure update, 12 November 2026:** [Owner accepted WP4 and the whole phase](acceptance/2026-11-12-phase-05-owner-closure.md). Phase 5 is closed. Earlier Pending decision language below describes delivery time; individual native results/runtime details not supplied remain unreported. Integration/deployment is separate.
+
+
+Candidate: `codex/phase-5-wp4-statements-closure-20261112`, based on accepted WP3 `9e81e769af4b588858de8f522a0ef62022331e11`. Record actual `git rev-parse HEAD`, environment, role/grants, Shop/timezone and device/browser in [WP4 results](Phase-5/Phase_5_WP4_Manual_Results.csv). **Owner acceptance is recorded; individual P5-37–P5-48 outcomes were not separately supplied.** [Full contracts](Phase-5/Phase_5_WP4_Integration_Contracts.md) · [operations](operations/phase-05-statements-release.md) · [integrated48-case register](Phase-5/Phase_5_Integrated_Manual_Results.csv).
 
 Use a backed-up isolated XAMPP/development copy and synthetic data. Do not reset production, insert/edit/delete protected financial evidence or restore an old DB over later accepted money. WP1/WP2/WP3 acceptance is recorded; individual outcomes not supplied are not invented. Reuse unaffected accepted observations; supplement affected integrations.
 

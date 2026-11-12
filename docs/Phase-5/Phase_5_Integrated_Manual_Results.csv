@@ -1,49 +1,49 @@
-case,owning_package,package_acceptance,native_observed_result,candidate_commit,environment_and_device,observed_values,evidence_reference,defect_or_blocker,reviewer,date
-P5-01,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-02,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-03,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-04,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-05,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-06,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-07,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-08,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-09,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-10,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,
-P5-11,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-12,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-13,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-14,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-15,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-16,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-17,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-18,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-19,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-20,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-21,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-22,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-23,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,
-P5-24,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-25,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-26,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-27,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-28,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-29,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-30,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-31,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-32,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-33,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-34,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-35,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-36,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,
-P5-37,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-38,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-39,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-40,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-41,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-42,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-43,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-44,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-45,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-46,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-47,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
-P5-48,WP4,Pending,Pending,,,,docs/manual-verification-phase-05-wp4.md,,,
+case,owning_package,package_acceptance,native_observed_result,candidate_commit,environment_and_device,observed_values,evidence_reference,defect_or_blocker,reviewer,date,phase_acceptance,phase_candidate_commit,phase_acceptance_reference
+P5-01,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-02,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-03,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-04,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-05,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-06,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-07,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-08,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-09,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-10,WP1,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-11,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-12,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-13,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-14,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-15,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-16,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-17,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-18,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-19,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-20,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-21,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-22,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-23,WP2,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-24,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-25,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-26,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-27,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-28,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-29,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-30,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-31,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-32,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-33,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-34,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-35,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-36,WP3,Owner accepted 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-37,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-38,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-39,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-40,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-41,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-42,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-43,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-44,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-45,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-46,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-47,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md
+P5-48,WP4,Owner accepted within whole-phase decision 2026-11-12,Not individually supplied,,,,docs/acceptance/2026-11-12-phase-05-owner-closure.md,,,,Owner accepted; Phase 5 closed 2026-11-12,970ad2e39fdc7ae2a1201c985bc8d54d6952152e,docs/acceptance/2026-11-12-phase-05-owner-closure.md

@@ -1,6 +1,9 @@
 # Phase 5 WP4 — Customer statements and integrated release handover
 
-12 November 2026 (Africa/Lagos). **Implementation delivered for native manual review; WP4/whole-phase acceptance and rollout remain pending.**
+**Closure update, 12 November 2026:** [Owner accepted WP4 and the whole phase](../acceptance/2026-11-12-phase-05-owner-closure.md). Phase 5 is closed. Earlier Pending decision language below describes delivery time; individual native results/runtime details not supplied remain unreported. Integration/deployment is separate.
+
+
+12 November 2026 (Africa/Lagos). **WP4 and the complete Phase 5 programme are now Owner-accepted and closed.** The original engineering observations below retain their execution limits; actual merge/rollout remains separate.
 
 [WP3 acceptance](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md) is recorded against accepted source `9e81e769af4b588858de8f522a0ef62022331e11`. New branch `codex/phase-5-wp4-statements-closure-20261112` retains the accepted prerequisites and targets main directly. PR #41 remained open, main at `b41425f905100a728a4c6167d5df936702a8502a`, when progression was checked. Capture final reviewed candidate SHA from PR or `git rev-parse HEAD`; no prerequisite integration/deployment is assumed.
 
@@ -37,6 +40,6 @@ No automated suite/framework or scratch probe is committed. Native PHP/cursor en
 
 [Native setup/P5-37–P5-48](../manual-verification-phase-05-wp4.md) · [Complete developer/API contract](Phase_5_WP4_Integration_Contracts.md) · [Operations/private-key setup/rollback](../operations/phase-05-statements-release.md) · [Coverage/source matrix](Phase_5_Requirements_Matrix.csv) · [Engineering evidence](Phase_5_WP4_Engineering_Evidence.json) · [Closure checklist](Phase_5_Closure_Checklist.md) · [Defect disposition](Phase_5_Defect_Disposition.csv).
 
-The [integrated48-case register](Phase_5_Integrated_Manual_Results.csv) preserves prior Owner decisions without inventing detailed observations. Complete the [final acceptance template](Phase_5_Final_Acceptance_Template.md) only after native review against the concrete candidate and known defect/gate disposition. Record actual merge/deployment separately in [release decision](Phase_5_Release_Decision.csv). WP4 code rollback can use a coherent compatible accepted WP3 release; no database/evidence rollback or pre-collection code against later financial evidence.
+The [integrated48-case register](Phase_5_Integrated_Manual_Results.csv) preserves prior Owner decisions without inventing detailed observations. The [dated Owner acceptance](../acceptance/2026-11-12-phase-05-owner-closure.md) now closes the whole phase; the [template](Phase_5_Final_Acceptance_Template.md) is retained only for a future explicit version/re-acceptance decision. Record actual merge/deployment separately in [release decision](Phase_5_Release_Decision.csv). WP4 code rollback can use a coherent compatible accepted WP3 release; no database/evidence rollback or pre-collection code against later financial evidence.
 
-**Phase5 implementation scope is handed over; Phase5 is not declared closed until explicit Owner whole-phase acceptance.** Nothing is merged, deployed or moved to Phase6 by this report.
+**Phase 5 is Owner-accepted and closed on 12 November 2026.** The closure does not merge, deploy or begin Phase 6. See the dated decision and closure report for the current integration/evidence distinction.

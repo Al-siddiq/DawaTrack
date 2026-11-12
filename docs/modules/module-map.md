@@ -77,3 +77,7 @@ Sales `CommercialEvidence` now reads allocation-aware live balances; `ReturnServ
 CustomerDebt StatementEventQuery derives scoped credit/commercial adjustment/generic adjustment/payment events. StatementInput owns Shop-date ranges; StatementCursor seals encrypted versioned page state using the existing private deployment encryption seed. StatementQuery owns one read-only snapshot, generation/relevant-change binding, exact totals/carry and safe DTOs. DebtController adds only GET customers/{uuid}/statement. DebtPaymentRepository::verifiedAllocations is shared by receipts/statements; payment writers unchanged. customer-statement-panel/document own contextual Customers paging and complete labelled print preparation. [Detailed contracts](../Phase-5/Phase_5_WP4_Integration_Contracts.md). No statement persistence or Audit/change writes.
 
 WP4 also fixes shared `resources/js/api/http-client.js` signal handling: caller abort and existing request deadline both reach fetch; listeners removed afterwards. No financial request is automatically retried.
+
+## Phase 5 closure status
+
+The complete WP1–WP4 module delivery is [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md) on 12 November 2026, against application candidate `970ad2e39fdc7ae2a1201c985bc8d54d6952152e`. No module code changes accompany closure. Main integration/deployment and Phase6 planning remain separately governed; preserve immutable evidence and exact accepted inventory.

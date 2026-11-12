@@ -1,6 +1,6 @@
 # Phase 5 WP4 — statement operations and release handover
 
-Use [contracts](../Phase-5/Phase_5_WP4_Integration_Contracts.md), [native guide](../manual-verification-phase-05-wp4.md), [closure checklist](../Phase-5/Phase_5_Closure_Checklist.md) and [release decision](../Phase-5/Phase_5_Release_Decision.csv). WP3 accepted; WP4 and whole-phase acceptance pending.
+Use [contracts](../Phase-5/Phase_5_WP4_Integration_Contracts.md), [native guide](../manual-verification-phase-05-wp4.md), [closure checklist](../Phase-5/Phase_5_Closure_Checklist.md) and [release decision](../Phase-5/Phase_5_Release_Decision.csv). WP1–WP4 and the whole phase are [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md). Actual integration/deployment remains separate; prior native execution details not supplied are not invented.
 
 ## Deployment prerequisites
 

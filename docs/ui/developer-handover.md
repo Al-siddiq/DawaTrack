@@ -56,3 +56,7 @@ Recovery keys `dt:pending-debt-correction:{host}:{recovery_scope}` store only ki
 ## Phase 5 WP4 maintenance addendum
 
 CustomerDebtPanel delegates `#customers/debt/{uuid}/statement` to CustomerStatementPanel. Both view grants required; no new shell destination. CustomerStatementDocument owns page/full print labels, dates and signed totals. Tokens are opaque in component memory only; Previous-to-first uses server checkpoint, not a fresh unversioned read. Refresh resets tokens. Changed/offline/failed scope clears previous amounts; superseded reads ignored. Print preparation revalidates all pages, cancels safely and prints nothing incomplete;2000-record full-print bound never truncates paging. Private current total removed from app clone/Ctrl+P, details opened/restored. All money/running values stay server-owned strings. [API/cursor/source/privacy reference](../Phase-5/Phase_5_WP4_Integration_Contracts.md), [manual guide](../manual-verification-phase-05-wp4.md), [final closure gate](../Phase-5/Phase_5_Closure_Checklist.md).
+
+## Phase 5 closure handover
+
+WP1–WP4 and their UI extensions are [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md) on 12 November 2026. Preserve the accepted runtime/source/Print/recovery contracts and historical engineering evidence; individual observations not supplied are not manufactured. Closure changes documentation only, keeps the391-file application inventory intact, and does not merge/deploy or begin Phase6. See [release/rollback operations](../operations/phase-05-statements-release.md).

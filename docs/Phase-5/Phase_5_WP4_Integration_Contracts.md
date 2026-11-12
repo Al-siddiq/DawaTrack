@@ -1,6 +1,6 @@
 # Phase 5 WP4 — Customer statements and release handover
 
-12 November 2026 (Africa/Lagos). Implements the [approved WP4 plan](Phase_5_Implementation_Plan.md) and [binding WP1 statement contract §9](Phase_5_WP1_Integration_Contracts.md), following [WP3 Owner acceptance](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md). Native WP4 acceptance and whole-phase closure remain pending. No new financial writer, schema, library, reporting/export product, offline transport or Phase 6 feature.
+12 November 2026 (Africa/Lagos). Implements the [approved WP4 plan](Phase_5_Implementation_Plan.md) and [binding WP1 statement contract §9](Phase_5_WP1_Integration_Contracts.md), following [WP3 Owner acceptance](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md). WP4 and the whole phase are now Owner-accepted and closed; [dated decision](../acceptance/2026-11-12-phase-05-owner-closure.md). Historical delivery-workspace limitations remain distinct from that decision. No new financial writer, schema, library, reporting/export product, offline transport or Phase 6 feature.
 
 ## Sources and responsibility
 

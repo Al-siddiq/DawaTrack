@@ -1,5 +1,8 @@
 # Phase 5 — planned manual acceptance
 
+**Current programme status — 12 November 2026:** [Owner whole-phase acceptance is recorded](../acceptance/2026-11-12-phase-05-owner-closure.md); Phase 5 is closed. The planned checks below and historical delivery-workspace execution limits remain evidence references, not a reason to relabel missing individual observations Pass.
+
+
 11 November 2026 (Africa/Lagos). **Not executed; no Pass results recorded.** This is the minimum phase-level coverage. Each package must provide runnable, commit-specific steps and actual result rows for its cases; further cases discovered during implementation are added rather than substituted for these. Follow the [implementation plan](Phase_5_Implementation_Plan.md).
 
 ## Safe setup and evidence

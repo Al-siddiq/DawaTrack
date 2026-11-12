@@ -187,6 +187,6 @@ No production data repair, destructive rollback, deployment or business mutation
 
 ## 10. Approval and progression
 
-**Now:** UI programme closure is recorded and this Phase 5 plan is Owner-approved. WP1, WP2 and WP3 are Owner-accepted. WP4 is delivered for native statement/integrated manual review; whole-phase acceptance is pending. See [WP3 decision](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md) and [closure checklist](Phase_5_Closure_Checklist.md).
+**Now:** WP1–WP4 and the complete Phase 5 programme are **Owner-accepted and closed on 12 November 2026 (Africa/Lagos)**. See the [dated whole-phase decision](../acceptance/2026-11-12-phase-05-owner-closure.md), [closure report](Phase_5_Closure_Report.md) and updated source/evidence registers. Earlier package delivery-time pending wording is historical; individual native observations not supplied are not fabricated as Pass results.
 
-**Current authorized implementation scope:** WP4 only, after explicit WP3 acceptance on 12 November 2026. Phase 6 is not authorized; final Phase 5 acceptance and rollout remain separate. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.
+**Current authorized work:** record closure and preserve the accepted implementation/handover. No Phase 5 implementation package remains awaiting Owner acceptance. Main integration and deployment remain separate; PRs #39–#42 were observed open/unmerged at closure. The next roadmap boundary is Phase 6 — Financial Movements and Cash Accountability, requiring a separately approved package plan before implementation.

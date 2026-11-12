@@ -1,6 +1,6 @@
 # Phase 5 final Owner acceptance — template, not an acceptance record
 
-**Decision: Pending.** Fill only after review; copy to a dated acceptance record when the Owner gives the decision. Do not sign on the Owner's behalf.
+**Reusable template, now superseded for this delivery by the [actual Owner closure record](../acceptance/2026-11-12-phase-05-owner-closure.md).** Phase 5 is closed. The unfilled fields below are retained for a future explicit re-acceptance/version decision; they are not a pending gate for the accepted release. Do not sign on the Owner's behalf or fabricate unreported details.
 
 - Reviewed candidate commit / branch / PR:
 - Actual tested runtime commit and inventory hash:
