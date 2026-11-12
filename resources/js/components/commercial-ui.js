@@ -31,6 +31,7 @@ export const feedback = (error, notice) => [
     notice && h(UiAlert, { key: `notice:${notice}`, severity: 'success', message: notice, persistent: !['Customer saved.', 'Product saved.', 'Product created.', 'Low-stock level saved.'].includes(notice) }),
 ].filter(Boolean);
 const errorCopy = {
+    COLLECTION_DEPENDENCY: 'This bill has customer payments. Returning or cancelling it is not available yet. Keep the saved payment and ask the shop owner for help.',
     CUSTOMER_REQUIRED: 'Choose a customer because some of this sale is left unpaid.',
     CUSTOMER_INACTIVE: 'This customer is inactive. Choose an active customer.',
     PRODUCT_INACTIVE: 'This product is inactive. Remove it or choose an active product.',

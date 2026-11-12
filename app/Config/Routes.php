@@ -39,6 +39,10 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/opening-cash/(:segment)/review', 'Api\OpeningCashController::review/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/finalize', 'Api\OpeningCashController::finalize/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/abort', 'Api\OpeningCashController::abort/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments/preview', 'Api\DebtPaymentController::preview', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments', 'Api\DebtPaymentController::post', ['filter' => 'authenticated']);
+    $routes->get('shop/debt-payments/(:segment)', 'Api\DebtPaymentController::show/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/customers/(:segment)/debt-payments', 'Api\DebtPaymentController::history/$1', ['filter' => 'authenticated']);
     $routes->get('shop/debts', 'Api\DebtController::index', ['filter' => 'authenticated']);
     $routes->get('shop/customers/(:segment)/debt', 'Api\DebtController::customer/$1', ['filter' => 'authenticated']);
     $routes->get('shop/debt-bills/(:segment)', 'Api\DebtController::bill/$1', ['filter' => 'authenticated']);

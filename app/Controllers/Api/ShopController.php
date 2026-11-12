@@ -40,7 +40,11 @@ final class ShopController extends BaseController
 
             return $this->ok([
                 'role' => $context->role,
-                'current_user' => ['display_name' => (string) (auth()->user()?->username ?? 'Signed-in user')],
+                'current_user' => [
+                    'display_name' => (string) (auth()->user()?->username ?? 'Signed-in user'),
+                    // Browser marker namespace only; never an authorization credential.
+                    'recovery_scope' => hash('sha256', $shop['public_id'] . '|' . $context->userId),
+                ],
                 'shop' => $shop,
                 'permissions' => $permissions,
                 'capabilities' => [
@@ -53,6 +57,8 @@ final class ShopController extends BaseController
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
                     'view_customers' => $hasPermission('customer.view'),
                     'view_debt' => $hasPermission('customer.view') && $hasPermission('debt.view'),
+                    'collect_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record'),
+                    'allocate_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record') && $hasPermission('debt.payment.allocate'),
                     'view_sale_drafts' => $hasPermission('sale.view'),
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),

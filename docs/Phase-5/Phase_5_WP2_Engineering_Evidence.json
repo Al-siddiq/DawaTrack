@@ -1,0 +1,107 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Africa/Lagos",
+  "package": "Phase 5 WP2",
+  "owner_acceptance": "Pending manual verification",
+  "accepted_wp1_head": "cca53e90d68ba092d78c2f35fcf94fa5240ad317",
+  "implementation_scope": "Forward collection/allocation/receipt/history/same-ID recovery only; no WP3/WP4 writers",
+  "observed_checks": [
+    {
+      "command": "npm run build",
+      "result": "Passed; Frontend assets built.",
+      "dependency_changes": false,
+      "icon_symbols": 34,
+      "icon_raw_bytes": 17008,
+      "icon_gzip_bytes": 5102,
+      "warnings": "Existing Bootstrap/Sass deprecations"
+    },
+    {
+      "check": "App PHP8.3 grammar parser",
+      "files": 244,
+      "result": "Passed",
+      "native_php": false
+    },
+    {
+      "check": "Published JS parse/local import graph",
+      "modules": 44,
+      "edges": 127,
+      "result": "Passed"
+    },
+    {
+      "check": "Existing WP1 migration/raw SQL parity",
+      "pairs": 2,
+      "result": "Passed",
+      "wp2_migrations": 0,
+      "native_mysql": false
+    },
+    {
+      "check": "Scratch real Vue client-handler host probes with mocked responses",
+      "render_variants": 12,
+      "workflow_assertions": 11,
+      "vue_warnings": 0,
+      "result": "Passed",
+      "native_browser_http": false,
+      "coverage": [
+        "single save",
+        "committed lost reply and reload",
+        "status recovery without new POST",
+        "404 not conclusive/same-ID continuation",
+        "stale review retains input",
+        "exact kobo remainder",
+        "denied old broad grant",
+        "READ_ONLY no write",
+        "offline no queue",
+        "empty history",
+        "account namespace separation",
+        "Print handler privacy/cleanup",
+        "unknown-result navigation/reload warning"
+      ]
+    },
+    {
+      "check": "Prior WP1 host rendering regression",
+      "render_variants": 10,
+      "requests": 8,
+      "mutations": 0,
+      "result": "Passed",
+      "native_browser_http": false
+    },
+    {
+      "check": "Actual SQL query/projection structure on SQLite synthetic integer fixtures",
+      "new_receipt_allocation_scenarios": 4,
+      "existing_projection_scenarios": 9,
+      "result": "Passed",
+      "limitation": "Not MySQL, DECIMAL boundaries, PHP, transaction/concurrency or HTTP execution"
+    },
+    {
+      "command": "node scripts/build-ui-release-manifest.mjs --check --output=docs/Phase-5/Phase_5_WP2_Artifact_Manifest.json",
+      "result": "Passed",
+      "files": 376,
+      "sha256": "7455ee25e271bf54060af3de3c6c4bfc640eb6e1d315918dcda31a932ca1941f"
+    },
+    {
+      "check": "Documentation/manual/wording consistency and diff whitespace",
+      "result": "Passed",
+      "wording_entries": 688,
+      "new_wording_entries": 88,
+      "native_cases": "P5-11-P5-23 (results Pending)"
+    },
+    {
+      "check": "Clean archive without Git; 367 simulated CRLF text files restored to all 376 exact recorded raw files; real change + CRLF rejected without repair",
+      "result": "Passed",
+      "manifest_regenerated": false,
+      "native_Windows": false
+    }
+  ],
+  "native_not_executed": [
+    "PHP runtime",
+    "MySQL posting/DECIMAL/locks/rollback",
+    "Authenticated HTTP/session/permission/CSRF",
+    "Native Windows/phone/browser/keyboard/accessibility",
+    "Native Print preview",
+    "Deployment/rollback"
+  ],
+  "new_schema_or_dependencies": false,
+  "automated_framework_added": false,
+  "deployed": false,
+  "next_gate": "Owner WP2 manual acceptance before WP3"
+}

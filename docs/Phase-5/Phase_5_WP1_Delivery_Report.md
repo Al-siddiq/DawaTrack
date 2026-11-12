@@ -1,5 +1,7 @@
 # Phase 5 WP1 — Debt foundation and live balances
 
+> **Current decision, 12 November 2026:** Owner accepted WP1 and authorized WP2. [Acceptance record](../acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md) supersedes the delivery-time Pending decision below; it does not invent individual native case observations.
+
 **Delivered:** 11 November 2026 (Africa/Lagos). **Branch:** `codex/phase-5-wp1-debt-foundation-20261111`. **Status:** implementation candidate delivered for Owner manual verification; WP1 is not yet accepted. WP2–WP4 have not started.
 
 ## Result

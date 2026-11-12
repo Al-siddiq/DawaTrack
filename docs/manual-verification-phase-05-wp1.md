@@ -1,5 +1,7 @@
 # Phase 5 WP1 — manual verification and handover
 
+> **Current decision, 12 November 2026:** Owner accepted WP1 and authorized WP2. [Acceptance](acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md) supersedes this guide's delivery-time Pending wording; detailed individual case observations remain unreported.
+
 11 November 2026 (Africa/Lagos). **Implementation delivered for your verification; not yet Owner-accepted.** This package adds live read-only customer balances, schema and integration contracts. It does not let you receive/undo payments or correct bill amounts yet.
 
 ## 1. Update your development checkout

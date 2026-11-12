@@ -1,5 +1,7 @@
 # Phase 5 WP1 — integration contracts
 
+> **12 November 2026 update:** WP1 is Owner-accepted. The collection contract specified below is now delivered by [WP2](Phase_5_WP2_Integration_Contracts.md) for its separate manual gate. Historical 'future WP2/not implemented' descriptions below record WP1's delivery boundary; WP3/WP4 remain unimplemented.
+
 11 November 2026 (Africa/Lagos). **Plan approved by Owner; WP1 implemented for manual verification.** Only the three read routes below, schema, permissions and internal participants are implemented now. Later-package commands in this document are binding integration specifications, **not available endpoints**. See [plan](Phase_5_Implementation_Plan.md) and [approval](../acceptance/2026-11-11-phase-05-plan-owner-approval.md).
 
 ## 1. Ownership and implemented boundaries

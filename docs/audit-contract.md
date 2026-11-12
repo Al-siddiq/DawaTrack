@@ -106,3 +106,8 @@ sale.reversed and sale.replacement_prepared are reasoned aggregate SALE/sale act
 ## WP4-D — 2026-11-06
 
 D adds no financial Audit action: it uses the approved B/C aggregate actions and reasons, independently rechecked by the backend. Receipt/history/diagnostics reads create no business Audit or change effects. Uncertain outcomes use same-identity retrieval; preview/print are not posting. Diagnostic snapshot failures do not repair or mutate evidence.
+
+
+## Phase 5 WP2
+
+DEBT / debt_payment.recorded and debt_payment.allocated use resource debt_payment. Only these normal collection actions receive optional-reason policy; no user reason is fabricated. Parent event records exact financial totals and canonical command/allocation fingerprints; each allocation has a bounded causal child event (bill UUID/amount/order/before/after). All evidence and payment/allocation rows share the owning transaction and RequestContext correlation. Reads/preview/equivalent retry append no success evidence. New change resource debt_payment is published with affected Receivables and Tenant Customer context in one final batch. No domain work follows generation acquisition before commit. [WP2 contract](Phase-5/Phase_5_WP2_Integration_Contracts.md).

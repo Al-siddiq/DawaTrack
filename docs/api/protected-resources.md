@@ -39,3 +39,8 @@ The existing authenticated/scoped `GET /api/v1/shop/context` response additional
 ## Phase 5 WP1 debt reads
 
 Authenticated current-Shop `GET /api/v1/shop/debts`, `GET /api/v1/shop/customers/{uuid}/debt` and `GET /api/v1/shop/debt-bills/{uuid}` require both customer.view and debt.view, independently of legacy debt.manage. Standard private/no-store envelope and current scope/access checks apply. No WP1 debt mutation route exists. See [request/response/error contract](../Phase-5/Phase_5_WP1_Integration_Contracts.md#4-implemented-read-api).
+
+
+## Phase 5 WP2 payment API
+
+POST /api/v1/shop/debt-payments/preview and /debt-payments require customer.view + debt.view + debt.payment.record (plus debt.payment.allocate for explicit mode). GET /debt-payments/{uuid} and /customers/{uuid}/debt-payments require both view grants. Authenticated hostname/membership/CSRF and private/no-store conventions remain. No undo/adjust/statement writer is exposed. [Payloads, errors and recovery](../Phase-5/Phase_5_WP2_Integration_Contracts.md).

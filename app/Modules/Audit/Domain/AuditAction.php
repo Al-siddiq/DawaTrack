@@ -23,6 +23,8 @@ final class AuditAction
         'domain.tls_ready',
         'domain.verified',
         'identity.password_changed',
+        'debt_payment.recorded',
+        'debt_payment.allocated',
         'customer.created',
         'customer.updated',
         'customer.deactivated',

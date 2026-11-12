@@ -1,3 +1,4 @@
+import { DebtPaymentPanel } from './debt-payment-panel.js';
 import { apiRequest } from '../api/http-client.js';
 import { UiLoading, UiRecordList, UiInformationPanel, UiAlert } from './ui/index.js';
 import { selectField, facts } from './trading-ui.js';
@@ -9,9 +10,9 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{1
 const dateLabel = value => value ? new Intl.DateTimeFormat('en-NG', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${value}T12:00:00Z`)) : 'No due date';
 const signedMoney = value => value?.startsWith('-') ? `−${money(value.slice(1))}` : money(value);
 
-/** Online read-only balances. No collection/adjustment API or browser-persisted debt cache. */
+/** Live balances and contextual payment routes; payment commands stay owned by DebtPaymentPanel. */
 export const CustomerDebtPanel = {
-    props: { permissions: { type: Array, default: () => [] }, hash: { type: String, default: '#customers/debts' } },
+    props: { permissions: { type: Array, default: () => [] }, hash: { type: String, default: '#customers/debts' }, readOnly: { type: Boolean, default: true }, recoveryScope: { type: String, default: '' } },
     emits: ['navigate'],
     setup(props, { emit }) {
         const data = ref(null), busy = ref(false), error = ref(''), heading = ref(null), online = ref(navigator.onLine);
@@ -19,6 +20,13 @@ export const CustomerDebtPanel = {
         const pagination = reactive({ page: 1, per_page: 20, total: 0, total_pages: 0 });
         let generation = 0, controller = null, alive = true;
         const allowed = computed(() => has(props.permissions, 'customer.view') && has(props.permissions, 'debt.view'));
+        const paymentRoute = computed(() => {
+            const parts = props.hash.split('/');
+            if (parts[0] !== '#customers' || parts[1] !== 'debt' || !uuid.test(parts[2] || '')) return null;
+            if (parts.length === 4 && ['receive','payments'].includes(parts[3])) return { customer: parts[2], mode: parts[3] === 'receive' ? 'new' : 'history', payment: '' };
+            if (parts.length === 5 && parts[3] === 'payment' && uuid.test(parts[4] || '')) return { customer: parts[2], mode: 'receipt', payment: parts[4] };
+            return null;
+        });
         const route = computed(() => {
             if (props.hash === '#customers/debts') return { kind: 'customers' };
             const parts = props.hash.split('/');
@@ -33,7 +41,7 @@ export const CustomerDebtPanel = {
             const current = ++generation;
             controller?.abort(); controller = new AbortController();
             data.value = null; error.value = ''; busy.value = false;
-            if (!allowed.value) return;
+            if (!allowed.value || paymentRoute.value) return;
             if (!online.value) { error.value = 'You are offline. Connect to see the latest balances.'; return; }
             const target = route.value;
             if (target.kind === 'invalid') { error.value = 'This bill link is incomplete. Go back to the customer list.'; return; }
@@ -87,7 +95,7 @@ export const CustomerDebtPanel = {
                 action('View bill', () => go(`#customers/debt/${customer}/bill/${bill.public_id}`), busy.value || !online.value),
             ].filter(Boolean));
         }
-        return () => h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': busy.value }, [
+        return () => paymentRoute.value ? h(DebtPaymentPanel, { customerId: paymentRoute.value.customer, paymentId: paymentRoute.value.payment, mode: paymentRoute.value.mode, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }) : h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': busy.value }, [
             h('h2', { ref: heading, tabindex: '-1' }, route.value.kind === 'bill' ? 'Bill details' : 'Money customers owe'),
             action('Back to customer records', () => go('#customers'), false, 'btn-outline-primary', { icon: 'back' }),
             route.value.kind !== 'customers' && action('Back to balances', () => go('#customers/debts')),
@@ -114,6 +122,8 @@ export const CustomerDebtPanel = {
                 data.value && route.value.kind === 'customer' && [
                     h('h3', data.value.customer.display_name),
                     data.value.customer.status === 'INACTIVE' && h('p', 'This customer is inactive. Their past bills are kept.'),
+                    has(props.permissions, 'debt.payment.record') && action('Receive payment', () => go(`#customers/debt/${data.value.customer.public_id}/receive`), busy.value || !online.value || props.readOnly, 'btn-primary', { icon: 'cash' }),
+                    action('View customer payments', () => go(`#customers/debt/${data.value.customer.public_id}/payments`), busy.value || !online.value),
                     balanceSummary(data.value.summary), h('p', 'The customer total includes every bill. The filter below changes only the bill list.'), filters(false),
                     h(UiRecordList, { records: data.value.bills, emptyTitle: 'No matching bills', emptyMessage: 'Try a different balance filter. A customer may also have no credit bills.' }, {
                         record: ({ record }) => billCard(record, data.value.customer.public_id),

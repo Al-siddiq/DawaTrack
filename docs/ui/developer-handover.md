@@ -41,3 +41,8 @@ Raw-byte manifests intentionally identify one content set and do not certify PHP
 ## Phase 5 WP1 maintenance addendum
 
 CustomerPanel delegates debt hashes to `components/customer-debt-panel.js` through existing workspace navigation. The component reads only GET endpoints, aborts/ignores superseded reads and clears data on failed/offline refresh; no balance cache or mutation controller is introduced. Server `DebtQuery` uses one read-only snapshot and exact signed SQL projection. See [WP1 contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md). The operational inventory script now supports `--output=docs/Phase-5/Phase_5_WP1_Artifact_Manifest.json` so later releases do not overwrite the accepted UI4 artifact record. Pass the same option when checking a package inventory. Existing default remains the historical UI4 inventory.
+
+
+## Phase 5 WP2 maintenance addendum
+
+CustomerDebtPanel routes receive/history/payment hashes to `components/debt-payment-panel.js`; `debt-payment-receipt.js` owns the filtered print copy and server-sourced historical/current balance labels. Panel uses the shared guarded navigation, no Router or new framework. It retains only pending payment/Customer UUIDs in per-host/user/Shop sessionStorage; never store command bodies, amounts, reasons, bank references or credentials there. Never replace an unresolved UUID with a new one or treat404 as conclusive non-commit. All amount/review/permission checks remain server-owned. [Exact API/lock/recovery/privacy contracts](../Phase-5/Phase_5_WP2_Integration_Contracts.md).

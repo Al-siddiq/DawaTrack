@@ -97,3 +97,8 @@ Apply after all accepted Phase 4 migrations. Two new ordered migrations only:
 No previous migration/table is edited or recreated. Existing `receivable_adjustments` is reused. Shield actor FK remains `INT UNSIGNED`; domain IDs are `BIGINT UNSIGNED`. No aggregate CHECK is claimed: allocation sums, same-Customer attribution and matching compensations are owning-service invariants. WP1 exposes no collection writer.
 
 Native MySQL apply/constraint verification remains an Owner development gate. DDL implicitly commits; identify/back up the database before applying. Do not execute raw SQL in addition to Spark migrations. If unrecorded DDL leaves a partial table, inspect/recover a disposable copy instead of forging migration history. Rollback only empty new-table development copies in child→parent order; never delete accepted financial evidence to undo deployment. See [WP1 setup/manual guide](../manual-verification-phase-05-wp1.md) and [contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md).
+
+
+## Phase 5 WP2 — no new migration
+
+Collection uses the accepted WP1 debt_payments/debt_payment_allocations tables and existing Receivables/Audit/sync_changes. Reason/review/replay evidence uses bounded immutable Audit metadata, without a command-hash/status/wallet table or receipt snapshot column. No existing migration/raw SQL is rewritten. Equivalent retries do not change accepted rows. Do not drop payment tables to roll back code after collections; see [collection operations](../operations/phase-05-debt-collection.md).

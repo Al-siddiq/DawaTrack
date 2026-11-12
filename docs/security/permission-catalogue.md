@@ -72,3 +72,8 @@ Integrated UI controls follow sale.return/sale.reverse/sale.record independently
 ## Phase 5 WP1 — read-only debt foundation
 
 `debt.view` + `customer.view` authorize current-Shop customer/bill balance GETs. `debt.manage` remains recognized for compatibility but grants no shortcut. New `debt.payment.allocate`, `debt.adjust`, `debt.payment.reverse` are independently registered for their future owning commands; WP1 has no collection/adjust/reverse routes. Existing `debt.payment.record` is not sufficient to read or explicitly allocate on its own. Staff grants are never expanded automatically. Owner derives known-code authority. Debt output contains no private Customer phone/notes/cost/profit; existing private-detail policies remain separate. READ_ONLY reads remain allowed, BLOCKED/CLOSED and inactive membership/host scope deny. [Exact matrix and package boundaries](../Phase-5/Phase_5_WP1_Integration_Contracts.md).
+
+
+## Phase 5 WP2 — collection and receipts
+
+customer.view + debt.view authorize scoped receipt/status/history reads. Add debt.payment.record for ordinary preview/post and debt.payment.allocate for EXPLICIT selection. All are rechecked through the owning current-FULL transaction; READ_ONLY reads remain available. debt.manage/customer.private/adjust/reverse do not imply collection. Shop context exposes matching collect_debt_payments/allocate_debt_payments hints; backend authority remains decisive. New recovery_scope is an opaque user/Shop browser-marker namespace, never a token or permission. [WP2 exact contract](../Phase-5/Phase_5_WP2_Integration_Contracts.md).

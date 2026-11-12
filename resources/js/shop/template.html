@@ -13,7 +13,7 @@
       </nav>
     <OpeningCashPanel v-if="page==='opening-cash' && context.capabilities.manage_opening_cash" :read-only="readOnly" />
 
-    <CustomerPanel v-if="page==='customers' && context.capabilities.view_customers" :permissions="context.permissions" :read-only="readOnly" :hash="workspaceNavigation.hash.value" @navigate="workspaceNavigation.request($event)" />
+    <CustomerPanel v-if="page==='customers' && context.capabilities.view_customers" :permissions="context.permissions" :read-only="readOnly" :hash="workspaceNavigation.hash.value" :recovery-scope="context.current_user?.recovery_scope||''" @navigate="workspaceNavigation.request($event)" />
     <SaleHistoryPanel v-if="page==='sale-history' && context.capabilities.view_sale_drafts" :permissions="context.permissions" :read-only="readOnly" />
     <SaleDraftPanel v-if="page==='sale-drafts' && context.capabilities.view_sale_drafts" :permissions="context.permissions" :read-only="readOnly" />
 

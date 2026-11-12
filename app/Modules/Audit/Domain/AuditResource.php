@@ -10,6 +10,7 @@ final class AuditResource
 {
     private const TYPES = [
         'platform_admin_authentication',
+        'debt_payment',
         'customer',
         'sale',
         'product',
