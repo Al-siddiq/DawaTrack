@@ -6,7 +6,6 @@ namespace App\Modules\CustomerDebt\Infrastructure;
 
 use App\Exceptions\ApiException;
 use App\Modules\CustomerDebt\Domain\DebtAmount;
-use App\Modules\CustomerDebt\Application\DebtPaymentInput;
 use App\Modules\Sales\Application\{CommercialAccess, DraftInput};
 use App\Modules\TenantShop\Infrastructure\ShopContext;
 use CodeIgniter\Database\BaseConnection;
@@ -23,14 +22,7 @@ final class DebtPaymentQuery
             $row = $repository->payment($context, DraftInput::uuid($id));
             if (!$row) throw new ApiException('DEBT_PAYMENT_NOT_FOUND', 'This payment is not saved yet. Check again before recording another payment.', 404);
             $evidence = $repository->recordedEvidence($context, $row['public_id']);
-            $allocations = $repository->allocations($context, (int) $row['id']);
-            $signature = DebtPaymentInput::fingerprint(array_map(static fn(array $a): array => [
-                'receivable_public_id' => $a['receivable_public_id'], 'amount' => (string) $a['amount'], 'allocation_order' => (int) $a['allocation_order'],
-            ], $allocations));
-            if (!hash_equals((string) ($evidence['metadata']['allocation_fingerprint'] ?? ''), $signature)
-                || DebtAmount::compare(DebtAmount::sum(array_column($allocations, 'amount')), (string) $row['amount']) !== 0) {
-                throw new ApiException('DEBT_EVIDENCE_INVALID', 'This payment needs checking. Ask the shop owner for help.', 409);
-            }
+            $allocations = $repository->verifiedAllocations($context, $row, $evidence['metadata']);
             $bills = $repository->balances($context, (int) $row['customer_id']);
             return $this->header($row) + [
                 'customer_public_id' => $row['customer_public_id'], 'customer_name' => $row['customer_name'],
@@ -39,10 +31,7 @@ final class DebtPaymentQuery
                 'corrects_public_id' => $evidence['metadata']['corrects_public_id'] ?? null,
                 'inverse_public_id' => $evidence['metadata']['inverse_public_id'] ?? null,
                 'shop_name' => $row['shop_name'], 'recorded_by' => $row['recorded_by'] ?: 'Shop user',
-                'allocations' => array_map(static fn(array $a): array => [
-                    'receivable_public_id' => $a['receivable_public_id'], 'sale_public_id' => $a['sale_public_id'],
-                    'amount' => (string) $a['amount'], 'allocation_order' => (int) $a['allocation_order'],
-                ], $allocations),
+                'allocations' => $allocations,
                 'customer_balance_before' => (string) $evidence['metadata']['customer_balance_before'],
                 'customer_balance_after' => (string) $evidence['metadata']['customer_balance_after'],
                 'current_customer_balance' => DebtAmount::sum(array_column($bills, 'outstanding_amount')),

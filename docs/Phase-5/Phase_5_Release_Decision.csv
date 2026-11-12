@@ -1,0 +1,6 @@
+decision,status,candidate_commit,tested_runtime_commit,inventory_hash,environment,approver,decision_date,evidence_reference,notes
+WP4 manual acceptance,Pending,,,,,,,docs/operations/phase-05-statements-release.md,Record concrete SHA and actual native results
+Phase 5 whole-phase closure,Pending,,,,,,,docs/operations/phase-05-statements-release.md,Requires explicit Owner final decision; no Phase6 implementation implied
+Main integration,Not performed,,,,,,,docs/operations/phase-05-statements-release.md,Accepted prerequisite PRs may still be open; inspect actual main tree
+Production deployment,Not performed,,,,,,,docs/operations/phase-05-statements-release.md,Separate authorization; backup/key/coherent assets/native smoke observations required
+Rollback readiness,Documented; target rehearsal pending,,,,,,,docs/operations/phase-05-statements-release.md,Compatible complete accepted WP3 code/assets; no DB/evidence rollback

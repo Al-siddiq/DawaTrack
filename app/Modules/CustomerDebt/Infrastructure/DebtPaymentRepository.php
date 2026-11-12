@@ -76,6 +76,23 @@ final class DebtPaymentRepository
         )->getResultArray();
     }
 
+    /** Safe public allocation DTO shared by receipts and statement rows. */
+    public function verifiedAllocations(ShopContext $context, array $payment, array $metadata): array
+    {
+        $rows = $this->allocations($context, (int) $payment['id']);
+        $signature = \App\Modules\CustomerDebt\Application\DebtPaymentInput::fingerprint(array_map(static fn(array $a): array => [
+            'receivable_public_id' => $a['receivable_public_id'], 'amount' => (string) $a['amount'], 'allocation_order' => (int) $a['allocation_order'],
+        ], $rows));
+        if (!hash_equals((string) ($metadata['allocation_fingerprint'] ?? ''), $signature)
+            || \App\Modules\CustomerDebt\Domain\DebtAmount::compare(\App\Modules\CustomerDebt\Domain\DebtAmount::sum(array_column($rows, 'amount')), (string) $payment['amount']) !== 0) {
+            throw new ApiException('DEBT_EVIDENCE_INVALID', 'This payment needs checking. Ask the shop owner for help.', 409);
+        }
+        return array_map(static fn(array $a): array => [
+            'receivable_public_id' => $a['receivable_public_id'], 'sale_public_id' => $a['sale_public_id'],
+            'amount' => (string) $a['amount'], 'allocation_order' => (int) $a['allocation_order'],
+        ], $rows);
+    }
+
     public function recordedEvidence(ShopContext $context, string $id): array
     {
         $audit = $this->database->table('audit_events')->select('change_metadata,reason')

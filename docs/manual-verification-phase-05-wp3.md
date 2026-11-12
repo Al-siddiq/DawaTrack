@@ -1,5 +1,8 @@
 # Phase 5 WP3 — native manual verification
 
+**Progression update, 12 November 2026:** [Owner accepted WP3](acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md) and authorized WP4. Delivery-time pending and future-package statements below are historical. Individual native outcomes were not supplied; WP4 and whole-phase acceptance remain separate.
+
+
 Candidate branch: `codex/phase-5-wp3-debt-corrections-20261112`, based on accepted WP2 `c2b86f9574a591da926cc3bdf6832f44294d3834`. Record the actual branch commit with `git rev-parse HEAD` before reviewing. Date:12 November2026 (Africa/Lagos). **Native cases below are Pending; this guide is not evidence of execution.**
 
 Use an isolated backed-up XAMPP/development database and synthetic Customers/products only. Do not reset production, delete evidence, bypass Cash/stock guards or restore an earlier DB over later accepted events. Accepted WP1/WP2 prerequisites are included; main was still behind them when this branch started. [Contracts](Phase-5/Phase_5_WP3_Integration_Contracts.md) · [operations/recovery](operations/phase-05-debt-corrections.md) · [results](Phase-5/Phase_5_WP3_Manual_Results.csv).

@@ -1,5 +1,8 @@
 # Phase 5 WP3 — corrections and returns after repayment
 
+**Progression update, 12 November 2026:** [Owner accepted WP3](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md) and authorized WP4. Delivery-time pending and future-package statements below are historical. Individual native outcomes were not supplied; WP4 and whole-phase acceptance remain separate.
+
+
 12 November2026 (Africa/Lagos). **Delivered for Owner native manual acceptance; not accepted/merged/deployed by this report.**
 
 WP2 acceptance is [recorded separately](../acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md). WP3 branch `codex/phase-5-wp3-debt-corrections-20261112` starts from accepted WP2 `c2b86f9574a591da926cc3bdf6832f44294d3834`. PR #40 was still open and main at `b41425f905100a728a4c6167d5df936702a8502a` when progression was checked. This branch includes accepted prerequisite commits and targets main directly; acceptance does not imply their integration. Capture final candidate SHA from the PR or `git rev-parse HEAD` in the manual register.

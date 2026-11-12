@@ -130,7 +130,9 @@ Replace the current allocation guard, original-receipt-only capacity, original-c
 
 Reject collection reversal while an effective dependent refund would duplicate returned money or invalidate current evidence. Show dependencies/safe correction order. Direct exact cancellation of a collected Sale still requires dependencies safely undone; regular eligible returns after collection must work. Keep existing stock quantities, historical cost/profit and Inventory exact-reversal guards. These changes require native collected-return/correction acceptance before phase closure.
 
-## 9. Binding statement contract — WP4, not implemented
+## 9. Binding statement contract — implemented in WP4
+
+Current implementation: [WP4 contracts](Phase_5_WP4_Integration_Contracts.md). The following binding scope was established at WP1; it is no longer a future unimplemented feature.
 
 GET `/customers/{uuid}/statement` with optional `from_date`/`to_date` Shop calendar dates, `per_page` max50 and opaque cursor. Scope/customer/view grants are mandatory. Filter accepted posting dates converted to UTC with correct Shop-local boundaries. Display occurrence time separately. Order atomic business events by `(posted_at,event_kind_rank,internal_id)` with fixed rank CREDIT=1, ADJUSTMENT=2, PAYMENT=3; one payment row carries its allocations, and one commercial return event groups related bill adjustments rather than counting total plus allocation twice.
 

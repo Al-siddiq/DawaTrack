@@ -115,3 +115,7 @@ DEBT / debt_payment.recorded and debt_payment.allocated use resource debt_paymen
 ## Phase 5 WP3 typed debt corrections
 
 Activate required-reason DEBT actions debt_payment.reversed, debt_payment.corrected, receivable.adjusted, receivable.adjustment_reversed; resource receivable_adjustment joins the closed catalogue and sync type. Existing debt_payment.recorded/allocated optional reasons remain optional. Shared append participant emits one parent plus allocation children per payment; exact inverse retains original bill/order/amount and public source link. Atomic correction adds original/inverse/replacement links, one canonical request correlation, no cross-request forged identity, and publishes once after both halves/Audit. Adjustment metadata stores bounded command hash, signed amount and historical totals/bill links. Metadata limits remain40 entries/16KiB; never log the whole200-bill body. No raw Audit metadata/hash or private reason in customer print. See [WP3 contract](Phase-5/Phase_5_WP3_Integration_Contracts.md).
+
+## Phase 5 WP4 read-only statement boundary
+
+Statement reads, pagination/checkpoint creation, Print preparation and refresh perform SELECT only, no success Audit/sync/domain writes. Existing accepted debt writers retain required parent/allocation/correction Audit. Shared verifiedAllocations validates payment amount/hash and returns safe bill explanations without exposing Audit metadata/reason. Statement replay/refresh does not invent a balancing event or financial evidence.

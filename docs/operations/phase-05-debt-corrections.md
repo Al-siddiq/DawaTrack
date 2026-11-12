@@ -1,5 +1,8 @@
 # Phase 5 WP3 operational handover
 
+**Progression update, 12 November 2026:** [Owner accepted WP3](../acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md) and authorized WP4. Delivery-time pending and future-package statements below are historical. Individual native outcomes were not supplied; WP4 and whole-phase acceptance remain separate.
+
+
 Use [contracts](../Phase-5/Phase_5_WP3_Integration_Contracts.md), [manual guide](../manual-verification-phase-05-wp3.md), [delivery report](../Phase-5/Phase_5_WP3_Delivery_Report.md). WP2 accepted; WP3 native acceptance pending.
 
 Deploy a coherent reviewed backend/source-generated asset set, with WP1 tables already migrated. No new DDL or dependency. Existing runtime SELECT/INSERT rights now also cover `receivable_adjustments` (and existing Audit/change tables); keep ordinary UPDATE/DELETE on immutable financial evidence unavailable. Close older trading tabs; hard reload. Do not run an older server that ignores collection/refund dependencies against new accepted records. No merge, deployment or production data repair has been performed by this package.

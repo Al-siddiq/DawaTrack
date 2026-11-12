@@ -106,3 +106,7 @@ Collection uses the accepted WP1 debt_payments/debt_payment_allocations tables a
 ## Phase 5 WP3 — no migration
 
 Reuses accepted WP1 debt_payments/debt_payment_allocations and existing receivable_adjustments unchanged. Service-level exact inverse/same-Customer/sum/no-chain/refund-dependency checks complement existing unique links/scoped FKs; no cross-row CHECK claim. Optional operation UUID argument to the adjustment participant changes no column. Audit/causal correlation identifies atomic pair without a replacement/status/balance column. Existing paired raw SQL is unchanged; destructive rollback of accepted evidence remains prohibited. Runtime needs SELECT/INSERT only for immutable correction evidence plus existing Audit/change rights.
+
+## Phase 5 WP4 — no migration
+
+Statements derive from existing Receivables, signed adjustments, payment headers/allocations, Sales and active generation/scoped changes in a read-only snapshot. No statement/cursor table, materialized balance/status, modified FK or new permission seed. Existing paired WP1 SQL unchanged. Page tokens carry sealed state rather than Phase10 cursor storage. Runtime reads need existing SELECT rights; deployment encryption.key remains private configuration outside the inventory.

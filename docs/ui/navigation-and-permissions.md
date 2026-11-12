@@ -26,3 +26,7 @@ The server embeds Admin permission hints using the same Shield user.can() checks
 ## Phase 5 WP3 contextual routes
 
 Within Customers, `#customers/debt/{customer}/payment/{payment}/reverse` and `/correct` require reverse; corrected replacement additionally record, and allocate for selected bills. `#customers/debt/{customer}/bill/{bill}/adjust` requires adjust; `/changes` is read-only history. `#customers/debt/{customer}/adjustment/{change}` reads a saved change; `/reverse` requires adjust and an eligible non-Sales original. Every path independently requires customer.view + debt.view on server. No new sidebar/bottom item or hidden blanket debt.manage authority. READ_ONLY/offline disables saves; saved status reads remain available when authorized and online. Shared shell/navigation guard owns unknown-result and unsaved-form transitions.
+
+## Phase 5 WP4 contextual statement
+
+`#customers/debt/{customer}/statement` is within Customers; View customer statement appears on Customer bills and bill detail. customer.view + debt.view independently enforced on server. Read-only date/page/Print utilities, no new bottom/sidebar item, no collect/reverse/adjust authority. Global money-recovery navigation guards continue to block leaving unresolved commands; statement reads create no pending-money marker. Page tokens are not stored in URLs/localStorage/sessionStorage or used as authentication.

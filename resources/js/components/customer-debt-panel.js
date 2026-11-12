@@ -1,3 +1,4 @@
+import { CustomerStatementPanel } from './customer-statement-panel.js';
 import { DebtCorrectionPanel } from './debt-correction-panel.js';
 import { DebtPaymentPanel } from './debt-payment-panel.js';
 import { apiRequest } from '../api/http-client.js';
@@ -21,6 +22,10 @@ export const CustomerDebtPanel = {
         const pagination = reactive({ page: 1, per_page: 20, total: 0, total_pages: 0 });
         let generation = 0, controller = null, alive = true;
         const allowed = computed(() => has(props.permissions, 'customer.view') && has(props.permissions, 'debt.view'));
+        const statementRoute = computed(() => {
+            const p = props.hash.split('/');
+            return p.length === 4 && p[0] === '#customers' && p[1] === 'debt' && uuid.test(p[2] || '') && p[3] === 'statement' ? p[2] : null;
+        });
         const correctionRoute = computed(() => {
             const p = props.hash.split('/');
             if (p[0] !== '#customers' || p[1] !== 'debt' || !uuid.test(p[2] || '') || !uuid.test(p[4] || '')) return null;
@@ -50,7 +55,7 @@ export const CustomerDebtPanel = {
             const current = ++generation;
             controller?.abort(); controller = new AbortController();
             data.value = null; error.value = ''; busy.value = false;
-            if (!allowed.value || paymentRoute.value || correctionRoute.value) return;
+            if (!allowed.value || paymentRoute.value || correctionRoute.value || statementRoute.value) return;
             if (!online.value) { error.value = 'You are offline. Connect to see the latest balances.'; return; }
             const target = route.value;
             if (target.kind === 'invalid') { error.value = 'This bill link is incomplete. Go back to the customer list.'; return; }
@@ -104,7 +109,7 @@ export const CustomerDebtPanel = {
                 action('View bill', () => go(`#customers/debt/${customer}/bill/${bill.public_id}`), busy.value || !online.value),
             ].filter(Boolean));
         }
-        return () => correctionRoute.value ? h(DebtCorrectionPanel, { customerId: correctionRoute.value.customer, sourceId: correctionRoute.value.source, kind: correctionRoute.value.kind, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }) : paymentRoute.value ? h(DebtPaymentPanel, { customerId: paymentRoute.value.customer, paymentId: paymentRoute.value.payment, mode: paymentRoute.value.mode, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }) : h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': busy.value }, [
+        return () => statementRoute.value ? h(CustomerStatementPanel, { customerId: statementRoute.value, permissions: props.permissions, onNavigate: go }) : correctionRoute.value ? h(DebtCorrectionPanel, { customerId: correctionRoute.value.customer, sourceId: correctionRoute.value.source, kind: correctionRoute.value.kind, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }) : paymentRoute.value ? h(DebtPaymentPanel, { customerId: paymentRoute.value.customer, paymentId: paymentRoute.value.payment, mode: paymentRoute.value.mode, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }) : h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': busy.value }, [
             h('h2', { ref: heading, tabindex: '-1' }, route.value.kind === 'bill' ? 'Bill details' : 'Money customers owe'),
             action('Back to customer records', () => go('#customers'), false, 'btn-outline-primary', { icon: 'back' }),
             route.value.kind !== 'customers' && action('Back to balances', () => go('#customers/debts')),
@@ -133,6 +138,7 @@ export const CustomerDebtPanel = {
                     data.value.customer.status === 'INACTIVE' && h('p', 'This customer is inactive. Their past bills are kept.'),
                     has(props.permissions, 'debt.payment.record') && action('Receive payment', () => go(`#customers/debt/${data.value.customer.public_id}/receive`), busy.value || !online.value || props.readOnly, 'btn-primary', { icon: 'cash' }),
                     action('View customer payments', () => go(`#customers/debt/${data.value.customer.public_id}/payments`), busy.value || !online.value),
+                    action('View customer statement', () => go(`#customers/debt/${data.value.customer.public_id}/statement`), busy.value || !online.value),
                     balanceSummary(data.value.summary), h('p', 'The customer total includes every bill. The filter below changes only the bill list.'), filters(false),
                     h(UiRecordList, { records: data.value.bills, emptyTitle: 'No matching bills', emptyMessage: 'Try a different balance filter. A customer may also have no credit bills.' }, {
                         record: ({ record }) => billCard(record, data.value.customer.public_id),
@@ -149,6 +155,7 @@ export const CustomerDebtPanel = {
                         ['Still to pay', money(data.value.outstanding_amount)], ['Due date', dateLabel(data.value.due_date)],
                     ]),
                     h('p', 'A return can reduce a bill without being a payment. The original sale receipt keeps the amounts recorded at the time.'),
+                    action('View customer statement', () => go(`#customers/debt/${route.value.customer}/statement`), busy.value || !online.value),
                     action('View bill changes', () => go(`#customers/debt/${route.value.customer}/bill/${data.value.public_id}/changes`)),
                     has(props.permissions, 'debt.adjust') && action('Change bill amount', () => go(`#customers/debt/${route.value.customer}/bill/${data.value.public_id}/adjust`), props.readOnly || !online.value),
                     action('Back to this customer’s bills', () => go(`#customers/debt/${route.value.customer}`)),
