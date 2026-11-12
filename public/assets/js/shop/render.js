@@ -123,8 +123,9 @@ export function render(_ctx, _cache) {
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly,
                       hash: _ctx.workspaceNavigation.hash.value,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
                       onNavigate: _cache[2] || (_cache[2] = $event => (_ctx.workspaceNavigation.request($event)))
-                    }, null, 8 /* PROPS */, ["permissions", "read-only", "hash"]))
+                    }, null, 8 /* PROPS */, ["permissions", "read-only", "hash", "recovery-scope"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='sale-history' && _ctx.context.capabilities.view_sale_drafts)
                   ? (_openBlock(), _createBlock(_component_SaleHistoryPanel, {

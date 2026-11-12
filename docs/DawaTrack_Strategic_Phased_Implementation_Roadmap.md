@@ -352,6 +352,8 @@ Debt collection/allocation, expenses, net profit, bank reconciliation or complet
 
 ## Phase 5 — Debt Collection and Customer Statements
 
+**Status — 12 November 2026:** Owner accepted the complete four-package delivery and closed Phase 5. See [dated closure](acceptance/2026-11-12-phase-05-owner-closure.md). Accepted candidate `970ad2e39fdc7ae2a1201c985bc8d54d6952152e`; actual main integration/deployment remains separately recorded. Phase 6 requires its own approved plan before implementation.
+
 ### Objective
 Complete the approved customer-debt lifecycle with accountable allocation and correction.
 

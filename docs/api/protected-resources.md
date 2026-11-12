@@ -39,3 +39,16 @@ The existing authenticated/scoped `GET /api/v1/shop/context` response additional
 ## Phase 5 WP1 debt reads
 
 Authenticated current-Shop `GET /api/v1/shop/debts`, `GET /api/v1/shop/customers/{uuid}/debt` and `GET /api/v1/shop/debt-bills/{uuid}` require both customer.view and debt.view, independently of legacy debt.manage. Standard private/no-store envelope and current scope/access checks apply. No WP1 debt mutation route exists. See [request/response/error contract](../Phase-5/Phase_5_WP1_Integration_Contracts.md#4-implemented-read-api).
+
+
+## Phase 5 WP2 payment API
+
+POST /api/v1/shop/debt-payments/preview and /debt-payments require customer.view + debt.view + debt.payment.record (plus debt.payment.allocate for explicit mode). GET /debt-payments/{uuid} and /customers/{uuid}/debt-payments require both view grants. Authenticated hostname/membership/CSRF and private/no-store conventions remain. No undo/adjust/statement writer is exposed. [Payloads, errors and recovery](../Phase-5/Phase_5_WP2_Integration_Contracts.md).
+
+## Phase 5 WP3 protected correction resources
+
+See [method/body/authority table](../Phase-5/Phase_5_WP3_Integration_Contracts.md). Ten new routes under `/api/v1/shop`: payment reversal-preview/reverse/correction-preview/correct; bill adjustment-preview/adjustments POST; adjustment reversal-preview/reverse; adjustment GET and bill adjustments GET. Read grants are customer.view + debt.view. Reverse requires debt.payment.reverse; atomic replacement also debt.payment.record and explicit allocation grant independently; bill adjustment/inverse requires debt.adjust. FULL/membership/CSRF apply to writes, including previews. No blanket debt.manage bypass. Strict UUID/reason/decimal/state fingerprint;409 for stale/conflict/dependency,422 invalid input,403 denied,404 absent scoped status. No new generic mutation/statement endpoint. Unknown outcome status reads remain available to authorized READ_ONLY users.
+
+## Phase 5 WP4 statement resource
+
+GET `/api/v1/shop/customers/{uuid}/statement`: customer.view + debt.view/current Shop context. Optional Shop-calendar from_date/to_date, per_page1–50(default20), opaque cursor. READ_ONLY reads; no POST or implicit sale/private/correction grant. Fresh read-only snapshot; opening/range/current totals and exact running page values. Authenticated encrypted page/checkpoint tokens bind scope/user/range/size/timezone/version; changes/expiry return STATEMENT_REFRESH_REQUIRED409, invalid/tampered token422, missing private key/OpenSSL STATEMENT_SETUP_REQUIRED503. Cursor grants no authority. No internal IDs/cost/private notes/Audit hashes/reasons/secret in public DTO. [Complete body/ordering/secret/privacy contract](../Phase-5/Phase_5_WP4_Integration_Contracts.md).

@@ -6,7 +6,7 @@
 
 Use [developer handover](developer-handover.md), [release/rollback guide](release-handover.md) and the existing component/navigation/wording references below for maintenance. The release decision now records the Owner's final acceptance and reported rollout separately from unknown hosting details. Prior delivery reports and manual checklists are historical references, not current Pending programme decisions.
 
-The [Phase 5 implementation plan](../Phase-5/Phase_5_Implementation_Plan.md) proposes four manually accepted packages for live debt balances, collection, corrections/return integration and customer statements. The Owner approved it and authorized WP1 only. [WP1 delivery](../Phase-5/Phase_5_WP1_Delivery_Report.md) and [manual guide](../manual-verification-phase-05-wp1.md) cover the new read-only Customer balances. WP1 acceptance remains pending.
+The [Phase 5 implementation plan](../Phase-5/Phase_5_Implementation_Plan.md) proposes four manually accepted packages for live debt balances, collection, corrections/return integration and customer statements. The Owner approved it and authorized WP1 only. [WP1 delivery](../Phase-5/Phase_5_WP1_Delivery_Report.md) and [manual guide](../manual-verification-phase-05-wp1.md) cover the new read-only Customer balances. WP1 is Owner-accepted; WP2 is delivered for its separate manual gate.
 
 ## Review the delivered foundation
 
@@ -59,3 +59,8 @@ The 18 designs are representative, not a substitute for the full task inventory.
 ## Phase 5 WP1 extension
 
 Customers now has a contextual **Money customers owe** view, Customer bill list and bill detail; no extra bottom destination or collection button. Uses existing shared components, guarded hashes, local cash/back/search/refresh icons and plain-language labels. `customer.view` + `debt.view` are required on server and component. The existing UI programme acceptance is unchanged; WP1 receives its own manual acceptance. [Implementation and future integration contract](../Phase-5/Phase_5_WP1_Integration_Contracts.md).
+
+
+## Phase 5 WP2 collection extension
+
+Inside Customer bills, Receive payment opens exact review/confirm, automatic/explicit allocation and receipt/history using shared components/icons. A same-ID unknown-result flow and minimal scoped tab marker protect retries; no offline queue. [WP2 developer contract](../Phase-5/Phase_5_WP2_Integration_Contracts.md), [operations](../operations/phase-05-debt-collection.md) and [native checklist P5-11–P5-23](../manual-verification-phase-05-wp2.md). Use the new WP2 artifact inventory path when checking its release. Previous UI programme/WP1 acceptance does not pre-accept WP2.

@@ -72,3 +72,16 @@ Integrated UI controls follow sale.return/sale.reverse/sale.record independently
 ## Phase 5 WP1 — read-only debt foundation
 
 `debt.view` + `customer.view` authorize current-Shop customer/bill balance GETs. `debt.manage` remains recognized for compatibility but grants no shortcut. New `debt.payment.allocate`, `debt.adjust`, `debt.payment.reverse` are independently registered for their future owning commands; WP1 has no collection/adjust/reverse routes. Existing `debt.payment.record` is not sufficient to read or explicitly allocate on its own. Staff grants are never expanded automatically. Owner derives known-code authority. Debt output contains no private Customer phone/notes/cost/profit; existing private-detail policies remain separate. READ_ONLY reads remain allowed, BLOCKED/CLOSED and inactive membership/host scope deny. [Exact matrix and package boundaries](../Phase-5/Phase_5_WP1_Integration_Contracts.md).
+
+
+## Phase 5 WP2 — collection and receipts
+
+customer.view + debt.view authorize scoped receipt/status/history reads. Add debt.payment.record for ordinary preview/post and debt.payment.allocate for EXPLICIT selection. All are rechecked through the owning current-FULL transaction; READ_ONLY reads remain available. debt.manage/customer.private/adjust/reverse do not imply collection. Shop context exposes matching collect_debt_payments/allocate_debt_payments hints; backend authority remains decisive. New recovery_scope is an opaque user/Shop browser-marker namespace, never a token or permission. [WP2 exact contract](../Phase-5/Phase_5_WP2_Integration_Contracts.md).
+
+## Phase 5 WP3 activation
+
+Registered debt.payment.reverse and debt.adjust now own explicit reviewed commands; existing Staff grants are not expanded. Every debt resource also requires customer.view + debt.view. Atomic corrected replacement independently needs debt.payment.record and, for EXPLICIT, debt.payment.allocate. A reverse-only Staff may undo but cannot save a corrected replacement; adjust-only Staff cannot undo a payment or Sales-owned Return. Existing sale.return/sale.reverse authority remains independent. No debt.manage shortcut. Mutation authority/entitlement/membership rechecked inside owning transaction; Cash guard covers original or replacement Cash effect. Correction reason on payment DTO is limited to reverse-authorized users and hidden on Print; adjustment reason is authorized debt context. No Customer private notes/phone, raw Audit hashes, cost/profit or credential storage is added.
+
+## Phase 5 WP4 statement reads
+
+No new grant. Both customer.view and debt.view required on every statement page, regardless of cursor. READ_ONLY may read; current Shop membership/AccessGate still governs BLOCKED/CLOSED/foreign/Admin context. sale.view only controls contextual Sale links and its separate endpoint; no correction authority is inferred. Current user/membership additionally binds the token; page state is AES-256-GCM opaque/authenticated with purpose-separated deployment encryption.key, never a browser credential or default source secret. Statement DTO excludes Customer private fields/Audit reasons/financial cost and command hashes; private live total hidden in both Print paths.

@@ -6,7 +6,7 @@ namespace App\Controllers\Api;
 
 use App\Modules\CustomerDebt\Infrastructure\DebtQuery;
 
-/** WP1 has GET routes only; no collection or general adjustment writer is exposed. */
+/** Debt balances and statements are authorized GET-only read models. */
 final class DebtController extends CommercialController
 {
     private function query(): DebtQuery
@@ -31,5 +31,12 @@ final class DebtController extends CommercialController
     public function bill(string $id)
     {
         return $this->execute(fn($context) => $this->ok($this->query()->bill($context, $id)));
+    }
+    public function statement(string $id)
+    {
+        return $this->execute(fn($context) => $this->ok(
+            (new \App\Modules\CustomerDebt\Infrastructure\StatementQuery(db_connect(), $this->access()))
+                ->show($context, $id, $this->request->getGet()),
+        ));
     }
 }

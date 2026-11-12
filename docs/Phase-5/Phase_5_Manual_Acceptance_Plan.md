@@ -1,5 +1,8 @@
 # Phase 5 — planned manual acceptance
 
+**Current programme status — 12 November 2026:** [Owner whole-phase acceptance is recorded](../acceptance/2026-11-12-phase-05-owner-closure.md); Phase 5 is closed. The planned checks below and historical delivery-workspace execution limits remain evidence references, not a reason to relabel missing individual observations Pass.
+
+
 11 November 2026 (Africa/Lagos). **Not executed; no Pass results recorded.** This is the minimum phase-level coverage. Each package must provide runnable, commit-specific steps and actual result rows for its cases; further cases discovered during implementation are added rather than substituted for these. Follow the [implementation plan](Phase_5_Implementation_Plan.md).
 
 ## Safe setup and evidence
@@ -72,7 +75,7 @@ For Cash cases finalize a legitimate Opening Cash (zero is allowed). Repeat elig
 | P5-24 | Undo normal Cash and Transfer collections | Equal-opposite linked evidence restores original allocations/balances once; Cash control applies to Cash compensation; originals unchanged. |
 | P5-25 | Duplicate reversal, reverse already reversed/reversal record, or use conflicting UUID | At most one inverse per original; valid retry recovers; invalid chains rejected. |
 | P5-26 | Correct wrong amount/channel/bill selection with linked reversal then replacement | Old and new evidence/correlation visible, correct final debt/channel effects; each step's true state shown. |
-| P5-27 | Let reversal succeed but replacement fail validation or permission | UI says original undone, replacement not saved; no automatic resurrection or concealed partial workflow. |
+| P5-27 | Fail linked replacement validation/permission or inject failure between inverse and replacement | Binding WP1 atomic contract: neither half commits; original remains effective. A separate standalone undo and later collection honestly show their independent outcomes. |
 | P5-28 | Apply valid factual increase and decrease (F5), then undo eligible adjustment | Signed exact balances, reasons/source links; no money/stock/revenue invented; original rows retained. |
 | P5-29 | Attempt decrease below zero, unsupported write-off/interest, no reason or cross-scope inverse | Rejected atomically; cannot directly edit balance or generic-reverse a Sales-owned return adjustment. |
 | P5-30 | Execute F4 with partial collection then Return | Debt400 reduction400/refund100/remaining0; stock/cost evidence correct; no COLLECTION_DEPENDENCY blanket block. |

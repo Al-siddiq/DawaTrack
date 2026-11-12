@@ -31,3 +31,7 @@ WP3 adds no feature table or migration. Existing `MANUAL`/`REVERSAL` source shap
 ## Phase 3 WP4 closure
 
 WP4 adds no DDL or index. Product, Intake and movement queries are capped and deterministically ordered; existing v1.1 scope/status/time/product indexes remain the reviewed access paths. Runtime `EXPLAIN` evidence belongs to owner acceptance before any index is justified. The operator diagnostic is read-only and does not establish a repair source of truth. Phase 4 owns the actual scoped `sale_item_id` FK after `sale_items` exists; Phase 7 owns the reconciliation parent/FK.
+
+## Phase 5 WP4 derived statement
+
+Implemented as read-only query over accepted existing schema. Group Sales-owned adjustment effects by commercial source; normal/inverse payment headers affect debt once, allocations explain them. Source ordering uses disjoint DECIMAL surrogate keys internally. No schema change, statement persistence, mutable balance/status or Phase10 cursor table. See Phase5 WP4 contracts and release/closure handover.

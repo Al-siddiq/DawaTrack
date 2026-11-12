@@ -172,73 +172,18 @@ final class CommercialEvidence
         if (!$r) {
             return null;
         }
-        if (
-            $this->db->tableExists("debt_payment_allocations") &&
-            $this->db
-                ->table("debt_payment_allocations")
-                ->where("receivable_id", $r["id"])
-                ->countAllResults() > 0
-        ) {
-            throw new ApiException(
-                "COLLECTION_DEPENDENCY",
-                "Collected debt requires the collection module settlement contract before this correction.",
-                409,
-            );
-        }
-        $v = (string) $this->db
-            ->query(
-                "SELECT CAST(? AS DECIMAL(38,2))+COALESCE(SUM(amount_delta),0.00) value FROM receivable_adjustments WHERE tenant_id=? AND shop_id=? AND receivable_id=?",
-                [$r["original_amount"], $c->tenantId, $c->shopId, $r["id"]],
-            )
-            ->getRowArray()["value"];
-        if (
-            str_starts_with($v, "-") ||
-            str_starts_with(
-                SaleMoney::difference(
-                    $r["original_amount"],
-                    CashAmount::parse($v),
-                ),
-                "-",
-            )
-        ) {
-            throw new ApiException(
-                "COMMERCIAL_EVIDENCE_INVALID",
-                "The original debt has an inconsistent adjustment balance.",
-                409,
-            );
-        }
-        $r["outstanding"] = CashAmount::parse($v);
+        $repository = new \App\Modules\CustomerDebt\Infrastructure\DebtPaymentRepository($this->db);
+        $bills = $repository->balances($c, (int) $r['customer_id']);
+        $live = array_column($bills, null, 'public_id')[$r['public_id']] ?? null;
+        if (!$live) throw new ApiException('COMMERCIAL_EVIDENCE_INVALID', 'The bill balance could not be checked.', 409);
+        $r['outstanding'] = $live['outstanding_amount'];
+        $r['collected_amount'] = $live['collected_amount'];
+        $r['adjustment_delta'] = $live['adjustment_delta'];
         return $r;
     }
     public function capacity(ShopContext $c, int $root): array
     {
-        $out = ["CASH" => "0.00", "TRANSFER" => "0.00"];
-        foreach ($out as $channel => $_) {
-            $row = $this->db
-                ->query(
-                    "SELECT (SELECT COALESCE(SUM(amount),0.00) FROM sale_payments WHERE tenant_id=? AND shop_id=? AND sale_id=? AND direction='RECEIPT' AND channel=?)-(SELECT COALESCE(SUM(p.amount),0.00) FROM sale_payments p JOIN sales r ON r.tenant_id=p.tenant_id AND r.shop_id=p.shop_id AND r.id=p.sale_id WHERE r.tenant_id=? AND r.shop_id=? AND r.original_sale_id=? AND r.kind='RETURN' AND r.status='POSTED' AND r.reversal_of_sale_id IS NULL AND p.direction='REFUND' AND p.channel=? AND NOT EXISTS(SELECT 1 FROM sales x WHERE x.tenant_id=r.tenant_id AND x.shop_id=r.shop_id AND x.reversal_of_sale_id=r.id AND x.status='POSTED')) value",
-                    [
-                        $c->tenantId,
-                        $c->shopId,
-                        $root,
-                        $channel,
-                        $c->tenantId,
-                        $c->shopId,
-                        $root,
-                        $channel,
-                    ],
-                )
-                ->getRowArray();
-            if (str_starts_with((string) $row["value"], "-")) {
-                throw new ApiException(
-                    "COMMERCIAL_EVIDENCE_INVALID",
-                    "Effective refunds exceed original receipts.",
-                    409,
-                );
-            }
-            $out[$channel] = CashAmount::parse((string) $row["value"]);
-        }
-        return $out;
+        return (new \App\Modules\CustomerDebt\Infrastructure\DebtSettlementQuery($this->db))->capacity($c, $root);
     }
     public function allocation(
         array $original,
@@ -355,7 +300,7 @@ final class CommercialEvidence
         $total = SaleMoney::sum(array_column($allocated, "line_sales_amount"));
         $credit = $this->credit($c, (int) $root["id"], $lockCredit);
         $owed = $credit["outstanding"] ?? "0.00";
-        $reduction = str_starts_with(SaleMoney::difference($total, $owed), "-")
+        $reduction = \App\Modules\CustomerDebt\Domain\DebtAmount::compare($total, $owed) < 0
             ? $total
             : $owed;
         return [

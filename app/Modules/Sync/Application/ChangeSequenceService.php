@@ -22,6 +22,8 @@ final class ChangeSequenceService
         'shop_brand_asset',
         'shop_domain',
         'subscription',
+        'debt_payment',
+        'receivable_adjustment',
         'customer',
         'sale',
         'receivable',

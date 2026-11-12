@@ -60,3 +60,24 @@ The operator UI now composes B Return and C correction commands through unified 
 ## Phase 5 WP1 — live debt reads and shared adjustment participant
 
 CustomerDebt now owns `DebtQuery`, `ReceivableBalanceQuery`, `DebtSchema`, `DebtReadSnapshot` and `ReceivableAdjustmentParticipant`. The query projects signed adjustment/allocation evidence into live current-Shop balances without stored balance/status. The snapshot covers counts/totals/pages; missing tables fail explicitly. CommercialEvents delegates existing adjustment insertion to the internal participant; Sales keeps its owning transaction, source validation, Audit and changes. WP1 routes are GET-only; collection/correction/statement writers remain later packages. See [contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md) and [manual verification](../manual-verification-phase-05-wp1.md).
+
+
+## Phase 5 WP2 — collect and allocate
+
+CustomerDebt owns exact aggregate DebtAmount, pure DebtAllocationPlanner, DebtPaymentInput/Repository/Service/Query and its controller. Existing CommercialAccess owns transaction/authority serialization; Reconciliation owns Cash eligibility; Audit and change publication remain atomic participants. No Inventory/Sale evidence is rewritten. Browser debt-payment-panel/receipt extend the existing Customer task without an outbox. [WP2 contracts](../Phase-5/Phase_5_WP2_Integration_Contracts.md), [operations](../operations/phase-05-debt-collection.md) and [manual guide](../manual-verification-phase-05-wp2.md).
+
+## Phase 5 WP3 ownership
+
+`CustomerDebt/Application/DebtCorrectionInput` closes/normalizes mutation payloads; `DebtCorrectionService` owns reversal/replacement/adjustment locks, review, replay, Audit and last publication. `DebtPaymentPostingParticipant` is shared with normal WP2 collection. `ReceivableAdjustmentParticipant` retains Sales callers and optional explicit operation UUID. `Infrastructure/DebtSettlementQuery` owns original-Sale/channel attributable capacity, reused by Sales and correction dependency checks. `DebtPaymentQuery` extends linked receipts; adjustment detail/history are authorized snapshots in correction service. `Api/DebtCorrectionController` owns ten explicit command/status/history endpoints.
+
+Sales `CommercialEvidence` now reads allocation-aware live balances; `ReturnService` keeps debt-first settlement and exact stock cost; `CommercialReversalService` preserves exact compensation with real dependency checks. `CommercialDiagnostics` includes live allocation/inverse evidence. Frontend `debt-correction-panel.js` owns reviewed forms, contextual history and minimal-ID recovery. [Complete contract/source map](../Phase-5/Phase_5_WP3_Integration_Contracts.md). WP4 statements remain separate.
+
+## Phase 5 WP4 read ownership
+
+CustomerDebt StatementEventQuery derives scoped credit/commercial adjustment/generic adjustment/payment events. StatementInput owns Shop-date ranges; StatementCursor seals encrypted versioned page state using the existing private deployment encryption seed. StatementQuery owns one read-only snapshot, generation/relevant-change binding, exact totals/carry and safe DTOs. DebtController adds only GET customers/{uuid}/statement. DebtPaymentRepository::verifiedAllocations is shared by receipts/statements; payment writers unchanged. customer-statement-panel/document own contextual Customers paging and complete labelled print preparation. [Detailed contracts](../Phase-5/Phase_5_WP4_Integration_Contracts.md). No statement persistence or Audit/change writes.
+
+WP4 also fixes shared `resources/js/api/http-client.js` signal handling: caller abort and existing request deadline both reach fetch; listeners removed afterwards. No financial request is automatically retried.
+
+## Phase 5 closure status
+
+The complete WP1–WP4 module delivery is [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md) on 12 November 2026, against application candidate `970ad2e39fdc7ae2a1201c985bc8d54d6952152e`. No module code changes accompany closure. Main integration/deployment and Phase6 planning remain separately governed; preserve immutable evidence and exact accepted inventory.

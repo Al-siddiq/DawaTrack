@@ -24,6 +24,11 @@ export class ApiError extends Error {
 export async function apiRequest(path, options = {}) {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), options.timeout ?? 10000);
+    // Both the caller's cancellation and our deadline must reach the same fetch signal.
+    const callerSignal = options.signal;
+    const callerAbort = () => controller.abort();
+    if (callerSignal?.aborted) controller.abort();
+    else callerSignal?.addEventListener('abort', callerAbort, { once: true });
     const csrfHeader = document.querySelector('meta[name="csrf-header"]')?.content;
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const headers = new Headers(options.headers ?? {});
@@ -37,7 +42,7 @@ export async function apiRequest(path, options = {}) {
     const mutating = !['GET', 'HEAD'].includes((options.method ?? 'GET').toUpperCase());
     if (mutating) mutationState(1);
     try {
-        const response = await fetch(path, { ...options, credentials: 'same-origin', headers, signal: options.signal ?? controller.signal });
+        const response = await fetch(path, { ...options, credentials: 'same-origin', headers, signal: controller.signal });
         const refreshedCsrfToken = csrfHeader ? response.headers.get(csrfHeader) : null;
         const csrfMeta = document.querySelector('meta[name="csrf-token"]');
         if (refreshedCsrfToken && csrfMeta) csrfMeta.content = refreshedCsrfToken;
@@ -50,6 +55,10 @@ export async function apiRequest(path, options = {}) {
             securityRedirect('/platform-admin/mfa');
             throw new ApiError({ code: 'MFA_REQUIRED', message: payload.error.message, status: 403 });
         }
+        // A successful status with an unreadable/incomplete envelope does not prove a mutation failed.
+        if (response.ok && (payload?.success !== true || !Object.prototype.hasOwnProperty.call(payload, 'data'))) {
+            throw new ApiError({ code: 'RESPONSE_UNCONFIRMED', message: 'The server reply could not be confirmed. Check saved status before trying again.', status: 0 });
+        }
         if (!response.ok || !payload?.success) {
             throw new ApiError({ code: payload?.error?.code ?? 'HTTP_ERROR', message: payload?.error?.message ?? 'The request could not be completed.', status: response.status, details: payload?.error?.details, requestId: payload?.meta?.request_id ?? response.headers.get('X-Request-ID') });
         }
@@ -61,6 +70,7 @@ export async function apiRequest(path, options = {}) {
         throw new ApiError({ code: 'NETWORK_ERROR', message: 'DawaTrack could not reach the server.', status: 0 });
     } finally {
         window.clearTimeout(timeout);
+        callerSignal?.removeEventListener('abort', callerAbort);
         if (mutating) mutationState(-1);
     }
 }

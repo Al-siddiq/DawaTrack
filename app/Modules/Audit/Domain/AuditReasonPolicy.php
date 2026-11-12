@@ -9,6 +9,8 @@ use App\Exceptions\ApiException;
 final class AuditReasonPolicy
 {
     private const OPTIONAL = [
+        'debt_payment.recorded',
+        'debt_payment.allocated',
         'branding.asset_replaced',
         'branding.updated',
         'shop.profile_updated',

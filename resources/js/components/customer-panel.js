@@ -7,7 +7,7 @@ import { has, get, send, field, action, submit, feedback, message, pager } from 
 const { h, ref, reactive, computed, onMounted, onUnmounted, nextTick } = window.Vue;
 const base = '/api/v1/shop/customers';
 export const CustomerPanel = {
-    props: { permissions: { type: Array, default: () => [] }, readOnly: { type: Boolean, default: true }, hash: { type: String, default: '#customers' } },
+    props: { permissions: { type: Array, default: () => [] }, readOnly: { type: Boolean, default: true }, hash: { type: String, default: '#customers' }, recoveryScope: { type: String, default: '' } },
     emits: ['navigate'],
     setup(props, { emit }) {
         const confirmation = useTradingConfirm(), validation = ref({});
@@ -69,7 +69,7 @@ export const CustomerPanel = {
         function back() { return confirmation.guard(() => { selected.value = null; editing.value = false; reason.value = ''; validation.value = {}; error.value = ''; notice.value = ''; load(); }); }
         onMounted(() => { load(); window.addEventListener('online', connection); window.addEventListener('offline', connection); });
         onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
-        return () => props.hash.startsWith('#customers/debt') ? h(CustomerDebtPanel, { permissions: props.permissions, hash: props.hash, onNavigate: hash => emit('navigate', hash) }) : h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': pending.value || list.pending.value }, [
+        return () => props.hash.startsWith('#customers/debt') ? h(CustomerDebtPanel, { permissions: props.permissions, hash: props.hash, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: hash => emit('navigate', hash) }) : h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': pending.value || list.pending.value }, [
             h('h2', { ref: heading, tabindex: '-1' }, 'Customers'), h('p', 'Find a customer or save their details for future sales.'),
             has(props.permissions, 'debt.view') && action('Money customers owe', () => emit('navigate', selected.value ? `#customers/debt/${selected.value.public_id}` : '#customers/debts'), pending.value || list.pending.value, 'btn-outline-primary', { icon: 'cash' }),
             !online.value && h('p', { class: 'alert alert-warning' }, 'You are offline. Customer changes are not queued.'),

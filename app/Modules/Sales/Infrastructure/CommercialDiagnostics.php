@@ -157,8 +157,36 @@ final class CommercialDiagnostics
             FROM receivables r LEFT JOIN receivable_adjustments a ON a.tenant_id=r.tenant_id AND a.shop_id=r.shop_id AND a.receivable_id=r.id
             WHERE r.tenant_id=? AND r.shop_id=?
             GROUP BY r.id,r.public_id,r.original_amount
-            HAVING phase_four_adjusted_amount<0 OR phase_four_adjusted_amount>r.original_amount
+            HAVING phase_four_adjusted_amount<0
             ORDER BY r.id LIMIT 100
+            SQL
+            ,
+            "debt_payment_evidence" => <<<'SQL'
+            WITH scoped AS (SELECT * FROM debt_payments WHERE tenant_id=? AND shop_id=?),
+            totals AS (SELECT a.debt_payment_id,SUM(a.amount) amount,COUNT(*) n,COUNT(DISTINCT a.allocation_order) distinct_orders,MIN(a.allocation_order) first_order,MAX(a.allocation_order) last_order
+                       FROM debt_payment_allocations a JOIN scoped p ON p.tenant_id=a.tenant_id AND p.shop_id=a.shop_id AND p.id=a.debt_payment_id GROUP BY a.debt_payment_id)
+            SELECT p.public_id payment_public_id FROM scoped p LEFT JOIN totals t ON t.debt_payment_id=p.id
+            LEFT JOIN debt_payments original ON original.id=p.reversal_of_debt_payment_id
+            WHERE COALESCE(t.amount,0.00)<>p.amount OR t.first_order<>1 OR t.last_order<>t.n OR t.distinct_orders<>t.n
+             OR (p.reversal_of_debt_payment_id IS NOT NULL AND (original.id IS NULL OR original.id=p.id OR original.reversal_of_debt_payment_id IS NOT NULL
+                 OR original.tenant_id<>p.tenant_id OR original.shop_id<>p.shop_id OR original.customer_id<>p.customer_id OR original.channel<>p.channel OR original.amount<>p.amount
+                 OR EXISTS(SELECT 1 FROM debt_payment_allocations a LEFT JOIN debt_payment_allocations b ON b.tenant_id=a.tenant_id AND b.shop_id=a.shop_id AND b.debt_payment_id=original.id AND b.receivable_id=a.receivable_id
+                           WHERE a.debt_payment_id=p.id AND (b.id IS NULL OR b.amount<>a.amount OR b.allocation_order<>a.allocation_order))
+                 OR (SELECT COUNT(*) FROM debt_payment_allocations a WHERE a.debt_payment_id=original.id)<>t.n))
+             OR EXISTS(SELECT 1 FROM debt_payment_allocations a LEFT JOIN receivables r ON r.id=a.receivable_id
+                       WHERE a.debt_payment_id=p.id AND (a.tenant_id<>p.tenant_id OR a.shop_id<>p.shop_id OR r.id IS NULL OR r.tenant_id<>p.tenant_id OR r.shop_id<>p.shop_id OR r.customer_id<>p.customer_id))
+            ORDER BY p.id LIMIT 100
+            SQL
+            ,
+            "debt_live_balance" => <<<'SQL'
+            WITH bills AS (SELECT * FROM receivables WHERE tenant_id=? AND shop_id=?),
+            adjusted AS (SELECT a.receivable_id,SUM(a.amount_delta) amount FROM receivable_adjustments a JOIN bills b ON b.tenant_id=a.tenant_id AND b.shop_id=a.shop_id AND b.id=a.receivable_id GROUP BY a.receivable_id),
+            collected AS (SELECT a.receivable_id,SUM(CASE WHEN p.reversal_of_debt_payment_id IS NULL THEN a.amount ELSE -a.amount END) amount
+             FROM debt_payment_allocations a JOIN debt_payments p ON p.tenant_id=a.tenant_id AND p.shop_id=a.shop_id AND p.id=a.debt_payment_id
+             JOIN bills b ON b.tenant_id=a.tenant_id AND b.shop_id=a.shop_id AND b.id=a.receivable_id GROUP BY a.receivable_id)
+            SELECT b.public_id receivable_public_id FROM bills b LEFT JOIN adjusted j ON j.receivable_id=b.id LEFT JOIN collected k ON k.receivable_id=b.id
+            WHERE b.original_amount+COALESCE(j.amount,0.00)<0 OR COALESCE(k.amount,0.00)<0 OR b.original_amount+COALESCE(j.amount,0.00)-COALESCE(k.amount,0.00)<0
+            ORDER BY b.id LIMIT 100
             SQL
             ,
             "normal_return_settlement" => <<<'SQL'
@@ -276,19 +304,33 @@ final class CommercialDiagnostics
             FROM receivable_adjustments a LEFT JOIN receivables r ON r.id=a.receivable_id LEFT JOIN sales s ON s.id=a.sale_id
             LEFT JOIN sales original ON original.id=s.reversal_of_sale_id LEFT JOIN receivable_adjustments reversed ON reversed.id=a.reversal_of_adjustment_id
             WHERE a.tenant_id=? AND a.shop_id=? AND (
-             r.id IS NULL OR s.id IS NULL OR r.tenant_id<>a.tenant_id OR r.shop_id<>a.shop_id OR s.tenant_id<>a.tenant_id OR s.shop_id<>a.shop_id OR s.status<>'POSTED'
-             OR r.sale_id<>s.original_sale_id
-             OR (a.adjustment_type='RETURN_REDUCTION' AND (s.kind<>'RETURN' OR s.reversal_of_sale_id IS NOT NULL OR a.amount_delta>=0))
-             OR (a.adjustment_type='CORRECTION_DECREASE' AND (s.kind<>'RETURN' OR original.kind<>'SALE' OR original.id<>r.sale_id OR a.amount_delta>=0))
-             OR (a.adjustment_type='REVERSAL' AND (s.kind<>'SALE' OR original.kind<>'RETURN' OR reversed.id IS NULL OR reversed.tenant_id<>a.tenant_id OR reversed.shop_id<>a.shop_id OR reversed.adjustment_type<>'RETURN_REDUCTION' OR reversed.sale_id<>original.id OR reversed.receivable_id<>a.receivable_id OR a.amount_delta<>-reversed.amount_delta))
-             OR a.adjustment_type='CORRECTION_INCREASE'
+             r.id IS NULL OR r.tenant_id<>a.tenant_id OR r.shop_id<>a.shop_id
+             OR (a.sale_id IS NULL AND (
+                 a.adjustment_type NOT IN ('CORRECTION_INCREASE','CORRECTION_DECREASE','REVERSAL')
+                 OR (a.adjustment_type='CORRECTION_INCREASE' AND a.amount_delta<=0)
+                 OR (a.adjustment_type='CORRECTION_DECREASE' AND a.amount_delta>=0)
+                 OR (a.adjustment_type='REVERSAL' AND (reversed.id IS NULL OR reversed.sale_id IS NOT NULL
+                     OR reversed.reversal_of_adjustment_id IS NOT NULL OR reversed.tenant_id<>a.tenant_id OR reversed.shop_id<>a.shop_id
+                     OR reversed.receivable_id<>a.receivable_id OR a.amount_delta<>-reversed.amount_delta))
+             ))
+             OR (a.sale_id IS NOT NULL AND (s.id IS NULL OR s.tenant_id<>a.tenant_id OR s.shop_id<>a.shop_id OR s.status<>'POSTED'
+                 OR r.sale_id<>s.original_sale_id
+                 OR (a.adjustment_type='RETURN_REDUCTION' AND (s.kind<>'RETURN' OR s.reversal_of_sale_id IS NOT NULL OR a.amount_delta>=0))
+                 OR (a.adjustment_type='CORRECTION_DECREASE' AND (s.kind<>'RETURN' OR original.kind<>'SALE' OR original.id<>r.sale_id OR a.amount_delta>=0))
+                 OR (a.adjustment_type='REVERSAL' AND (s.kind<>'SALE' OR original.kind<>'RETURN' OR reversed.id IS NULL OR reversed.tenant_id<>a.tenant_id OR reversed.shop_id<>a.shop_id OR reversed.adjustment_type<>'RETURN_REDUCTION' OR reversed.sale_id<>original.id OR reversed.receivable_id<>a.receivable_id OR a.amount_delta<>-reversed.amount_delta))
+                 OR a.adjustment_type='CORRECTION_INCREASE'))
             )
             ORDER BY a.id LIMIT 100
             SQL
             ,
             "effective_refund_channel_caps" => <<<'SQL'
             WITH roots AS (SELECT * FROM sales WHERE tenant_id=? AND shop_id=? AND kind='SALE' AND status='POSTED' AND reversal_of_sale_id IS NULL),
-            received AS (SELECT p.sale_id,p.channel,SUM(p.amount) amount FROM sale_payments p JOIN roots s ON s.tenant_id=p.tenant_id AND s.shop_id=p.shop_id AND s.id=p.sale_id WHERE p.direction='RECEIPT' GROUP BY p.sale_id,p.channel),
+            receipts AS (SELECT p.sale_id,p.channel,p.amount FROM sale_payments p JOIN roots s ON s.tenant_id=p.tenant_id AND s.shop_id=p.shop_id AND s.id=p.sale_id WHERE p.direction='RECEIPT'
+             UNION ALL SELECT b.sale_id,p.channel,CASE WHEN p.reversal_of_debt_payment_id IS NULL THEN a.amount ELSE -a.amount END amount
+             FROM debt_payment_allocations a JOIN debt_payments p ON p.tenant_id=a.tenant_id AND p.shop_id=a.shop_id AND p.id=a.debt_payment_id
+             JOIN receivables b ON b.tenant_id=a.tenant_id AND b.shop_id=a.shop_id AND b.id=a.receivable_id AND b.customer_id=p.customer_id
+             JOIN roots s ON s.tenant_id=b.tenant_id AND s.shop_id=b.shop_id AND s.id=b.sale_id),
+            received AS (SELECT sale_id,channel,SUM(amount) amount FROM receipts GROUP BY sale_id,channel),
             refunded AS (SELECT r.original_sale_id root_id,p.channel,SUM(p.amount) amount FROM sales r JOIN roots s ON s.tenant_id=r.tenant_id AND s.shop_id=r.shop_id AND s.id=r.original_sale_id JOIN sale_payments p ON p.tenant_id=r.tenant_id AND p.shop_id=r.shop_id AND p.sale_id=r.id WHERE r.kind='RETURN' AND r.status='POSTED' AND r.reversal_of_sale_id IS NULL AND p.direction='REFUND' AND NOT EXISTS(SELECT 1 FROM sales x WHERE x.reversal_of_sale_id=r.id AND x.status='POSTED') GROUP BY r.original_sale_id,p.channel)
             SELECT s.public_id original_sale_public_id,r.channel,r.amount refunded,COALESCE(p.amount,0.00) received
             FROM refunded r JOIN roots s ON s.id=r.root_id LEFT JOIN received p ON p.sale_id=r.root_id AND p.channel=r.channel

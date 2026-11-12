@@ -2,13 +2,15 @@
 
 DawaTrack is a modular CodeIgniter 4 application for Nigerian chemist/PPMV operations, with tenant isolation, staff permissions, accountable stock and commercial evidence, and a responsive white-label Shop/Admin/Auth interface.
 
-## Current position — 11 November 2026
+## Current position — 12 November 2026
 
-The Owner has reported manual acceptance and merge of Phase 4, and has now **reviewed, accepted, merged and rolled out the UI programme**. UI4-A PR #37 is verified merged into main as `b41425f905100a728a4c6167d5df936702a8502a`. The [UI final acceptance](docs/ui/acceptance/2026-11-11-ui-programme-owner-closure.md) records the decision and reported rollout without inventing per-case or hosting observations. See the [current closure ledger](docs/ui/programme-closure.md).
+**Phase 5 — Debt Collection and Customer Statements is Owner-accepted and closed.** The Owner explicitly accepted the whole phase, including WP4. [Dated acceptance](docs/acceptance/2026-11-12-phase-05-owner-closure.md) · [Closure report](docs/Phase-5/Phase_5_Closure_Report.md) · [Requirement/source matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) · [Integrated evidence](docs/Phase-5/Phase_5_Integrated_Manual_Results.csv).
 
-The implemented foundation covers identity, tenancy, subscriptions, permissions, Audit/change sequence, Products/Inventory, Opening Cash, Customers, Sales/payments/credit, Returns and linked commercial corrections. Debt collection, Financial Movements, full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work. The existing service worker does not provide offline business operation.
+Accepted application candidate: `970ad2e39fdc7ae2a1201c985bc8d54d6952152e` (PR #42), including WP1–WP4. This adds derived balances, Cash/Transfer repayment/allocation, append-only corrections, repayment-aware Returns and scoped versioned statements/Print to the accepted Phases1–4 foundation and UI programme. Detailed per-case observations/runtime configuration were not separately supplied; acceptance does not manufacture independent native test execution.
 
-**Current: Phase 5 WP1 — Debt foundation and live balances, delivered for manual verification.** The [four-package implementation plan](docs/Phase-5/Phase_5_Implementation_Plan.md), [requirements matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) and [manual acceptance plan](docs/Phase-5/Phase_5_Manual_Acceptance_Plan.md) are Owner-approved. [WP1 delivery](docs/Phase-5/Phase_5_WP1_Delivery_Report.md), [integration contracts](docs/Phase-5/Phase_5_WP1_Integration_Contracts.md) and [native manual guide](docs/manual-verification-phase-05-wp1.md) describe the implemented read-only balances and two new migrations. WP1 acceptance remains pending; WP2–WP4 collection/correction/statement commands have not started.
+PRs #39–#42 were still open/unmerged and main at `b41425f905100a728a4c6167d5df936702a8502a` when closure was checked. Integration and production deployment are separate decisions, not performed by this documentation closure. The earlier UI programme acceptance/rollout remains recorded in its [own closure ledger](docs/ui/programme-closure.md).
+
+The next roadmap boundary is **Phase 6 — Financial Movements and Cash Accountability**, with a separately approved package plan before implementation. Full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work; the service worker does not provide offline business operation. [Operational release/key/rollback handover](docs/operations/phase-05-statements-release.md) and [release decision register](docs/Phase-5/Phase_5_Release_Decision.csv) remain current.
 
 ## Start locally
 
@@ -38,6 +40,14 @@ Frontend source lives in `resources/`. `npm run build` compiles CSS and copies p
 | [Release and rollback guide](docs/ui/release-handover.md) | Coherent releases, asset integrity and operational recovery |
 | [Phase 4 plan](docs/Phase-4/Phase_4_Comprehensive_Analysis_and_Four_Work_Package_Plan.md) | Historical package scope, contracts and acceptance approach |
 | [Phase 4 operations](docs/operations/phase-04-sales.md) | Sale/Return/correction operational contracts |
-| [Phase 5 plan](docs/Phase-5/Phase_5_Implementation_Plan.md) | Proposed next four work packages and manual gates |
+| [Phase 5 plan](docs/Phase-5/Phase_5_Implementation_Plan.md) | Accepted four-package programme and manual gates; Phase 5 closed |
 
 Historical delivery reports describe their state when authored. Later explicit Owner acceptance supersedes earlier Pending decision wording; it does not manufacture historical per-case evidence. Delivery remains package-by-package, with Owner manual acceptance before progression. Engineering checks support that process rather than replacing it.
+
+## Phase 5 WP3 — corrections and returns after repayment
+
+WP2 is [Owner-accepted](docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md). WP3 delivers linked payment undo/atomic replacement, reasoned bill corrections, repayment-aware returns and read-only integrity checks. [Delivery](docs/Phase-5/Phase_5_WP3_Delivery_Report.md) · [Developer/API contract](docs/Phase-5/Phase_5_WP3_Integration_Contracts.md) · [Native manual guide P5-24–P5-36](docs/manual-verification-phase-05-wp3.md) · [Operations](docs/operations/phase-05-debt-corrections.md). No new migration/dependency; WP1 tables required. WP3 and the complete Phase 5 programme are now Owner-accepted; see the [closure report](docs/Phase-5/Phase_5_Closure_Report.md).
+
+## Phase 5 WP4 — Customer statements and integrated handover
+
+WP3 is [Owner-accepted](docs/acceptance/2026-11-12-phase-05-wp3-owner-acceptance.md). WP4 adds scoped versioned Customer statements with Shop-date filters, exact opening/running/closing debt, safe detail links and page/full-range printing. [Delivery](docs/Phase-5/Phase_5_WP4_Delivery_Report.md) · [Developer/API contract](docs/Phase-5/Phase_5_WP4_Integration_Contracts.md) · [Native P5-37–P5-48](docs/manual-verification-phase-05-wp4.md) · [Closure checklist](docs/Phase-5/Phase_5_Closure_Checklist.md) · [Operations/key setup/rollback](docs/operations/phase-05-statements-release.md). Existing private deployment encryption.key required for page tokens; no new DDL/dependency. WP4 and the whole phase are Owner-accepted and closed; actual merge/deployment remains separate. See the [dated decision](docs/acceptance/2026-11-12-phase-05-owner-closure.md).

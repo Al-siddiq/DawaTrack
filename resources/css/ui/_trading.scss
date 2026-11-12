@@ -55,3 +55,24 @@
  #commercial-print-receipt .trading-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; }
  #commercial-print-receipt .trading-facts dd { margin: 0; }
 }
+
+// Phase 5 statement: compact responsive event cards and explicit page/period totals.
+.statement-records { display: grid; gap: .75rem; padding-inline-start: 1.5rem; margin: 0; }
+.statement-row { min-width: 0; border-block-end: 1px solid var(--ui-border); padding: .65rem 0; overflow-wrap: anywhere; }
+.statement-row p { margin-block: .25rem; }
+.statement-event-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+.statement-event-heading h4 { font-size: 1rem; margin: 0; }
+.statement-running { font-weight: 600; }
+.statement-links { margin-block-start: .5rem; }
+.statement-print-prepared { display: none; }
+@media print {
+ // The shared receipt's absolute layout must not clip a multi-page statement.
+ .customer-statement { position: static !important; inset: auto !important; display: block !important; }
+ .customer-statement-workspace > :not(.statement-document-host) { display: none !important; }
+ .customer-statement .statement-records { display: block; }
+ .customer-statement .statement-links, .customer-statement .receipt-private { display: none !important; }
+ .statement-row { break-inside: avoid; }
+ .statement-records { gap: .3rem; }
+ .statement-allocation-details > :not(summary) { display: block !important; }
+ .statement-allocation-details::details-content { content-visibility: visible !important; }
+}

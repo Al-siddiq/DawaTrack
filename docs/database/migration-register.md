@@ -97,3 +97,16 @@ Apply after all accepted Phase 4 migrations. Two new ordered migrations only:
 No previous migration/table is edited or recreated. Existing `receivable_adjustments` is reused. Shield actor FK remains `INT UNSIGNED`; domain IDs are `BIGINT UNSIGNED`. No aggregate CHECK is claimed: allocation sums, same-Customer attribution and matching compensations are owning-service invariants. WP1 exposes no collection writer.
 
 Native MySQL apply/constraint verification remains an Owner development gate. DDL implicitly commits; identify/back up the database before applying. Do not execute raw SQL in addition to Spark migrations. If unrecorded DDL leaves a partial table, inspect/recover a disposable copy instead of forging migration history. Rollback only empty new-table development copies in child→parent order; never delete accepted financial evidence to undo deployment. See [WP1 setup/manual guide](../manual-verification-phase-05-wp1.md) and [contracts](../Phase-5/Phase_5_WP1_Integration_Contracts.md).
+
+
+## Phase 5 WP2 — no new migration
+
+Collection uses the accepted WP1 debt_payments/debt_payment_allocations tables and existing Receivables/Audit/sync_changes. Reason/review/replay evidence uses bounded immutable Audit metadata, without a command-hash/status/wallet table or receipt snapshot column. No existing migration/raw SQL is rewritten. Equivalent retries do not change accepted rows. Do not drop payment tables to roll back code after collections; see [collection operations](../operations/phase-05-debt-collection.md).
+
+## Phase 5 WP3 — no migration
+
+Reuses accepted WP1 debt_payments/debt_payment_allocations and existing receivable_adjustments unchanged. Service-level exact inverse/same-Customer/sum/no-chain/refund-dependency checks complement existing unique links/scoped FKs; no cross-row CHECK claim. Optional operation UUID argument to the adjustment participant changes no column. Audit/causal correlation identifies atomic pair without a replacement/status/balance column. Existing paired raw SQL is unchanged; destructive rollback of accepted evidence remains prohibited. Runtime needs SELECT/INSERT only for immutable correction evidence plus existing Audit/change rights.
+
+## Phase 5 WP4 — no migration
+
+Statements derive from existing Receivables, signed adjustments, payment headers/allocations, Sales and active generation/scoped changes in a read-only snapshot. No statement/cursor table, materialized balance/status, modified FK or new permission seed. Existing paired WP1 SQL unchanged. Page tokens carry sealed state rather than Phase10 cursor storage. Runtime reads need existing SELECT rights; deployment encryption.key remains private configuration outside the inventory.

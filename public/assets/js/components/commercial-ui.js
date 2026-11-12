@@ -17,7 +17,7 @@ export function field(id, label, value, update, options = {}) {
     });
 }
 export const actionIcon = label => {
-    const match = [[/^(Back|Previous)/i, 'back'], [/^(Add|New|Start|Create)/i, 'add'], [/^(Edit|Change)/i, 'edit'], [/^(Remove|Discard)/i, 'remove'], [/^(Cancel|Reverse|Undo)/i, 'cancel-record'], [/^(Find|Search)/i, 'search'], [/^(Reload|Refresh|Check .*status)/i, 'refresh'], [/^Print/i, 'print'], [/^Return/i, 'return'], [/^(Review|Continue|Open|View|Next)/i, 'next'], [/^(Save|Confirm)/i, 'success']].find(([pattern]) => pattern.test(label));
+    const match = [[/^(Back|Previous)/i, 'back'], [/^(Add|New|Start|Create)/i, 'add'], [/^(Edit|Change|Correct)/i, 'edit'], [/^(Remove|Discard)/i, 'remove'], [/^(Cancel|Reverse|Undo)/i, 'cancel-record'], [/^(Find|Search)/i, 'search'], [/^(Reload|Refresh|Check .*status)/i, 'refresh'], [/^Print/i, 'print'], [/^Return/i, 'return'], [/^(Review|Continue|Open|View|Next|Load more)/i, 'next'], [/^(Save|Confirm)/i, 'success']].find(([pattern]) => pattern.test(label));
     return match?.[1] || '';
 };
 const variants = { 'btn-primary': 'primary', 'btn-danger': 'danger', 'btn-outline-danger': 'danger-secondary', 'btn-link': 'plain' };
@@ -31,6 +31,8 @@ export const feedback = (error, notice) => [
     notice && h(UiAlert, { key: `notice:${notice}`, severity: 'success', message: notice, persistent: !['Customer saved.', 'Product saved.', 'Product created.', 'Low-stock level saved.'].includes(notice) }),
 ].filter(Boolean);
 const errorCopy = {
+    RECEIVABLE_DEPENDENCY: 'This sale still has linked payments or bill changes. Check and safely undo them before cancelling the sale.',
+    DEBT_REFUND_DEPENDENCY: 'Part of this payment has been refunded. Open the original sale and undo the eligible return first, then review this payment again.',
     CUSTOMER_REQUIRED: 'Choose a customer because some of this sale is left unpaid.',
     CUSTOMER_INACTIVE: 'This customer is inactive. Choose an active customer.',
     PRODUCT_INACTIVE: 'This product is inactive. Remove it or choose an active product.',

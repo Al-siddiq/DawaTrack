@@ -1,6 +1,6 @@
 # Phase 5 — Debt Collection and Customer Statements
 
-**Date:** 11 November 2026 (Africa/Lagos). **Status:** Owner approved on 11 November 2026; WP1 implementation authorized only. See [approval](../acceptance/2026-11-11-phase-05-plan-owner-approval.md) and [WP1 delivery](Phase_5_WP1_Delivery_Report.md). WP1 manual acceptance remains pending. **Reviewed baseline:** main `b41425f905100a728a4c6167d5df936702a8502a` (UI4-A PR #37 merged). **Delivery model:** four sequential work packages, each runnable, documented and manually accepted before the next begins.
+**Date:** 11 November 2026 (Africa/Lagos). **Status:** Owner approved on 11 November 2026; WP1 accepted; WP2 implementation authorized only. See [approval](../acceptance/2026-11-11-phase-05-plan-owner-approval.md) and [WP1 delivery](Phase_5_WP1_Delivery_Report.md). See [WP1 acceptance](../acceptance/2026-11-12-phase-05-wp1-owner-acceptance.md); WP2 manual acceptance is pending. **Reviewed baseline:** main `b41425f905100a728a4c6167d5df936702a8502a` (UI4-A PR #37 merged). **Delivery model:** four sequential work packages, each runnable, documented and manually accepted before the next begins.
 
 ## 1. Authority and entry position
 
@@ -187,6 +187,6 @@ No production data repair, destructive rollback, deployment or business mutation
 
 ## 10. Approval and progression
 
-**Now:** UI programme closure is recorded and this Phase 5 plan is Owner-approved. WP1 has been implemented for manual verification; its acceptance is not presumed.
+**Now:** WP1–WP4 and the complete Phase 5 programme are **Owner-accepted and closed on 12 November 2026 (Africa/Lagos)**. See the [dated whole-phase decision](../acceptance/2026-11-12-phase-05-owner-closure.md), [closure report](Phase_5_Closure_Report.md) and updated source/evidence registers. Earlier package delivery-time pending wording is historical; individual native observations not supplied are not fabricated as Pass results.
 
-**Current authorized scope:** WP1 only, with its native manual handover. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.
+**Current authorized work:** record closure and preserve the accepted implementation/handover. No Phase 5 implementation package remains awaiting Owner acceptance. Main integration and deployment remain separate; PRs #39–#42 were observed open/unmerged at closure. The next roadmap boundary is Phase 6 — Financial Movements and Cash Accountability, requiring a separately approved package plan before implementation.
