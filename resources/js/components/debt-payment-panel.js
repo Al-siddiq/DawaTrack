@@ -1,3 +1,4 @@
+import { correctionHash } from './debt-correction-panel.js';
 import { apiRequest } from '../api/http-client.js';
 import { action, field, submit, money, message, has, pager } from './commercial-ui.js';
 import { facts, selectField, fieldSummary, stateLabel, useTradingConfirm } from './trading-ui.js';
@@ -74,6 +75,10 @@ export const DebtPaymentPanel = {
                     if (!alive || current !== generation) return;
                     customer.value = result.data.customer; history.value = result.data.items; Object.assign(pagination, result.data.pagination);
                 } else {
+                    try { const m = JSON.parse(props.recoveryScope ? sessionStorage.getItem(`dt:pending-debt-correction:${location.host}:${props.recoveryScope}`) : 'null');
+                        const id = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
+                        if (m && id.test(m.customer) && id.test(m.source) && id.test(m.id) && ['reverse','correct','adjust','adjust-reverse'].includes(m.kind) && (m.kind !== 'correct' || id.test(m.replacement))) { go(correctionHash(m)); return; }
+                    } catch { /* A correction marker holds identities only. */ }
                     pendingIdentity.value = readMarker();
                     if (!pendingIdentity.value) {
                         phase.value = 'input'; dirty.value = false; review.value = null; frozen.value = null;
@@ -126,7 +131,7 @@ export const DebtPaymentPanel = {
                 saving.value = false;
                 go(`#customers/debt/${props.customerId}/payment/${frozen.value.public_id}`);
             } catch (failure) {
-                if (failure.status === 0 || failure.status >= 500 || [401,403,404].includes(failure.status)) {
+                if (failure.code === 'DEBT_IDENTITY_CONFLICT' || failure.status === 0 || failure.status >= 500 || [401,403,404].includes(failure.status)) {
                     phase.value = 'unknown'; error.value = 'We could not confirm whether this payment was saved. Check saved status. Do not record it again with a new reference.';
                 } else {
                     pendingIdentity.value = null; marker(null); phase.value = 'input'; review.value = null;
@@ -196,8 +201,12 @@ export const DebtPaymentPanel = {
                 action('Save payment',save,locked.value,'btn-primary',{loading:saving.value,busyLabel:'Saving payment…',icon:'success'}),
                 action('Edit payment',()=>{phase.value='input';review.value=null;},busy.value||saving.value),
             ]),
+            view.value && receipt.value && !receipt.value.reversal_of_public_id && !receipt.value.reversed_by_public_id && has(props.permissions,'debt.payment.reverse') && [
+                action('Undo payment',()=>go(`#customers/debt/${props.customerId}/payment/${receipt.value.public_id}/reverse`),props.readOnly||!online.value),
+                has(props.permissions,'debt.payment.record') && action('Correct payment',()=>go(`#customers/debt/${props.customerId}/payment/${receipt.value.public_id}/correct`),props.readOnly||!online.value),
+            ],
             view.value && receipt.value && h(DebtPaymentReceipt,{payment:receipt.value,permissions:props.permissions,onNavigate:go}),
-            props.mode === 'history' && view.value && !busy.value && !error.value && [customer.value && h('h3',customer.value.display_name),h(UiRecordList,{records:history.value,emptyTitle:'No customer payments yet',emptyMessage:'Payments will appear here after they are saved.'},{record:({record:p})=>h('article',{class:'commercial-card'},[h('h3',`${money(p.amount)} · ${stateLabel(p.channel)}`),h('p',`Saved (on this device): ${paymentTime(p.posted_at)}`),p.reversed_by_public_id && h('p','This payment was undone.'),action('View receipt',()=>go(`#customers/debt/${props.customerId}/payment/${p.public_id}`))])}),pager(pagination,busy.value||!online.value,initialize)],
+            props.mode === 'history' && view.value && !busy.value && !error.value && [customer.value && h('h3',customer.value.display_name),h(UiRecordList,{records:history.value,emptyTitle:'No customer payments yet',emptyMessage:'Payments will appear here after they are saved.'},{record:({record:p})=>h('article',{class:'commercial-card'},[h('h3',`${money(p.amount)} · ${stateLabel(p.channel)}`),h('p',`Saved (on this device): ${paymentTime(p.posted_at)}`),p.reversed_by_public_id && h('p','This payment was undone.'),p.reversal_of_public_id && h('p','This record undoes an earlier payment.'),action('View receipt',()=>go(`#customers/debt/${props.customerId}/payment/${p.public_id}`))])}),pager(pagination,busy.value||!online.value,initialize)],
         ].filter(Boolean));
     },
 };

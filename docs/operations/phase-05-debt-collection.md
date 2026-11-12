@@ -1,5 +1,8 @@
 # Phase 5 WP2 operational handover
 
+**Progression update,12 November2026:** [Owner accepted WP2](../acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md) and authorized WP3. Delivery-time pending/boundary statements below are historical. Per-case native outcomes were not supplied. WP3 supersedes the temporary collected-return guard; WP4 remains separate.
+
+
 Use the [module/API/transaction contract](../Phase-5/Phase_5_WP2_Integration_Contracts.md), [native manual guide](../manual-verification-phase-05-wp2.md) and [delivery report](../Phase-5/Phase_5_WP2_Delivery_Report.md). WP1 is accepted; WP2 still needs its own Owner manual decision.
 
 ## Release prerequisites

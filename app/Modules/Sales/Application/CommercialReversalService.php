@@ -211,6 +211,9 @@ final class CommercialReversalService
                 409,
             );
         }
+        if ($row['kind'] === 'SALE' && $credit && ($credit['collected_amount'] !== '0.00' || $credit['adjustment_delta'] !== '0.00')) {
+            throw new ApiException('RECEIVABLE_DEPENDENCY', 'Undo the linked customer payments and eligible bill changes before cancelling this sale.', 409);
+        }
         if ($row["kind"] === "SALE" && $adjustments) {
             throw new ApiException(
                 "RECEIVABLE_DEPENDENCY",
@@ -267,23 +270,6 @@ final class CommercialReversalService
             throw new ApiException(
                 "COMMERCIAL_EVIDENCE_INVALID",
                 "Money plus credit evidence does not match the operation being reversed.",
-                409,
-            );
-        }
-        if (
-            $row["kind"] === "RETURN" &&
-            $credit &&
-            str_starts_with(
-                SaleMoney::difference(
-                    $credit["original_amount"],
-                    SaleMoney::sum([$credit["outstanding"], $debt]),
-                ),
-                "-",
-            )
-        ) {
-            throw new ApiException(
-                "RECEIVABLE_DEPENDENCY",
-                "Restoring this Return would exceed the original obligation.",
                 409,
             );
         }

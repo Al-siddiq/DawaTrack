@@ -102,3 +102,7 @@ Native MySQL apply/constraint verification remains an Owner development gate. DD
 ## Phase 5 WP2 — no new migration
 
 Collection uses the accepted WP1 debt_payments/debt_payment_allocations tables and existing Receivables/Audit/sync_changes. Reason/review/replay evidence uses bounded immutable Audit metadata, without a command-hash/status/wallet table or receipt snapshot column. No existing migration/raw SQL is rewritten. Equivalent retries do not change accepted rows. Do not drop payment tables to roll back code after collections; see [collection operations](../operations/phase-05-debt-collection.md).
+
+## Phase 5 WP3 — no migration
+
+Reuses accepted WP1 debt_payments/debt_payment_allocations and existing receivable_adjustments unchanged. Service-level exact inverse/same-Customer/sum/no-chain/refund-dependency checks complement existing unique links/scoped FKs; no cross-row CHECK claim. Optional operation UUID argument to the adjustment participant changes no column. Audit/causal correlation identifies atomic pair without a replacement/status/balance column. Existing paired raw SQL is unchanged; destructive rollback of accepted evidence remains prohibited. Runtime needs SELECT/INSERT only for immutable correction evidence plus existing Audit/change rights.

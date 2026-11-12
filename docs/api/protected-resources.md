@@ -44,3 +44,7 @@ Authenticated current-Shop `GET /api/v1/shop/debts`, `GET /api/v1/shop/customers
 ## Phase 5 WP2 payment API
 
 POST /api/v1/shop/debt-payments/preview and /debt-payments require customer.view + debt.view + debt.payment.record (plus debt.payment.allocate for explicit mode). GET /debt-payments/{uuid} and /customers/{uuid}/debt-payments require both view grants. Authenticated hostname/membership/CSRF and private/no-store conventions remain. No undo/adjust/statement writer is exposed. [Payloads, errors and recovery](../Phase-5/Phase_5_WP2_Integration_Contracts.md).
+
+## Phase 5 WP3 protected correction resources
+
+See [method/body/authority table](../Phase-5/Phase_5_WP3_Integration_Contracts.md). Ten new routes under `/api/v1/shop`: payment reversal-preview/reverse/correction-preview/correct; bill adjustment-preview/adjustments POST; adjustment reversal-preview/reverse; adjustment GET and bill adjustments GET. Read grants are customer.view + debt.view. Reverse requires debt.payment.reverse; atomic replacement also debt.payment.record and explicit allocation grant independently; bill adjustment/inverse requires debt.adjust. FULL/membership/CSRF apply to writes, including previews. No blanket debt.manage bypass. Strict UUID/reason/decimal/state fingerprint;409 for stale/conflict/dependency,422 invalid input,403 denied,404 absent scoped status. No new generic mutation/statement endpoint. Unknown outcome status reads remain available to authorized READ_ONLY users.

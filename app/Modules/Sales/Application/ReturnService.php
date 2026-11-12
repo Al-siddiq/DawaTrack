@@ -277,17 +277,11 @@ final class ReturnService
             as $channel => $amount
         ) {
             if (
-                str_starts_with(
-                    SaleMoney::difference(
-                        $quote["capacity"][$channel],
-                        $amount,
-                    ),
-                    "-",
-                )
+                \App\Modules\CustomerDebt\Domain\DebtAmount::compare($quote['capacity'][$channel], $amount) < 0
             ) {
                 throw new ApiException(
                     "RETURN_REFUND_CAP_EXCEEDED",
-                    "The chosen refund exceeds remaining original receipts for " .
+                    "The chosen refund exceeds payments available for " .
                         $channel .
                         ".",
                     409,

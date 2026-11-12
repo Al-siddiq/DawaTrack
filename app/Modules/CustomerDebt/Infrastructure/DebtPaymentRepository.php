@@ -80,8 +80,8 @@ final class DebtPaymentRepository
     {
         $audit = $this->database->table('audit_events')->select('change_metadata,reason')
             ->where(['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId,
-                'action_code' => 'debt_payment.recorded', 'resource_type' => 'debt_payment', 'resource_public_id' => $id])
-            ->orderBy('id')->get(1)->getRowArray();
+                'resource_type' => 'debt_payment', 'resource_public_id' => $id])
+            ->whereIn('action_code', ['debt_payment.recorded', 'debt_payment.reversed'])->orderBy('id')->get(1)->getRowArray();
         $metadata = $audit ? json_decode($audit['change_metadata'] ?? '', true, 512, JSON_THROW_ON_ERROR) : null;
         if (!is_array($metadata) || !isset($metadata['command_fingerprint'], $metadata['customer_balance_before'], $metadata['customer_balance_after'])) {
             throw new ApiException('DEBT_EVIDENCE_INVALID', 'This payment needs checking. Ask the shop owner for help.', 409);

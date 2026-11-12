@@ -34,6 +34,10 @@ final class DebtPaymentQuery
             $bills = $repository->balances($context, (int) $row['customer_id']);
             return $this->header($row) + [
                 'customer_public_id' => $row['customer_public_id'], 'customer_name' => $row['customer_name'],
+                'correction_reason' => ($row['reversal_of_public_id'] !== null || isset($evidence['metadata']['corrects_public_id'])) && $this->access->allows($context, 'debt.payment.reverse') ? $evidence['reason'] : null,
+                'replacement_public_id' => $evidence['metadata']['replacement_public_id'] ?? null,
+                'corrects_public_id' => $evidence['metadata']['corrects_public_id'] ?? null,
+                'inverse_public_id' => $evidence['metadata']['inverse_public_id'] ?? null,
                 'shop_name' => $row['shop_name'], 'recorded_by' => $row['recorded_by'] ?: 'Shop user',
                 'allocations' => array_map(static fn(array $a): array => [
                     'receivable_public_id' => $a['receivable_public_id'], 'sale_public_id' => $a['sale_public_id'],

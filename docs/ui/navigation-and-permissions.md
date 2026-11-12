@@ -22,3 +22,7 @@ Current BLOCKED/CLOSED navigation in Shop limits to home/activity; preserve actu
 C now integrates the registry into real Shop/Admin shells. Every current destination remains reachable with its actual authority; use workspace-shells.md and the C checklist. Full task-body migration/copy remains UI-3. Design samples never override server rules.
 
 The server embeds Admin permission hints using the same Shield user.can() checks as current platform filters. Client metadata is display filtering only; all APIs/MFA still revalidate. Shop context refresh on returning focus/visibility can remove an unavailable current page without broadening any access mode.
+
+## Phase 5 WP3 contextual routes
+
+Within Customers, `#customers/debt/{customer}/payment/{payment}/reverse` and `/correct` require reverse; corrected replacement additionally record, and allocate for selected bills. `#customers/debt/{customer}/bill/{bill}/adjust` requires adjust; `/changes` is read-only history. `#customers/debt/{customer}/adjustment/{change}` reads a saved change; `/reverse` requires adjust and an eligible non-Sales original. Every path independently requires customer.view + debt.view on server. No new sidebar/bottom item or hidden blanket debt.manage authority. READ_ONLY/offline disables saves; saved status reads remain available when authorized and online. Shared shell/navigation guard owns unknown-result and unsaved-form transitions.

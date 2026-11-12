@@ -65,3 +65,9 @@ CustomerDebt now owns `DebtQuery`, `ReceivableBalanceQuery`, `DebtSchema`, `Debt
 ## Phase 5 WP2 — collect and allocate
 
 CustomerDebt owns exact aggregate DebtAmount, pure DebtAllocationPlanner, DebtPaymentInput/Repository/Service/Query and its controller. Existing CommercialAccess owns transaction/authority serialization; Reconciliation owns Cash eligibility; Audit and change publication remain atomic participants. No Inventory/Sale evidence is rewritten. Browser debt-payment-panel/receipt extend the existing Customer task without an outbox. [WP2 contracts](../Phase-5/Phase_5_WP2_Integration_Contracts.md), [operations](../operations/phase-05-debt-collection.md) and [manual guide](../manual-verification-phase-05-wp2.md).
+
+## Phase 5 WP3 ownership
+
+`CustomerDebt/Application/DebtCorrectionInput` closes/normalizes mutation payloads; `DebtCorrectionService` owns reversal/replacement/adjustment locks, review, replay, Audit and last publication. `DebtPaymentPostingParticipant` is shared with normal WP2 collection. `ReceivableAdjustmentParticipant` retains Sales callers and optional explicit operation UUID. `Infrastructure/DebtSettlementQuery` owns original-Sale/channel attributable capacity, reused by Sales and correction dependency checks. `DebtPaymentQuery` extends linked receipts; adjustment detail/history are authorized snapshots in correction service. `Api/DebtCorrectionController` owns ten explicit command/status/history endpoints.
+
+Sales `CommercialEvidence` now reads allocation-aware live balances; `ReturnService` keeps debt-first settlement and exact stock cost; `CommercialReversalService` preserves exact compensation with real dependency checks. `CommercialDiagnostics` includes live allocation/inverse evidence. Frontend `debt-correction-panel.js` owns reviewed forms, contextual history and minimal-ID recovery. [Complete contract/source map](../Phase-5/Phase_5_WP3_Integration_Contracts.md). WP4 statements remain separate.

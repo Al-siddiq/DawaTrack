@@ -41,3 +41,7 @@ Frontend source lives in `resources/`. `npm run build` compiles CSS and copies p
 | [Phase 5 plan](docs/Phase-5/Phase_5_Implementation_Plan.md) | Proposed next four work packages and manual gates |
 
 Historical delivery reports describe their state when authored. Later explicit Owner acceptance supersedes earlier Pending decision wording; it does not manufacture historical per-case evidence. Delivery remains package-by-package, with Owner manual acceptance before progression. Engineering checks support that process rather than replacing it.
+
+## Phase 5 WP3 — corrections and returns after repayment
+
+WP2 is [Owner-accepted](docs/acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md). WP3 delivers linked payment undo/atomic replacement, reasoned bill corrections, repayment-aware returns and read-only integrity checks. [Delivery](docs/Phase-5/Phase_5_WP3_Delivery_Report.md) · [Developer/API contract](docs/Phase-5/Phase_5_WP3_Integration_Contracts.md) · [Native manual guide P5-24–P5-36](docs/manual-verification-phase-05-wp3.md) · [Operations](docs/operations/phase-05-debt-corrections.md). No new migration/dependency; WP1 tables required. WP3 native acceptance pending; WP4 statements not started.

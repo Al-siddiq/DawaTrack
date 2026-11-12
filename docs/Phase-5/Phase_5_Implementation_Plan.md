@@ -187,6 +187,6 @@ No production data repair, destructive rollback, deployment or business mutation
 
 ## 10. Approval and progression
 
-**Now:** UI programme closure is recorded and this Phase 5 plan is Owner-approved. WP1 is Owner-accepted; WP2 is delivered for its separate manual verification.
+**Now:** UI programme closure is recorded and this Phase 5 plan is Owner-approved. WP1 and WP2 are Owner-accepted; WP3 is delivered for its separate native manual verification. See [Owner WP2 acceptance](../acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md).
 
-**Current authorized implementation scope:** WP2 only, after recorded WP1 acceptance. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.
+**Current authorized implementation scope:** WP3 only, after explicit WP2 acceptance on12 November2026. WP4 is not started. Proceed WP1 → acceptance → WP2 → acceptance → WP3 → acceptance → WP4 → integrated acceptance. Any internal coding increments stay inside their package; they cannot reduce its deliverable or bypass its gate.

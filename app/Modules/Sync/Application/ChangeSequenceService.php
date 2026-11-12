@@ -23,6 +23,7 @@ final class ChangeSequenceService
         'shop_domain',
         'subscription',
         'debt_payment',
+        'receivable_adjustment',
         'customer',
         'sale',
         'receivable',

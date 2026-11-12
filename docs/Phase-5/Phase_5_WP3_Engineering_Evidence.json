@@ -1,0 +1,105 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Africa/Lagos",
+  "package": "Phase 5 WP3",
+  "owner_acceptance": "Pending native manual verification",
+  "accepted_wp2_head": "c2b86f9574a591da926cc3bdf6832f44294d3834",
+  "implementation_scope": "Payment inverse/atomic replacement, factual bill adjustment/inverse, repayment-aware Returns, diagnostics and contextual UI; WP4 not started",
+  "observed_checks": [
+    {
+      "command": "npm run build",
+      "result": "Passed; Frontend assets built.",
+      "warnings": "Existing Bootstrap/Sass deprecations",
+      "icons": 34,
+      "icon_bytes": 17008,
+      "icon_gzip_bytes": 5102
+    },
+    {
+      "check": "PHP8.3 grammar parser",
+      "files": 249,
+      "result": "Passed",
+      "native_php": false
+    },
+    {
+      "check": "Published JS parse/import graph",
+      "modules": 45,
+      "local_edges": 135,
+      "result": "Passed"
+    },
+    {
+      "check": "Existing WP1 migration/raw SQL parity",
+      "pairs": 2,
+      "new_migrations": 0,
+      "result": "Passed",
+      "native_mysql": false
+    },
+    {
+      "check": "Actual Vue host component/handler probes with mocked API",
+      "new_render_variants": 16,
+      "vue_warnings": 0,
+      "result": "Passed",
+      "coverage": [
+        "review/modal/save/link",
+        "unknown reload and status without automatic POST",
+        "404 same pair continuation",
+        "stale input retained",
+        "refund dependency guidance",
+        "grants/READ_ONLY/offline",
+        "bill change/detail/history",
+        "normal/correction pending marker redirection"
+      ],
+      "native_browser_http": false
+    },
+    {
+      "check": "Prior UI regression",
+      "wp2_render_variants": 12,
+      "wp1_read_render_variants": 10,
+      "result": "Passed",
+      "additional_private_correction_reason_print_filter": "Passed (actual handler, host only)"
+    },
+    {
+      "check": "Actual settlement/projection/diagnostic SQL on SQLite synthetic integer fixtures",
+      "assertion_statements": 21,
+      "changed_diagnostic_queries": 5,
+      "prior_projection_scenarios": 9,
+      "prior_receipt_allocation_scenarios": 4,
+      "result": "Passed",
+      "native_mysql_php_concurrency": false
+    },
+    {
+      "check": "Exact raw release/source-generated inventory",
+      "files": 383,
+      "sha256": "72893c9da9d051e59c9cc5eb8acfe348bbeaf54e13a87d25cfb585a3cfe49754",
+      "result": "Passed"
+    },
+    {
+      "check": "Archive without Git, CRLF repair and genuine change rejection",
+      "simulated_crlf_text_files": 374,
+      "exact_restored_files": 383,
+      "manifest_regenerated": false,
+      "result": "Passed",
+      "native_windows": false
+    },
+    {
+      "check": "Documentation/register/coverage and diff whitespace",
+      "requirements": 30,
+      "navigation_rows": 29,
+      "wording_entries": 788,
+      "new_wording_entries": 100,
+      "native_cases": "P5-24-P5-36 Pending",
+      "result": "Passed"
+    }
+  ],
+  "native_not_executed": [
+    "PHP runtime/posting",
+    "MySQL DECIMAL/constraints/locks/concurrency/rollback",
+    "Authenticated HTTP/security/CSRF/session",
+    "Native browser/phone/keyboard/accessibility",
+    "Native Print preview",
+    "Deployment/rollback"
+  ],
+  "new_schema_or_dependencies": false,
+  "automated_framework_added": false,
+  "deployed": false,
+  "next_gate": "Explicit Owner WP3 native manual acceptance before WP4"
+}

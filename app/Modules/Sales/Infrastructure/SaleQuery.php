@@ -452,35 +452,42 @@ final class SaleQuery
     public function receivable(ShopContext $c, string $id): array
     {
         $this->access->read($c, "sale.view");
-        $r = $this->database
-            ->table("receivables r")
-            ->select(
-                "r.public_id,r.original_amount,r.due_date,r.occurred_at,r.posted_at,s.public_id sale_public_id,c.public_id customer_public_id,c.display_name customer_name",
-            )
-            ->join(
-                "sales s",
-                "s.tenant_id=r.tenant_id AND s.shop_id=r.shop_id AND s.id=r.sale_id",
-            )
-            ->join(
-                "customers c",
-                "c.tenant_id=r.tenant_id AND c.id=r.customer_id",
-            )
-            ->where([
-                "r.tenant_id" => $c->tenantId,
-                "r.shop_id" => $c->shopId,
-                "r.public_id" => DraftInput::uuid($id),
-                "s.status" => "POSTED",
-                "s.kind" => "SALE",
-            ])
-            ->get()
-            ->getRowArray();
-        if (!$r) {
-            throw new ApiException(
-                "RECEIVABLE_NOT_FOUND",
-                "The Sale credit was not found.",
-                404,
-            );
-        }
-        return $r;
+        return (new \App\Modules\CustomerDebt\Infrastructure\DebtReadSnapshot($this->database))->run(function () use ($c, $id): array {
+            $r = $this->database
+                ->table("receivables r")
+                ->select(
+                    "r.public_id,r.original_amount,r.due_date,r.occurred_at,r.posted_at,s.public_id sale_public_id,c.public_id customer_public_id,c.display_name customer_name",
+                )
+                ->join(
+                    "sales s",
+                    "s.tenant_id=r.tenant_id AND s.shop_id=r.shop_id AND s.id=r.sale_id",
+                )
+                ->join(
+                    "customers c",
+                    "c.tenant_id=r.tenant_id AND c.id=r.customer_id",
+                )
+                ->where([
+                    "r.tenant_id" => $c->tenantId,
+                    "r.shop_id" => $c->shopId,
+                    "r.public_id" => DraftInput::uuid($id),
+                    "s.status" => "POSTED",
+                    "s.kind" => "SALE",
+                ])
+                ->get()
+                ->getRowArray();
+            if (!$r) {
+                throw new ApiException(
+                    "RECEIVABLE_NOT_FOUND",
+                    "The Sale credit was not found.",
+                    404,
+                );
+            }
+            $creditRow = $this->database->query('SELECT customer_id FROM receivables WHERE tenant_id=? AND shop_id=? AND public_id=?', [$c->tenantId, $c->shopId, $r['public_id']])->getRowArray();
+            $live = (new \App\Modules\CustomerDebt\Infrastructure\DebtPaymentRepository($this->database))->balances($c, (int) $creditRow['customer_id']);
+            $balance = array_column($live, null, 'public_id')[$r['public_id']] ?? null;
+            if (!$balance) throw new ApiException('DEBT_EVIDENCE_INVALID', 'The bill balance could not be checked.', 409);
+            foreach (['adjustment_delta', 'adjusted_amount', 'collected_amount', 'outstanding_amount', 'settlement_state'] as $key) $r[$key] = $balance[$key];
+            return $r;
+        });
     }
 }

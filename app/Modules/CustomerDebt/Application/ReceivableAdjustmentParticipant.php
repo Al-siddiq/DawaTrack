@@ -26,6 +26,7 @@ final class ReceivableAdjustmentParticipant
         string $now,
         string $correlation,
         ?int $reversal = null,
+        ?string $publicId = null,
     ): ?string {
         // Preserve the accepted commercial participant's zero-effect no-op.
         if ($delta === '0.00' || $delta === '-0.00') {
@@ -49,7 +50,7 @@ final class ReceivableAdjustmentParticipant
             || (($type === 'REVERSAL') !== ($reversal !== null))) {
             throw new ApiException('VALIDATION_FAILED', 'The bill correction does not match its source.', 422);
         }
-        $id = Uuid::v4();
+        $id = $publicId ?? Uuid::v4();
         $this->database->table('receivable_adjustments')->insert([
             'public_id' => $id, 'tenant_id' => $context->tenantId, 'shop_id' => $context->shopId,
             'receivable_id' => $lockedCredit['id'], 'sale_id' => $sale,

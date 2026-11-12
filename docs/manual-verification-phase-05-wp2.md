@@ -1,5 +1,8 @@
 # Phase 5 WP2 — receive and allocate customer payments
 
+**Progression update,12 November2026:** [Owner accepted WP2](acceptance/2026-11-12-phase-05-wp2-owner-acceptance.md) and authorized WP3. Delivery-time pending/boundary statements below are historical. Per-case native outcomes were not supplied. WP3 supersedes the temporary collected-return guard; WP4 remains separate.
+
+
 12 November 2026 (Africa/Lagos). WP1 is accepted. **WP2 is delivered for your manual verification; not yet accepted.** No correction/undo/statement workflow is included yet.
 
 ## Update and open the real application

@@ -39,6 +39,16 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/opening-cash/(:segment)/review', 'Api\OpeningCashController::review/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/finalize', 'Api\OpeningCashController::finalize/$1', ['filter' => 'authenticated']);
     $routes->post('shop/opening-cash/(:segment)/abort', 'Api\OpeningCashController::abort/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments/(:segment)/reversal-preview', 'Api\DebtCorrectionController::reversalPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments/(:segment)/reverse', 'Api\DebtCorrectionController::reverse/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments/(:segment)/correction-preview', 'Api\DebtCorrectionController::correctionPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-payments/(:segment)/correct', 'Api\DebtCorrectionController::correct/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-bills/(:segment)/adjustment-preview', 'Api\DebtCorrectionController::adjustmentPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-bills/(:segment)/adjustments', 'Api\DebtCorrectionController::adjust/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-adjustments/(:segment)/reversal-preview', 'Api\DebtCorrectionController::adjustmentReversalPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/debt-adjustments/(:segment)/reverse', 'Api\DebtCorrectionController::adjustmentReverse/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/debt-adjustments/(:segment)', 'Api\DebtCorrectionController::show/$1', ['filter' => 'authenticated']);
+    $routes->get('shop/debt-bills/(:segment)/adjustments', 'Api\DebtCorrectionController::history/$1', ['filter' => 'authenticated']);
     $routes->post('shop/debt-payments/preview', 'Api\DebtPaymentController::preview', ['filter' => 'authenticated']);
     $routes->post('shop/debt-payments', 'Api\DebtPaymentController::post', ['filter' => 'authenticated']);
     $routes->get('shop/debt-payments/(:segment)', 'Api\DebtPaymentController::show/$1', ['filter' => 'authenticated']);
