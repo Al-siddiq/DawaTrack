@@ -1,32 +1,27 @@
 # UI programme closure ledger
 
-UI4-A, 11 November 2026. This ledger separates code delivery, Owner acceptance, engineering evidence and native release evidence.
+**11 November 2026 (Africa/Lagos): CLOSED — Owner reviewed, accepted, merged and reported rollout complete.** See the [Owner decision record](acceptance/2026-11-11-ui-programme-owner-closure.md) for the Owner's exact confirmation and evidence boundaries. This is a recorded Owner decision, not a claim of newly performed deployment/testing by the assistant.
 
-| Boundary | Recorded state | Evidence |
+| Boundary | Current recorded state | Evidence |
 |---|---|---|
-| UI2 foundation / brand | Prior Owner acceptance preserved | `acceptance/2026-11-09-ui2-b-owner-acceptance.md`, `2026-11-10-ui2-c-owner-acceptance.md`, `2026-11-10-ui2-brand-owner-acceptance.md` |
-| UI3-A/B integrated candidate | Owner accepted delivered B #36 including its A prerequisite | `acceptance/2026-11-11-ui3-b-owner-acceptance.md`; no per-case/device results invented |
-| Main integration | #35 in main; #36 only in feature branch at inspection | UI4 first commit integrates the exact accepted B tree onto main |
-| Current UI4 corrections | Implemented and engineering checked | `verification/ui4-a-defects.csv`; native re-verification pending |
-| Requirements | All 46 source mappings reconciled | `requirements-register.csv`, explicit UI4 source references and M cases |
-| Navigation | All 29 entries/actions reconciled | `navigation-map.csv`; mandatory password flow/contextual owner details distinguished from nonexistent standalone pages |
-| Screens/designs | All 35 inventory rows mapped; all 18 specimens explained | `screen-inventory.csv`, `verification/ui4-a-design-reconciliation.csv` |
-| Wording | Original 96 IDs and extended catalogue preserved | `wording-catalogue.csv`; current implementation/future exclusions retained; manual reading still Owner-owned |
-| Build/content | Candidate inventory and checks recorded | `verification/ui4-a-engineering.json`, `releases/ui4-a-artifact-manifest.json` |
-| Native programme gate | Pending missing observations | `verification/ui4-a-manual-results.csv`; use previous evidence where applicable |
-| Deployment/rollback | Not performed here | `releases/ui4-a-release-decision.csv`; exact host/candidate/operator decision pending |
-| Phase 5 readiness | Not declared complete | Full agreed UI definition of done includes final manual/release acceptance |
+| UI2 foundation, components, shell and brand | Earlier acceptance preserved; included in final programme acceptance | Existing UI2 acceptance records; final decision above |
+| UI3 trading, Owner/Admin/Auth | Earlier acceptance preserved; integrated programme accepted | UI3-B acceptance; final decision |
+| Main integration | Complete; UI3-B and UI4-A are in main | PR #37 merged as `b41425f905100a728a4c6167d5df936702a8502a` |
+| UI4 fixes | Delivered and accepted with final package | `verification/ui4-a-defects.csv`; individual native observations not supplied |
+| Requirements | 46 source mappings reconciled; programme accepted | `requirements-register.csv` |
+| Navigation | 29 entries/actions reconciled; programme accepted | `navigation-map.csv` |
+| Screens/designs | 35 inventory rows; 18 representative designs reconciled; programme accepted | `screen-inventory.csv`; design reconciliation matrix |
+| Wording | 538 entries including original 96 IDs retained; programme accepted | `wording-catalogue.csv` |
+| Engineering/build | Historical measured evidence preserved | `verification/ui4-a-engineering.json`; 355-file artifact manifest |
+| Final manual decision | Owner reports reviewed and accepted | Acceptance record; individual M01–M18 details not supplied |
+| Merge and rollout | Merge verified; rollout reported complete by Owner | PR #37; `releases/ui4-a-release-decision.csv` |
+| Detailed hosting/device evidence | Not individually supplied; no Pass invented | Historical manual result template and release decision explain missing fields |
+| Phase 5 entry | UI entry decision satisfied; planning authorized | [Phase 5 plan](../Phase-5/Phase_5_Implementation_Plan.md); implementation awaits plan approval |
 
-## What the design reconciliation means
+## What closure means
 
-The 18 SVGs are representative designs, not fake production screenshots. The source matrix records what implements each intent and why legitimate differences exist. No screenshot-to-browser or device parity is claimed from source inspection alone. Financial review, errors and essential next steps remain visible; supplementary history/support details can be collapsed. No mock reporting totals, Customer portal, plan checkout, standalone Owners page or general account-management service has been invented.
+The approved UI programme is accepted and closed. Further UI defects discovered during use enter normal maintenance; they do not silently reopen accepted packages. Phase 5 must extend the accepted shared shell, components, local icon vocabulary, plain-English content, brand accents, privacy and safe request-recovery patterns.
 
-## How acceptance closes
+The 18 SVG designs remain representative references, not production screenshots. Source reconciliation, engineering checks, Owner acceptance and reported rollout retain their separate provenance. Existing reports describe their state at delivery time; this ledger and final acceptance record state the current decision.
 
-1. Review the runnable UI4 branch/commit, including the integrated accepted B and focused fixes.
-2. Record M01–M18 actual outcomes and device/environment details, or reference existing observations for unchanged code. A blanket package acceptance remains valid approval but does not fabricate detailed observations.
-3. Resolve release blockers and verify the affected path. A new minor correction does not require repeating unrelated accepted workflows.
-4. Bind the reviewed commit and artifact content SHA-256 to the actual staging/production environment and complete release/cache/rollback checks.
-5. Record Owner's final UI4 decision against that concrete candidate. Do not silently turn Pending into Pass or Not applicable because a fixture/device was unavailable.
-
-Full UI completion is declared only after this final gate. The engineering packet and candidate are delivered now; native programme/deployment evidence remains pending.
+No detailed case result, exact production configuration, production checksum, deployment timestamp or rollback rehearsal is manufactured. No requirement to repeat all previously accepted workflows is introduced. The next work is a four-package Phase 5 plan with manual acceptance gates.

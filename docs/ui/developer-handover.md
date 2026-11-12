@@ -1,5 +1,7 @@
 # Developer maintenance handover
 
+> **Current status, 11 November 2026:** Owner accepted the UI programme and reported merge/rollout complete. [Final decision](acceptance/2026-11-11-ui-programme-owner-closure.md) and [closure ledger](programme-closure.md) supersede pre-review Pending wording below. Historical engineering limits and unreported individual results remain unchanged.
+
 The UI uses existing Vue 3 JavaScript modules with precompiled Shop rendering and `h()` Admin/components. Native Auth remains PHP forms with a small local enhancement module. Bootstrap is CSS only; no competing Bootstrap DOM controller, Router/Pinia or runtime-template compiler is introduced. Icons are the pinned, locally served Bootstrap Icons subset.
 
 ## Start with these references

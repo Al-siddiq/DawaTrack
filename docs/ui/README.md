@@ -1,20 +1,12 @@
 # DawaTrack UI developer reference
 
-**Current package: UI4-A — engineering verification and release handover delivered; final native programme gate pending.** The Owner accepted the integrated UI3-B candidate. #36 had merged into the UI3-A branch, so this candidate explicitly brings accepted B to main before the UI4 fixes. No native device/email/MySQL/deployment pass or final programme acceptance is invented.
+**Current status: UI programme CLOSED — Owner reviewed, accepted, merged and reported rollout complete on 11 November 2026.** PR #37 is verified merged into main. Read the [final acceptance](acceptance/2026-11-11-ui-programme-owner-closure.md) and [closure ledger](programme-closure.md). Individual device/native/hosting observations were not supplied and have not been invented.
 
-## UI4-A handover
+## Current handover and next phase
 
-Start with [delivery and limitations](UI4-A-delivery.md), [programme closure](programme-closure.md), [final manual gate](manual-verification-ui4-a.md), [release/rollback guide](release-handover.md) and [developer handover](developer-handover.md). `verification/` contains source/design reconciliation, measured engineering evidence, defects and the manual result template. `releases/` contains the content inventory and pending release decision. No migration. The UI4 PR targets **main directly**; it includes accepted B missing from main.
+Use [developer handover](developer-handover.md), [release/rollback guide](release-handover.md) and the existing component/navigation/wording references below for maintenance. The release decision now records the Owner's final acceptance and reported rollout separately from unknown hosting details. Prior delivery reports and manual checklists are historical references, not current Pending programme decisions.
 
-Use valid prior manual observations for unchanged paths, then verify new print/disclosure/cache fixes and missing programme cases. Source delivery and package acceptance are separate from actual device/hosting evidence.
-
-## Review UI3-B in the actual application
-
-Use the normal XAMPP Shop/Admin addresses and [UI3-B manual verification](manual-verification-ui3-b.md). See [delivery](UI3-B-delivery.md) and [Owner/Admin/Auth reference](owner-admin-auth.md). No migration. Merge UI3-A #35 into main first, then retarget the B PR to main; do not merge into an old UI2 feature branch.
-
-## Review UI3-A in the actual application
-
-Follow [UI3-A manual verification](manual-verification-ui3-a.md) using the normal XAMPP Shop address. See [delivery scope and integration](UI3-A-delivery.md) and [trading developer reference](trading-screens.md). No migration is needed. The component gallery below remains a design reference, not the live app or proof of business acceptance.
+The [Phase 5 implementation plan](../Phase-5/Phase_5_Implementation_Plan.md) proposes four manually accepted packages for live debt balances, collection, corrections/return integration and customer statements. It is prepared for approval; Phase 5 code has not started.
 
 ## Review the delivered foundation
 
@@ -61,4 +53,4 @@ UI2-C now changes the actual Shop/Admin/Auth layout and navigation. Open the nor
 
 Edit source, regenerate output and commit both where the repository tracks generated assets. Do not edit `public/assets` or `icon-catalogue.js` / `UiIconCatalogue.php` directly. Every change to the allowlist must rebuild icons and review examples. Never regenerate the human-maintained requirement/acceptance columns over review results. Update documentation in the same PR as the implementation.
 
-The 18 designs are representative, not a substitute for the full task inventory. The 96 copy entries are not marked migrated merely because their text appears in a reference. The requirements register records package-level C acceptance separately from unreported per-case results and remaining UI3/UI4 work. The Owner's prior Phase 4 acceptance remains intact; new UI acceptance is recorded separately and only after manual confirmation.
+The 18 designs are representative, not a substitute for the full task inventory. The 96 copy entries are not marked migrated merely because their text appears in a reference. The requirements register retains historical source/per-case columns and records the final programme decision separately. The Owner's prior Phase 4 acceptance remains intact; new UI acceptance is recorded separately and only after manual confirmation.
