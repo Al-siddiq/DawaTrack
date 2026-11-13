@@ -42,3 +42,7 @@ Phase 3 collection reads are bounded. Products, Stock Intakes and Product stock 
 ## Phase 4 WP1 Opening Cash
 
 Owner-only `/api/v1/shop/opening-cash` state/start and explicit count/commit-count/review/finalize/abort commands. Exact decimal strings, standard envelopes, scoped UUIDs, CSRF and no-store responses. See [integration contracts](../Phase-4/Phase_4_WP1_Integration_Contracts.md). No Sale endpoint exists yet.
+
+## Phase 6 WP1 expense API
+
+Authenticated current-Shop routes: GET `/api/v1/shop/financial-movements` and `/{public UUID}`; POST `/api/v1/shop/financial-movements/expenses/preview` and `/expenses`. Existing CSRF, no-store, correlation and error envelopes apply. Preview/post accept only public_id, channel (CASH|TRANSFER), positive decimal-string amount, description, optional external_reference and occurred_at (null means first-save time); post additionally requires review_fingerprint from preview. No actor/scope/type/signed delta/link can be submitted. See [complete contract](../Phase-6/Phase_6_WP1_Integration_Contracts.md). Reads require financial.view; post also financial.record and FULL current access. History accepts page/per_page (max50), channel ALL|CASH|TRANSFER, from_date/to_date in the Shop calendar and orders posted_at/id descending. Public amounts remain strings. No generic movement/correction/owner-action route is exposed.

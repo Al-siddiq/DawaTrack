@@ -2,15 +2,13 @@
 
 DawaTrack is a modular CodeIgniter 4 application for Nigerian chemist/PPMV operations, with tenant isolation, staff permissions, accountable stock and commercial evidence, and a responsive white-label Shop/Admin/Auth interface.
 
-## Current position — 12 November 2026
+## Current position — 13 November 2026
 
-**Phase 5 — Debt Collection and Customer Statements is Owner-accepted and closed.** The Owner explicitly accepted the whole phase, including WP4. [Dated acceptance](docs/acceptance/2026-11-12-phase-05-owner-closure.md) · [Closure report](docs/Phase-5/Phase_5_Closure_Report.md) · [Requirement/source matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) · [Integrated evidence](docs/Phase-5/Phase_5_Integrated_Manual_Results.csv).
+**Phase 5 is Owner-accepted and closed**, now integrated into main through PR #43 (`f985b5a88516ecd3861497bae0ee90984dfe47a1`). The historical [closure ledger](docs/acceptance/2026-11-12-phase-05-owner-closure.md) preserves what was known when accepted. UI programme closure remains recorded separately.
 
-Accepted application candidate: `970ad2e39fdc7ae2a1201c985bc8d54d6952152e` (PR #42), including WP1–WP4. This adds derived balances, Cash/Transfer repayment/allocation, append-only corrections, repayment-aware Returns and scoped versioned statements/Print to the accepted Phases1–4 foundation and UI programme. Detailed per-case observations/runtime configuration were not separately supplied; acceptance does not manufacture independent native test execution.
+**Phase 6 WP1 — Financial Movement foundation and Shop expenses is implemented for manual acceptance.** The Owner approved the [four-package plan](docs/Phase-6/Phase_6_Implementation_Plan.md) and authorized WP1 only. This delivery adds the additive schema, independent permissions, online Cash/Transfer expense review/save, scoped history/detail and same-UUID recovery. [Delivery report](docs/Phase-6/Phase_6_WP1_Delivery_Report.md) · [Developer contracts](docs/Phase-6/Phase_6_WP1_Integration_Contracts.md) · [Manual verification P6-01–P6-12](docs/manual-verification-phase-6-wp1.md) · [Release/rollback handover](docs/operations/phase-06-wp1-release.md).
 
-PRs #39–#42 were still open/unmerged and main at `b41425f905100a728a4c6167d5df936702a8502a` when closure was checked. Integration and production deployment are separate decisions, not performed by this documentation closure. The earlier UI programme acceptance/rollout remains recorded in its [own closure ledger](docs/ui/programme-closure.md).
-
-The next roadmap boundary is **Phase 6 — Financial Movements and Cash Accountability**, with a separately approved package plan before implementation. **Phase 6 — Financial Movements and Cash Accountability** has a proposed four-package implementation plan, requirements matrix and manual acceptance plan; it is awaiting explicit Owner approval. No Phase 6 implementation is authorized by the planning proposal. Full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work; the service worker does not provide offline business operation. [Phase 6 implementation plan](docs/Phase-6/Phase_6_Implementation_Plan.md) · [Manual acceptance plan](docs/Phase-6/Phase_6_Manual_Acceptance_Plan.md) · [Requirements matrix](docs/Phase-6/Phase_6_Requirements_Matrix.csv). [Operational release/key/rollback handover](docs/operations/phase-05-statements-release.md) and [release decision register](docs/Phase-5/Phase_5_Release_Decision.csv) remain current.
+WP1 native PHP/MySQL/HTTP/concurrency/browser acceptance is pending. WP2 Owner money actions, WP3 corrections and WP4 expected-Cash composition remain planned. Full Reconciliation, reporting, registered devices and offline/sync transport remain later phases. No merge or deployment is performed by this delivery.
 
 ## Start locally
 

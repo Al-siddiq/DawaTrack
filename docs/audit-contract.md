@@ -119,3 +119,7 @@ Activate required-reason DEBT actions debt_payment.reversed, debt_payment.correc
 ## Phase 5 WP4 read-only statement boundary
 
 Statement reads, pagination/checkpoint creation, Print preparation and refresh perform SELECT only, no success Audit/sync/domain writes. Existing accepted debt writers retain required parent/allocation/correction Audit. Shared verifiedAllocations validates payment amount/hash and returns safe bill explanations without exposing Audit metadata/reason. Statement replay/refresh does not invent a balancing event or financial evidence.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1: financial_movement.recorded / financial_movement / FINANCIAL is mandatory, with description as the required reason. Metadata contains type, channel, signed exact delta and canonical command fingerprint; it is internal evidence, not a public DTO. Movement, Audit, Shop generation and financial_movement change commit together. Equivalent retry and reads/preview add no success Audit/change. Change publication is last; no subsequent domain locking/read occurs inside the owning write transaction. Missing/corrupt recorded evidence fails closed.

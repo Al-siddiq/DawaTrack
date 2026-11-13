@@ -321,3 +321,7 @@ Each package handover must identify its exact base/head commit, migration/setup 
 **Proposed sequence:** Owner reviews and approves this plan and its binding correction/permission/expected-Cash decisions. Then WP1 is authorized as a separate implementation package. After each package, pause for Owner review and explicit acceptance before beginning the next package.
 
 This planning change creates no Financial Movement schema, route, permission, UI or business record. It does not implement Phase 6, alter existing evidence, run migrations, deploy, or authorize production operations.
+
+## Delivery progression — 13 November 2026
+
+The Owner approved this plan and authorized WP1 only: [dated approval](../acceptance/2026-11-13-phase-06-plan-owner-approval.md). WP1 is implemented for review, with [integration contracts](Phase_6_WP1_Integration_Contracts.md), [delivery report](Phase_6_WP1_Delivery_Report.md), [native manual guide](../manual-verification-phase-6-wp1.md) and [unexecuted results register](Phase_6_WP1_Manual_Results.csv). This does not pre-accept WP1. WP2–WP4 remain planned and unimplemented. Approval supersedes the proposal's earlier awaiting-approval status; the approved scope above is preserved.

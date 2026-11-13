@@ -30,3 +30,7 @@ Within Customers, `#customers/debt/{customer}/payment/{payment}/reverse` and `/c
 ## Phase 5 WP4 contextual statement
 
 `#customers/debt/{customer}/statement` is within Customers; View customer statement appears on Customer bills and bill detail. customer.view + debt.view independently enforced on server. Read-only date/page/Print utilities, no new bottom/sidebar item, no collect/reverse/adjust authority. Global money-recovery navigation guards continue to block leaving unresolved commands; statement reads create no pending-money marker. Page tokens are not stored in URLs/localStorage/sessionStorage or used as authentication.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1: Money movements is a single sidebar/Menu Work destination, shown by view_financial_movements derived from financial.view. Expense entry additionally requires record_expenses, financial.record and FULL current access. Hash routes share that one destination; direct hashes never confer authority. READ_ONLY retains authorized history/detail; unknown-save status lookup remains read-only. Four/five existing bottom destinations are unchanged. Correct/reverse permissions register for later packages without buttons or endpoints.

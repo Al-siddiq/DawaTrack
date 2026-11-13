@@ -60,3 +60,7 @@ CustomerDebtPanel delegates `#customers/debt/{uuid}/statement` to CustomerStatem
 ## Phase 5 closure handover
 
 WP1–WP4 and their UI extensions are [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md) on 12 November 2026. Preserve the accepted runtime/source/Print/recovery contracts and historical engineering evidence; individual observations not supplied are not manufactured. Closure changes documentation only, keeps the391-file application inventory intact, and does not merge/deploy or begin Phase6. See [release/rollback operations](../operations/phase-05-statements-release.md).
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1 adds one permission-gated Money movements destination in the existing Shop sidebar/Menu, not a bottom tab. Routes: #financial-movements, #financial-movements/expense, #financial-movements/record/{public UUID}. Native app shell, bundled cash icon, form fields, busy indicators, confirmation modal and readable errors are reused. The review shows exact cash effect, not an invented balance. Session recovery stores only a user/Shop/host-scoped UUID; the API remains authoritative. Future Owner actions/corrections are absent. [Developer contract](../Phase-6/Phase_6_WP1_Integration_Contracts.md), [manual cases](../manual-verification-phase-6-wp1.md).
