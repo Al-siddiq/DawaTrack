@@ -53,3 +53,7 @@ In a disposable runtime inject failures after insert, during required Audit and 
 Finally review narrow phone/desktop, keyboard/focus/modal close, button loading/disabled state, explanation correction, date/channel filters, paging, empty/error reads and browser navigation. Confirm Owner controls use the shared shell and no new bottom tab. Recheck expenses, Starting cash, Sales/Returns, Debt payments/corrections/statements, Stock and Staff settings. Individual movement effects are displayed; aggregate expected Cash remains WP4. Undo/correct actions remain absent until WP3.
 
 Record Pass/Fail/Blocked/Not run for each case using observed evidence. Any failed case blocks acceptance. Submit WP2 acceptance after your manual review; WP3 starts only after that decision.
+
+## History ErrorException follow-up
+
+If testing the initial WP2 candidate produced a generic history error despite the applied migration, pull the updated WP2 branch and rerun its exact inventory check. See [metadata error follow-up](Phase-6/Phase_6_WP2_Metadata_Error_Followup.md). Explicit metadata aliases fix missing lowercase result keys; no migration rerun is needed for this repair. Refresh history and repeat affected cases. New unexpected-error logs include safe source/app_trace locations; send the newest matching line if failure persists. Native resolution remains unconfirmed until retested.

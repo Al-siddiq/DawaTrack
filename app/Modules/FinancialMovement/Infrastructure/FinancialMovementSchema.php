@@ -15,7 +15,7 @@ final class FinancialMovementSchema
     public function requireReady(): void
     {
         $columns = $this->database->query(
-            "SELECT column_name `name`,column_type `data_type`,is_nullable `nullable`,extra,character_set_name `charset`,collation_name `collation`
+            "SELECT column_name `name`,column_type `data_type`,is_nullable `nullable`,extra `extra`,character_set_name `charset`,collation_name `collation`
              FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='financial_movements'",
         )->getResultArray();
         $expected = ['id' => 'bigint unsigned', 'public_id' => 'char(36)', 'tenant_id' => 'bigint unsigned',
@@ -40,7 +40,7 @@ final class FinancialMovementSchema
             $this->notReady();
         }
         $indexes = $this->database->query(
-            "SELECT index_name `name`,column_name,non_unique FROM information_schema.statistics
+            "SELECT index_name `name`,column_name `column_name`,non_unique `non_unique` FROM information_schema.statistics
              WHERE table_schema=DATABASE() AND table_name='financial_movements' ORDER BY index_name,seq_in_index",
         )->getResultArray();
         $actualIndexes = [];

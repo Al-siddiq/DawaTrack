@@ -2,7 +2,7 @@
   "schema": 1,
   "scope": "Tracked app/public and UI source/dependency lock inventory; excludes vendor PHP, environment, writable data, uploads and database.",
   "gitBinding": "Record the exact reviewed/deployed commit separately in release-decision.csv. Content hashes do not imply deployment or acceptance.",
-  "contentSha256": "d803281ee0e02f054427943f2155ecd875593e18ca8c8c6a8fda84da0c8ad058",
+  "contentSha256": "75b2902fbd74df5696caf29a8a7ebab007c3c7f63c1838aa24c9b82a73fd4524",
   "buildNode": "v24.22.1",
   "dependencyPins": {
     "bootstrap": "5.3.8",
@@ -313,8 +313,8 @@
     },
     {
       "path": "app/Controllers/Api/CommercialController.php",
-      "bytes": 3348,
-      "sha256": "042f8884540cfcd3935d33b3966fa3ec4c7bc3e7b6507e2822d98e60da7a5008"
+      "bytes": 4370,
+      "sha256": "e2b8a9c17bf8b49720647172b98fc806c019bafcbeb7da7bc442586a31497490"
     },
     {
       "path": "app/Controllers/Api/CommercialCorrectionController.php",
@@ -973,8 +973,8 @@
     },
     {
       "path": "app/Modules/FinancialMovement/Infrastructure/FinancialMovementSchema.php",
-      "bytes": 5762,
-      "sha256": "2388d858e99f4abb96b159354ab5ba0f7cc3d6633e1cf53b6aac15cd1259ba8f"
+      "bytes": 5797,
+      "sha256": "bbbc48ee5fc6fa3d8b2e4b5ccc354570ee03ca878c2159cdee9b9679de481329"
     },
     {
       "path": "app/Modules/Identity/Application/MembershipInvariantService.php",
