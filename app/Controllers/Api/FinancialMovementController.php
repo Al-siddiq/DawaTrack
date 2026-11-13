@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers\Api;
 
-use App\Modules\FinancialMovement\Application\ExpenseService;
+use App\Modules\FinancialMovement\Application\{ExpenseService, OwnerMovementService};
 use App\Modules\FinancialMovement\Infrastructure\FinancialMovementQuery;
 use Config\Services;
 
@@ -42,4 +42,35 @@ final class FinancialMovementController extends CommercialController
             return $this->ok($this->query()->show($context, $id));
         });
     }
+    private function ownerService(): OwnerMovementService
+    {
+        return new OwnerMovementService(db_connect(), $this->access(), Services::auditService(), Services::changeSequenceService(), Services::requestContext());
+    }
+
+    public function withdrawalPreview()
+    {
+        return $this->execute(fn($context) => $this->ok($this->ownerService()->previewWithdrawal($context, $this->input())));
+    }
+
+    public function withdrawalPost()
+    {
+        return $this->execute(function ($context) {
+            $id = $this->ownerService()->postWithdrawal($context, $this->input());
+            return $this->ok($this->query()->show($context, $id));
+        });
+    }
+
+    public function introductionPreview()
+    {
+        return $this->execute(fn($context) => $this->ok($this->ownerService()->previewIntroduction($context, $this->input())));
+    }
+
+    public function introductionPost()
+    {
+        return $this->execute(function ($context) {
+            $id = $this->ownerService()->postIntroduction($context, $this->input());
+            return $this->ok($this->query()->show($context, $id));
+        });
+    }
+
 }

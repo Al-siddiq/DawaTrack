@@ -21,7 +21,7 @@ final readonly class MovementAmount
                 ['amount' => ['Use a number such as 1500.50, without commas or a currency sign.']]);
         }
         if ($amount === '0.00') {
-            throw new ApiException('VALIDATION_FAILED', 'Enter an amount greater than zero.', 422, ['amount' => ['Enter the amount spent, such as 1500.00.']]);
+            throw new ApiException('VALIDATION_FAILED', 'Enter an amount greater than zero.', 422, ['amount' => ['Enter the amount, such as 1500.00.']]);
         }
         return new self($amount);
     }

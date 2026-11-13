@@ -325,3 +325,8 @@ This planning change creates no Financial Movement schema, route, permission, UI
 ## Delivery progression — 13 November 2026
 
 The Owner approved this plan and authorized WP1 only: [dated approval](../acceptance/2026-11-13-phase-06-plan-owner-approval.md). WP1 is implemented for review, with [integration contracts](Phase_6_WP1_Integration_Contracts.md), [delivery report](Phase_6_WP1_Delivery_Report.md), [native manual guide](../manual-verification-phase-6-wp1.md) and [unexecuted results register](Phase_6_WP1_Manual_Results.csv). This does not pre-accept WP1. WP2–WP4 remain planned and unimplemented. Approval supersedes the proposal's earlier awaiting-approval status; the approved scope above is preserved.
+
+
+## WP2 progression — 13 November 2026
+
+The Owner accepted WP1 and authorized WP2: [acceptance record](../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md). WP2 is implemented for manual review with [contracts](Phase_6_WP2_Integration_Contracts.md), [delivery report](Phase_6_WP2_Delivery_Report.md), [P6-13–P6-18 guide](../manual-verification-phase-6-wp2.md) and [pending results](Phase_6_WP2_Manual_Results.csv). This supersedes the earlier WP1 pending-acceptance progression without changing its historical facts. WP2 is not pre-accepted; WP3/WP4 remain planned.

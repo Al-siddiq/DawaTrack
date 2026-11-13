@@ -46,3 +46,8 @@ Owner-only `/api/v1/shop/opening-cash` state/start and explicit count/commit-cou
 ## Phase 6 WP1 expense API
 
 Authenticated current-Shop routes: GET `/api/v1/shop/financial-movements` and `/{public UUID}`; POST `/api/v1/shop/financial-movements/expenses/preview` and `/expenses`. Existing CSRF, no-store, correlation and error envelopes apply. Preview/post accept only public_id, channel (CASH|TRANSFER), positive decimal-string amount, description, optional external_reference and occurred_at (null means first-save time); post additionally requires review_fingerprint from preview. No actor/scope/type/signed delta/link can be submitted. See [complete contract](../Phase-6/Phase_6_WP1_Integration_Contracts.md). Reads require financial.view; post also financial.record and FULL current access. History accepts page/per_page (max50), channel ALL|CASH|TRANSFER, from_date/to_date in the Shop calendar and orders posted_at/id descending. Public amounts remain strings. No generic movement/correction/owner-action route is exposed.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+Four explicit authenticated POST routes extend /api/v1/shop/financial-movements: owner-withdrawals/preview, owner-withdrawals, owner-introductions/preview and owner-introductions. Closed DTO/fingerprint follows WP1; server selects type/sign. Both grants financial.view/record plus current ACTIVE PRIMARY_OWNER and FULL access are rechecked inside the owning lock boundary for preview and save. Shared GET history/detail carries all three recorded types. Expense-v1 fingerprints remain compatible; Owner fingerprints include operation identity. No generic type, undo or correction route. [WP2 contract](../Phase-6/Phase_6_WP2_Integration_Contracts.md).

@@ -57,6 +57,7 @@ final class ShopController extends BaseController
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
                     'view_customers' => $hasPermission('customer.view'),
                     'view_financial_movements' => $hasPermission('financial.view'),
+                    'record_owner_movements' => $context->role === 'PRIMARY_OWNER' && $hasPermission('financial.view') && $hasPermission('financial.record'),
                     'record_expenses' => $hasPermission('financial.view') && $hasPermission('financial.record'),
                     'view_debt' => $hasPermission('customer.view') && $hasPermission('debt.view'),
                     'collect_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record'),

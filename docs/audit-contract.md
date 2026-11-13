@@ -123,3 +123,8 @@ Statement reads, pagination/checkpoint creation, Print preparation and refresh p
 ## Phase 6 WP1 — 13 November 2026
 
 Phase 6 WP1: financial_movement.recorded / financial_movement / FINANCIAL is mandatory, with description as the required reason. Metadata contains type, channel, signed exact delta and canonical command fingerprint; it is internal evidence, not a public DTO. Movement, Audit, Shop generation and financial_movement change commit together. Equivalent retry and reads/preview add no success Audit/change. Change publication is last; no subsequent domain locking/read occurs inside the owning write transaction. Missing/corrupt recorded evidence fails closed.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+financial_movement.recorded now covers SHOP_EXPENSE, OWNER_WITHDRAWAL and OWNER_INTRODUCTION. Existing required reason/type/channel/signed exact delta/command fingerprint metadata and one owning Audit/change transaction are retained. The Activity display is Money record saved; row type distinguishes the action. Equivalent retry adds no new success evidence; read/preview remains side-effect-free. Original expense-v1 hashes remain unchanged, Owner hashes are action-specific. No reversal/correction action is enabled early.

@@ -115,12 +115,13 @@ export function render(_ctx, _cache) {
                 (_ctx.page==='financial-movements' && _ctx.context.capabilities.view_financial_movements)
                   ? (_openBlock(), _createBlock(_component_FinancialMovementsPanel, {
                       key: 3,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly,
                       hash: _ctx.workspaceNavigation.hash.value,
                       "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
                       onNavigate: _cache[2] || (_cache[2] = $event => (_ctx.workspaceNavigation.request($event)))
-                    }, null, 8 /* PROPS */, ["permissions", "read-only", "hash", "recovery-scope"]))
+                    }, null, 8 /* PROPS */, ["is-owner", "permissions", "read-only", "hash", "recovery-scope"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='opening-cash' && _ctx.context.capabilities.manage_opening_cash)
                   ? (_openBlock(), _createBlock(_component_OpeningCashPanel, {

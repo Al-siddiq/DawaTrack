@@ -114,3 +114,8 @@ Statements derive from existing Receivables, signed adjustments, payment headers
 ## Phase 6 WP1 — 13 November 2026
 
 Phase 6 WP1 adds `2026-11-13-100000_CreatePhaseSixFinancialMovements.php` after accepted Phase 5 migrations; raw twin [20261113100000_financial_movements.sql](sql/phase-06/20261113100000_financial_movements.sql). Creates only financial_movements with 16 columns and scoped self FKs; created_by_user_id matches Shield INT UNSIGNED. Existing migrations remain unchanged. Apply PHP migration or reviewed raw SQL to separate native fixtures, never both to one existing table. Down refuses nonempty evidence. Native empty/populated migration and constraint acceptance remain pending P6-01/P6-02. See [operations](../operations/phase-06-wp1-release.md).
+
+
+## Phase 6 WP2 — 13 November 2026
+
+WP2 adds no migration and does not alter accepted financial_movements DDL/SQL. OWNER_WITHDRAWAL negative and OWNER_INTRODUCTION positive use WP1's existing type/sign CHECKs and scoped FKs. Check status/apply only missing accepted migrations before use. Retain evidence and prior inventories; never drop/recreate to upgrade WP2.

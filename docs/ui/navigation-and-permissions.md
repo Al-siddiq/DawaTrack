@@ -34,3 +34,8 @@ Within Customers, `#customers/debt/{customer}/payment/{payment}/reverse` and `/c
 ## Phase 6 WP1 — 13 November 2026
 
 Phase 6 WP1: Money movements is a single sidebar/Menu Work destination, shown by view_financial_movements derived from financial.view. Expense entry additionally requires record_expenses, financial.record and FULL current access. Hash routes share that one destination; direct hashes never confer authority. READ_ONLY retains authorized history/detail; unknown-save status lookup remains read-only. Four/five existing bottom destinations are unchanged. Correct/reverse permissions register for later packages without buttons or endpoints.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+The existing financial-movements destination adds /withdrawal and /introduction contextual routes for the active Owner with financial.view/record and writable access. Staff may still view authorized records but cannot expose Owner forms through direct hashes. No new sidebar or bottom destination. Context capability record_owner_movements mirrors the UI rule but does not replace locked server authorization. Interrupted-save route restoration preserves action and UUID.

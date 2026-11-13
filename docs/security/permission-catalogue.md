@@ -89,3 +89,8 @@ No new grant. Both customer.view and debt.view required on every statement page,
 ## Phase 6 WP1 — 13 November 2026
 
 Phase 6 WP1 registers financial.view (read Money movements), financial.record (save expenses; also needs view), financial.correct and financial.reverse (reserved independently for WP3, no routes yet). Staff management uses the Money movements group and plain labels; existing Staff grants are not expanded. Primary Owner follows existing membership authority; a Platform Admin role alone is not Shop access. Record requires FULL active commercial access; authorized reads remain subject to existing READ_ONLY policy. No legacy debt.manage fallback.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+Owner withdrawals/introduction require financial.view + financial.record AND a current ACTIVE PRIMARY_OWNER membership, selected by current tenant/membership/user inside the owning Tenant/Shop/membership lock boundary. Staff with every financial grant are still denied. No new grant is added. Browser role/capability is presentation only. READ_ONLY prevents commands; authorized financial.view reads permit status recovery. Correct/reverse remain independently reserved for WP3.
