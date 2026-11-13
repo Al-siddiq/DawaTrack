@@ -110,3 +110,7 @@ Reuses accepted WP1 debt_payments/debt_payment_allocations and existing receivab
 ## Phase 5 WP4 — no migration
 
 Statements derive from existing Receivables, signed adjustments, payment headers/allocations, Sales and active generation/scoped changes in a read-only snapshot. No statement/cursor table, materialized balance/status, modified FK or new permission seed. Existing paired WP1 SQL unchanged. Page tokens carry sealed state rather than Phase10 cursor storage. Runtime reads need existing SELECT rights; deployment encryption.key remains private configuration outside the inventory.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1 adds `2026-11-13-100000_CreatePhaseSixFinancialMovements.php` after accepted Phase 5 migrations; raw twin [20261113100000_financial_movements.sql](sql/phase-06/20261113100000_financial_movements.sql). Creates only financial_movements with 16 columns and scoped self FKs; created_by_user_id matches Shield INT UNSIGNED. Existing migrations remain unchanged. Apply PHP migration or reviewed raw SQL to separate native fixtures, never both to one existing table. Down refuses nonempty evidence. Native empty/populated migration and constraint acceptance remain pending P6-01/P6-02. See [operations](../operations/phase-06-wp1-release.md).

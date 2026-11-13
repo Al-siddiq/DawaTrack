@@ -85,3 +85,7 @@ Registered debt.payment.reverse and debt.adjust now own explicit reviewed comman
 ## Phase 5 WP4 statement reads
 
 No new grant. Both customer.view and debt.view required on every statement page, regardless of cursor. READ_ONLY may read; current Shop membership/AccessGate still governs BLOCKED/CLOSED/foreign/Admin context. sale.view only controls contextual Sale links and its separate endpoint; no correction authority is inferred. Current user/membership additionally binds the token; page state is AES-256-GCM opaque/authenticated with purpose-separated deployment encryption.key, never a browser credential or default source secret. Statement DTO excludes Customer private fields/Audit reasons/financial cost and command hashes; private live total hidden in both Print paths.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1 registers financial.view (read Money movements), financial.record (save expenses; also needs view), financial.correct and financial.reverse (reserved independently for WP3, no routes yet). Staff management uses the Money movements group and plain labels; existing Staff grants are not expanded. Primary Owner follows existing membership authority; a Platform Admin role alone is not Shop access. Record requires FULL active commercial access; authorized reads remain subject to existing READ_ONLY policy. No legacy debt.manage fallback.

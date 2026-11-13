@@ -2,15 +2,13 @@
 
 DawaTrack is a modular CodeIgniter 4 application for Nigerian chemist/PPMV operations, with tenant isolation, staff permissions, accountable stock and commercial evidence, and a responsive white-label Shop/Admin/Auth interface.
 
-## Current position — 12 November 2026
+## Current position — 13 November 2026
 
-**Phase 5 — Debt Collection and Customer Statements is Owner-accepted and closed.** The Owner explicitly accepted the whole phase, including WP4. [Dated acceptance](docs/acceptance/2026-11-12-phase-05-owner-closure.md) · [Closure report](docs/Phase-5/Phase_5_Closure_Report.md) · [Requirement/source matrix](docs/Phase-5/Phase_5_Requirements_Matrix.csv) · [Integrated evidence](docs/Phase-5/Phase_5_Integrated_Manual_Results.csv).
+**Phase 5 is Owner-accepted and closed**, now integrated into main through PR #43 (`f985b5a88516ecd3861497bae0ee90984dfe47a1`). The historical [closure ledger](docs/acceptance/2026-11-12-phase-05-owner-closure.md) preserves what was known when accepted. UI programme closure remains recorded separately.
 
-Accepted application candidate: `970ad2e39fdc7ae2a1201c985bc8d54d6952152e` (PR #42), including WP1–WP4. This adds derived balances, Cash/Transfer repayment/allocation, append-only corrections, repayment-aware Returns and scoped versioned statements/Print to the accepted Phases1–4 foundation and UI programme. Detailed per-case observations/runtime configuration were not separately supplied; acceptance does not manufacture independent native test execution.
+**Phase 6 WP1 — Financial Movement foundation and Shop expenses is implemented for manual acceptance.** The Owner approved the [four-package plan](docs/Phase-6/Phase_6_Implementation_Plan.md) and authorized WP1 only. This delivery adds the additive schema, independent permissions, online Cash/Transfer expense review/save, scoped history/detail and same-UUID recovery. [Delivery report](docs/Phase-6/Phase_6_WP1_Delivery_Report.md) · [Developer contracts](docs/Phase-6/Phase_6_WP1_Integration_Contracts.md) · [Manual verification P6-01–P6-12](docs/manual-verification-phase-6-wp1.md) · [Release/rollback handover](docs/operations/phase-06-wp1-release.md).
 
-PRs #39–#42 were still open/unmerged and main at `b41425f905100a728a4c6167d5df936702a8502a` when closure was checked. Integration and production deployment are separate decisions, not performed by this documentation closure. The earlier UI programme acceptance/rollout remains recorded in its [own closure ledger](docs/ui/programme-closure.md).
-
-The next roadmap boundary is **Phase 6 — Financial Movements and Cash Accountability**, with a separately approved package plan before implementation. Full Reconciliation, reporting, registered devices and full offline/sync transport remain later-phase work; the service worker does not provide offline business operation. [Operational release/key/rollback handover](docs/operations/phase-05-statements-release.md) and [release decision register](docs/Phase-5/Phase_5_Release_Decision.csv) remain current.
+WP1 native PHP/MySQL/HTTP/concurrency/browser acceptance is pending. WP2 Owner money actions, WP3 corrections and WP4 expected-Cash composition remain planned. Full Reconciliation, reporting, registered devices and offline/sync transport remain later phases. No merge or deployment is performed by this delivery.
 
 ## Start locally
 
@@ -41,6 +39,7 @@ Frontend source lives in `resources/`. `npm run build` compiles CSS and copies p
 | [Phase 4 plan](docs/Phase-4/Phase_4_Comprehensive_Analysis_and_Four_Work_Package_Plan.md) | Historical package scope, contracts and acceptance approach |
 | [Phase 4 operations](docs/operations/phase-04-sales.md) | Sale/Return/correction operational contracts |
 | [Phase 5 plan](docs/Phase-5/Phase_5_Implementation_Plan.md) | Accepted four-package programme and manual gates; Phase 5 closed |
+| [Phase 6 plan](docs/Phase-6/Phase_6_Implementation_Plan.md) | Proposed four-package Financial Movements programme; awaiting Owner approval |
 
 Historical delivery reports describe their state when authored. Later explicit Owner acceptance supersedes earlier Pending decision wording; it does not manufacture historical per-case evidence. Delivery remains package-by-package, with Owner manual acceptance before progression. Engineering checks support that process rather than replacing it.
 
