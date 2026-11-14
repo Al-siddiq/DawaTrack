@@ -34,6 +34,18 @@ final class DebtCashComponentQuery
                 }
             }
         }
+        $crossChannel = $this->database->query(
+            "SELECT COUNT(*) invalid_count FROM debt_payments p
+             LEFT JOIN debt_payments source ON source.tenant_id=p.tenant_id AND source.shop_id=p.shop_id AND source.id=p.reversal_of_debt_payment_id
+             WHERE p.tenant_id=? AND p.shop_id=? AND p.reversal_of_debt_payment_id IS NOT NULL
+               AND p.posted_at>? AND p.posted_at<=? AND (p.channel='CASH' OR source.channel='CASH')
+               AND (source.id IS NULL OR p.channel<>source.channel)",
+            [$context->tenantId, $context->shopId, $periodStartedAt, $cutoffAt],
+        )->getRowArray();
+        if ((int) $crossChannel['invalid_count'] !== 0) {
+            throw new ApiException('EXPECTED_CASH_EVIDENCE_INVALID', 'A Debt payment reversal changes Cash/Transfer channel across its source link.', 409);
+        }
+
         $row = $this->database->query(
             "SELECT
                 COALESCE(SUM(CASE WHEN p.reversal_of_debt_payment_id IS NULL THEN p.amount ELSE 0.00 END),0.00) receipts,
@@ -44,9 +56,6 @@ final class DebtCashComponentQuery
                 COALESCE(SUM(CASE WHEN p.amount<=0
                     OR COALESCE(a.allocated_amount,0.00)<>p.amount
                     OR p.correlation_id IS NULL
-                    OR EXISTS (SELECT 1 FROM debt_payments child WHERE child.tenant_id=p.tenant_id AND child.shop_id=p.shop_id
-                        AND child.reversal_of_debt_payment_id=p.id AND (p.reversal_of_debt_payment_id IS NOT NULL
-                            OR child.customer_id<>p.customer_id OR child.channel<>p.channel OR child.amount<>p.amount))
                     OR NOT EXISTS (
                         SELECT 1 FROM audit_events ae
                         WHERE ae.tenant_id=p.tenant_id AND ae.shop_id=p.shop_id

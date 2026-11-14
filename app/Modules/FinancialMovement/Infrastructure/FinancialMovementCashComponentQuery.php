@@ -18,7 +18,8 @@ final class FinancialMovementCashComponentQuery
     public function forPeriod(ShopContext $context, string $periodStartedAt, string $cutoffAt): array
     {
         (new FinancialMovementSchema($this->database))->requireReady();
-        $where = 'm.tenant_id=? AND m.shop_id=? AND m.channel=\'CASH\' AND m.posted_at>? AND m.posted_at<=?';
+        $scopePeriod = 'm.tenant_id=? AND m.shop_id=? AND m.posted_at>? AND m.posted_at<=?';
+        $where = $scopePeriod . ' AND m.channel=\'CASH\'';
         $binds = [$context->tenantId, $context->shopId, $periodStartedAt, $cutoffAt];
         $aggregate = $this->database->query(
             "SELECT
@@ -34,6 +35,8 @@ final class FinancialMovementCashComponentQuery
                 COALESCE(SUM(CASE WHEN m.movement_type NOT IN ('OWNER_INTRODUCTION','SHOP_EXPENSE','OWNER_WITHDRAWAL','FINANCIAL_CORRECTION','REVERSAL')
                     OR (m.movement_type='OWNER_INTRODUCTION' AND (m.amount_delta<=0 OR m.reversal_of_movement_id IS NOT NULL OR m.replacement_for_movement_id IS NOT NULL))
                     OR (m.movement_type IN ('SHOP_EXPENSE','OWNER_WITHDRAWAL') AND (m.amount_delta>=0 OR m.reversal_of_movement_id IS NOT NULL OR m.replacement_for_movement_id IS NOT NULL))
+                    OR (m.movement_type='REVERSAL' AND EXISTS (SELECT 1 FROM financial_movements child_reverse
+                        WHERE child_reverse.tenant_id=m.tenant_id AND child_reverse.shop_id=m.shop_id AND child_reverse.reversal_of_movement_id=m.id))
                     OR EXISTS (SELECT 1 FROM financial_movements child WHERE child.tenant_id=m.tenant_id AND child.shop_id=m.shop_id
                         AND child.reversal_of_movement_id=m.id AND (child.movement_type<>'REVERSAL'
                             OR child.channel<>m.channel OR child.amount_delta<>-m.amount_delta))
@@ -56,8 +59,11 @@ final class FinancialMovementCashComponentQuery
 
         $repository = new FinancialMovementRepository($this->database);
         $rows = $this->database->query(
-            "SELECT m.* FROM financial_movements m WHERE $where
-             AND m.movement_type IN ('FINANCIAL_CORRECTION','REVERSAL')
+            "SELECT m.* FROM financial_movements m
+             LEFT JOIN financial_movements source ON source.tenant_id=m.tenant_id AND source.shop_id=m.shop_id
+                AND source.id=COALESCE(m.reversal_of_movement_id,m.replacement_for_movement_id)
+             WHERE $scopePeriod AND m.movement_type IN ('FINANCIAL_CORRECTION','REVERSAL')
+               AND (m.channel='CASH' OR source.channel='CASH')
              ORDER BY m.posted_at,m.id",
             $binds,
         )->getResultArray();
@@ -96,10 +102,12 @@ final class FinancialMovementCashComponentQuery
                         || ($replacementEvidence['review_fingerprint'] ?? null) !== ($evidence['review_fingerprint'] ?? null)) $this->invalid();
                 }
                 $this->validateAncestors($context, $repository, $source);
-                $reversals[] = $delta;
-                $sourceType = $source['movement_type'];
-                $reversalsByType[$sourceType] ??= [];
-                $reversalsByType[$sourceType][] = $delta;
+                if ($row['channel'] === 'CASH') {
+                    $reversals[] = $delta;
+                    $sourceType = $source['movement_type'];
+                    $reversalsByType[$sourceType] ??= [];
+                    $reversalsByType[$sourceType][] = $delta;
+                }
                 continue;
             }
 
@@ -120,7 +128,7 @@ final class FinancialMovementCashComponentQuery
                 || ($inverseEvidence['command_fingerprint'] ?? null) !== ($evidence['command_fingerprint'] ?? null)
                 || ($inverseEvidence['review_fingerprint'] ?? null) !== ($evidence['review_fingerprint'] ?? null)) $this->invalid();
             $this->validateAncestors($context, $repository, $source);
-            $corrections[] = $delta;
+            if ($row['channel'] === 'CASH') $corrections[] = $delta;
         }
 
         $reversalAttribution = [];
