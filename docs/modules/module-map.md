@@ -95,3 +95,8 @@ FinancialMovement adds explicit OwnerMovementService withdrawal/introduction com
 ## Phase 6 WP3 — protected financial movement corrections
 
 FinancialMovementCorrectionInput owns closed reversal/correction DTO normalization and canonical command/review fingerprints. FinancialMovementCorrectionService owns source eligibility, current Shop transaction/permission rechecks, CashControlGuard ordering, linear-chain validation, same-identity replay, exact inverse insertion, atomic corrected replacement, required Audit and last change publication. FinancialMovementRepository verifies typed evidence and exposes scoped causal links; FinancialMovementQuery::correctionState builds the bounded original → undo → replacement chain without exposing internal IDs or raw Audit metadata. Api/FinancialMovementController maps explicit preview/post/state routes. financial-movement-correction-panel.js owns reviewed undo/correction forms, confirmation, multi-UUID interrupted-save recovery and linked history; financial-movements-panel.js exposes permission-gated actions in the existing workspace. No migration, new dependency, generic CRUD, or mutable balance is added. See [WP3 contracts](../Phase-6/Phase_6_WP3_Integration_Contracts.md) and [manual verification](../manual-verification-phase-6-wp3.md).
+
+
+## Phase 6 WP3 acceptance — 14 November 2026
+
+The Owner explicitly accepted protected reversal/correction and authorized WP4. This is package-level acceptance; individual P6-19–P6-30 result observations were not separately supplied and remain Not run. See [acceptance record](../acceptance/2026-11-14-phase-06-wp3-owner-acceptance.md). WP4 is the next cumulative package; no merge/deployment is implied.

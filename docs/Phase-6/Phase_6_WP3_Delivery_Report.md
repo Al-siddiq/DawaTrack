@@ -1,6 +1,6 @@
 # Phase 6 WP3 — delivery report
 
-**14 November 2026 (Africa/Lagos).** **Implemented for Owner manual acceptance; not yet accepted, merged or deployed.** WP1 and WP2 are Owner-accepted. The Owner's WP2 confirmation and the earlier metadata-error resolution are recorded in the dated WP2 acceptance record.
+**14 November 2026 (Africa/Lagos).** **Owner-accepted 14 November 2026; not merged or deployed.** WP1 and WP2 are Owner-accepted. The Owner's WP2 confirmation and the earlier metadata-error resolution are recorded in the dated WP2 acceptance record.
 
 ## Delivered
 
@@ -33,4 +33,4 @@ No WP3 migration is introduced. The Owner should confirm php spark migrate:statu
 
 The WP3 branch is based on the WP2 candidate after its metadata-label fix. PR #47 targets main as a cumulative successor; merge WP2 PR #46 first, then PR #47. If the cumulative PR is merged first, do not merge the same WP2 changes again. No repository merge, production deployment, database mutation or Phase 6 closure is performed by this report.
 
-**Exit gate:** Owner completes P6-19–P6-30, records actual results, confirms all critical cases and explicitly accepts WP3. WP4 expected-Cash integration remains blocked until then.
+**Exit gate:** Owner acceptance was explicitly recorded on 14 November 2026. Individual P6-19–P6-30 observations were not separately itemized and remain Not run in the result register. WP4 is authorized to proceed; merge and deployment remain separate.

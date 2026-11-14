@@ -1,6 +1,6 @@
 # Phase 6 WP3 — protected reversal and correction
 
-**14 November 2026 (Africa/Lagos).** WP1 and WP2 are Owner-accepted. WP3 is implemented on the cumulative WP2 candidate for native Owner manual acceptance. No migration, SQL artifact, package dependency, broad permission or mutable balance is added.
+**14 November 2026 (Africa/Lagos).** WP1, WP2 and WP3 are Owner-accepted. WP3 was accepted by the Owner on 14 November 2026; native case observations remain separately marked Not run where not supplied. No migration, SQL artifact, package dependency, broad permission or mutable balance is added.
 
 ## 1. Scope and non-negotiable rules
 

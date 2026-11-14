@@ -1,7 +1,7 @@
 # Phase 6 — Financial Movements and Cash Accountability
 
 **Date:** 12 November 2026 (Africa/Lagos)  
-**Status:** Approved implementation plan — WP1 and WP2 Owner-accepted; WP3 implemented for manual acceptance  
+**Status:** Approved implementation plan — WP1, WP2 and WP3 Owner-accepted; WP4 in implementation  
 **Reviewed baseline:** main at `f985b5a88516ecd3861497bae0ee90984dfe47a1` (Phase 5 PR #43 merged)  
 **Delivery model:** Four sequential, independently reviewable work packages. Each package must be runnable, documented and manually accepted before the next package begins.
 
@@ -36,8 +36,8 @@ These are Phase 6 deliverables, not capabilities to assume already exist. WP1 mu
 
 - **WP1 — Owner-accepted 13 November 2026.** Acceptance is recorded in ../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md.
 - **WP2 — Owner-accepted 14 November 2026.** The Owner confirmed: “Nothing fails. The error is no more. Proceed to implementation of next WP.” The history ErrorException was corrected in the WP2 metadata-label follow-up. This is an explicit package-level acceptance; individual P6-13–P6-18 results were not separately itemized, so their result register remains unfilled rather than inferred. See ../acceptance/2026-11-14-phase-06-wp2-owner-acceptance.md.
-- **WP3 — implemented for Owner manual acceptance.** Protected reversal, atomic correction, causal history and same-reference recovery are in the WP3 candidate. Native build, PHP/MySQL transaction and browser checks remain the Owner's next verification step.
-- **WP4 — not started.** Expected-Cash integration remains gated on WP3 acceptance.
+- **WP3 — Owner-accepted 14 November 2026.** The Owner explicitly accepted WP3 and authorized WP4. See ../acceptance/2026-11-14-phase-06-wp3-owner-acceptance.md. Individual P6-19–P6-30 observations were not separately itemized; their result register remains Not run rather than inferred.
+- **WP4 — implementation authorized 14 November 2026.** Expected-Cash integration and final Phase 6 handover are now in progress; the WP3 acceptance decision satisfies the package progression gate.
 
 The WP3 candidate is cumulative from the accepted WP2 branch so the prerequisites remain coherent. Merge WP2 PR #46 before WP3 PR #47, or review the cumulative candidate carefully; do not merge duplicate package changes twice.
 
@@ -339,3 +339,8 @@ The Owner approved this plan and authorized WP1 only: [dated approval](../accept
 ## WP2 progression — 13 November 2026
 
 The Owner accepted WP1 and authorized WP2: [acceptance record](../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md). WP2 is implemented for manual review with [contracts](Phase_6_WP2_Integration_Contracts.md), [delivery report](Phase_6_WP2_Delivery_Report.md), [P6-13–P6-18 guide](../manual-verification-phase-6-wp2.md) and [pending results](Phase_6_WP2_Manual_Results.csv). This supersedes the earlier WP1 pending-acceptance progression without changing its historical facts. WP2 is not pre-accepted; WP3/WP4 remain planned.
+
+
+## WP3 progression — 14 November 2026
+
+The Owner explicitly accepted WP3 and authorized WP4. The package acceptance record is ../acceptance/2026-11-14-phase-06-wp3-owner-acceptance.md. Individual P6-19–P6-30 results were not separately itemized and remain Not run in the register. WP4 begins as a cumulative successor from the WP3 candidate; merge sequence is WP2 PR #46 → WP3 PR #47 → WP4 PR #48. This progression does not imply merge, deployment or whole-Phase acceptance.
