@@ -1,0 +1,17 @@
+item,state,evidence_or_action,owner
+WP1,Owner-accepted,2026-11-13 acceptance record,Owner
+WP2,Owner-accepted,2026-11-14 acceptance record,Owner
+WP3,Owner-accepted,2026-11-14 acceptance record,Owner
+WP4,Owner-accepted,2026-11-14 exact conversation record,Owner
+Source candidate,Identified,9483c57d2fae3fd0ed59f0403470e678de4429d2,Technical maintainer
+Application inventory,Generated and verified,412 files content SHA-256 0f2bb165391d7dc006fe91ac0fad99ca5a396618928ad0898e494d0b9ab4d728,Technical maintainer
+Inventory file SHA-256,Recorded,447b2fe6f3c53ab95891003d32341b7f0beeed04d996926dec96887bb7ff1da5,Technical maintainer
+Final closure commit,Record from reviewed PR head,Documentation commit follows the accepted source; application bytes unchanged,Technical maintainer
+Frontend build,Passed,Node v24.22.1 npm 11.9.0 locked install and production build,Technical maintainer
+Native runtime and manual cases,Open,Attach actual observations without inferring Pass from acceptance,Owner
+Defect disposition,Open release gates,Phase_6_Defect_Disposition.csv,Owner
+Whole-phase decision,Not recorded,Use Phase_6_Release_Decision_Template.md against reviewed commit and inventory,Owner
+Integration,Not performed,All package PRs open; cumulative closure may merge directly after review,Technical maintainer
+Backup restore rollback rehearsal,Not observed,Record actual environment and compatible artifacts,Release operator
+Production deployment,Not authorized or performed,Separate concrete authorization and actual rollout record required,Owner
+Next phase,Not authorized,Phase 7 requires separate planning and authorization,Owner

@@ -1,5 +1,6 @@
 # Phase 6 WP4 — Owner manual verification (P6-31–P6-40)
 
+**Current status — 14 November 2026:** WP4 is [Owner-accepted](acceptance/2026-11-14-phase-06-wp4-owner-acceptance.md); individual outcomes were not supplied. The guide below remains the native verification procedure. See [final release handover](operations/phase-06-final-release.md) for current integration and release gates.
 **WP4 is implemented for manual acceptance, not yet accepted, merged or deployed.** Use a backed-up isolated XAMPP development database with synthetic Shops and users. Never seed/delete/edit posted financial rows by direct SQL. Create business evidence through the accepted UI/API workflows.
 
 ## 1. Candidate setup

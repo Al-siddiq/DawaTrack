@@ -68,3 +68,7 @@ For an incident, stop further affected operations, preserve logs/references and 
 ## 8. Final handover
 
 Store the release decision, manual result references, closed/accepted defects and actual deploy/rollback evidence together with the exact commit/content hash. Only then record full UI4/programme acceptance and Phase 5 readiness. This engineering delivery does not authorize or claim an unseen production switch.
+
+## Phase 6 final handover — 14 November 2026
+
+WP1–WP4 are Owner-accepted; [complete closure](../Phase-6/Phase_6_Closure_Report.md) and [final release/rollback operations](../operations/phase-06-final-release.md) are prepared. Whole-phase decision and production release remain pending. Preserve independent view/record/reverse/correct grants and Primary Owner checks, immutable exact signed effects, Cash guard/lock/Audit/change atomicity, contextual history/correction links and same-ID recovery. Expected Cash stays internal/read-only; five-type history filters reuse the existing shell. No automatic balancing or offline financial replay. Native runtime and device/accessibility observations remain separate from package acceptance.

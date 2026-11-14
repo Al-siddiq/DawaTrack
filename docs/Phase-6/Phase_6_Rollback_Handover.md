@@ -1,5 +1,6 @@
 # Phase 6 WP4 — rollback and recovery handover
 
+**Current status — 14 November 2026:** WP4 is [Owner-accepted](../acceptance/2026-11-14-phase-06-wp4-owner-acceptance.md). Closure and release handover are prepared; whole-phase decision remains pending. The original delivery/setup instructions below retain their historical context. See [final release handover](../operations/phase-06-final-release.md) for the complete integration sequence and current gates.
 ## Scope
 
 WP4 adds read-only expected-Cash query classes and a Financial Movement history type filter. It adds no database migration, raw SQL, package dependency, public route, Audit writer, change publisher, reconciliation snapshot writer or financial posting command.
