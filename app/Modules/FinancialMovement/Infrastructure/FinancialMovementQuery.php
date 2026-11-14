@@ -100,7 +100,9 @@ final class FinancialMovementQuery
                     }
                     $replacementEvidence = $repository->recordedEvidence($context, $children[0]);
                     if (($inverseEvidence['counterpart_public_id'] ?? null) !== $children[0]['public_id']
-                        || ($replacementEvidence['counterpart_public_id'] ?? null) !== ($inverse['public_id'] ?? null)) {
+                        || ($replacementEvidence['counterpart_public_id'] ?? null) !== ($inverse['public_id'] ?? null)
+                        || $inverse['correlation_id'] !== $children[0]['correlation_id']
+                        || $inverse['posted_at'] !== $children[0]['posted_at']) {
                         throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The undo and corrected replacement do not identify each other.', 409);
                     }
                     $current = $children[0];

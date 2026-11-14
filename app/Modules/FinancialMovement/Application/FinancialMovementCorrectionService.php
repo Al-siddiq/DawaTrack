@@ -206,6 +206,8 @@ final class FinancialMovementCorrectionService
             if (!$parentInverse || $parentInverse['movement_type'] !== 'REVERSAL'
                 || $parentInverse['amount_delta'] !== $this->inverse((string) $parent['amount_delta'])
                 || $parentInverse['channel'] !== $parent['channel']
+                || $parentInverse['correlation_id'] !== $cursor['correlation_id']
+                || $parentInverse['posted_at'] !== $cursor['posted_at']
                 || count($children) !== 1 || (int) $children[0]['id'] !== (int) $cursor['id']) {
                 throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The correction history is incomplete or has more than one replacement.', 409);
             }
