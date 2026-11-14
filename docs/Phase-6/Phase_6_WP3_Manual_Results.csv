@@ -1,0 +1,13 @@
+case_id,scenario,expected_result,observed_result,status,commit,environment,evidence_reference,notes
+P6-19,Standalone Cash reversal,Exact opposite same-channel REVERSAL; original unchanged; one Audit and one change,,Not run,,,,
+P6-20,Transfer-only reversal,Works without Opening Cash or Cash-control guard; zero physical Cash effect,,Not run,,,,
+P6-21,Identity and invalid-link protection,Duplicates replay safely; changed identity/source/self-link/foreign/reversal-of-reversal rejected,,Not run,,,,
+P6-22,Atomic corrected replacement,Exact inverse and linked replacement commit together; original unchanged; two Audit and two change rows,,Not run,,,,
+P6-23,Cash and Transfer combinations,Cash effect on either side invokes Cash guard; Transfer-to-Transfer skips it,,Not run,,,,
+P6-24,Independent permissions,Reverse and correct grants remain separate; correction requires both,,Not run,,,,
+P6-25,Injected rollback,Any failure after insert/Audit/change publication rolls back all movement/Audit/change effects,,Not run,,,,
+P6-26,Linear multi-generation chain,Only current replacement can be corrected; branch/cycle/invalid chain rejected,,Not run,,,,
+P6-27,Authority changes after preview,Changed membership/grants/access reject confirmation with no evidence,,Not run,,,,
+P6-28,Audit and publication ordering,Required reasons/correlation preserved; change publication last; reads/previews emit no success event,,Not run,,,,
+P6-29,Lost-response recovery,Same inverse/replacement/source references recover; no automatic repost or new IDs,,Not run,,,,
+P6-30,History UI and regressions,Scoped graph and responsive accessible UI; WP1/WP2 and other accepted workflows remain intact,,Not run,,,,

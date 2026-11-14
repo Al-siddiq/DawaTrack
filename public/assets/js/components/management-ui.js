@@ -34,6 +34,10 @@ export const managementLabel = (value) =>
   })[value] || stateLabel(value);
 export const permissionLabel = (permission) =>
   ({
+    "financial.view": "View money movements",
+    "financial.record": "Record shop expenses",
+    "financial.correct": "Correct money records",
+    "financial.reverse": "Undo money records",
     "inventory.view": "View products and stock",
     "customer.view": "View customer records",
     "customer.manage": "Add and edit customers",
