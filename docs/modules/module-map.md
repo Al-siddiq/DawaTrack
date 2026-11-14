@@ -81,3 +81,12 @@ WP4 also fixes shared `resources/js/api/http-client.js` signal handling: caller 
 ## Phase 5 closure status
 
 The complete WP1–WP4 module delivery is [Owner-accepted and closed](../acceptance/2026-11-12-phase-05-owner-closure.md) on 12 November 2026, against application candidate `970ad2e39fdc7ae2a1201c985bc8d54d6952152e`. No module code changes accompany closure. Main integration/deployment and Phase6 planning remain separately governed; preserve immutable evidence and exact accepted inventory.
+
+## Phase 6 WP1 — 13 November 2026
+
+FinancialMovement owns Phase 6 financial_movements and the WP1 SHOP_EXPENSE writer. ExpenseInput/MovementAmount normalize exact unsigned magnitude strings; ExpenseService owns CommercialAccess/Audit/change transaction orchestration; FinancialMovementPostingParticipant inserts server-scoped evidence; FinancialMovementSchema gates native structure; repository/query provide scoped history/detail. Query reuses CustomerDebt's generic DebtReadSnapshot repeatable-read primitive; no Debt business writer is invoked. Controller: Api/FinancialMovementController. UI: components/financial-movements-panel.js. Later movement writers and expected-Cash engine are not delivered. See [contracts](../Phase-6/Phase_6_WP1_Integration_Contracts.md).
+
+
+## Phase 6 WP2 — 13 November 2026
+
+FinancialMovement adds explicit OwnerMovementService withdrawal/introduction commands. ExpenseService and OwnerMovementService delegate to MovementRecordingService's fixed action methods, whose generic type-bearing preview/post are private. Shared exact normalization, locked current membership, schema/replay/Cash protection, immutable insert, Audit and change remain one transaction; no new schema or mutable balance. Shared ExpenseInput retains its historical class name and expense-v1 compatibility. [WP2 source contract](../Phase-6/Phase_6_WP2_Integration_Contracts.md).

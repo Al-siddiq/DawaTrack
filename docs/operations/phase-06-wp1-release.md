@@ -1,0 +1,11 @@
+# Phase 6 WP1 — release and recovery handover
+
+13 November 2026. Delivery candidate only; Owner native acceptance, merge and deployment remain separate. See [manual guide](../manual-verification-phase-6-wp1.md) and [integration contract](../Phase-6/Phase_6_WP1_Integration_Contracts.md).
+
+Deploy source and generated assets from one reviewed commit, install locked dependencies, build, check the exact WP1 inventory, back up/identify the target database, review migration status, then apply the new additive migration before enabling expense traffic. Keep app connections in UTC and validate native MySQL 8.4 CHECK/FK enforcement. Existing runtime database privileges should allow SELECT/INSERT for protected financial evidence; no expense UPDATE/DELETE endpoint or mutable balance exists. Use a migration account for DDL, not broader runtime grants. No new secret or signing key is introduced.
+
+An incomplete schema produces setup-required errors. Do not bypass readiness or fabricate zero totals. Inspect the failed migration and SHOW CREATE TABLE; resolve the exact partial structure against the approved SQL in a backed-up maintenance window. Never blindly rerun a CREATE over a partially created table or drop evidence to make migrations pass.
+
+On an interrupted save, check the public UUID in the authenticated current Shop. Retry only the same reviewed operation and same UUID explicitly. The browser retains only that UUID in a user/Shop/host session namespace; no offline queue exists. Querying 404 is inconclusive while a request may still be running. Conflict means review the saved evidence; never substitute a fresh UUID to silence it.
+
+Rollback preserves data. The migration down method refuses to drop a nonempty financial_movements table. Destructive down is only for disposable empty fixtures. Once financial Cash evidence exists, older code that ignores it must not resume Cash accounting or reconciliation. Prefer a forward fix or a data-compatible prior package with affected write/accountability surfaces disabled and a reviewed recovery procedure. Retain financial/Audit/change rows and backups. No production rollback, deployment or infrastructure alteration has been performed by this delivery.

@@ -10,7 +10,7 @@ import { field, action, submit, message } from "./commercial-ui.js";
 import { facts, note, selectField, managementLabel } from "./management-ui.js";
 const { ref, reactive, h, onMounted, onUnmounted, nextTick } = window.Vue;
 const readable = (value) =>
-  String(value || "")
+  ({ "financial_movement.recorded": "Money record saved", "financial_movement": "Money record", FINANCIAL: "Money movements" })[value] || String(value || "")
     .replace(/[._]/g, " ")
     .toLowerCase();
 export const AuditPanel = {
