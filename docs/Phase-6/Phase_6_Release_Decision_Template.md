@@ -10,7 +10,7 @@
 - WP4 branch: codex/phase-6-wp4-expected-cash-20261114
 - WP4 PR: #48 (cumulative successor)
 - Reviewed base commit: `154a2d84b772d594adf8555bee08bc3fe80ca27c`
-- WP4 head commit: [record after final manifest commit]
+- WP4 source candidate head before generated manifest: `6114f910e4f85ea0c25a19e92bfb55891ea9fae1` (update to the new head after the Owner commits the generated manifest)
 - Built artifact manifest path/hash: [record actual generated file and SHA-256]
 - PHP version: [record]
 - MySQL version: [record]
