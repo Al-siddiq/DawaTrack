@@ -50,6 +50,6 @@ WP4 introduces no migration and does not alter the existing `reconciliation_fina
 
 ## Integration
 
-WP4 branch: `codex/phase-6-wp4-expected-cash-20261114`. Current source candidate head before the Owner-generated artifact-manifest commit: `6114f910e4f85ea0c25a19e92bfb55891ea9fae1`. PR #48 is a cumulative successor from the accepted WP3 candidate. Merge order remains WP2 PR #46 → WP3 PR #47 → WP4 PR #48. No merge, production deployment, database mutation or whole-Phase closure is performed by this report.
+WP4 branch: `codex/phase-6-wp4-expected-cash-20261114`. WP4 source implementation commit: `6114f910e4f85ea0c25a19e92bfb55891ea9fae1` (the branch contains a later documentation-only follow-up; record the actual branch HEAD again after the Owner commits the generated artifact manifest). PR #48 is a cumulative successor from the accepted WP3 candidate. Merge order remains WP2 PR #46 → WP3 PR #47 → WP4 PR #48. No merge, production deployment, database mutation or whole-Phase closure is performed by this report.
 
 **Exit gate:** Owner completes P6-31–P6-40, hand-calculates F1/F3 and boundary cases, confirms no omission/defect remains, records the exact accepted source commit and artifact inventory, and explicitly accepts the complete Phase 6 programme. Deployment remains separately authorized.
