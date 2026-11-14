@@ -94,3 +94,8 @@ Phase 6 WP1 registers financial.view (read Money movements), financial.record (s
 ## Phase 6 WP2 — 13 November 2026
 
 Owner withdrawals/introduction require financial.view + financial.record AND a current ACTIVE PRIMARY_OWNER membership, selected by current tenant/membership/user inside the owning Tenant/Shop/membership lock boundary. Staff with every financial grant are still denied. No new grant is added. Browser role/capability is presentation only. READ_ONLY prevents commands; authorized financial.view reads permit status recovery. Correct/reverse remain independently reserved for WP3.
+
+
+## Phase 6 WP3 — independent correction authority
+
+financial.reverse authorizes a standalone reversal and is required for every correction. financial.correct is independent and additionally required to create a corrected replacement. Neither permission implies the other or financial.record; debt.manage, reconciliation and inventory grants do not substitute. Owner authority remains role-derived. Staff require explicit active grants. Every preview and confirmation rechecks current active membership, FULL access, Tenant/Shop state and grants under the owning lock boundary. READ_ONLY permits authorized reads only; BLOCKED/CLOSED, inactive membership and foreign scope are denied. No broad financial.manage permission is added.

@@ -24,6 +24,8 @@ final class AuditAction
         'domain.verified',
         'identity.password_changed',
         'financial_movement.recorded',
+        'financial_movement.reversed',
+        'financial_movement.corrected',
         'debt_payment.recorded',
         'debt_payment.allocated',
         'debt_payment.reversed',

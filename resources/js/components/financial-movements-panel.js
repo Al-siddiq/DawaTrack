@@ -3,6 +3,7 @@ import { action, field, submit, money, message, has, pager } from './commercial-
 import { facts, selectField, fieldSummary, useTradingConfirm } from './trading-ui.js';
 import { UiAlert, UiInformationPanel, UiLoading, UiRecordList } from './ui/index.js';
 import { useNavigationGuard } from '../shared/workspace-navigation.js';
+import { FinancialMovementCorrectionPanel } from './financial-movement-correction-panel.js';
 const { h, ref, reactive, computed, watch, onBeforeUnmount, nextTick } = window.Vue;
 const base = '/api/v1/shop/financial-movements';
 const actions = {
@@ -34,6 +35,9 @@ export const FinancialMovementsPanel = {
             const entry = props.hash.split('/');
             if (entry.length === 2 && entry[0] === '#financial-movements' && Object.hasOwn(actions, entry[1])) return { kind: 'new', action: entry[1] };
             const parts = props.hash.split('/');
+            if (parts.length === 3 && parts[0] === '#financial-movements' && ['reverse', 'correct', 'history'].includes(parts[1]) && uuid.test(parts[2])) {
+                return { kind: 'correction', action: parts[1], source: parts[2] };
+            }
             return parts.length === 3 && parts[0] === '#financial-movements' && parts[1] === 'record' && uuid.test(parts[2])
                 ? { kind: 'detail', id: parts[2] } : { kind: 'invalid' };
         });
@@ -49,13 +53,25 @@ export const FinancialMovementsPanel = {
             catch { storageAvailable.value = false; }
         }
         function readMarker() {
-            try { const m = JSON.parse(key() ? sessionStorage.getItem(key()) : 'null'); return m && uuid.test(m.movement || '') && (m.action === undefined || Object.hasOwn(actions, m.action)) ? { movement: m.movement, action: m.action || 'expense' } : null; }
-            catch { return null; }
+            try {
+                const m = JSON.parse(key() ? sessionStorage.getItem(key()) : 'null');
+                if (!m || !uuid.test(m.movement || '')) return null;
+                const actionName = m.action || 'expense';
+                if (Object.hasOwn(actions, actionName)) return { movement: m.movement, action: actionName };
+                if (['reverse', 'correct'].includes(actionName) && uuid.test(m.source || '')
+                    && (actionName !== 'correct' || uuid.test(m.replacement || ''))) {
+                    return { movement: m.movement, action: actionName, source: m.source, replacement: m.replacement || null };
+                }
+                return null;
+            } catch { return null; }
         }
         useNavigationGuard(({ hash }) => {
             if (saving.value) return { hard: true, message: 'This money record is being saved. Wait for the result.' };
             if (pending.value) {
-                if (hash === actionHash(pending.value.action) && hash !== location.hash) return null;
+                const recoveryHash = ['reverse', 'correct'].includes(pending.value.action)
+                    ? `#financial-movements/${pending.value.action}/${pending.value.source}`
+                    : actionHash(pending.value.action);
+                if (hash === recoveryHash && hash !== location.hash) return null;
                 return { hard: true, message: 'Check the saved money record status or continue with the same reference before leaving.' };
             }
             return dirty.value || phase.value === 'review' ? { message: 'This money record has not been saved. Keep editing, or leave without saving.' } : null;
@@ -74,7 +90,18 @@ export const FinancialMovementsPanel = {
             busy.value = false; error.value = ''; validation.value = {}; data.value = null; receipt.value = null; absent.value = false;
             if (!view.value) return;
             pending.value = readMarker();
-            if (pending.value && !(route.value.kind === 'new' && currentAction.value === pending.value.action) && !(route.value.kind === 'detail' && route.value.id === pending.value.movement)) { go(actionHash(pending.value.action)); return; }
+            if (pending.value && ['reverse', 'correct'].includes(pending.value.action)) {
+                const recoveryHash = `#financial-movements/${pending.value.action}/${pending.value.source}`;
+                if (!(route.value.kind === 'correction' && route.value.action === pending.value.action && route.value.source === pending.value.source)) {
+                    go(recoveryHash); return;
+                }
+                // The correction child owns its multi-reference recovery marker.
+                pending.value = null;
+            } else if (pending.value && !(route.value.kind === 'new' && currentAction.value === pending.value.action)
+                && !(route.value.kind === 'detail' && route.value.id === pending.value.movement)) {
+                go(actionHash(pending.value.action)); return;
+            }
+            if (route.value.kind === 'correction') return;
             if (route.value.kind === 'new') {
                 if (pending.value) { form.public_id = pending.value.movement; phase.value = 'unknown'; }
                 else { Object.assign(form, { public_id: crypto.randomUUID(), channel: 'CASH', amount: '', description: '', external_reference: '', happened: '' }); phase.value = 'input'; dirty.value = false; frozen = null; review.value = null; }
@@ -169,19 +196,25 @@ export const FinancialMovementsPanel = {
         window.addEventListener('online', connection); window.addEventListener('offline', connection);
         watch([() => props.hash, () => props.recoveryScope, () => props.isOwner, view], () => initialize(), { immediate: true });
         onBeforeUnmount(() => { alive = false; generation++; controller?.abort(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
-        function effect(channel, amount, type = currentAction.value === 'introduction' ? 'OWNER_INTRODUCTION' : 'SHOP_EXPENSE') {
-            return h(UiInformationPanel, { message: channel === 'CASH' ? `Cash physically in the shop goes ${type === 'OWNER_INTRODUCTION' ? 'up' : 'down'} by ${money(amount)}.` : 'Transfer does not change the cash physically in the shop.' });
+        function effect(channel, amount, type = currentAction.value === 'introduction' ? 'OWNER_INTRODUCTION' : 'SHOP_EXPENSE', delta = null) {
+            const incoming = delta ? !delta.startsWith('-') : type === 'OWNER_INTRODUCTION';
+            return h(UiInformationPanel, { message: channel === 'CASH' ? `Cash physically in the shop goes ${incoming ? 'up' : 'down'} by ${money(amount)}.` : 'Transfer does not change the cash physically in the shop.' });
         }
         function detail(r) {
             return h('article', { class: 'commercial-card' }, [h('h3', labels[r.movement_type] || 'Money record'), h('p', 'Saved. This is a permanent money record.'),
                 h('p', { class: 'trading-record-meta' }, `Reference: ${r.public_id}`), facts([['Amount', money(r.amount)], ['Money record', labels[r.movement_type] || 'Money record'], ['Payment method', r.channel === 'CASH' ? 'Cash' : 'Transfer'],
-                    ['Explanation', r.description], ['Recorded by', r.recorded_by], ['Date recorded', time(r.posted_at, r.shop_timezone)],
+                    ['Explanation', r.description], ...(r.audit_reason !== r.description ? [['Why it was changed', r.audit_reason]] : []), ['Money direction', r.amount_delta], ['Recorded by', r.recorded_by], ['Date recorded', time(r.posted_at, r.shop_timezone)],
                     ['Date it happened', time(r.occurred_at, r.shop_timezone)], ...(r.external_reference ? [['Reference', r.external_reference]] : [])]),
-                h('p', `Dates shown in shop time: ${r.shop_timezone}`), effect(r.channel, r.amount, r.movement_type)]);
+                h('p', `Dates shown in shop time: ${r.shop_timezone}`), effect(r.channel, r.amount, r.movement_type, r.amount_delta),
+                ...(['SHOP_EXPENSE', 'OWNER_WITHDRAWAL', 'OWNER_INTRODUCTION', 'FINANCIAL_CORRECTION'].includes(r.movement_type) && !r.reversed_by_public_id && !r.replacement_public_id
+                    ? [has(props.permissions, 'financial.reverse') && action('Undo this money record', () => go(`#financial-movements/reverse/${r.public_id}`), props.readOnly || busy.value, 'btn-outline-primary', { icon: 'return' }),
+                        has(props.permissions, 'financial.reverse') && has(props.permissions, 'financial.correct') && action('Correct this money record', () => go(`#financial-movements/correct/${r.public_id}`), props.readOnly || busy.value, 'btn-primary', { icon: 'edit' })].filter(Boolean) : []),
+                ...((r.reversed_by_public_id || r.replacement_public_id || r.reversal_of_public_id || r.replacement_for_public_id)
+                    ? [action('View linked correction history', () => go(`#financial-movements/history/${r.public_id}`), busy.value, 'btn-outline-primary', { icon: 'activity' })] : [])]);
         }
         return () => h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': busy.value || saving.value }, [
             h('h2', { ref: heading, tabindex: '-1' }, route.value.kind === 'new' ? config.value.title : route.value.kind === 'detail' ? 'Saved money record' : 'Money movements'),
-            route.value.kind !== 'history' && action('Back to money movements', () => confirmation.guard(() => go('#financial-movements')), busy.value || saving.value, 'btn-outline-primary', { icon: 'back' }),
+            route.value.kind !== 'history' && action('Back', () => confirmation.guard(() => go(route.value.kind === 'correction' ? `#financial-movements/record/${route.value.source}` : '#financial-movements')), busy.value || saving.value, 'btn-outline-primary', { icon: 'back' }),
             ...confirmation.render(),
             !view.value ? h(UiInformationPanel, { severity: 'warning', message: 'You are not allowed to view money movements. Ask your shop owner for help.' }) : [
                 !online.value && h(UiInformationPanel, { severity: 'warning', message: 'You are offline. Connect before reviewing or saving a money record. Nothing is queued.' }),
@@ -213,6 +246,8 @@ export const FinancialMovementsPanel = {
                     action(currentAction.value === 'expense' ? 'Edit expense' : 'Edit money record', () => { phase.value = 'input'; review.value = null; }, saving.value || busy.value, 'btn-outline-primary', { icon: 'edit' }),
                 ]),
                 receipt.value && detail(receipt.value),
+                route.value.kind === 'correction' && h(FinancialMovementCorrectionPanel, { key: `${route.value.action}:${route.value.source}`, mode: route.value.action,
+                    sourcePublicId: route.value.source, permissions: props.permissions, readOnly: props.readOnly, recoveryScope: props.recoveryScope, onNavigate: go }),
                 route.value.kind === 'history' && [
                     record.value && action('Record expense', () => go(actionHash('expense')), props.readOnly || busy.value || !online.value, 'btn-primary', { icon: 'cash' }),
                     props.isOwner && record.value && action('Owner took money', () => go(actionHash('withdrawal')), props.readOnly || busy.value || !online.value, 'btn-outline-primary', { icon: 'cash' }),

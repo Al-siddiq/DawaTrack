@@ -47,6 +47,11 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/financial-movements/owner-withdrawals', 'Api\FinancialMovementController::withdrawalPost', ['filter' => 'authenticated']);
     $routes->post('shop/financial-movements/owner-introductions/preview', 'Api\FinancialMovementController::introductionPreview', ['filter' => 'authenticated']);
     $routes->post('shop/financial-movements/owner-introductions', 'Api\FinancialMovementController::introductionPost', ['filter' => 'authenticated']);
+    $routes->get('shop/financial-movements/(:segment)/correction-state', 'Api\FinancialMovementController::correctionState/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/financial-movements/(:segment)/reversal-preview', 'Api\FinancialMovementController::reversalPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/financial-movements/(:segment)/reverse', 'Api\FinancialMovementController::reverse/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/financial-movements/(:segment)/correction-preview', 'Api\FinancialMovementController::correctionPreview/$1', ['filter' => 'authenticated']);
+    $routes->post('shop/financial-movements/(:segment)/correct', 'Api\FinancialMovementController::correct/$1', ['filter' => 'authenticated']);
     $routes->get('shop/customers/(:segment)/statement', 'Api\DebtController::statement/$1', ['filter' => 'authenticated']);
     $routes->post('shop/debt-payments/(:segment)/reversal-preview', 'Api\DebtCorrectionController::reversalPreview/$1', ['filter' => 'authenticated']);
     $routes->post('shop/debt-payments/(:segment)/reverse', 'Api\DebtCorrectionController::reverse/$1', ['filter' => 'authenticated']);

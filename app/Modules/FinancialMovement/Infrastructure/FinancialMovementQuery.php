@@ -21,12 +21,103 @@ final class FinancialMovementQuery
     {
         $this->authorize($context);
         return (new DebtReadSnapshot($this->database))->run(function () use ($context, $id): array {
-            $row = (new FinancialMovementRepository($this->database))->movement($context, DraftInput::uuid($id));
+            $repository = new FinancialMovementRepository($this->database);
+            $row = $repository->movement($context, DraftInput::uuid($id));
             if (!$row) {
                 throw new ApiException('FINANCIAL_MOVEMENT_NOT_FOUND', 'This money record is not saved yet. Check again before starting another expense.', 404);
             }
-            (new FinancialMovementRepository($this->database))->recordedEvidence($context, $row);
-            return $this->output($row);
+            return $this->output($row, $repository->recordedEvidence($context, $row));
+        });
+    }
+
+    public function correctionState(ShopContext $context, string $id): array
+    {
+        $this->authorize($context);
+        return (new DebtReadSnapshot($this->database))->run(function () use ($context, $id): array {
+            $repository = new FinancialMovementRepository($this->database);
+            $requested = $repository->movement($context, DraftInput::uuid($id));
+            if (!$requested) {
+                throw new ApiException('FINANCIAL_MOVEMENT_NOT_FOUND', 'This money record was not found in this shop.', 404);
+            }
+            if ($requested['movement_type'] === 'REVERSAL') {
+                $requested = $repository->movementById($context, (int) $requested['reversal_of_movement_id']);
+                if (!$requested) {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The original money record is missing. Ask the shop owner to investigate.', 409);
+                }
+            }
+
+            $root = $requested;
+            $seen = [(int) $root['id'] => true];
+            $depth = 0;
+            while ($root['replacement_for_movement_id'] !== null) {
+                if (++$depth > 100) {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The correction history is too long to display safely.', 409);
+                }
+                $parentId = (int) $root['replacement_for_movement_id'];
+                if (isset($seen[$parentId])) {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The correction history contains a cycle.', 409);
+                }
+                $seen[$parentId] = true;
+                $parent = $repository->movementById($context, $parentId);
+                if (!$parent || $parent['movement_type'] === 'REVERSAL') {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The correction history has a missing or invalid original record.', 409);
+                }
+                $root = $parent;
+            }
+
+            $items = [];
+            $currentEffective = $root['public_id'];
+            $current = $root;
+            $visited = [];
+            $depth = 0;
+            while ($current) {
+                if (++$depth > 100 || isset($visited[(int) $current['id']])) {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The correction history contains a cycle or is too long.', 409);
+                }
+                $visited[(int) $current['id']] = true;
+                $currentEvidence = $repository->recordedEvidence($context, $current);
+                $items[] = $this->output($current, $currentEvidence) + ['relationship' => $current['movement_type'] === 'FINANCIAL_CORRECTION' ? 'Corrected replacement' : 'Original record'];
+
+                $inverse = $repository->reversalChild($context, (int) $current['id']);
+                $children = $repository->replacementChildren($context, (int) $current['id']);
+                $inverseEvidence = null;
+                if (count($children) > 1) {
+                    throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'This correction history has more than one replacement for the same record.', 409);
+                }
+                if ($inverse) {
+                    if ($inverse['movement_type'] !== 'REVERSAL'
+                        || $inverse['channel'] !== $current['channel']
+                        || (string) $inverse['amount_delta'] !== $this->inverse((string) $current['amount_delta'])) {
+                        throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The undo record does not exactly match the original.', 409);
+                    }
+                    $inverseEvidence = $repository->recordedEvidence($context, $inverse);
+                    $items[] = $this->output($inverse, $inverseEvidence) + ['relationship' => 'Undo record'];
+                }
+                if ($children) {
+                    if (!$inverse || $children[0]['movement_type'] !== 'FINANCIAL_CORRECTION'
+                        || (int) $children[0]['replacement_for_movement_id'] !== (int) $current['id']) {
+                        throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The corrected replacement is not linked to a complete undo.', 409);
+                    }
+                    $replacementEvidence = $repository->recordedEvidence($context, $children[0]);
+                    if (($inverseEvidence['counterpart_public_id'] ?? null) !== $children[0]['public_id']
+                        || ($replacementEvidence['counterpart_public_id'] ?? null) !== ($inverse['public_id'] ?? null)) {
+                        throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The undo and corrected replacement do not identify each other.', 409);
+                    }
+                    $current = $children[0];
+                    $currentEffective = $current['public_id'];
+                } else {
+                    if ($inverse && ($inverseEvidence['counterpart_public_id'] ?? null) !== null) {
+                        throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The undo record points to a replacement that is missing.', 409);
+                    }
+                    if ($inverse) $currentEffective = null;
+                    $current = null;
+                }
+            }
+            return [
+                'source_public_id' => $requested['public_id'],
+                'current_public_id' => $currentEffective,
+                'items' => $items,
+            ];
         });
     }
 
@@ -78,8 +169,7 @@ final class FinancialMovementQuery
                 if (!$row) {
                     throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'This money history needs checking. Ask the shop owner for help.', 409);
                 }
-                $repository->recordedEvidence($context, $row);
-                $items[] = $this->output($row);
+                $items[] = $this->output($row, $repository->recordedEvidence($context, $row));
             }
             return ['items' => $items, 'shop' => ['name' => $shop['name'], 'timezone' => $shop['timezone_name']],
                 'filters' => ['channel' => $channel, 'from_date' => $from?->format('Y-m-d'), 'to_date' => $to?->format('Y-m-d')],
@@ -87,16 +177,23 @@ final class FinancialMovementQuery
         });
     }
 
-    private function output(array $row): array
+    private function output(array $row, array $evidence): array
     {
         return ['public_id' => $row['public_id'], 'movement_type' => $row['movement_type'], 'channel' => $row['channel'],
             'amount_delta' => (string) $row['amount_delta'], 'amount' => MovementAmount::fromDelta((string) $row['amount_delta'])->magnitude,
             'physical_cash_effect' => $row['channel'] === 'CASH' ? (string) $row['amount_delta'] : '0.00',
-            'description' => $row['description'], 'external_reference' => $row['external_reference'],
+            'description' => $row['description'], 'audit_reason' => $evidence['audit_reason'],
+            'external_reference' => $row['external_reference'],
             'occurred_at' => $row['occurred_at'], 'posted_at' => $row['posted_at'],
             'shop_name' => $row['shop_name'], 'shop_timezone' => $row['timezone_name'],
             'recorded_by' => $row['recorded_by'] ?: 'Shop user',
-            'reversal_of_public_id' => $row['reversal_of_public_id'], 'replacement_for_public_id' => $row['replacement_for_public_id']];
+            'reversal_of_public_id' => $row['reversal_of_public_id'], 'replacement_for_public_id' => $row['replacement_for_public_id'],
+            'reversed_by_public_id' => $row['reversed_by_public_id'], 'replacement_public_id' => $row['replacement_public_id']];
+    }
+
+    private function inverse(string $delta): string
+    {
+        return str_starts_with($delta, '-') ? substr($delta, 1) : '-' . $delta;
     }
 
     private function authorize(ShopContext $context): void

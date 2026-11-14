@@ -1,0 +1,13 @@
+case_id,scenario,expected_result,observed_result,status,commit,environment,evidence_reference,notes
+P6-19,Standalone Cash reversal creates exact opposite immutable row,,,,,,,
+P6-20,Transfer-only reversal without Opening Cash or Cash-control dependency,,,,,,,
+P6-21,Duplicate identity and invalid/self/foreign/reversal-of-reversal protection,,,,,,,
+P6-22,Correction creates inverse and linked replacement atomically,,,,,,,
+P6-23,Cash-to-Transfer and Transfer-to-Cash guard; Transfer-only skips guard,,,,,,,
+P6-24,Independent financial.reverse and financial.correct grants,,,,,,,
+P6-25,Injected rollback after either insert/Audit/change publication,,,,,,,
+P6-26,Linear multi-generation correction chain; branch/cycle rejection,,,,,,,
+P6-27,Current access/grants rechecked between preview and confirmation,,,,,,,
+P6-28,Audit reasons/correlation and last change publication,,,,,,,
+P6-29,Lost reply and same-reference recovery for both identities,,,,,,,
+P6-30,Scoped graph UI accessibility and WP1/WP2 regressions,,,,,,,

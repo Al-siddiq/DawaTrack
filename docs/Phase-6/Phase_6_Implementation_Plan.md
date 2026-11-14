@@ -1,7 +1,7 @@
 # Phase 6 — Financial Movements and Cash Accountability
 
 **Date:** 12 November 2026 (Africa/Lagos)  
-**Status:** Proposed implementation plan — awaiting explicit Owner approval  
+**Status:** Approved implementation plan — WP1 and WP2 Owner-accepted; WP3 implemented for manual acceptance  
 **Reviewed baseline:** main at `f985b5a88516ecd3861497bae0ee90984dfe47a1` (Phase 5 PR #43 merged)  
 **Delivery model:** Four sequential, independently reviewable work packages. Each package must be runnable, documented and manually accepted before the next package begins.
 
@@ -28,9 +28,18 @@ The current main branch already provides:
 - Phase 4 Opening Cash and CashControlGuard, including finalized-baseline and active-Cash-control checks;
 - accepted Sales, Cash/Transfer payments and refunds, Debt collections, debt corrections and Customer statements.
 
-The current source does **not** yet contain a Financial Movement module, the financial_movements migration/table, financial_movement Audit action/resource vocabulary, financial_movement change-resource registration, or financial movement permissions and Shop UI. The existing ChangeSequenceService does not yet accept financial_movement as a resource. The existing workspace has no Financial Movements task.
+At the time this plan was prepared, the source did **not** yet contain the Financial Movement module, table, Audit/change vocabulary, permissions or Shop UI. WP1 and WP2 have since delivered those foundations and Owner workflows. The current package status is recorded below.
 
 These are Phase 6 deliverables, not capabilities to assume already exist. WP1 must verify these findings against its exact implementation base before changing files.
+
+### 1.2 Package status — 14 November 2026
+
+- **WP1 — Owner-accepted 13 November 2026.** Acceptance is recorded in ../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md.
+- **WP2 — Owner-accepted 14 November 2026.** The Owner confirmed: “Nothing fails. The error is no more. Proceed to implementation of next WP.” The history ErrorException was corrected in the WP2 metadata-label follow-up. This is an explicit package-level acceptance; individual P6-13–P6-18 results were not separately itemized, so their result register remains unfilled rather than inferred. See ../acceptance/2026-11-14-phase-06-wp2-owner-acceptance.md.
+- **WP3 — implemented for Owner manual acceptance.** Protected reversal, atomic correction, causal history and same-reference recovery are in the WP3 candidate. Native build, PHP/MySQL transaction and browser checks remain the Owner's next verification step.
+- **WP4 — not started.** Expected-Cash integration remains gated on WP3 acceptance.
+
+The WP3 candidate is cumulative from the accepted WP2 branch so the prerequisites remain coherent. Merge WP2 PR #46 before WP3 PR #47, or review the cumulative candidate carefully; do not merge duplicate package changes twice.
 
 ## 2. Objective and outcome
 

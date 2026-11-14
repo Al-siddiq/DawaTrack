@@ -1,6 +1,6 @@
 # Phase 6 WP2 — Owner withdrawals and money added
 
-13 November 2026 (Africa/Lagos). WP1 Owner-accepted; WP2 implemented for manual review. This extends the [approved plan](Phase_6_Implementation_Plan.md) and [WP1 foundation](Phase_6_WP1_Integration_Contracts.md). No migration or dependency is added; all financial_movements schema/SQL and prior artifact manifests remain unchanged.
+13 November 2026 (Africa/Lagos). **WP2 Owner-accepted 14 November 2026.** The Owner confirmed that no failure remained and authorized the next package. Individual P6-13–P6-18 results were not separately supplied; see ../acceptance/2026-11-14-phase-06-wp2-owner-acceptance.md. This extends the [approved plan](Phase_6_Implementation_Plan.md) and [WP1 foundation](Phase_6_WP1_Integration_Contracts.md). No migration or dependency is added; all financial_movements schema/SQL and prior artifact manifests remain unchanged.
 
 ## Explicit commands and authority
 
@@ -29,4 +29,4 @@ One existing Money movements destination gains Owner took money and Add money to
 
 The existing per-host/user/Shop session marker key is retained for backward recovery. The marker now holds only `{movement: UUID, action: expense|withdrawal|introduction}`; it contains no amount, explanation, reference, body or credentials. Older UUID-only markers are interpreted as expense. Valid action tags are checked as own registry properties. Pending Owner recovery redirects to its original action, never another sign/action. A 404 is inconclusive during an in-flight request; explicit continuation retains UUID and action and requires re-entry/review of the same content. No automatic repost/offline queue. Permission/role loss still permits authorized GET status lookup, not a new Owner write. A route/role change while a confirmation is open invalidates that confirmation before POST.
 
-Native manual acceptance P6-13–P6-18 and affected WP1 regression checks remain pending. Parser/source/SQLite/custom Vue host probes are not native PHP/MySQL/browser evidence. No production merge, deployment or database change is performed.
+Owner package-level acceptance was recorded on 14 November 2026. Individual P6-13–P6-18 results were not separately itemized and remain unfilled in the manual result register. Parser/source/SQLite/custom Vue host probes are not native PHP/MySQL/browser evidence. No production merge, deployment or database change is performed.

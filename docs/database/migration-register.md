@@ -119,3 +119,8 @@ Phase 6 WP1 adds `2026-11-13-100000_CreatePhaseSixFinancialMovements.php` after 
 ## Phase 6 WP2 — 13 November 2026
 
 WP2 adds no migration and does not alter accepted financial_movements DDL/SQL. OWNER_WITHDRAWAL negative and OWNER_INTRODUCTION positive use WP1's existing type/sign CHECKs and scoped FKs. Check status/apply only missing accepted migrations before use. Retain evidence and prior inventories; never drop/recreate to upgrade WP2.
+
+
+## Phase 6 WP3
+
+WP3 introduces no migration or raw SQL artifact. It uses the existing v1.1 financial_movements reversal and replacement self-links. The schema's unique reversal link prevents duplicate direct inverses; because v1.1 intentionally has no unique replacement-link index, one-child linearity is enforced under the serialized Tenant → Shop → membership transaction boundary. Do not add a replacement unique index or alter prior migrations without a separately approved schema amendment.

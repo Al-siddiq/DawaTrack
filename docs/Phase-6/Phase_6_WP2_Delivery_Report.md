@@ -1,6 +1,6 @@
 # Phase 6 WP2 — delivery report
 
-13 November 2026 (Africa/Lagos). **Implemented for Owner manual acceptance; not accepted, merged or deployed.** [WP1 acceptance](../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md) is recorded from the Owner's explicit instruction. WP1 individual native observations were not separately supplied and are not fabricated.
+13 November 2026 (Africa/Lagos), acceptance recorded 14 November. **Owner-accepted; not merged or deployed.** [WP1 acceptance](../acceptance/2026-11-13-phase-06-wp1-owner-acceptance.md) is recorded from the Owner's explicit instruction. WP1 individual native observations were not separately supplied and are not fabricated.
 
 ## Delivered outcome
 
@@ -32,8 +32,13 @@ No automated test framework/suite/dependency was added; review probes stayed out
 
 [Manual guide P6-13–P6-18](../manual-verification-phase-6-wp2.md), [pending native results](Phase_6_WP2_Manual_Results.csv), [developer contracts](Phase_6_WP2_Integration_Contracts.md) and [operations/release guidance](../operations/phase-06-wp2-owner-money.md) accompany this delivery. All six native result rows initially remain Not run. Native authority changes, exact money, authenticated HTTP/CSRF, concurrency, rollback and actual Windows/browser behavior require manual verification.
 
-This branch is based on accepted WP1 candidate b7b4d7ad40afbe9b3023c9c0e67457ba0bee4081 (PR #45), which remained open when WP2 began; main was f985b5a88516ecd3861497bae0ee90984dfe47a1. It targets main directly and includes that accepted prerequisite and approved plan. It can be reviewed as a cumulative candidate; do not assume WP1 was merged or merge multiple stale branches blindly. No repository merge or deployment is performed here. WP2 acceptance must precede WP3 implementation.
+This branch is based on accepted WP1 candidate b7b4d7ad40afbe9b3023c9c0e67457ba0bee4081 (PR #45), which remained open when WP2 began; main was f985b5a88516ecd3861497bae0ee90984dfe47a1. It targets main directly and includes that accepted prerequisite and approved plan. It can be reviewed as a cumulative candidate; do not assume WP1 was merged or merge multiple stale branches blindly. No repository merge or deployment is performed here. WP2 was subsequently Owner-accepted on 14 November 2026; the dated acceptance record supersedes this earlier pending-decision wording.
 
 ## Subsequent error investigation — 13 November 2026
 
 The Owner's native screenshot/log shows the migration applied and history returning ErrorException/500; WP2 remains pending acceptance. A [metadata label fix and diagnostic follow-up](Phase_6_WP2_Metadata_Error_Followup.md) explicitly aliases three uppercase-prone metadata columns and records safe source locations for future unexpected commercial errors. The 404-file WP2 inventory advances to `75b2902fbd74df5696caf29a8a7ebab007c3c7f63c1838aa24c9b82a73fd4524`; the initial hash above is historical. Actual old/new SQL-label fixture checks, 264 PHP grammar files and 38 host UI variants pass. Native retest must confirm resolution; no new migration or business data change is made.
+
+
+## Owner acceptance — 14 November 2026
+
+The Owner reported: “Nothing fails. The error is no more. Proceed to implementation of next WP.” This confirms the manual review found no outstanding failure and the Money movements history error is resolved. WP2 is therefore recorded as Owner-accepted and WP3 is authorized to proceed. This package-level decision does not fabricate individual P6-13–P6-18 observations; the separate CSV remains unfilled where the Owner did not provide per-case evidence. PR #46 remains a separate integration step; no merge or deployment is implied.
