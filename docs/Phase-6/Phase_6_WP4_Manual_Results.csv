@@ -1,0 +1,11 @@
+case_id,scenario,expected_result,observed_result,status,commit,environment,evidence_reference,notes
+P6-31,F1 mixed Cash sources,Exact component totals and expected Cash ₦35,000.00,,Not run,,,,
+P6-32,F2 Transfer exclusion,Transfer Expense/Introduction leave physical Cash unchanged; no Opening Cash dependency,,Not run,,,,
+P6-33,F3 original plus inverse plus replacement,Net Financial Movement Cash effect exactly -₦800.00 with no double count,,Not run,,,,
+P6-34,posted_at boundaries and late posting,Strict UTC (start,cutoff] inclusion; occurred_at never backdates a finalized period,,Not run,,,,
+P6-35,integrated Sales Debt and Financial Movement journey,Every approved Cash source contributes once; Transfer/Credit excluded,,Not run,,,,
+P6-36,Financial Movement reversal attribution,Reversal maps to immediate original type and all signed deltas enter correction net once,,Not run,,,,
+P6-37,no automatic variance balancing,No public expected-Cash endpoint, snapshot write or automatic movement from variance,,Not run,,,,
+P6-38,scoped history filters pagination detail and causal navigation,All five types filter correctly; stable bounded Shop-local posted-time history and privacy,,Not run,,,,
+P6-39,responsive online-only workflows,Phone/tablet/desktop/keyboard and offline/unknown/stale/access states behave honestly,,Not run,,,,
+P6-40,final Phase 6 evidence and Owner decision,All requirements mapped and actual evidence/defects/release/rollback reviewed,,Not run,,,,

@@ -25,7 +25,7 @@ export const FinancialMovementsPanel = {
         const busy = ref(false), saving = ref(false), online = ref(navigator.onLine), phase = ref('input'), dirty = ref(false);
         const error = ref(''), validation = ref({}), pending = ref(null), absent = ref(false), storageAvailable = ref(true);
         const form = reactive({ public_id: crypto.randomUUID(), channel: 'CASH', amount: '', description: '', external_reference: '', happened: '' });
-        const filters = reactive({ channel: 'ALL', from_date: '', to_date: '' });
+        const filters = reactive({ channel: 'ALL', movement_type: 'ALL', from_date: '', to_date: '' });
         const pagination = reactive({ page: 1, per_page: 20, total: 0, total_pages: 0 });
         let generation = 0, controller = null, alive = true, frozen = null;
         const view = computed(() => has(props.permissions, 'financial.view'));
@@ -45,7 +45,7 @@ export const FinancialMovementsPanel = {
         const config = computed(() => actions[currentAction.value]);
         const canRecord = computed(() => record.value && (currentAction.value === 'expense' || props.isOwner));
         const locked = computed(() => busy.value || saving.value || !online.value || props.readOnly || !canRecord.value || phase.value === 'unknown');
-        const dirtyFilters = computed(() => data.value && Object.keys(filters).some(k => filters[k] !== (data.value.filters[k] || (k === 'channel' ? 'ALL' : ''))));
+        const dirtyFilters = computed(() => data.value && Object.keys(filters).some(k => filters[k] !== (data.value.filters[k] || (['channel', 'movement_type'].includes(k) ? 'ALL' : ''))));
         const key = () => props.recoveryScope ? `dt:pending-expense:${location.host}:${props.recoveryScope}` : '';
         const go = hash => emit('navigate', hash);
         function marker(value) {
@@ -254,13 +254,14 @@ export const FinancialMovementsPanel = {
                     props.isOwner && record.value && action('Add money to shop', () => go(actionHash('introduction')), props.readOnly || busy.value || !online.value, 'btn-outline-primary', { icon: 'add' }),
                     h('form', { class: 'commercial-filters', onSubmit: e => { e.preventDefault(); if (!busy.value) initialize(1); } }, [
                         selectField('expense-filter-channel', 'Payment method', filters.channel, v => { filters.channel = v; }, [['ALL', 'All'], ['CASH', 'Cash'], ['TRANSFER', 'Transfer']], { disabled: busy.value }),
+                        selectField('expense-filter-type', 'Money record type', filters.movement_type, v => { filters.movement_type = v; }, [['ALL', 'All types'], ['SHOP_EXPENSE', 'Shop expense'], ['OWNER_WITHDRAWAL', 'Owner took money'], ['OWNER_INTRODUCTION', 'Owner added money'], ['FINANCIAL_CORRECTION', 'Corrected money record'], ['REVERSAL', 'Money record undone']], { disabled: busy.value }),
                         field('expense-from', 'Date recorded from (optional)', filters.from_date, v => { filters.from_date = v; }, { type: 'date', disabled: busy.value }),
                         field('expense-to', 'Date recorded to (optional)', filters.to_date, v => { filters.to_date = v; }, { type: 'date', disabled: busy.value }),
                         submit('Find records', busy.value || !online.value, { loading: busy.value, busyLabel: 'Finding records…', icon: 'search' }),
                     ]),
                     dirtyFilters.value && h('p', 'Choose Find records to apply the new filters.'),
                     action('Refresh money records', () => initialize(pagination.page), busy.value || !online.value, 'btn-outline-primary', { icon: 'refresh' }),
-                    data.value && [h('p', `Date recorded follows shop time: ${data.value.shop.timezone}.`), h(UiRecordList, { records: data.value.items, emptyTitle: 'No money movements found', emptyMessage: 'Try another date or payment method. Saved expenses and owner money movements will appear here.' }, {
+                    data.value && [h('p', `Date recorded follows shop time: ${data.value.shop.timezone}.`), h(UiRecordList, { records: data.value.items, emptyTitle: 'No money movements found', emptyMessage: 'Try another date, payment method or money record type. Saved expenses, owner movements, reversals and corrections will appear here.' }, {
                         record: ({ record: r }) => h('article', { class: 'commercial-card' }, [h('h3', r.description), facts([['Amount', money(r.amount)], ['Money record', labels[r.movement_type] || 'Money record'], ['Payment method', r.channel === 'CASH' ? 'Cash' : 'Transfer'], ['Date recorded', time(r.posted_at, r.shop_timezone)]]), action('View money record', () => go(`#financial-movements/record/${r.public_id}`))]),
                     }), pager(pagination, busy.value || !online.value || dirtyFilters.value, initialize)],
                 ],

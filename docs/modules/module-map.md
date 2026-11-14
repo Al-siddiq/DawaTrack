@@ -100,3 +100,8 @@ FinancialMovementCorrectionInput owns closed reversal/correction DTO normalizati
 ## Phase 6 WP3 acceptance — 14 November 2026
 
 The Owner explicitly accepted protected reversal/correction and authorized WP4. This is package-level acceptance; individual P6-19–P6-30 result observations were not separately supplied and remain Not run. See [acceptance record](../acceptance/2026-11-14-phase-06-wp3-owner-acceptance.md). WP4 is the next cumulative package; no merge/deployment is implied.
+
+
+## Phase 6 WP4 — expected physical Cash composition
+
+`Sales\Infrastructure\SaleCashComponentQuery` owns Cash Sale receipt/refund direction and validates posted Sale/Return headers, correlation, typed Audit evidence and direct payment reversal links. `CustomerDebt\Infrastructure\DebtCashComponentQuery` owns Cash debt receipt totals, allocation evidence and negative debt-payment inverse effects. `FinancialMovement\Infrastructure\FinancialMovementCashComponentQuery` owns signed CASH movements, exact WP3 inverse/replacement pair validation and reversal attribution by immediate source movement type. `Reconciliation\Infrastructure\ExpectedCashQuery` composes those source-owned components with a server-supplied finalized baseline and UTC `(period_started_at, cutoff_at]` boundaries inside the existing repeatable-read read-only snapshot. It returns exact strings mapped to `reconciliation_financial_counts`; it has no public route and writes no snapshot/Audit/change/ledger row. FinancialMovementQuery and the existing workspace add a movement_type history filter. No migration or dependency is added. See [WP4 contract](../Phase-6/Phase_6_WP4_Integration_Contracts.md) and [manual guide](../manual-verification-phase-6-wp4.md).

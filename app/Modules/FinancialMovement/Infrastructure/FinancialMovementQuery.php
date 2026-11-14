@@ -100,9 +100,7 @@ final class FinancialMovementQuery
                     }
                     $replacementEvidence = $repository->recordedEvidence($context, $children[0]);
                     if (($inverseEvidence['counterpart_public_id'] ?? null) !== $children[0]['public_id']
-                        || ($replacementEvidence['counterpart_public_id'] ?? null) !== ($inverse['public_id'] ?? null)
-                        || $inverse['correlation_id'] !== $children[0]['correlation_id']
-                        || $inverse['posted_at'] !== $children[0]['posted_at']) {
+                        || ($replacementEvidence['counterpart_public_id'] ?? null) !== ($inverse['public_id'] ?? null)) {
                         throw new ApiException('FINANCIAL_EVIDENCE_INVALID', 'The undo and corrected replacement do not identify each other.', 409);
                     }
                     $current = $children[0];
@@ -126,14 +124,18 @@ final class FinancialMovementQuery
     public function history(ShopContext $context, array $input): array
     {
         $this->authorize($context);
-        DraftInput::only($input, ['page', 'per_page', 'channel', 'from_date', 'to_date']);
+        DraftInput::only($input, ['page', 'per_page', 'channel', 'movement_type', 'from_date', 'to_date']);
         $page = $this->integer($input['page'] ?? 1, 100000);
         $size = $this->integer($input['per_page'] ?? 20, 50);
         $channel = $input['channel'] ?? 'ALL';
+        $movementType = $input['movement_type'] ?? 'ALL';
         if (!in_array($channel, ['ALL', 'CASH', 'TRANSFER'], true)) {
             throw new ApiException('VALIDATION_FAILED', 'Choose Cash, Transfer or All.', 422);
         }
-        return (new DebtReadSnapshot($this->database))->run(function () use ($context, $input, $page, $size, $channel): array {
+        if (!in_array($movementType, ['ALL', 'SHOP_EXPENSE', 'OWNER_WITHDRAWAL', 'OWNER_INTRODUCTION', 'FINANCIAL_CORRECTION', 'REVERSAL'], true)) {
+            throw new ApiException('VALIDATION_FAILED', 'Choose a valid money record type.', 422);
+        }
+        return (new DebtReadSnapshot($this->database))->run(function () use ($context, $input, $page, $size, $channel, $movementType): array {
             $shop = $this->database->table('shops')->select('name,timezone_name')
                 ->where(['tenant_id' => $context->tenantId, 'id' => $context->shopId])->get()->getRowArray();
             if (!$shop) {
@@ -151,6 +153,10 @@ final class FinancialMovementQuery
             if ($channel !== 'ALL') {
                 $where .= ' AND m.channel=?';
                 $binds[] = $channel;
+            }
+            if ($movementType !== 'ALL') {
+                $where .= ' AND m.movement_type=?';
+                $binds[] = $movementType;
             }
             $utc = new DateTimeZone('UTC');
             if ($from) {
@@ -174,7 +180,7 @@ final class FinancialMovementQuery
                 $items[] = $this->output($row, $repository->recordedEvidence($context, $row));
             }
             return ['items' => $items, 'shop' => ['name' => $shop['name'], 'timezone' => $shop['timezone_name']],
-                'filters' => ['channel' => $channel, 'from_date' => $from?->format('Y-m-d'), 'to_date' => $to?->format('Y-m-d')],
+                'filters' => ['channel' => $channel, 'movement_type' => $movementType, 'from_date' => $from?->format('Y-m-d'), 'to_date' => $to?->format('Y-m-d')],
                 'pagination' => ['page' => $page, 'per_page' => $size, 'total' => $total, 'total_pages' => (int) ceil($total / $size)]];
         });
     }

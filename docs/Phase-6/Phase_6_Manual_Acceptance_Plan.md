@@ -43,7 +43,9 @@ Create all financial and commercial evidence through accepted UI/API commands.
 | F5 — reversal | Transfer Expense ₦250 with no Cash baseline, then reverse it | Exact +₦250 Transfer inverse; no Cash requirement or Cash effect. |
 | F6 — boundary and occurrence | Opening baseline at t0; record an expense with an earlier occurred_at but posted after t0; query cutoff before and after posted_at | The event is included only in periods whose posted_at boundary includes it; occurred_at does not rewrite a closed period. |
 
-For F1, use an explicit hand-calculation sheet. The Transfer movement in F2 must not enter the F1 Cash total. A zero Opening Cash amount is legitimate where a fresh Shop requires an Opening baseline.
+For F1, use an explicit hand-calculation sheet.
+F1 correction construction note: create a pre-baseline Transfer Owner Introduction of ₦1,000, then after finalizing the ₦20,000 Opening Cash baseline correct it into a Cash FINANCIAL_CORRECTION replacement of +₦500. The inverse remains Transfer and is excluded from physical Cash, so the in-period Cash correction net is exactly +₦500. This preserves the approved F1 hand-calculation without inventing a Cash event before Opening Cash is ready.
+ The Transfer movement in F2 must not enter the F1 Cash total. A zero Opening Cash amount is legitimate where a fresh Shop requires an Opening baseline.
 
 ## 4. WP1 — schema, Expense and shared foundation
 

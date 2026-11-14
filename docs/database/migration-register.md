@@ -124,3 +124,8 @@ WP2 adds no migration and does not alter accepted financial_movements DDL/SQL. O
 ## Phase 6 WP3
 
 WP3 introduces no migration or raw SQL artifact. It uses the existing v1.1 financial_movements reversal and replacement self-links. The schema's unique reversal link prevents duplicate direct inverses; because v1.1 intentionally has no unique replacement-link index, one-child linearity is enforced under the serialized Tenant → Shop → membership transaction boundary. Do not add a replacement unique index or alter prior migrations without a separately approved schema amendment.
+
+
+## Phase 6 WP4
+
+WP4 introduces no migration, raw SQL artifact or schema change. It reads existing Sales, Debt and financial_movements source evidence and returns exact component strings for the existing Phase 4 `reconciliation_financial_counts` contract. It does not write that table, create reconciliation sessions, or alter Phase 4 migrations. See [WP4 contract](../Phase-6/Phase_6_WP4_Integration_Contracts.md).
