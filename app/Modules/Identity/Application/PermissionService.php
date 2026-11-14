@@ -34,7 +34,7 @@ final class PermissionService
 
             return [
                 'code' => $permission->value,
-                'group' => ucwords(str_replace('_', ' ', $group)),
+                'group' => $group === 'financial' ? 'Money movements' : ucwords(str_replace('_', ' ', $group)),
                 'label' => ucwords(str_replace(['.', '_'], ' ', $group . ' ' . $action)),
             ];
         }, PermissionCode::cases());

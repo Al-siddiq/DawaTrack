@@ -1,3 +1,4 @@
+import { FinancialMovementsPanel } from '../components/financial-movements-panel.js';
 import { OwnerPanel } from '../components/owner-panel.js';
 import { permissionLabel } from '../components/management-ui.js';
 import { ProductsPanel } from '../components/products-panel.js';
@@ -34,7 +35,7 @@ const {
 
 export const ShopApp = {
     render,
-    components: { OwnerPanel, ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { FinancialMovementsPanel, OwnerPanel, ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
 
     setup() {
         const presentation = readWorkspacePresentation(document.getElementById('shop-app'));

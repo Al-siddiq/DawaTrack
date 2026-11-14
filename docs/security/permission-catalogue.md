@@ -85,3 +85,17 @@ Registered debt.payment.reverse and debt.adjust now own explicit reviewed comman
 ## Phase 5 WP4 statement reads
 
 No new grant. Both customer.view and debt.view required on every statement page, regardless of cursor. READ_ONLY may read; current Shop membership/AccessGate still governs BLOCKED/CLOSED/foreign/Admin context. sale.view only controls contextual Sale links and its separate endpoint; no correction authority is inferred. Current user/membership additionally binds the token; page state is AES-256-GCM opaque/authenticated with purpose-separated deployment encryption.key, never a browser credential or default source secret. Statement DTO excludes Customer private fields/Audit reasons/financial cost and command hashes; private live total hidden in both Print paths.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1 registers financial.view (read Money movements), financial.record (save expenses; also needs view), financial.correct and financial.reverse (reserved independently for WP3, no routes yet). Staff management uses the Money movements group and plain labels; existing Staff grants are not expanded. Primary Owner follows existing membership authority; a Platform Admin role alone is not Shop access. Record requires FULL active commercial access; authorized reads remain subject to existing READ_ONLY policy. No legacy debt.manage fallback.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+Owner withdrawals/introduction require financial.view + financial.record AND a current ACTIVE PRIMARY_OWNER membership, selected by current tenant/membership/user inside the owning Tenant/Shop/membership lock boundary. Staff with every financial grant are still denied. No new grant is added. Browser role/capability is presentation only. READ_ONLY prevents commands; authorized financial.view reads permit status recovery. Correct/reverse remain independently reserved for WP3.
+
+
+## Phase 6 WP3 — independent correction authority
+
+financial.reverse authorizes a standalone reversal and is required for every correction. financial.correct is independent and additionally required to create a corrected replacement. Neither permission implies the other or financial.record; debt.manage, reconciliation and inventory grants do not substitute. Owner authority remains role-derived. Staff require explicit active grants. Every preview and confirmation rechecks current active membership, FULL access, Tenant/Shop state and grants under the owning lock boundary. READ_ONLY permits authorized reads only; BLOCKED/CLOSED, inactive membership and foreign scope are denied. No broad financial.manage permission is added.

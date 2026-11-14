@@ -26,6 +26,10 @@ enum PermissionCode: string
     case DebtPaymentReverse = 'debt.payment.reverse';
     case DebtManage = 'debt.manage';
     case DebtPaymentRecord = 'debt.payment.record';
+    case FinancialView = 'financial.view';
+    case FinancialRecord = 'financial.record';
+    case FinancialCorrect = 'financial.correct';
+    case FinancialReverse = 'financial.reverse';
     case ReconciliationView = 'reconciliation.view';
     case ReconciliationCount = 'reconciliation.count';
     case ReconciliationReview = 'reconciliation.review';

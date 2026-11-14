@@ -1,0 +1,3 @@
+item_id,item_type,severity,description,status,disposition,owner,evidence_reference
+GAP-WP4-01,verification_gap,high,Native PHP lint Composer frontend build and MySQL DECIMAL/query/read-only snapshot execution not performed in the code-editing environment,Blocked,Owner must run the WP4 manual guide and record actual versions/results,Owner,manual-verification-phase-6-wp4.md
+GAP-WP4-02,verification_gap,high,Native HTTP/session/CSRF two-session concurrency rollback and real browser/device/accessibility execution not performed here,Blocked,Do not claim Pass until P6-31 to P6-40 observations are recorded,Owner,manual-verification-phase-6-wp4.md

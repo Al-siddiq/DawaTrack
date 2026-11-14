@@ -119,3 +119,17 @@ Activate required-reason DEBT actions debt_payment.reversed, debt_payment.correc
 ## Phase 5 WP4 read-only statement boundary
 
 Statement reads, pagination/checkpoint creation, Print preparation and refresh perform SELECT only, no success Audit/sync/domain writes. Existing accepted debt writers retain required parent/allocation/correction Audit. Shared verifiedAllocations validates payment amount/hash and returns safe bill explanations without exposing Audit metadata/reason. Statement replay/refresh does not invent a balancing event or financial evidence.
+
+## Phase 6 WP1 — 13 November 2026
+
+Phase 6 WP1: financial_movement.recorded / financial_movement / FINANCIAL is mandatory, with description as the required reason. Metadata contains type, channel, signed exact delta and canonical command fingerprint; it is internal evidence, not a public DTO. Movement, Audit, Shop generation and financial_movement change commit together. Equivalent retry and reads/preview add no success Audit/change. Change publication is last; no subsequent domain locking/read occurs inside the owning write transaction. Missing/corrupt recorded evidence fails closed.
+
+
+## Phase 6 WP2 — 13 November 2026
+
+financial_movement.recorded now covers SHOP_EXPENSE, OWNER_WITHDRAWAL and OWNER_INTRODUCTION. Existing required reason/type/channel/signed exact delta/command fingerprint metadata and one owning Audit/change transaction are retained. The Activity display is Money record saved; row type distinguishes the action. Equivalent retry adds no new success evidence; read/preview remains side-effect-free. Original expense-v1 hashes remain unchanged, Owner hashes are action-specific. No reversal/correction action is enabled early.
+
+
+## Phase 6 WP3 — immutable reversal and correction evidence
+
+The closed FINANCIAL vocabulary adds financial_movement.reversed and financial_movement.corrected on financial_movement. A standalone reversal writes one exact-opposite REVERSAL row and one required-reason Audit event. An atomic correction writes the inverse and FINANCIAL_CORRECTION replacement, each with its own required-reason Audit event, same canonical request correlation, and minimized source/counterpart public UUIDs, type, channel, signed amount and fingerprints. All rows and Audit events share the owning CommercialAccess transaction; financial_movement change publication occurs once, last. No Audit or change is emitted by GET/preview or failed commands. Original rows remain immutable. Audit DTOs never expose raw metadata or internal numeric IDs.

@@ -79,12 +79,27 @@ abstract class CommercialController extends BaseController
                     409,
                 );
             }
+            // Source locations only: never log SQL, request bodies, credentials or exception arguments.
+            $root = str_replace('\\', '/', ROOTPATH);
+            $origin = str_replace('\\', '/', $exception->getFile());
+            $origin = str_starts_with($origin, $root) ? substr($origin, strlen($root)) : basename($origin);
+            $applicationTrace = [];
+            foreach ($exception->getTrace() as $frame) {
+                $file = str_replace('\\', '/', $frame['file'] ?? '');
+                if (str_starts_with($file, str_replace('\\', '/', APPPATH))) {
+                    $applicationTrace[] = substr($file, strlen($root)) . ':' . ($frame['line'] ?? 0);
+                    if (count($applicationTrace) === 3) break;
+                }
+            }
             log_message(
                 "error",
-                "commercial.request_failed {request_id} {exception_class}",
+                "commercial.request_failed {request_id} {exception_class} source={source_file}:{source_line} app_trace={application_trace}",
                 [
                     "request_id" => Services::requestContext()->requestId(),
                     "exception_class" => $exception::class,
+                    "source_file" => $origin,
+                    "source_line" => $exception->getLine(),
+                    "application_trace" => implode(',', $applicationTrace),
                 ],
             );
             return ApiResponse::error(

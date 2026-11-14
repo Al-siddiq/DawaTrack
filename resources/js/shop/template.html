@@ -11,6 +11,7 @@
         <ui-button variant="secondary" icon="stock" @click="workspaceNavigation.request('#products')">Products and stock</ui-button>
         <ui-button variant="secondary" icon="add" @click="workspaceNavigation.request('#intakes')">Stock deliveries and starting stock</ui-button>
       </nav>
+    <FinancialMovementsPanel :is-owner="context.role==='PRIMARY_OWNER'" v-if="page==='financial-movements' && context.capabilities.view_financial_movements" :permissions="context.permissions" :read-only="readOnly" :hash="workspaceNavigation.hash.value" :recovery-scope="context.current_user?.recovery_scope||''" @navigate="workspaceNavigation.request($event)" />
     <OpeningCashPanel v-if="page==='opening-cash' && context.capabilities.manage_opening_cash" :read-only="readOnly" />
 
     <CustomerPanel v-if="page==='customers' && context.capabilities.view_customers" :permissions="context.permissions" :read-only="readOnly" :hash="workspaceNavigation.hash.value" :recovery-scope="context.current_user?.recovery_scope||''" @navigate="workspaceNavigation.request($event)" />
