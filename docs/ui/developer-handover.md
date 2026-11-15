@@ -69,3 +69,7 @@ Phase 6 WP1 adds one permission-gated Money movements destination in the existin
 ## Phase 6 WP2 — 13 November 2026
 
 Money movements gains contextual Owner took money and Add money to shop, with explicit Cash/Transfer selection and up/down physical-cash guidance. The component receives server-context isOwner for presentation and backend always rechecks. Routes /withdrawal and /introduction share the existing destination, icons/loading/modal/fields; bottom nav unchanged. Recovery uses the prior host/user/Shop key, now UUID+safe action tag; old UUID-only markers mean expense. Pending action cannot switch sign. [Contracts](../Phase-6/Phase_6_WP2_Integration_Contracts.md) and [native guide](../manual-verification-phase-6-wp2.md).
+
+## Phase 6 final handover — 14 November 2026
+
+WP1–WP4 are Owner-accepted; [complete closure](../Phase-6/Phase_6_Closure_Report.md) and [final release/rollback operations](../operations/phase-06-final-release.md) are prepared. Whole-phase decision and production release remain pending. Preserve independent view/record/reverse/correct grants and Primary Owner checks, immutable exact signed effects, Cash guard/lock/Audit/change atomicity, contextual history/correction links and same-ID recovery. Expected Cash stays internal/read-only; five-type history filters reuse the existing shell. No automatic balancing or offline financial replay. Native runtime and device/accessibility observations remain separate from package acceptance.

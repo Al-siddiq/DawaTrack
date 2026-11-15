@@ -408,6 +408,8 @@ Interest, penalties, reminders/messaging, wallet, advance receipts or accounts r
 
 ## Phase 6 — Financial Movements and Cash Accountability
 
+**Status — 14 November 2026:** WP1–WP4 Owner-accepted. [Closure report](Phase-6/Phase_6_Closure_Report.md) and [final release handover](operations/phase-06-final-release.md) prepared; whole-phase decision, native release evidence, integration and deployment remain separately outstanding. Phase 7 is not started or authorized by this preparation.
+
 ### Objective
 Record the approved non-sale movements that change expected physical Cash or provide financial evidence.
 
