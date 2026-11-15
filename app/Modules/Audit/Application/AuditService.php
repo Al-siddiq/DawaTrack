@@ -57,7 +57,7 @@ final class AuditService
             'actor_type' => $command->actor->actorType(),
             'actor_user_id' => $command->actor->userId,
             'actor_membership_id' => $command->actor->membershipId,
-            'actor_device_id' => null,
+            'actor_device_id' => $command->actor->deviceId,
             'action_code' => $actionCode,
             'category' => $command->category->value,
             'resource_type' => $resourceType,

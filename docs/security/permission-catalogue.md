@@ -99,3 +99,8 @@ Owner withdrawals/introduction require financial.view + financial.record AND a c
 ## Phase 6 WP3 — independent correction authority
 
 financial.reverse authorizes a standalone reversal and is required for every correction. financial.correct is independent and additionally required to create a corrected replacement. Neither permission implies the other or financial.record; debt.manage, reconciliation and inventory grants do not substitute. Owner authority remains role-derived. Staff require explicit active grants. Every preview and confirmation rechecks current active membership, FULL access, Tenant/Shop state and grants under the owning lock boundary. READ_ONLY permits authorized reads only; BLOCKED/CLOSED, inactive membership and foreign scope are denied. No broad financial.manage permission is added.
+
+
+## Phase 7 WP1
+
+Device administration is current PRIMARY_OWNER-only under FULL locked authority; active Staff can read/validate own cookie-proven installation only. No Device credential supplies membership/grants. New independent reconciliation.start/commit/abort/exclude_device/note join existing view/count/review/finalize/adjust; reserved for later standard commands, no Staff grants auto-expanded. Shop context exposes view_devices for own status and manage_devices for Owner presentation; server authority always rechecks. Existing scope writers recheck locked entitlement/membership/grants. Standard COUNTING blind-read foundation is server-enforced, OPENING exception retained. Device actions share a20/minute identity bucket.

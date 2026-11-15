@@ -53,6 +53,8 @@ final class ShopController extends BaseController
                     'manage_branding' => $context->role === 'PRIMARY_OWNER',
                     'manage_domains' => $context->role === 'PRIMARY_OWNER',
                     'view_subscription' => $context->role === 'PRIMARY_OWNER',
+                    'view_devices' => true,
+                    'manage_devices' => $context->role === 'PRIMARY_OWNER',
                     'manage_opening_cash' => $context->role === 'PRIMARY_OWNER',
                     'view_audit' => $context->role === 'PRIMARY_OWNER',
                     'view_customers' => $hasPermission('customer.view'),

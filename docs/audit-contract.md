@@ -133,3 +133,8 @@ financial_movement.recorded now covers SHOP_EXPENSE, OWNER_WITHDRAWAL and OWNER_
 ## Phase 6 WP3 — immutable reversal and correction evidence
 
 The closed FINANCIAL vocabulary adds financial_movement.reversed and financial_movement.corrected on financial_movement. A standalone reversal writes one exact-opposite REVERSAL row and one required-reason Audit event. An atomic correction writes the inverse and FINANCIAL_CORRECTION replacement, each with its own required-reason Audit event, same canonical request correlation, and minimized source/counterpart public UUIDs, type, channel, signed amount and fingerprints. All rows and Audit events share the owning CommercialAccess transaction; financial_movement change publication occurs once, last. No Audit or change is emitted by GET/preview or failed commands. Original rows remain immutable. Audit DTOs never expose raw metadata or internal numeric IDs.
+
+
+## Phase 7 WP1 Device attribution
+
+The deferred Device parent/FK is added by forward migrations. Existing tenantUser callers remain Device-null. tenantDevice may be used only after actual current-cookie proof is verified; validator independently requires TENANT authority and ACTIVE same-Tenant/Shop Device. Owner enrollment/recovery/revocation are user-attributed administrative decisions, not unproven Device actors. device.registered/renamed/revoked/credential_recovered/validated use SYNC category and registered_device resource, redacted bounded metadata and final change publication. No arbitrary client Device ID or credential enters Audit.

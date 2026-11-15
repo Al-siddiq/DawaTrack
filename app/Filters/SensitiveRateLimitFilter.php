@@ -78,6 +78,10 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [5, 300];
         }
 
+        if (str_starts_with($path, '/api/v1/shop/devices')) {
+            return [20, 60];
+        }
+
         if (str_starts_with($path, '/api/v1/shop/staff')) {
             return [20, 60];
         }
@@ -93,6 +97,10 @@ final class SensitiveRateLimitFilter implements FilterInterface
 
         if (str_contains($path, '/shop/audit-events')) {
             return '/api/v1/shop/audit-events';
+        }
+
+        if (str_starts_with($path, '/api/v1/shop/devices')) {
+            return '/api/v1/shop/devices';
         }
 
         return $path;

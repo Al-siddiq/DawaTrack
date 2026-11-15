@@ -1,9 +1,11 @@
 # Phase 7 — Reconciliation Control Engine: strategic implementation plan
 
-**Date:** 15 November 2026 (Africa/Lagos)  
-**Status:** PROPOSED — awaiting Owner review and acceptance; no Phase 7 implementation authorized by this document.  
-**Reviewed baseline:** merged main at `4266400` (closure PR #49), following Phase 6 WP4 integration PR #48 (`1677106`). Application content matches accepted WP4 `9483c57`; closure content matches the previously prepared handover.  
+**Date:** 15 November 2026 (Africa/Lagos)
+**Status:** OWNER-ACCEPTED — 15 November 2026; WP1 only authorized. See the dated approval record.
+**Reviewed baseline:** merged main at `4266400` (closure PR #49), following Phase 6 WP4 integration PR #48 (`1677106`). Application content matches accepted WP4 `9483c57`; closure content matches the previously prepared handover.
 **Delivery model:** four sequential, independently deliverable work packages. Each is implemented only after its authorization and accepted before its successor begins.
+
+[Owner plan approval / WP1 authorization](../acceptance/2026-11-15-phase-07-plan-owner-approval.md). WP1 delivery remains subject to native manual review; WP2–WP4 are not authorized.
 
 ## 1. Authority and entry position
 

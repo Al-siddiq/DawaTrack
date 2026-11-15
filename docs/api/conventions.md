@@ -61,3 +61,8 @@ Under /api/v1/shop/financial-movements, the scoped GET /{uuid}/correction-state 
 ## Phase 6 WP4 — history filter and expected Cash boundary
 
 The scoped Financial Movement history GET accepts the optional `movement_type` filter: ALL, SHOP_EXPENSE, OWNER_WITHDRAWAL, OWNER_INTRODUCTION, FINANCIAL_CORRECTION or REVERSAL. It remains bounded by page/per_page (maximum 50), channel and Shop-local from_date/to_date filters applied to posted_at; ordering is posted_at DESC then id DESC. Detail keeps occurred_at separate from Date recorded. WP4 does not add an expected-Cash public API route. ExpectedCashQuery is an internal read-only Reconciliation component called with server-resolved ShopContext, server-selected baseline and exact UTC period boundaries. See [WP4 contract](../Phase-6/Phase_6_WP4_Integration_Contracts.md).
+
+
+## Phase 7 WP1 Device/control APIs
+
+See [complete contract](../Phase-7/Phase_7_WP1_Integration_Contracts.md). Authenticated Shop /devices collection/current plus explicit register/current-validate/rename/revoke/recover commands. Owner-only collection/admin; active Staff own-cookie status/validation. No generic Device CRUD or expected-Cash route. Closed DTOs, no-store/CSRF, stable errors and bounded pagination; cookie proof never appears in JSON. BLIND_COUNT_ACTIVE denies revealing source reads for standard counting actors; no standard session route activated here.

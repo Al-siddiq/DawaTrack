@@ -35,6 +35,7 @@ export function render(_ctx, _cache) {
   const _component_ui_alert = _resolveComponent("ui-alert")
   const _component_ui_button = _resolveComponent("ui-button")
   const _component_FinancialMovementsPanel = _resolveComponent("FinancialMovementsPanel")
+  const _component_DevicesPanel = _resolveComponent("DevicesPanel")
   const _component_OpeningCashPanel = _resolveComponent("OpeningCashPanel")
   const _component_CustomerPanel = _resolveComponent("CustomerPanel")
   const _component_SaleHistoryPanel = _resolveComponent("SaleHistoryPanel")
@@ -123,15 +124,23 @@ export function render(_ctx, _cache) {
                       onNavigate: _cache[2] || (_cache[2] = $event => (_ctx.workspaceNavigation.request($event)))
                     }, null, 8 /* PROPS */, ["is-owner", "permissions", "read-only", "hash", "recovery-scope"]))
                   : _createCommentVNode("v-if", true),
+                (_ctx.page==='devices' && _ctx.context.capabilities.view_devices)
+                  ? (_openBlock(), _createBlock(_component_DevicesPanel, {
+                      key: 4,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
+                      "read-only": _ctx.readOnly,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||''
+                    }, null, 8 /* PROPS */, ["is-owner", "read-only", "recovery-scope"]))
+                  : _createCommentVNode("v-if", true),
                 (_ctx.page==='opening-cash' && _ctx.context.capabilities.manage_opening_cash)
                   ? (_openBlock(), _createBlock(_component_OpeningCashPanel, {
-                      key: 4,
+                      key: 5,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='customers' && _ctx.context.capabilities.view_customers)
                   ? (_openBlock(), _createBlock(_component_CustomerPanel, {
-                      key: 5,
+                      key: 6,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly,
                       hash: _ctx.workspaceNavigation.hash.value,
@@ -141,21 +150,21 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='sale-history' && _ctx.context.capabilities.view_sale_drafts)
                   ? (_openBlock(), _createBlock(_component_SaleHistoryPanel, {
-                      key: 6,
+                      key: 7,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["permissions", "read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='sale-drafts' && _ctx.context.capabilities.view_sale_drafts)
                   ? (_openBlock(), _createBlock(_component_SaleDraftPanel, {
-                      key: 7,
+                      key: 8,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["permissions", "read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='home')
                   ? (_openBlock(), _createBlock(_component_workspace_home, {
-                      key: 8,
+                      key: 9,
                       context: _ctx.context,
                       access: _ctx.access,
                       items: _ctx.navigation,
@@ -165,7 +174,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='intakes' && _ctx.context.capabilities.view_inventory)
                   ? (_openBlock(), _createBlock(_component_intakes_panel, {
-                      key: 9,
+                      key: 10,
                       intakes: _ctx.intakes,
                       inventory: _ctx.inventoryActions,
                       "read-only": _ctx.readOnly
@@ -173,7 +182,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='products' && _ctx.context.capabilities.view_inventory)
                   ? (_openBlock(), _createBlock(_component_products_panel, {
-                      key: 10,
+                      key: 11,
                       products: _ctx.products,
                       inventory: _ctx.inventoryActions,
                       context: _ctx.context,
@@ -182,7 +191,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (['staff','settings','branding','domains','subscription'].includes(_ctx.page) && _ctx.navigation.some(item=>item.id===_ctx.page))
                   ? (_openBlock(), _createBlock(_component_owner_panel, {
-                      key: 11,
+                      key: 12,
                       page: _ctx.page,
                       model: _ctx.ownerTools,
                       "read-only": _ctx.readOnly
@@ -190,13 +199,13 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='audit' && _ctx.context.capabilities.view_audit)
                   ? (_openBlock(), _createBlock(_component_audit_panel, {
-                      key: 12,
+                      key: 13,
                       mode: "owner"
                     }))
                   : _createCommentVNode("v-if", true),
                 (_ctx.notice)
                   ? (_openBlock(), _createBlock(_component_ui_alert, {
-                      key: 13,
+                      key: 14,
                       severity: "success",
                       message: _ctx.notice,
                       persistent: !['Shop details saved.','Staff account created.'].includes(_ctx.notice)
@@ -204,7 +213,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.dialog.open)
                   ? (_openBlock(), _createBlock(_component_ui_dialog, {
-                      key: 14,
+                      key: 15,
                       open: _ctx.dialog.open,
                       busy: _ctx.dialog.pending,
                       "initial-focus": "#action-reason",

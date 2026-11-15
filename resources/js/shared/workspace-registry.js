@@ -6,6 +6,7 @@ export const shopPages = Object.freeze([
     { id: 'sale-history', label: 'Sales', icon: 'sales', hash: '#sale-history', prefixes: ['#sale/'], capability: 'view_sale_drafts', group: 'menu' },
     { id: 'intakes', label: 'Stock deliveries', icon: 'add', hash: '#intakes', capability: 'view_inventory', group: 'stock', parent: 'Stock', parentId: 'products', sidebar: false, trackEdits: true },
     { id: 'financial-movements', label: 'Money movements', icon: 'cash', hash: '#financial-movements', prefixes: ['#financial-movements/'], capability: 'view_financial_movements', group: 'menu', section: 'Work' },
+    { id: 'devices', label: 'Shop devices', icon: 'settings', hash: '#devices', capability: 'view_devices', group: 'menu', section: 'Manage shop', trackEdits: true },
     { id: 'staff', label: 'Staff', icon: 'staff', hash: '#staff', capability: 'manage_staff', group: 'menu', section: 'Manage shop', trackEdits: true },
     { id: 'settings', label: 'Shop details', icon: 'settings', hash: '#settings', capability: 'manage_shop_settings', group: 'menu', parent: 'Shop settings', section: 'Shop settings', trackEdits: true },
     { id: 'opening-cash', label: 'Starting cash', icon: 'cash', hash: '#opening-cash', capability: 'manage_opening_cash', group: 'menu', parent: 'Shop settings', section: 'Shop settings', trackEdits: true },

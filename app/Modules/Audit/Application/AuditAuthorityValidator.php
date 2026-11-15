@@ -21,6 +21,15 @@ final class AuditAuthorityValidator
             throw new ApiException('AUDIT_CONTEXT_INVALID', 'Audit Shop scope requires Tenant scope.', 422);
         }
 
+        if ($actor->deviceId !== null) {
+            $valid = $actor->authority === AuditAuthority::TENANT && $actor->tenantId !== null && $actor->shopId !== null
+                && $this->database->table('registered_devices')->where([
+                    'id' => $actor->deviceId, 'tenant_id' => $actor->tenantId, 'shop_id' => $actor->shopId, 'status' => 'ACTIVE',
+                ])->countAllResults() === 1;
+            if (!$valid) {
+                throw new ApiException('AUDIT_CONTEXT_INVALID', 'Audit Device authority is invalid.', 422);
+            }
+        }
         $this->validateShopScope($actor);
 
         match ($actor->authority) {

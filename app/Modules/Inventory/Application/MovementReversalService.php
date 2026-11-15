@@ -25,7 +25,9 @@ $this->projection=new InventoryProjection($database);
  public function reverse(ShopContext $context,string $originalPublicId,string $reason): string{$this->authorize($context);
 $reason=SensitiveReason::require($reason);
 $this->database->transException(true)->transBegin();
-try{$original=$this->database->query('SELECT * FROM stock_movements WHERE tenant_id=? AND shop_id=? AND public_id=?',[$context->tenantId,$context->shopId,strtolower($originalPublicId)])->getRowArray();
+try{
+(new \App\Modules\Reconciliation\Application\StockControlGuard($this->database))->assertCanAffectStock($context, ['inventory.reverse']);
+$original=$this->database->query('SELECT * FROM stock_movements WHERE tenant_id=? AND shop_id=? AND public_id=?',[$context->tenantId,$context->shopId,strtolower($originalPublicId)])->getRowArray();
 if(!$original)throw new ApiException('MOVEMENT_NOT_FOUND','The Stock Movement was not found.',404);
 if($original['movement_type']==='REVERSAL')throw new ApiException('REVERSAL_OF_REVERSAL_NOT_ALLOWED','Use a Correction instead of reversing a reversal.',409);
 if($original['source_kind']==='SALE_ITEM')throw new ApiException('COMMERCIAL_MOVEMENT_PROTECTED','Sale and Return stock evidence must be corrected through its commercial workflow.',409);

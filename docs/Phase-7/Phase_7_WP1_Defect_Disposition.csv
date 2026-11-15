@@ -1,0 +1,5 @@
+item_id,type,severity,status,description,disposition
+P7-WP1-GAP-01,verification_gap,high,Open native gate,Native PHP Composer MySQL schema DECIMAL transaction and protected rollback not executed,Run native guide and record actual observations before release
+P7-WP1-GAP-02,verification_gap,high,Open native gate,HTTP CSRF secure cookies session scope concurrency and real device accessibility not executed,Owner native manual verification required; no inferred Pass
+P7-WP1-DEP-01,planned_dependency,info,Deferred by scope,Real standard-start relevant-set readiness acknowledgement and standard active-scope runtime cases await WP2 WP3,WP1 supplies contracts and protection foundation only; no fake session or ACK
+P7-WP1-FIX-01,inherited_source_blocker,high,Source repaired native verification open,Phase6 expected-Cash query had truncated SQL and repeated class tail,Repair completed; PHP grammar and SQLite SQL shape pass; native MySQL F1 F3 still required

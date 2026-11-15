@@ -129,3 +129,8 @@ WP3 introduces no migration or raw SQL artifact. It uses the existing v1.1 finan
 ## Phase 6 WP4
 
 WP4 introduces no migration, raw SQL artifact or schema change. It reads existing Sales, Debt and financial_movements source evidence and returns exact component strings for the existing Phase 4 `reconciliation_financial_counts` contract. It does not write that table, create reconciliation sessions, or alter Phase 4 migrations. See [WP4 contract](../Phase-6/Phase_6_WP4_Integration_Contracts.md).
+
+
+## Phase 7 WP1 — online Device foundation
+
+Apply after Phase6: 2026-11-15-100000 CreatePhaseSevenRegisteredDevices, then100100 AddPhaseSevenAuditDeviceForeignKey. SQL twins: phase-07/20261115100000_registered_devices.sql and20261115100100_audit_device_fk.sql. Actor keys match Shield INT UNSIGNED; Domain IDs BIGINT UNSIGNED. Audit preflight refuses orphan/foreign Device context before FK; never rewrite protected Audit. Reverse dependency order only for empty disposable development fixtures; populated Device/Audit context refuses destructive down. Native empty/upgrade/partial-DDL/restore checks remain Owner gates. No count/variance/ack/provision/receipt/cursor schema in WP1.

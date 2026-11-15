@@ -46,3 +46,8 @@ Phase 1 requires a deliberately created MySQL 8.4 database and an explicit `.env
 Package migration dependencies are explicit: `CodeIgniter\\Settings`, then `CodeIgniter\\Shield`, then `App`. Do not treat cross-namespace timestamps as dependency ordering and do not use `migrate --all` as the authoritative bootstrap procedure. See `docs/operations/phase-01-bootstrap.md` for the exact preflight, install, rollback, and clean-recovery commands.
 
 Phase 2 Audit query limits are code-owned security policy: maximum page size 50, maximum date range 366 days, Owner Audit 60 requests/minute, and Platform Audit/support 30 requests/minute per authenticated identity. A support-access continuation expires after 15 minutes and is revalidated against its creating Platform Administrator; it is not configurable session infrastructure.
+
+
+## Phase 7 WP1 Device configuration
+
+No dependency or new deployment secret is introduced. Production installation proof uses host-only __Host-dt_device Secure/HttpOnly/SameSite Strict Path=/ cookie; non-production name dt_device, still Secure outside HTTP development. Random proof verifier is stored in registered_devices; no reusable password/PIN/browser-JS proof storage. Existing session/CSRF/HTTPS policy remains. Before Device use apply the two approved migrations and check native MySQL constraints. Cookie retention is not an offline entitlement lease.

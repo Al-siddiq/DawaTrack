@@ -9,6 +9,11 @@ use App\Exceptions\ApiException;
 final class AuditAction
 {
     private const CODES = [
+        'device.registered',
+        'device.renamed',
+        'device.revoked',
+        'device.credential_recovered',
+        'device.validated',
         'admin.mfa_cleared',
         'admin.mfa_verified',
         'branding.asset_replaced',

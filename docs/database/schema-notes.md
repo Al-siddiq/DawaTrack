@@ -35,3 +35,8 @@ WP4 adds no DDL or index. Product, Intake and movement queries are capped and de
 ## Phase 5 WP4 derived statement
 
 Implemented as read-only query over accepted existing schema. Group Sales-owned adjustment effects by commercial source; normal/inverse payment headers affect debt once, allocations explain them. Source ordering uses disjoint DECIMAL surrogate keys internally. No schema change, statement persistence, mutable balance/status or Phase10 cursor table. See Phase5 WP4 contracts and release/closure handover.
+
+
+## Phase 7 WP1
+
+registered_devices is schema v1.1 §16.1; deferred audit_events.actor_device_id parent FK now exists after Device migration. Service validates active same-Shop Device authority as well as FK existence. No offline trust/provision/sync state is fabricated; last_validated_at is set only after explicit current-cookie validation. Historical session/financial-count and all prior migration definitions remain unchanged.

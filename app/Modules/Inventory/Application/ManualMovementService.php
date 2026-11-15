@@ -34,7 +34,9 @@ $delta=$this->projection->signed((string)($input['quantity']??''),$type==='CORRE
 $productId=strtolower((string)($input['product_public_id']??''));
 $occurred=$this->occurred($input['occurred_at']??null);
 $this->database->transException(true)->transBegin();
-try{$product=$this->database->query('SELECT id,public_id FROM products WHERE tenant_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$productId])->getRowArray();
+try{
+(new \App\Modules\Reconciliation\Application\StockControlGuard($this->database))->assertCanAffectStock($context, ['inventory.adjust']);
+$product=$this->database->query('SELECT id,public_id FROM products WHERE tenant_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$productId])->getRowArray();
 if(!$product)throw new ApiException('PRODUCT_NOT_FOUND','The Product was not found.',404);
 $position=$this->database->query('SELECT * FROM stock_positions WHERE tenant_id=? AND shop_id=? AND product_id=? FOR UPDATE',[$context->tenantId,$context->shopId,$product['id']])->getRowArray();
 if(!$position)throw new ApiException('INVENTORY_STATE_CONFLICT','The Stock Position is unavailable.',409);
