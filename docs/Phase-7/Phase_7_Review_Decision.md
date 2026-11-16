@@ -1,6 +1,6 @@
 # Phase 7 planning review decision
 
-15 November 2026 (Africa/Lagos). **Owner accepted plan and WP1; WP2 only now authorized.**
+15 November 2026 (Africa/Lagos). **Owner accepted plan, WP1 and WP2; WP3 now authorized.**
 
 Review [implementation plan](Phase_7_Implementation_Plan.md), [requirements matrix](Phase_7_Requirements_Matrix.csv), [manual acceptance](Phase_7_Manual_Acceptance_Plan.md) and [initial results](Phase_7_Manual_Results.csv).
 
@@ -16,8 +16,8 @@ Owner decision: Recorded in [dated approval](../acceptance/2026-11-15-phase-07-p
 Exact reviewed planning commit: bf5a35853047c1b6665eb7bd8006351376fa9b9c.
 Requested amendments: None supplied yet.
 WP1 authorization: Recorded; WP1 subsequently Owner-accepted.
-WP2 authorization: [Recorded with WP1 acceptance](../acceptance/2026-11-16-phase-07-wp1-owner-acceptance.md); WP2 delivered for native review.
-WP3–WP4 authorization: Not recorded.
+WP2 authorization: [Recorded with WP1 acceptance](../acceptance/2026-11-16-phase-07-wp1-owner-acceptance.md); WP2 subsequently Owner-accepted; individual case outcomes not supplied.
+WP3 authorization: [Recorded with WP2 acceptance](../acceptance/2026-11-16-phase-07-wp2-owner-acceptance.md). WP4 authorization: Not recorded.
 Production changes: None authorized by this planning record.
 
 Approval does not manufacture native test outcomes. Each package is separately delivered and accepted before its successor; final phase acceptance and deployment are separate decisions.

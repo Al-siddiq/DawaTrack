@@ -71,3 +71,8 @@ See [complete contract](../Phase-7/Phase_7_WP1_Integration_Contracts.md). Authen
 ## Phase 7 WP2 — standard Cash/readiness API
 
 Authenticated Shop /cash-controls provides bounded history, start/detail, readiness/challenge/acknowledge/exclude, count/commit/review/explain/finalize/abort, Staff context, append-only notes and blind-safe source-status. See [complete method/grant/DTO contract](../Phase-7/Phase_7_WP2_Integration_Contracts.md). No generic reconciliation CRUD, public expected-Cash or Stock/Full route. Closed command DTOs, exact decimal strings, private no-store/CSRF/correlation, revision conflicts and same-identity recovery apply. Money review projection is absent until commitment/current review; historical controls and notes respect active blindness.
+
+
+## Phase 7 WP3 integration
+
+Stock/Full now share Cash lifecycle/authority/readiness with server-bound scopes and blind DTOs. Inventory owns reviewed one-effect Stock delta against the current position; late source Audit and control refresh publish in the source transaction. Existing Cash API/recovery markers remain compatible. See the [complete WP3 contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md), [native guide](../manual-verification-phase-07-wp3.md) and [operations](../operations/phase-07-wp3-stock-full.md). Native verification remains open.

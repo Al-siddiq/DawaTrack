@@ -56,3 +56,8 @@ No dependency or new deployment secret is introduced. Production installation pr
 ## Phase 7 WP2 readiness configuration
 
 Reuse the existing private deployment encryption.key with at least32 bytes and OpenSSL; ReadinessProof derives a separate purpose key (CashReadiness:v1), never a source default/new secret. Five-minute receipt binds user/membership/current Device/control/generation/exact string watermark. Token remains memory/POST only, not URL/storage/Audit. New starts and proof issuance/use fail closed on missing setup. Safe abort and post-final notes do not require decrypting an old proof. Existing production HTTPS/Device cookie/session/CSRF policy unchanged; actual behavior requires native acceptance. Cash-control writes share30/minute identity throttle; user-triggered acknowledgement is not an auto heartbeat.
+
+
+## Phase 7 WP3
+
+WP3 adds no setting, key, dependency or default grant. Existing private encryption.key/OpenSSL and actual Device cookie setup remain required. Stock/Full setup additionally verifies the deferred Stock Movement variance FK; missing setup returns503. Shared sensitive rate limiting covers all three control roots. See [integration contract](Phase-7/Phase_7_WP3_Integration_Contracts.md).

@@ -45,3 +45,8 @@ registered_devices is schema v1.1 §16.1; deferred audit_events.actor_device_id 
 ## Phase 7 WP2
 
 Standard Cash uses existing session/financial-count definitions and actual-baseline rollover. New Stock counts/variances/notes/Staff contexts/Device acknowledgements follow v1.1; supporting scope keys let variance FKs prove source count belongs to the same control. ACK/EXCLUDED is insert-once, no pending row/table. Relevant-set membership is typed per-Device start Audit plus count/digest, never rewritten from live Device list. Actual/variance draft fields satisfy existing CHECKs but remain hidden in blind DTOs. Stock adjustment FK/lifecycle remains WP3.
+
+
+## Phase 7 WP3
+
+Stock counts retain expected quantity/cost in approved rows; causal per-Product start Audit freezes name/unit/cost-state/version and membership digest. The deferred scoped Stock Movement variance FK is now activated with a MySQL8.4 candidate key. No adjustment-status table or mutable balance is introduced. See [integration contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md).

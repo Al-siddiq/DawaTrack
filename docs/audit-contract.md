@@ -143,3 +143,8 @@ The deferred Device parent/FK is added by forward migrations. Existing tenantUse
 ## Phase 7 WP2 — Cash and readiness evidence
 
 Typed actions reconciliation.cash_started/device_required/cash_counted/cash_committed/cash_reviewed/cash_explained/cash_finalized/cash_aborted/device_acknowledged/device_excluded/variance_note_added use RECONCILIATION category and reconciliation_session aggregate. Start records cutoff/selected generation/predecessor and bounded count/digest; per-Device membership events causally reference start. Actual ACK uses cookie-validated tenantDevice actor; exclusion is reasoned Owner authority. Later note Audit holds public identity/type and short reason, not2000-character note body. All required Audit precedes final generation publication; normalized variance and baseline advancement are atomic, no silent history edits.
+
+
+## Phase 7 WP3
+
+WP3 adds control_started/counted/committed/reviewed/explained/finalized/aborted, stock_expected/counted/explained/variance_finalized/adjusted and late_operation_associated actions under reconciliation.*. Per-Product stock_expected links causally to start; Stock adjustment uses Inventory Audit with source UUIDs/delta/current before/after. Deduplicated SYSTEM late associations preserve original source times and refresh the control through publication. Notes keep text in approved note rows, not unbounded Audit metadata. See [integration contract](Phase-7/Phase_7_WP3_Integration_Contracts.md).

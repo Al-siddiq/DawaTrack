@@ -78,7 +78,7 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [5, 300];
         }
 
-        if (str_starts_with($path, '/api/v1/shop/cash-controls')) {
+        if (preg_match('#^/api/v1/shop/(cash|stock|full)-controls(?:/|$)#', $path) === 1) {
             return [30, 60];
         }
 
@@ -107,7 +107,7 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return '/api/v1/shop/devices';
         }
 
-        if (str_starts_with($path, '/api/v1/shop/cash-controls')) {
+        if (preg_match('#^/api/v1/shop/(cash|stock|full)-controls(?:/|$)#', $path) === 1) {
             return '/api/v1/shop/cash-controls';
         }
 

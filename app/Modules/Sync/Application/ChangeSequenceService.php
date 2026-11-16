@@ -55,6 +55,20 @@ final class ChangeSequenceService
             }
             $this->validate($command);
         }
+        $late = new \App\Modules\Reconciliation\Application\LateOperationAssociation(
+            $this->database, new \App\Modules\Audit\Application\AuditService($this->database, $this->requestContext),
+        );
+        $seen = [];
+        foreach ($commands as $command) {
+            $key = $command->tenantId . '|' . $command->shopId . '|' . $command->resourceType . '|' . $command->resourcePublicId;
+            if (!isset($seen[$key])) {
+                $controlId = $late->associate($command);
+                if ($controlId !== null) {
+                    $commands[] = new ChangeCommand($command->tenantId, $command->shopId, 'reconciliation_session', $controlId);
+                }
+                $seen[$key] = true;
+            }
+        }
         $generation = $this->lockActiveGeneration();
         $published = [];
         foreach ($commands as $command) {

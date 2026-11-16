@@ -104,6 +104,11 @@ final class CashControlController extends CommercialController
         });
     }
 
+    public function lateOperations(string $id)
+    {
+        return $this->execute(fn($context) => $this->collection($this->query()->lateOperations($context, CashControlInput::uuid($id), ...$this->paging())));
+    }
+
     private function perform(string $id, string $action)
     {
         return $this->execute(function ($context) use ($id, $action) {

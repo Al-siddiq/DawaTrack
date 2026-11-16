@@ -1,0 +1,4 @@
+item_id,type,severity,status,description,disposition
+P7-WP3-GAP-01,verification_gap,high,Open native gate,Native MySQL FK DECIMAL lifecycle races and rollback unavailable here,Run P7-25 through P7-36 on isolated native environment and record observations
+P7-WP3-GAP-02,verification_gap,high,Open native gate,Real HTTP cookies readiness responsive accessibility performance and restore not executed,Native Owner manual verification required before release
+P7-WP3-BOUNDARY-01,planned_scope,info,Separate gate,WP4 integrated closure is not authorized,Stop after WP3 handover and await acceptance
