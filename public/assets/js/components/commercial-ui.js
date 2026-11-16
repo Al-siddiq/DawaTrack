@@ -50,5 +50,13 @@ const errorCopy = {
     REQUEST_TIMEOUT: 'We could not confirm the result in time. Check the saved record before trying again.',
     NETWORK_ERROR: 'We cannot reach DawaTrack. Check your connection and the saved status before trying again.',
 };
-export const message = error => [error.status >= 500 ? 'DawaTrack could not complete the request. Check the saved status before trying again.' : errorCopy[error.code] || error.message, ...(error.status >= 500 ? [] : Object.values(error.details ?? {}).flat()), error.requestId && `Support reference: ${error.requestId}`].filter(Boolean).join(' ');
+// Only these public setup codes have operator-safe text. Unexpected 5xx stay redacted.
+const setupCopy = {
+    DEVICE_SETUP_REQUIRED: 'Shop Device setup is incomplete. Ask the administrator to check the Phase 7 Device migrations before starting a control.',
+    CASH_CONTROL_SETUP_REQUIRED: 'Control evidence setup is incomplete. Ask the administrator to check the Phase 7 WP2 migrations before starting Cash, Stock or Full control.',
+    STOCK_CONTROL_SETUP_REQUIRED: 'Stock control setup is incomplete. Ask the administrator to check the Phase 7 WP3 Stock variance foreign-key migration.',
+    READINESS_SETUP_REQUIRED: 'Online readiness is not configured. Ask the administrator to check the existing private encryption key and PHP OpenSSL support.',
+};
+export const setupMessage = error => error.status === 503 ? setupCopy[error.code] || null : null;
+export const message = error => [setupMessage(error) || (error.status >= 500 ? 'DawaTrack could not complete the request. Check the saved status before trying again.' : errorCopy[error.code] || error.message), ...(error.status >= 500 ? [] : Object.values(error.details ?? {}).flat()), error.requestId && `Support reference: ${error.requestId}`].filter(Boolean).join(' ');
 export const pager = (page, disabled, load) => h(UiPagination, { page: page.page, totalPages: page.total_pages, busy: disabled, onPageRequest: load });

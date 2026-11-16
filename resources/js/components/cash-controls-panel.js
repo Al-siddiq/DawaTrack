@@ -33,7 +33,7 @@ export const CashControlsPanel = {
         const quantity = value => /^(?:0|[1-9][0-9]{0,14})(?:\.[0-9]{1,4})?$/.test(String(value));
         const records = ref([]), control = ref(null), devices = ref([]), notes = ref([]), staff = ref([]);
         const listPage = ref(1), listPages = ref(0), devicePage = ref(1), devicePages = ref(0), notePage = ref(1), notePages = ref(0), staffPage = ref(1), staffPages = ref(0);
-        const loading = ref(true), pending = ref(false), online = ref(navigator.onLine), unknown = ref(false), storageWarning = ref(false);
+        const loaded = ref(false), loading = ref(true), pending = ref(false), online = ref(navigator.onLine), unknown = ref(false), storageWarning = ref(false);
         const error = ref(''), notice = ref(''), amount = ref(''), explanation = ref(''), reason = ref('');
         const selectedId = ref(null), startId = ref(crypto.randomUUID()), noteId = ref(crypto.randomUUID()), savedMarker = ref(null);
         const sourceChoices = computed(() => [
@@ -44,14 +44,14 @@ export const CashControlsPanel = {
         const noteType = ref('EXPLANATION'), noteText = ref(''), sourceKind = ref(sourceChoices.value[0]?.[0] || ''), sourceId = ref(''), sourceResult = ref(null);
         const members = ref([]), search = ref(''), memberPage = ref(1), memberPages = ref(0), duty = ref({});
         const has = code => props.permissions.includes(`reconciliation.${code}`);
-        const blocked = computed(() => pending.value || loading.value || props.readOnly || !online.value || unknown.value);
+        const blocked = computed(() => pending.value || loading.value || !loaded.value || props.readOnly || !online.value || unknown.value);
         const key = `dt:pending-${scope === 'CASH' ? 'cash-control' : slug}:${location.host}:${props.recoveryScope}`;
         let revision = 0, alive = true;
         const dirty = computed(() => stockDirty.value || adjustmentReason.value.trim() || noteText.value.trim() || reason.value.trim() || Object.keys(duty.value).length
             || (control.value?.status === 'COUNTING' && amount.value !== '' && cash(amount.value) !== control.value?.count?.actual_amount)
             || (control.value?.status === 'REVIEW' && explanation.value !== (control.value?.snapshot?.explanation || '')));
-        useNavigationGuard(() => unknown.value ? { hard: true, message: 'Check the saved Cash control status before leaving. Keep its original reference.' }
-            : dirty.value ? { message: 'Your Cash count, responsibility context or explanation has unsaved changes.' } : null);
+        useNavigationGuard(() => unknown.value ? { hard: true, message: `Check the saved ${title} control status before leaving. Keep its original reference.` }
+            : dirty.value ? { message: `Your ${title} count, responsibility context or explanation has unsaved changes.` } : null);
 
         function remember(actionName, id) {
             const value = { control_public_id: id, action: actionName };
@@ -95,6 +95,7 @@ export const CashControlsPanel = {
             const request = ++revision;
             const id = selectedId.value;
             loading.value = true;
+            loaded.value = false;
             error.value = '';
             control.value = null;
             devices.value = notes.value = staff.value = records.value = stockRows.value = lateRows.value = [];
@@ -141,6 +142,7 @@ export const CashControlsPanel = {
                     }
                     if (unknown.value) notice.value = 'Saved server status is shown. It does not mean a missing or changed command failed. Keep the original note/reference when continuing.';
                 }
+                loaded.value = true;
                 if (unknown.value && savedMarker.value?.action === 'adjust') {
                     const status = (await apiRequest(`${root}/${id}/adjustment-status?public_id=${savedMarker.value.movement_public_id}`)).data;
                     if (status.found && status.movement.variance_public_id === savedMarker.value.variance_public_id) {
@@ -165,7 +167,7 @@ export const CashControlsPanel = {
             } finally { if (alive && request === revision) loading.value = false; }
         }
         async function command(actionName, body = {}, allowRetry = false) {
-            if (pending.value || loading.value || props.readOnly || !online.value || (unknown.value && !allowRetry)) return;
+            if (pending.value || loading.value || !loaded.value || props.readOnly || !online.value || (unknown.value && !allowRetry)) return;
             const id = actionName === 'start' ? startId.value : selectedId.value;
             if (!validId(id)) return;
             pending.value = true;
@@ -275,7 +277,7 @@ export const CashControlsPanel = {
         function predecessor(id, predecessorScope) { emit('navigate', `#${predecessorScope.toLowerCase()}-controls/${id}`); }
         const connection = () => {
             online.value = navigator.onLine;
-            if (!online.value) { revision++; control.value = null; devices.value = notes.value = staff.value = records.value = stockRows.value = lateRows.value = []; loading.value = false; }
+            if (!online.value) { loaded.value = false; revision++; control.value = null; devices.value = notes.value = staff.value = records.value = stockRows.value = lateRows.value = []; loading.value = false; }
         };
         watch(() => props.hash, value => {
             if (pending.value || unknown.value) return;
@@ -330,7 +332,7 @@ export const CashControlsPanel = {
                     submit(`Start ${title} control`, blocked.value, { loading: pending.value }),
                 ]),
                 h('h2', `${title} control history`),
-                !records.value.length && h('p', `No ${title} controls on this page.`),
+                !error.value && !records.value.length && h('p', `No ${title} controls on this page.`),
                 ...records.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [
                     h('h3', labels[row.status] || row.status), h('p', `Cutoff (UTC): ${row.cutoff_at}`),
                     action(`View ${title} control`, () => choose(row.public_id), pending.value || unknown.value),

@@ -12,7 +12,7 @@ Run from the DawaTrack checkout:
     composer install
     npm ci
     npm run build
-    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Artifact_Manifest.json
+    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Control_Error_Fix_Artifact_Manifest.json
     php spark migrate:status
 
 Record exact commit, inventory hash, PHP/Composer/MySQL/browser versions, Shop hostname/timezone and actors/grants. Do not regenerate inventory to hide edits. Only exact CRLF-only changes can use the established --fix-line-endings recovery followed by a plain check.
@@ -25,6 +25,8 @@ WP1 Device and WP2 evidence migrations must already exist. Inspect the single ne
 For an empty installation retain Settings → Shield → App ordering. The new migration preflights existing links, adds the scoped variance candidate key, then deferred Stock Movement FK. Use migration OR raw SQL on a database, never both; SQL parity rehearsal needs a separate copy. MySQL DDL may partially commit, so inspect before retry. Down is refused after linked movement evidence; use compatible code/assets rollback. Preserve private encryption.key (at least32 bytes)/OpenSSL and real HTTPS host-scoped Device cookies. Never capture credentials/receipts in evidence.
 
 Open the configured Shop address and normal Menu → Stock control / Full control; not a reference gallery. Existing Cash control remains available.
+
+For the shared control-page error follow-up and the deployed evidence still needed, see [investigation](Phase-7/Phase_7_WP3_Control_Error_Fix.md). The original WP3 inventory is historical; the command above checks the follow-up candidate.
 
 ## Test fixtures
 
