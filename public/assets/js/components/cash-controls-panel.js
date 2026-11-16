@@ -58,6 +58,21 @@ export const CashControlsPanel = {
         const noteType = ref('EXPLANATION'), noteText = ref(''), sourceKind = ref(sourceChoices.value[0]?.[0] || ''), sourceId = ref(''), sourceResult = ref(null);
         const members = ref([]), search = ref(''), memberPage = ref(1), memberPages = ref(0), duty = ref({});
         const has = code => props.permissions.includes(`reconciliation.${code}`);
+        const stepHelp = status => {
+            if (props.readOnly) return 'You can look at this saved check, but you cannot change it.';
+            if (status === 'COUNTING') return has('count')
+                ? `Enter what you counted and save it. ${has('commit') ? 'Check each saved number before you confirm the count.' : 'Someone allowed to confirm the count must continue from here.'}`
+                : 'Counting is still in progress. You can look at the check, but you are not allowed to enter a count. Ask the person counting to save and confirm it.';
+            if (status === 'COUNTS_COMMITTED') return has('review')
+                ? 'The count cannot be changed now. Tap Compare the numbers to check it against the shop records.'
+                : 'The count has been confirmed. Someone allowed to check the counts will compare the numbers next.';
+            if (status === 'REVIEW') return has('review')
+                ? `Compare your count with the shop records. Save a reason for each difference. ${has('finalize') ? 'Then finish the check.' : 'Someone allowed to finish the check will finish it.'}`
+                : 'The counts are being checked. You can look at the saved details you are allowed to see.';
+            if (status === 'FINALIZED') return `This check is finished. The counts cannot be changed. ${has('review') && has('note') ? 'You can add a note if you find out more later.' : 'Ask the shop owner if you find out more later.'}`;
+            if (status === 'ABORTED') return 'This check was cancelled. Your entries were kept, but they will not be used as a finished count.';
+            return 'Open this check to see what was saved.';
+        };
         const blocked = computed(() => pending.value || loading.value || !loaded.value || props.readOnly || !online.value || unknown.value);
         const key = `dt:pending-${scope === 'CASH' ? 'cash-control' : slug}:${location.host}:${props.recoveryScope}`;
         let revision = 0, alive = true;
@@ -187,6 +202,7 @@ export const CashControlsPanel = {
             pending.value = true;
             error.value = '';
             notice.value = '';
+            const hadUnknownSave = unknown.value || savedMarker.value !== null;
             remember(actionName, id);
             try {
                 const path = actionName === 'start' ? root : `${root}/${id}/${actionName}`;
@@ -203,7 +219,11 @@ export const CashControlsPanel = {
                 await load(hasStock && ['count', 'explain'].includes(actionName) && !!body.product_public_id);
             } catch (e) {
                 error.value = message(e);
-                if (!e.status || e.status >= 500 || [401, 403, 404].includes(e.status) || ['CASH_CONTROL_IDENTITY_CONFLICT', 'STOCK_ADJUSTMENT_IDENTITY_CONFLICT'].includes(e.code)) {
+                // Start checks this setting before any new control row is written.
+                // Never dismiss uncertainty retained from an earlier request.
+                if (actionName === 'start' && e.status === 503 && e.code === 'READINESS_SETUP_REQUIRED' && !hadUnknownSave) {
+                    clearMarker();
+                } else if (!e.status || e.status >= 500 || [401, 403, 404].includes(e.status) || ['CASH_CONTROL_IDENTITY_CONFLICT', 'STOCK_ADJUSTMENT_IDENTITY_CONFLICT'].includes(e.code)) {
                     unknown.value = true;
                 } else { clearMarker(); }
             } finally { pending.value = false; }
@@ -327,6 +347,7 @@ export const CashControlsPanel = {
             unknown.value && h(UiInformationPanel, { title: 'Check what was saved first', message: `We do not yet know if your last action was saved. Tap “Check what was saved”. Keep this number: ${savedMarker.value?.control_public_id || selectedId.value || startId.value}. We will not send it again unless you choose to.` }),
             action('Check what was saved', () => load(true), pending.value || loading.value || !online.value),
             loading.value ? h(UiLoading, { label: `Loading ${title} check` }) : !selectedId.value ? h('div', [
+                !has('start') && h('p', 'You can open past checks below. Ask the shop owner if a new check is needed.'),
                 has('start') && h('form', { class: 'commercial-form', onSubmit: start }, [
                     h('h2', `Start a ${title.toLowerCase()} check`),
                     h('p', 'You can add who worked in the shop. Leave any time you do not know empty. If the person is still working, leave “Finished work” empty.'),
@@ -355,13 +376,13 @@ export const CashControlsPanel = {
             ]) : control.value ? h('div', [
                 action(`Back to ${title} checks`, () => choose(null), pending.value || unknown.value),
                 h('h2', labels[control.value.status] || 'Check saved'),
-                h('p', ({ COUNTING: 'Enter what you counted and save it. Check each saved number before you confirm the count.', COUNTS_COMMITTED: 'The count cannot be changed now. Someone allowed to check the counts can compare the numbers next.', REVIEW: 'Compare your count with the shop records. Save a reason for each difference, then finish the check.', FINALIZED: 'This check is finished. The counts cannot be changed. You can add a note if you find out more later.', ABORTED: 'This check was cancelled. Your entries were kept, but they will not be used as a finished count.' })[control.value.status]),
+                h('p', stepHelp(control.value.status)),
                 h('p', `Check number: ${control.value.public_id}`),
                 hasCash && h('p', `Cash records from ${when(control.value.cash_period_starts_at)} to ${when(control.value.cutoff_at)}`),
                 hasStock && h('p', `Stock records from ${when(control.value.stock_period_starts_at)} to ${when(control.value.cutoff_at)}`),
                 control.value.generation_changed && h(UiInformationPanel, { title: 'This check must be started again', message: 'DawaTrack has changed since this check started. Ask the shop owner to cancel this check and start again. Your saved work will be kept.' }),
                 h('h3', 'Check shop phones and computers'),
-                h('p', 'Open this check on each shop phone or computer listed below and tap the ready button. If one is not available, the owner can give a reason to skip it. All must be ready or skipped before you confirm the count. This does not send any unsaved sales from a phone.'),
+                h('p', control.value.readiness.required === 0 ? 'There were no shop phones or computers on the list when this check started.' : 'Open this check on each shop phone or computer listed below and tap the ready button. If one is not available, the owner can give a reason to skip it. All must be ready or skipped before you confirm the count. This does not send any unsaved sales from a phone.'),
                 h('p', `${control.value.readiness.resolved} of ${control.value.readiness.required} shop phones or computers checked.`),
                 control.value.status !== 'FINALIZED' && control.value.status !== 'ABORTED' && control.value.current_device_public_id && control.value.current_device_required
                     && action('This phone or computer is ready', acknowledge, blocked.value || control.value.generation_changed),
