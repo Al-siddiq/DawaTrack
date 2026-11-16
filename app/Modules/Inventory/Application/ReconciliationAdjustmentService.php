@@ -58,7 +58,7 @@ final class ReconciliationAdjustmentService
             }
             $review = $this->review($context, $id, $command);
             if (!hash_equals($review['review_fingerprint'], (string) ($input['review_fingerprint'] ?? ''))) {
-                throw new ApiException('STOCK_ADJUSTMENT_REVIEW_STALE', 'Stock changed after review. Refresh the adjustment preview before confirming.', 409);
+                throw new ApiException('STOCK_ADJUSTMENT_REVIEW_STALE', 'Stock has changed since you looked at these numbers. Load the stock change again before saving it.', 409);
             }
             $source = $this->source($context, $id, $command['variance_public_id']);
             $position = $this->position($context, (int) $source['product_id']);
@@ -116,7 +116,7 @@ final class ReconciliationAdjustmentService
         if ($row['source_kind'] !== 'RECON_VARIANCE' || $row['movement_type'] !== 'RECONCILIATION_ADJUSTMENT'
             || $row['variance_public_id'] !== $command['variance_public_id'] || $row['control_public_id'] !== $id || $row['scope'] !== $this->scope
             || $row['reason_text'] !== $command['reason']) {
-            throw new ApiException('STOCK_ADJUSTMENT_IDENTITY_CONFLICT', 'This movement reference already belongs to different saved details. Inspect the original before another adjustment.', 409);
+            throw new ApiException('STOCK_ADJUSTMENT_IDENTITY_CONFLICT', 'This stock change number is already saved with different details. Open the saved record before trying again.', 409);
         }
         return ['public_id' => $row['public_id'], 'variance_public_id' => $row['variance_public_id'], 'control_public_id' => $id];
     }
@@ -128,12 +128,12 @@ final class ReconciliationAdjustmentService
         $latest = $this->database->query("SELECT id FROM reconciliation_sessions WHERE tenant_id=? AND shop_id=? AND scope IN ('STOCK','FULL') AND status='FINALIZED' ORDER BY cutoff_at DESC,id DESC LIMIT 1 FOR UPDATE",
             [$context->tenantId, $context->shopId])->getRowArray();
         if (!$latest || (int) $latest['id'] !== (int) $source['reconciliation_session_id']) {
-            throw new ApiException('STOCK_ADJUSTMENT_SUPERSEDED', 'A newer Stock control supersedes this variance. Preserve its history and use the current control for any new alignment.', 409);
+            throw new ApiException('STOCK_ADJUSTMENT_SUPERSEDED', 'A newer stock check has been finished. Use that check if you need to change stock. This older check will be kept.', 409);
         }
         $existing = $this->database->query('SELECT id FROM stock_movements WHERE tenant_id=? AND shop_id=? AND reconciliation_variance_id=? FOR UPDATE',
             [$context->tenantId, $context->shopId, $source['id']])->getRowArray();
         if ($existing) {
-            throw new ApiException('STOCK_VARIANCE_ALREADY_ADJUSTED', 'This variance already has its one linked Stock adjustment. Inspect that movement; do not create another.', 409);
+            throw new ApiException('STOCK_VARIANCE_ALREADY_ADJUSTED', 'Stock has already been changed for this difference. Open that saved change. Do not save it again with another number.', 409);
         }
         $position = $this->position($context, (int) $source['product_id']);
         $after = StockCountAmount::add((string) $position['expected_quantity'], (string) $source['quantity_variance']);
@@ -151,13 +151,13 @@ final class ReconciliationAdjustmentService
         $repo = new ControlRepository($this->database, $this->scope);
         $control = $repo->control($context, $id, true);
         if ($control['status'] !== 'FINALIZED') {
-            throw new ApiException('STOCK_ADJUSTMENT_NOT_FINAL', 'Only finalized nonzero Stock variances can be adjusted.', 409);
+            throw new ApiException('STOCK_ADJUSTMENT_NOT_FINAL', 'Finish the stock check first. You can change stock only when the count and the shop records differ.', 409);
         }
         $source = $this->database->query("SELECT v.*,c.product_id,c.expected_quantity,c.actual_quantity,p.public_id product_public_id FROM reconciliation_variances v JOIN reconciliation_stock_counts c ON c.tenant_id=v.tenant_id AND c.shop_id=v.shop_id AND c.reconciliation_session_id=v.reconciliation_session_id AND c.id=v.stock_count_id JOIN products p ON p.tenant_id=c.tenant_id AND p.id=c.product_id WHERE v.tenant_id=? AND v.shop_id=? AND v.reconciliation_session_id=? AND v.public_id=? AND v.variance_kind='STOCK' FOR UPDATE",
             [$context->tenantId, $context->shopId, $control['id'], $variance])->getRowArray();
         if (!$source || $source['quantity_variance'] === '0.0000'
             || StockCountAmount::difference((string) $source['actual_quantity'], (string) $source['expected_quantity']) !== (string) $source['quantity_variance']) {
-            throw new ApiException('STOCK_VARIANCE_NOT_FOUND', 'The finalized Stock variance is unavailable or inconsistent.', 409);
+            throw new ApiException('STOCK_VARIANCE_NOT_FOUND', 'We could not use this saved stock difference. Keep the record and ask the shop owner for help.', 409);
         }
         // Frozen membership/cost metadata must still agree with the original immutable count rows.
         (new StockCountEvidence($this->database))->rows($context, $control, true);
@@ -170,7 +170,7 @@ final class ReconciliationAdjustmentService
         $row = $this->database->query('SELECT * FROM stock_positions WHERE tenant_id=? AND shop_id=? AND product_id=? FOR UPDATE',
             [$context->tenantId, $context->shopId, $product])->getRowArray();
         if (!$row) {
-            throw new ApiException('INVENTORY_STATE_CONFLICT', 'The current Stock position is unavailable.', 409);
+            throw new ApiException('INVENTORY_STATE_CONFLICT', 'We could not load the stock record. Try loading it again.', 409);
         }
         return $row;
     }

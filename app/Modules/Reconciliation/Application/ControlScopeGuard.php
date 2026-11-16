@@ -64,7 +64,7 @@ final class ControlScopeGuard
         )->getRowArray();
         if ($active) {
             $code = $scope === 'CASH' ? 'CASH_CONTROL_ACTIVE' : 'STOCK_CONTROL_ACTIVE';
-            throw new ApiException($code, 'Finish or abort the active control before recording an event that affects this scope.', 409);
+            throw new ApiException($code, 'Finish or cancel the open cash or stock check before saving this shop record.', 409);
         }
     }
 }

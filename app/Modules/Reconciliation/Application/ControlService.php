@@ -48,7 +48,7 @@ class ControlService
                 )->getResultArray();
                 $metadata = count($record) === 1 ? json_decode((string) $record[0]['change_metadata'], true) : null;
                 if (!is_array($metadata) || !hash_equals((string) ($metadata['duty_fingerprint'] ?? ''), $fingerprint)) {
-                    throw new ApiException('CASH_CONTROL_IDENTITY_CONFLICT', 'This control reference was already started with different responsibility context.', 409);
+                    throw new ApiException('CASH_CONTROL_IDENTITY_CONFLICT', 'This check number is already saved with different staff details. Open that check before trying again.', 409);
                 }
                 return $id;
             }
@@ -63,7 +63,7 @@ class ControlService
                     [$context->tenantId, $context->shopId],
                 )->getRowArray();
                 if (!$cashPrior || $cashPrior['actual_amount'] === null || $cashPrior['committed_at'] === null) {
-                    throw new ApiException('OPENING_CASH_REQUIRED', 'Finalize Starting cash before beginning a Cash-containing control.', 409);
+                    throw new ApiException('OPENING_CASH_REQUIRED', 'Finish the starting cash count before you start a cash check.', 409);
                 }
             }
             if ($this->hasStock()) {
@@ -74,13 +74,13 @@ class ControlService
                 $shop = $this->database->table('shops')->select('created_at')->where(['tenant_id' => $context->tenantId, 'id' => $context->shopId])->get()->getRowArray();
                 $stockStart = $stockPrior['cutoff_at'] ?? ($shop['created_at'] ?? null);
                 if ($stockStart === null) {
-                    throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'The initial Stock period origin needs investigation.', 409);
+                    throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'We could not find when stock records began. Ask the shop owner for help.', 409);
                 }
             }
             $generation = $this->activeGeneration();
             $now = UtcTimestamp::now();
             if (($cashPrior && $now <= $cashPrior['cutoff_at']) || ($stockStart !== null && $now <= $stockStart)) {
-                throw new ApiException('CASH_CONTROL_CLOCK_CONFLICT', 'The server time is not later than the prior control boundary. Ask the administrator to check the clock.', 409);
+                throw new ApiException('CASH_CONTROL_CLOCK_CONFLICT', 'The DawaTrack clock needs checking. Ask the person who sets it up for your shop to help.', 409);
             }
             $expected = $this->hasCash()
                 ? (new ExpectedCashQuery($this->database))->calculate($context, $cashPrior['cutoff_at'], $now, (string) $cashPrior['actual_amount']) : null;
@@ -139,7 +139,7 @@ class ControlService
                 $member = $this->database->query("SELECT id,user_id FROM tenant_memberships WHERE tenant_id=? AND public_id=? AND status='ACTIVE' FOR UPDATE",
                     [$context->tenantId, $duty['membership_public_id']])->getRowArray();
                 if (!$member || ($duty['ends_at'] !== null && $duty['ends_at'] > $now) || ($duty['starts_at'] !== null && $duty['starts_at'] > $now)) {
-                    throw new ApiException('VALIDATION_FAILED', 'Choose active Shop members and duty times no later than the cutoff.', 422);
+                    throw new ApiException('VALIDATION_FAILED', 'Choose people who still work in the shop. Enter only times that have already passed. If someone is still working, leave their finish time empty.', 422);
                 }
                 $this->staff($context, $internal, (int) $member['id'], (int) $member['user_id'], 'ON_DUTY', $duty['starts_at'], $duty['ends_at'], $duty['notes']);
             }
@@ -159,7 +159,7 @@ class ControlService
             return $this->stockObservation($context, $id, $input, false);
         }
         if (!$this->hasCash()) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose a Product for this Stock observation.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Choose the item you counted.', 422);
         }
         CashControlInput::only($input, ['amount', 'expected_updated_at']);
         $amount = CashAmount::parse($input['amount'] ?? null);
@@ -196,7 +196,7 @@ class ControlService
             if ($this->hasStock()) {
                 $revision = StockCountEvidence::revision($id, $rows, $cash);
                 if (!is_string($input['expected_commit_revision'] ?? null) || !hash_equals($revision, $input['expected_commit_revision'])) {
-                    throw new ApiException('CASH_CONTROL_STALE', 'The observation set changed. Refresh and review all saved counts before committing.', 409);
+                    throw new ApiException('CASH_CONTROL_STALE', 'A saved count has changed. Reload and check all saved counts before confirming them.', 409);
                 }
             } else {
                 $this->revision($cash, $input);
@@ -205,13 +205,13 @@ class ControlService
             $observers = [];
             if ($cash !== null) {
                 if ($cash['actual_amount'] === null || $cash['counted_by_user_id'] === null) {
-                    throw new ApiException('CASH_COUNT_REQUIRED', 'Save the physical Cash amount, including zero when none, before committing.', 422);
+                    throw new ApiException('CASH_COUNT_REQUIRED', 'Enter the cash you counted and save it first. Enter 0 if there is no cash.', 422);
                 }
                 $observers[] = (int) $cash['counted_by_user_id'];
             }
             foreach ($rows as $row) {
                 if ($row['actual_quantity'] === null || $row['counted_by_user_id'] === null) {
-                    throw new ApiException('STOCK_COUNT_REQUIRED', 'Explicitly save a physical quantity for every frozen Product, including zero when none.', 422);
+                    throw new ApiException('STOCK_COUNT_REQUIRED', 'Enter and save a count for every item on this list. Enter 0 if you have none.', 422);
                 }
                 $observers[] = (int) $row['counted_by_user_id'];
             }
@@ -229,7 +229,7 @@ class ControlService
             foreach (array_unique($observers) as $user) {
                 $member = $this->database->query('SELECT id,user_id FROM tenant_memberships WHERE tenant_id=? AND user_id=? FOR UPDATE', [$context->tenantId, $user])->getRowArray();
                 if (!$member) {
-                    throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'The historical counter identity needs investigation.', 409);
+                    throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'We could not find who counted. Ask the shop owner for help.', 409);
                 }
                 $this->staff($context, (int) $control['id'], (int) $member['id'], $user, 'COUNTER');
             }
@@ -264,7 +264,7 @@ class ControlService
             return $this->stockObservation($context, $id, $input, true);
         }
         if (!$this->hasCash()) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose a Product variance to explain.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Choose the item with a different count.', 422);
         }
         CashControlInput::only($input, ['explanation', 'expected_updated_at']);
         $explanation = CashControlInput::text($input['explanation'] ?? null, 500, 'explanation');
@@ -298,17 +298,17 @@ class ControlService
             $rows = $this->hasStock() ? (new StockCountEvidence($this->database))->rows($context, $control, true) : [];
             $this->requireReady($context, $control);
             if ($control['counts_committed_at'] === null) {
-                throw new ApiException('CASH_COUNT_REQUIRED', 'Commit all physical observations first.', 409);
+                throw new ApiException('CASH_COUNT_REQUIRED', 'Confirm all the counts first.', 409);
             }
             $now = UtcTimestamp::now();
             $cashVariance = null;
             if ($cash !== null) {
                 if ($cash['actual_amount'] === null || $cash['committed_at'] === null) {
-                    throw new ApiException('CASH_COUNT_REQUIRED', 'Commit the physical Cash observation first.', 409);
+                    throw new ApiException('CASH_COUNT_REQUIRED', 'Confirm the cash count first.', 409);
                 }
                 $cashVariance = $this->difference((string) $cash['actual_amount'], (string) $cash['expected_amount']);
                 if ($cashVariance !== (string) $cash['variance_amount']) {
-                    throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'Saved Cash variance needs investigation.', 409);
+                    throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'The saved cash numbers need checking. Keep them as they are and ask the shop owner for help.', 409);
                 }
                 $this->requireExplanation($cashVariance !== '0.00', $cash['explanation']);
                 if ($cashVariance !== '0.00') {
@@ -322,7 +322,7 @@ class ControlService
             $stockVariances = 0;
             foreach ($rows as $row) {
                 if ($row['actual_quantity'] === null || $row['committed_at'] === null) {
-                    throw new ApiException('STOCK_COUNT_REQUIRED', 'Commit every frozen Stock observation first.', 409);
+                    throw new ApiException('STOCK_COUNT_REQUIRED', 'Confirm every item count first.', 409);
                 }
                 $variance = \App\Modules\Inventory\Application\StockCountAmount::difference((string) $row['actual_quantity'], (string) $row['expected_quantity']);
                 $this->requireExplanation($variance !== '0.0000', $row['explanation']);
@@ -379,7 +379,7 @@ class ControlService
             $this->status($control, ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW']);
             $device = (new DeviceQuery($this->database))->authenticated($context, $cookie, true);
             if (!$device || $device['status'] !== 'ACTIVE') {
-                throw new ApiException('DEVICE_PROOF_REQUIRED', 'An active cookie-proven installation is required to acknowledge readiness.', 409);
+                throw new ApiException('DEVICE_PROOF_REQUIRED', 'Ask the owner to add this phone or computer under Shop devices first.', 409);
             }
             $payload = (new ReadinessProof($this->readinessSecret))->decode($token);
             $target = ['control_public_id' => $id, 'device_public_id' => $device['public_id'], 'user_id' => $context->userId,
@@ -387,7 +387,7 @@ class ControlService
                 'cutoff_at' => $control['cutoff_at'], 'sequence' => (string) $control['cutoff_change_sequence']];
             foreach ($target as $key => $value) {
                 if (($payload[$key] ?? null) !== $value) {
-                    throw new ApiException('READINESS_REFRESH_REQUIRED', 'This receipt belongs to another Device, user or control target. Check readiness again.', 409);
+                    throw new ApiException('READINESS_REFRESH_REQUIRED', 'Reload this check on the same phone or computer, then tap the ready button again.', 409);
                 }
             }
             $readiness = $this->repository->readiness($context, $control);
@@ -396,7 +396,7 @@ class ControlService
                 return $id;
             }
             if ($required['decision'] !== null) {
-                throw new ApiException('READINESS_DECISION_CONFLICT', 'This Device already has an immutable readiness decision.', 409);
+                throw new ApiException('READINESS_DECISION_CONFLICT', 'This phone or computer has already been marked ready or skipped. That choice cannot be changed.', 409);
             }
             $now = UtcTimestamp::now();
             $this->database->table('reconciliation_device_acknowledgements')->insert([
@@ -424,7 +424,7 @@ class ControlService
         return $this->command($context, ['reconciliation.exclude_device'], function () use ($context, $id, $deviceId, $reason): string {
             $member = $this->database->table('tenant_memberships')->select('role')->where('id', $context->membershipId)->get()->getRowArray();
             if (!$member || $member['role'] !== 'PRIMARY_OWNER') {
-                throw new ApiException('PERMISSION_DENIED', 'Only the current Primary Owner may expressly exclude a Device.', 403);
+                throw new ApiException('PERMISSION_DENIED', 'Only the shop owner can skip a phone or computer.', 403);
             }
             $control = $this->repository->control($context, $id, true);
             $this->status($control, ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW']);
@@ -433,7 +433,7 @@ class ControlService
                 return $id;
             }
             if ($required['decision'] !== null) {
-                throw new ApiException('READINESS_DECISION_CONFLICT', 'This Device already has an immutable readiness decision. Abort and start a new control if it needs reconsideration.', 409);
+                throw new ApiException('READINESS_DECISION_CONFLICT', 'This phone or computer has already been marked ready or skipped. To change that choice, cancel this check and start again.', 409);
             }
             $now = UtcTimestamp::now();
             $this->database->table('reconciliation_device_acknowledgements')->insert([
@@ -455,23 +455,23 @@ class ControlService
         $text = CashControlInput::text($input['note_text'] ?? null, 2000, 'note_text');
         $type = $input['note_type'] ?? null;
         if (!in_array($type, ['EXPLANATION', 'INVESTIGATION_FINDING', 'REVIEW_NOTE'], true)) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose an approved variance note type.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Choose what this note is about.', 422);
         }
         return $this->command($context, ['reconciliation.review', 'reconciliation.note'], function () use ($context, $id, $noteId, $text, $type, $varianceId): string {
             if (($this->hasCash() && (new BlindReadPolicy($this->database))->blocksScope($context, 'CASH')) || ($this->hasStock() && (new BlindReadPolicy($this->database))->blocksScope($context, 'STOCK'))) {
-                throw new ApiException('BLIND_COUNT_ACTIVE', 'Commit the active physical count before working with historical variance notes.', 409);
+                throw new ApiException('BLIND_COUNT_ACTIVE', 'Confirm the current count before opening notes from past checks.', 409);
             }
             $control = $this->repository->control($context, $id, true);
             $this->status($control, ['FINALIZED']);
             $variance = $this->repository->variance($context, (int) $control['id'], $varianceId);
             if (!$variance) {
-                throw new ApiException('VARIANCE_NOT_FOUND', 'This control has no selected finalized variance to annotate.', 409);
+                throw new ApiException('VARIANCE_NOT_FOUND', 'Choose a difference from a finished check before adding a note.', 409);
             }
             $existing = $this->database->query('SELECT * FROM reconciliation_variance_notes WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',
                 [$context->tenantId, $context->shopId, $noteId])->getRowArray();
             if ($existing) {
                 if ((int) $existing['reconciliation_variance_id'] !== (int) $variance['id'] || $existing['note_type'] !== $type || $existing['note_text'] !== $text) {
-                    throw new ApiException('CASH_CONTROL_IDENTITY_CONFLICT', 'This note reference already belongs to different saved details.', 409);
+                    throw new ApiException('CASH_CONTROL_IDENTITY_CONFLICT', 'This note number is already saved with different details. Open the saved note before trying again.', 409);
                 }
                 return $id;
             }
@@ -505,7 +505,7 @@ class ControlService
                 }
             }
             if ($row === null) {
-                throw new ApiException('STOCK_COUNT_NOT_FOUND', 'This Product was not in the frozen Stock dataset.', 404);
+                throw new ApiException('STOCK_COUNT_NOT_FOUND', 'This item is not on the list for this check.', 404);
             }
             if (($explain ? $row['explanation'] : $row['actual_quantity']) === $value) {
                 return $id;
@@ -538,7 +538,7 @@ class ControlService
     private function requireExplanation(bool $nonzero, mixed $value): void
     {
         if ($nonzero && (!is_string($value) || trim($value) === '')) {
-            throw new ApiException('VARIANCE_EXPLANATION_REQUIRED', 'Explain every nonzero shortage or surplus before finalizing; explanations never erase variances.', 422);
+            throw new ApiException('VARIANCE_EXPLANATION_REQUIRED', 'Save a reason for each difference before you finish the check. The difference will still be kept.', 422);
         }
     }
 
@@ -583,7 +583,7 @@ class ControlService
     private function normalizeDuty(mixed $input): array
     {
         if (!is_array($input) || !array_is_list($input) || count($input) > 50) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose up to 50 on-duty members.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'You can add up to 50 people who worked in the shop.', 422);
         }
         $out = [];
         foreach ($input as $duty) {
@@ -591,17 +591,17 @@ class ControlService
                 $duty = (array) $duty;
             }
             if (!is_array($duty)) {
-                throw new ApiException('VALIDATION_FAILED', 'Use valid on-duty responsibility context.', 422);
+                throw new ApiException('VALIDATION_FAILED', 'Check the details of the people who worked in the shop.', 422);
             }
             CashControlInput::only($duty, ['membership_public_id', 'starts_at', 'ends_at', 'notes']);
             $key = CashControlInput::uuid($duty['membership_public_id'] ?? null);
             if (isset($out[$key])) {
-                throw new ApiException('VALIDATION_FAILED', 'Choose each on-duty member only once.', 422);
+                throw new ApiException('VALIDATION_FAILED', 'Add each person only once.', 422);
             }
             $start = CashControlInput::utc($duty['starts_at'] ?? null);
             $end = CashControlInput::utc($duty['ends_at'] ?? null);
             if ($start !== null && $end !== null && $end < $start) {
-                throw new ApiException('VALIDATION_FAILED', 'The duty end cannot precede its start.', 422);
+                throw new ApiException('VALIDATION_FAILED', 'The finish time must be after the start time.', 422);
             }
             $out[$key] = ['membership_public_id' => $key, 'starts_at' => $start, 'ends_at' => $end,
                 'notes' => ($duty['notes'] ?? null) === null || $duty['notes'] === '' ? null : CashControlInput::text($duty['notes'], 500, 'notes')];
@@ -622,21 +622,21 @@ class ControlService
     private function revision(array $count, array $input): void
     {
         if (!is_string($input['expected_updated_at'] ?? null) || $input['expected_updated_at'] !== $count['updated_at']) {
-            throw new ApiException('CASH_CONTROL_STALE', 'This count changed in another session. Refresh and review the saved value before saving again.', 409);
+            throw new ApiException('CASH_CONTROL_STALE', 'Someone has changed this saved count. Reload and check it before saving again.', 409);
         }
     }
 
     private function status(array $control, array $allowed): void
     {
         if (!in_array($control['status'], $allowed, true)) {
-            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'This action is unavailable at the current control stage. Check saved status.', 409);
+            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'You cannot do this at this step. Check what was saved first.', 409);
         }
     }
 
     private function requireReady(ShopContext $context, array $control): void
     {
         if (!$this->repository->readiness($context, $control)['complete']) {
-            throw new ApiException('DEVICE_READINESS_REQUIRED', 'Every pinned Device must acknowledge the online target or be explicitly excluded by the Owner.', 409);
+            throw new ApiException('DEVICE_READINESS_REQUIRED', 'Each shop phone or computer on this list must be marked ready or skipped by the owner before you can continue.', 409);
         }
     }
 
@@ -647,7 +647,7 @@ class ControlService
                 return $row;
             }
         }
-        throw new ApiException('DEVICE_NOT_RELEVANT', 'This Device is not in the frozen relevant set for this control.', 409);
+        throw new ApiException('DEVICE_NOT_RELEVANT', 'This phone or computer is not on the list for this check.', 409);
     }
 
     private function difference(string $actual, string $expected): string
@@ -665,6 +665,6 @@ class ControlService
 
     private function generationChanged(): never
     {
-        throw new ApiException('CASH_CONTROL_GENERATION_CHANGED', 'The server generation changed. Abort this control safely and start a new one.', 409);
+        throw new ApiException('CASH_CONTROL_GENERATION_CHANGED', 'DawaTrack has changed since this check started. Cancel this check and start again.', 409);
     }
 }

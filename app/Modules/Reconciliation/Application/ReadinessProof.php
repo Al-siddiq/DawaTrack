@@ -54,7 +54,7 @@ final class ReadinessProof
             }
             return $data;
         } catch (Throwable) {
-            throw new ApiException('READINESS_REFRESH_REQUIRED', 'This readiness receipt is invalid or expired. Check this Device online again.', 409);
+            throw new ApiException('READINESS_REFRESH_REQUIRED', 'Reload this check on the same phone or computer, then tap the ready button again.', 409);
         }
     }
 }

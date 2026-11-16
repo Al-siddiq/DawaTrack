@@ -12,8 +12,8 @@ final class StockCountAmount
     public static function parse(mixed $value): string
     {
         if (!is_string($value) || !preg_match('/^(?:0|[1-9][0-9]{0,14})(?:\.[0-9]{1,4})?$/D', trim($value))) {
-            throw new ApiException('VALIDATION_FAILED', 'Enter a non-negative physical quantity with at most four decimal places.', 422,
-                ['actual_quantity' => ['Use an exact quantity, including zero when none is present.']]);
+            throw new ApiException('VALIDATION_FAILED', 'Enter how many you counted. Use 0 or more, with no more than four numbers after the decimal point.', 422,
+                ['actual_quantity' => ['Enter 0 if you have none of this item.']]);
         }
         [$whole, $fraction] = array_pad(explode('.', trim($value), 2), 2, '');
         return $whole . '.' . str_pad($fraction, 4, '0');
@@ -72,7 +72,7 @@ final class StockCountAmount
         }
         $digits = ltrim($digits, '0') ?: '0';
         if (strlen($digits) > 19) {
-            throw new ApiException('STOCK_COUNT_RANGE_EXCEEDED', 'The exact Stock quantity or variance exceeds the supported range.', 409);
+            throw new ApiException('STOCK_COUNT_RANGE_EXCEEDED', 'This item count is too large to save. Check the number and try again.', 409);
         }
         $digits = str_pad($digits, 5, '0', STR_PAD_LEFT);
         $value = substr($digits, 0, -4) . '.' . substr($digits, -4);

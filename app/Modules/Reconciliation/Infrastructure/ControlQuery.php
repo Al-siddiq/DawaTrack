@@ -123,19 +123,19 @@ class ControlQuery
         $this->read($context);
         $control = $this->repository->control($context, $id);
         if (!in_array($control['status'], ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'], true)) {
-            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'This control is no longer accepting readiness decisions.', 409);
+            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'You can no longer mark a phone or computer ready for this check.', 409);
         }
         $device = (new DeviceQuery($this->database))->authenticated($context, $cookie);
         if (!$device || $device['status'] !== 'ACTIVE') {
-            throw new ApiException('DEVICE_PROOF_REQUIRED', 'Use an active browser installation registered by the Owner.', 409);
+            throw new ApiException('DEVICE_PROOF_REQUIRED', 'Ask the owner to add this phone or computer under Shop devices first.', 409);
         }
         $state = $this->repository->readiness($context, $control);
         if (!in_array($device['public_id'], array_column($state['devices'], 'public_id'), true)) {
-            throw new ApiException('DEVICE_NOT_RELEVANT', 'This Device was not active in the pinned start set.', 409);
+            throw new ApiException('DEVICE_NOT_RELEVANT', 'This phone or computer was not on the list when the check started.', 409);
         }
         $active = $this->database->table('sync_generations')->select('generation_uuid')->where('status', 'ACTIVE')->get()->getResultArray();
         if (count($active) !== 1 || $active[0]['generation_uuid'] !== $control['generation_uuid']) {
-            throw new ApiException('CASH_CONTROL_GENERATION_CHANGED', 'The server generation changed. Abort safely and start a new control.', 409);
+            throw new ApiException('CASH_CONTROL_GENERATION_CHANGED', 'DawaTrack has changed since this check started. Cancel this check and start again.', 409);
         }
         $target = ['control_public_id' => $id, 'device_public_id' => $device['public_id'], 'generation_uuid' => $control['generation_uuid'],
             'cutoff_at' => $control['cutoff_at'], 'sequence' => (string) $control['cutoff_change_sequence']];
@@ -162,7 +162,7 @@ class ControlQuery
     {
         $this->read($context, 'reconciliation.start');
         if (mb_strlen($search) > 100) {
-            throw new ApiException('VALIDATION_FAILED', 'Use a shorter member search.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Use fewer words to find a person.', 422);
         }
         $builder = $this->database->table('tenant_memberships m')->join('users u', 'u.id=m.user_id')
             ->where(['m.tenant_id' => $context->tenantId, 'm.status' => 'ACTIVE']);
@@ -178,11 +178,11 @@ class ControlQuery
     {
         $this->read($context, 'reconciliation.review');
         if ($this->blind($context)) {
-            throw new ApiException('BLIND_COUNT_ACTIVE', 'Commit the active physical count before reading historical variance notes.', 409);
+            throw new ApiException('BLIND_COUNT_ACTIVE', 'Confirm the current count before opening notes from past checks.', 409);
         }
         $control = $this->repository->control($context, $id);
         if ($control['status'] !== 'FINALIZED') {
-            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'Later notes belong to finalized variance evidence.', 409);
+            throw new ApiException('CASH_CONTROL_STATE_CONFLICT', 'Finish the check before adding a later note.', 409);
         }
         $where = ['n.tenant_id' => $context->tenantId, 'n.shop_id' => $context->shopId, 'n.reconciliation_session_id' => $control['id']];
         $total = $this->database->table('reconciliation_variance_notes n')->where($where)->countAllResults();
@@ -200,7 +200,7 @@ class ControlQuery
         $map = ['sale' => ['sales', ['sale.view']], 'debt_payment' => ['debt_payments', ['customer.view', 'debt.view']],
             'financial_movement' => ['financial_movements', ['financial.view']]];
         if (!isset($map[$kind])) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose a Sale, Debt payment or Money movement reference.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Choose a sale, customer payment or money record.', 422);
         }
         [$table, $permissions] = $map[$kind];
         foreach ($permissions as $permission) {
@@ -210,13 +210,13 @@ class ControlQuery
             'tenant_id' => $context->tenantId, 'shop_id' => $context->shopId, 'public_id' => $id,
         ])->get()->getRowArray();
         return ['public_id' => $id, 'found' => $row !== null, 'state' => $row ? ($row['status'] ?? 'POSTED') : 'NOT_FOUND_AT_READ',
-            'guidance' => 'A missing record is inconclusive while a request may still finish. Keep the same reference; inspect full details after count commitment before resolving a changed-command conflict.'];
+            'guidance' => 'Your earlier save may still finish. Keep the same record number. Confirm the count before opening the full record to check its details.'];
     }
     public function stockCounts(ShopContext $context, string $id, string $search, int $page, int $perPage): array
     {
         $this->read($context);
         if (!$this->hasStock() || mb_strlen($search) > 100) {
-            throw new ApiException('VALIDATION_FAILED', 'Choose a Stock-containing scope and bounded Product search.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Open a stock check and use a short item name to search.', 422);
         }
         return (new DebtReadSnapshot($this->database))->run(function () use ($context, $id, $search, $page, $perPage): array {
             $control = $this->repository->control($context, $id);
@@ -230,7 +230,7 @@ class ControlQuery
                 $links = $this->database->query("SELECT v.stock_count_id,v.public_id variance_public_id,v.quantity_variance,m.public_id adjustment_public_id,m.posted_at adjusted_at FROM reconciliation_variances v LEFT JOIN stock_movements m ON m.tenant_id=v.tenant_id AND m.shop_id=v.shop_id AND m.reconciliation_variance_id=v.id AND m.source_kind='RECON_VARIANCE' AND m.movement_type='RECONCILIATION_ADJUSTMENT' WHERE v.tenant_id=? AND v.shop_id=? AND v.reconciliation_session_id=? AND v.variance_kind='STOCK'", [$context->tenantId, $context->shopId, $control['id']])->getResultArray();
                 foreach ($links as $link) {
                     if (isset($variances[$link['stock_count_id']])) {
-                        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'A Stock variance has multiple adjustments. Preserve the evidence for investigation.', 409);
+                        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'More than one stock change was found for this difference. Keep the records and ask the shop owner for help.', 409);
                     }
                     $variances[$link['stock_count_id']] = $link;
                 }
@@ -248,7 +248,7 @@ class ControlQuery
                     $link = $variances[$row['id']] ?? null;
                     if ($control['status'] === 'FINALIZED' && $row['variance_quantity'] !== '0.0000'
                         && (!$link || $link['quantity_variance'] !== $row['variance_quantity'])) {
-                        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'The finalized Stock variance source is inconsistent.', 409);
+                        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'The saved stock numbers do not match. Keep them as they are and ask the shop owner for help.', 409);
                     }
                     $safe['variance_public_id'] = $link['variance_public_id'] ?? null;
                     $safe['adjustment'] = $link && $link['adjustment_public_id'] ? ['public_id' => $link['adjustment_public_id'], 'posted_at' => $link['adjusted_at']] : null;
@@ -267,7 +267,7 @@ class ControlQuery
         $row = $this->database->query("SELECT m.public_id,v.public_id variance_public_id,m.posted_at FROM stock_movements m JOIN reconciliation_variances v ON v.tenant_id=m.tenant_id AND v.shop_id=m.shop_id AND v.id=m.reconciliation_variance_id WHERE m.tenant_id=? AND m.shop_id=? AND v.reconciliation_session_id=? AND m.public_id=? AND m.source_kind='RECON_VARIANCE' AND m.movement_type='RECONCILIATION_ADJUSTMENT'",
             [$context->tenantId, $context->shopId, $control['id'], $movement])->getRowArray();
         return ['found' => $row !== null, 'movement' => $row, 'control_public_id' => $id,
-            'guidance' => 'Absence is inconclusive while an earlier request may still commit. Keep the same movement/variance reference; do not create another identity.'];
+            'guidance' => 'Your earlier save may still finish. Keep the same stock change and difference numbers. Do not start another change.'];
     }
 
     public function lateOperations(ShopContext $context, string $id, int $page, int $perPage): array
@@ -275,7 +275,7 @@ class ControlQuery
         $this->read($context, 'reconciliation.review');
         $control = $this->repository->control($context, $id);
         if ($control['counts_committed_at'] === null || $this->blind($context)) {
-            throw new ApiException('BLIND_COUNT_ACTIVE', 'Commit the physical count before viewing source associations.', 409);
+            throw new ApiException('BLIND_COUNT_ACTIVE', 'Confirm the count before opening the related shop records.', 409);
         }
         $where = ['tenant_id' => $context->tenantId, 'shop_id' => $context->shopId, 'resource_type' => 'reconciliation_session',
             'resource_public_id' => $id, 'action_code' => 'reconciliation.late_operation_associated'];
@@ -285,7 +285,7 @@ class ControlQuery
         foreach ($rows as $row) {
             $metadata = json_decode((string) $row['change_metadata'], true);
             if (!is_array($metadata)) {
-                throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'A late-operation association needs investigation.', 409);
+                throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'A shop record added later needs checking. Keep it as it is and ask the shop owner for help.', 409);
             }
             $out[] = ['public_id' => $row['public_id'], 'created_at' => $row['created_at'], ...array_intersect_key($metadata, array_flip([
                 'source_resource_type', 'source_public_id', 'affected_scope', 'occurred_at', 'posted_at', 'cutoff_at']))];

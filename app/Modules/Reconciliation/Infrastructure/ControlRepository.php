@@ -31,7 +31,7 @@ class ControlRepository
             [$context->tenantId, $context->shopId, $id, $this->scope],
         )->getRowArray();
         if (!$row && $required) {
-            throw new ApiException('CASH_CONTROL_NOT_FOUND', 'The Cash control is unavailable.', 404);
+            throw new ApiException('CASH_CONTROL_NOT_FOUND', 'We could not find this check. Keep its number and check again.', 404);
         }
         if ($row) {
             $generation = $this->database->table('sync_generations')->select('generation_uuid')->where('id', $row['sync_generation_id'])->get()->getRowArray();
@@ -132,6 +132,6 @@ class ControlRepository
 
     private function invalid(): never
     {
-        throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'This control has inconsistent evidence. Stop and ask the Owner to investigate without editing saved records.', 409);
+        throw new ApiException('CASH_CONTROL_EVIDENCE_INVALID', 'The saved numbers do not match. Keep them as they are and ask the shop owner for help.', 409);
     }
 }

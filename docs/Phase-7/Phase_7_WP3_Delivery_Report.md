@@ -4,6 +4,8 @@
 
 Follow-up: [shared control-page error investigation](Phase_7_WP3_Control_Error_Fix.md) documents the corrected error presentation/load gate and the Owner-confirmed DEVICE_SETUP_REQUIRED response; the Owner’s migration status confirms all nine Phase7 migrations pending; local application and page reload are awaiting their outcome. Use its separate inventory for the updated candidate; the hashes below describe the original WP3 delivery.
 
+Current wording follow-up: [plain-English changes and remaining Start error](Phase_7_WP3_Plain_English.md). The Owner supplied Cash history200 with an empty list; the remaining failed Start still needs its response/log. The current manual guide checks the new plain-English inventory.
+
 ## Delivered behavior
 
 - Shared Cash/Stock/Full lifecycle with stable Cash API wrappers, server-selected scope, independent Cash/Stock predecessors and common Full cutoff. Full commits and finalizes observations atomically; reasoned abort retains evidence without advancing chains.

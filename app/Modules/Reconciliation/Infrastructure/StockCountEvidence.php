@@ -105,6 +105,6 @@ final class StockCountEvidence
 
     private function invalid(): never
     {
-        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'The frozen Stock dataset or count evidence is inconsistent. Preserve it and ask the Owner to investigate.', 409);
+        throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'The saved item list and counts do not match. Keep them as they are and ask the shop owner for help.', 409);
     }
 }

@@ -46,7 +46,7 @@ final class BlindReadPolicy
                 continue;
             }
             if ($audit || ($stock && in_array($row['scope'], ['STOCK', 'FULL'], true)) || ($cash && in_array($row['scope'], ['CASH', 'FULL'], true))) {
-                throw new ApiException('BLIND_COUNT_ACTIVE', 'Commit the physical count before viewing source records that could reveal the expected result.', 409);
+                throw new ApiException('BLIND_COUNT_ACTIVE', 'Confirm your count before opening the shop records that show how much should be there.', 409);
             }
         }
     }

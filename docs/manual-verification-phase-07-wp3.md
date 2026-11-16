@@ -12,7 +12,7 @@ Run from the DawaTrack checkout:
     composer install
     npm ci
     npm run build
-    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Control_Error_Fix_Artifact_Manifest.json
+    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Plain_English_Artifact_Manifest.json
     php spark migrate:status
 
 Record exact commit, inventory hash, PHP/Composer/MySQL/browser versions, Shop hostname/timezone and actors/grants. Do not regenerate inventory to hide edits. Only exact CRLF-only changes can use the established --fix-line-endings recovery followed by a plain check.
@@ -26,7 +26,9 @@ For an empty installation retain Settings → Shield → App ordering. The new m
 
 Open the configured Shop address and normal Menu → Stock control / Full control; not a reference gallery. Existing Cash control remains available.
 
-For the shared control-page error follow-up and the deployed evidence still needed, see [investigation](Phase-7/Phase_7_WP3_Control_Error_Fix.md). The original WP3 inventory is historical; the command above checks the follow-up candidate.
+For the shared control-page error follow-up and the deployed evidence still needed, see [investigation](Phase-7/Phase_7_WP3_Control_Error_Fix.md). The original WP3 and first fix inventories are historical; the command above checks the current plain-English candidate.
+
+The menu now says **Cash check**, **Stock check** and **Cash and stock check**. Save each count, then use **Confirm this count** (or **Confirm all item counts** / **Confirm cash and item counts**). **Compare the numbers** opens the next step. **Finish check** keeps the final result; **Cancel check** stops the attempt but keeps its saved entries. **Check what was saved** loads the saved result without sending it again. These labels replace the old UI terms in the steps below; the API and case numbers stay the same. See [what changed](Phase-7/Phase_7_WP3_Plain_English.md).
 
 ## Test fixtures
 

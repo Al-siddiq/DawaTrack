@@ -14,14 +14,14 @@ final class CashControlInput
     public static function only(array $input, array $fields): void
     {
         if (array_diff(array_keys($input), $fields)) {
-            throw new ApiException('VALIDATION_FAILED', 'This Cash control action contains unsupported fields.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Something on this page has changed. Reload the page and try again.', 422);
         }
     }
 
     public static function uuid(mixed $value): string
     {
         if (!is_string($value) || !Uuid::isV4($value) || strtolower($value) !== $value) {
-            throw new ApiException('VALIDATION_FAILED', 'Use a permanent lowercase UUIDv4 for this control.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'This check number is not valid. Go back and open the check again.', 422);
         }
         return $value;
     }
@@ -41,11 +41,11 @@ final class CashControlInput
             return null;
         }
         if (!is_string($value)) {
-            throw new ApiException('VALIDATION_FAILED', 'Use a valid UTC time.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Enter a valid date and time, or leave it empty if you do not know it.', 422);
         }
         $date = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s.u', $value, new DateTimeZone('UTC'));
         if (!$date || $date->format('Y-m-d H:i:s.u') !== $value) {
-            throw new ApiException('VALIDATION_FAILED', 'Use an exact UTC date and time.', 422);
+            throw new ApiException('VALIDATION_FAILED', 'Enter a valid date and time, or leave it empty if you do not know it.', 422);
         }
         return $value;
     }

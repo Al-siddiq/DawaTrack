@@ -13,9 +13,23 @@ const cash = value => {
     return `${whole}.${fraction.padEnd(2, '0')}`;
 };
 const utc = value => value ? new Date(value).toISOString().replace('T', ' ').replace('Z', '000') : null;
-const labels = { COUNTING: 'Physical counting', COUNTS_COMMITTED: 'Count committed', REVIEW: 'Review', FINALIZED: 'Finalized', ABORTED: 'Aborted' };
-const componentLabels = { opening_baseline_amount: 'Previous physical Cash baseline', cash_sale_receipts: 'Cash Sale receipts', cash_sale_refunds: 'Cash Sale refunds',
-    cash_debt_receipts: 'Cash Debt receipts', cash_introductions: 'Owner Cash introductions', cash_expenses: 'Cash expenses', cash_withdrawals: 'Owner Cash withdrawals', cash_corrections_net: 'Signed Cash corrections' };
+const labels = { COUNTING: 'Count now', COUNTS_COMMITTED: 'Count confirmed', REVIEW: 'Compare the numbers', FINALIZED: 'Finished', ABORTED: 'Cancelled' };
+const roles = { ON_DUTY: 'Worked in the shop', COUNTER: 'Counted', REVIEWER: 'Checked the numbers', FINALIZER: 'Finished the check' };
+const noteLabels = { EXPLANATION: 'Reason for the difference', INVESTIGATION_FINDING: 'What we found out', REVIEW_NOTE: 'Other note' };
+const costLabels = { VALID: 'Buying price is recorded', RETAINED: 'Using the last known buying price', UNESTABLISHED: 'Buying price is not yet known' };
+const sourceLabels = { stock_movement: 'Stock record', sale: 'Sale or return', debt_payment: 'Customer payment', financial_movement: 'Money record' };
+const when = value => {
+    if (!value) return 'Not recorded';
+    const date = new Date(String(value).replace(' ', 'T') + 'Z');
+    return Number.isNaN(date.getTime()) ? 'Time not available' : new Intl.DateTimeFormat('en-NG', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }).format(date) + ' (Nigeria time)';
+};
+const differenceText = (value, money = false) => {
+    if (/^-?0(?:\.0+)?$/.test(value)) return 'Your count matches the shop records.';
+    const amount = String(value).replace(/^-/, '');
+    return `${money ? 'Cash counted is ₦' : 'Your count is '}${amount} ${String(value).startsWith('-') ? 'less' : 'more'} than the shop records.`;
+};
+const componentLabels = { opening_baseline_amount: 'Cash counted at the last check', cash_sale_receipts: 'Cash received from sales', cash_sale_refunds: 'Cash paid back for returned items',
+    cash_debt_receipts: 'Cash received from customers who owed money', cash_introductions: 'Cash the owner added', cash_expenses: 'Cash spent on shop costs', cash_withdrawals: 'Cash the owner took out', cash_corrections_net: 'Other cash changes' };
 
 export const CashControlsPanel = {
     props: { controlScope: { type: String, default: 'CASH' }, permissions: { type: Array, default: () => [] }, isOwner: Boolean, readOnly: Boolean,
@@ -25,7 +39,7 @@ export const CashControlsPanel = {
         const confirmation = useTradingConfirm();
         const scope = props.controlScope, hasStock = scope !== 'CASH', hasCash = scope !== 'STOCK';
         const slug = `${scope.toLowerCase()}-controls`, rootHash = `#${slug}`, root = `/api/v1/shop/${slug}`;
-        const title = scope === 'FULL' ? 'Full' : scope === 'STOCK' ? 'Stock' : 'Cash';
+        const title = scope === 'FULL' ? 'Cash and stock' : scope === 'STOCK' ? 'Stock' : 'Cash';
         const stockRows = ref([]), stockPage = ref(1), stockPages = ref(0), stockSearch = ref(''), stockDrafts = ref({});
         const lateRows = ref([]), latePage = ref(1), latePages = ref(0), noteVariance = ref('');
         const adjustment = ref(null), adjustmentPreview = ref(null), adjustmentReason = ref('');
@@ -50,8 +64,8 @@ export const CashControlsPanel = {
         const dirty = computed(() => stockDirty.value || adjustmentReason.value.trim() || noteText.value.trim() || reason.value.trim() || Object.keys(duty.value).length
             || (control.value?.status === 'COUNTING' && amount.value !== '' && cash(amount.value) !== control.value?.count?.actual_amount)
             || (control.value?.status === 'REVIEW' && explanation.value !== (control.value?.snapshot?.explanation || '')));
-        useNavigationGuard(() => unknown.value ? { hard: true, message: `Check the saved ${title} control status before leaving. Keep its original reference.` }
-            : dirty.value ? { message: `Your ${title} count, responsibility context or explanation has unsaved changes.` } : null);
+        useNavigationGuard(() => unknown.value ? { hard: true, message: `Check what was saved before leaving. Keep the same check number.` }
+            : dirty.value ? { message: `You have changes that are not saved. Save them before leaving.` } : null);
 
         function remember(actionName, id) {
             const value = { control_public_id: id, action: actionName };
@@ -72,7 +86,7 @@ export const CashControlsPanel = {
                 const actions = ['start', 'count', 'commit', 'review', 'explain', 'finalize', 'abort', 'acknowledge', 'exclude', 'note', 'adjust'];
                 if (!validId(value.control_public_id) || !actions.includes(value.action) || (value.action === 'note' && (!validId(value.note_public_id) || (hasStock && !validId(value.variance_public_id)))) || (value.action === 'adjust' && (!hasStock || !validId(value.movement_public_id) || !validId(value.variance_public_id)))) {
                     storageWarning.value = true;
-                    error.value = 'The saved recovery reference needs Owner review. Do not clear browser storage to dismiss uncertain work.';
+                    error.value = 'We could not read the saved check number. Keep this page open and ask the shop owner for help. Do not clear the browser data.';
                     unknown.value = true;
                     return;
                 }
@@ -140,14 +154,14 @@ export const CashControlsPanel = {
                         amount.value = value.count?.actual_amount ?? '';
                         explanation.value = value.snapshot?.explanation ?? '';
                     }
-                    if (unknown.value) notice.value = 'Saved server status is shown. It does not mean a missing or changed command failed. Keep the original note/reference when continuing.';
+                    if (unknown.value) notice.value = 'Here is what was saved. Keep the same check or note number if you need to try again.';
                 }
                 loaded.value = true;
                 if (unknown.value && savedMarker.value?.action === 'adjust') {
                     const status = (await apiRequest(`${root}/${id}/adjustment-status?public_id=${savedMarker.value.movement_public_id}`)).data;
                     if (status.found && status.movement.variance_public_id === savedMarker.value.variance_public_id) {
                         unknown.value = false; clearMarker(); adjustment.value = adjustmentPreview.value = null; adjustmentReason.value = '';
-                        notice.value = 'The original Stock adjustment is saved. Inspect its linked movement before continuing.';
+                        notice.value = 'The stock change was saved. Check that record before doing anything else.';
                     }
                 } else if (unknown.value && savedMarker.value?.action !== 'note') {
                     unknown.value = false;
@@ -183,7 +197,7 @@ export const CashControlsPanel = {
                 if (actionName === 'adjust') { adjustment.value = adjustmentPreview.value = null; adjustmentReason.value = ''; }
                 if (actionName === 'start') { duty.value = {}; startId.value = crypto.randomUUID(); }
                 reason.value = '';
-                notice.value = 'Saved. The server status has been refreshed.';
+                notice.value = 'Saved. The page now shows your saved work.';
                 selectedId.value = id;
                 emit('navigate', `${rootHash}/${id}`);
                 await load(hasStock && ['count', 'explain'].includes(actionName) && !!body.product_public_id);
@@ -200,7 +214,7 @@ export const CashControlsPanel = {
             try {
                 const onDuty = Object.values(duty.value).map(v => ({ membership_public_id: v.public_id,
                     starts_at: utc(v.starts_at), ends_at: utc(v.ends_at), notes: v.notes || null }));
-                if (!await confirmation.ask({ title: `Start a blind ${title} control?`, message: `The server will freeze the ${title} cutoff and relevant Device set. Transactions affecting this scope pause until finalization or abort.`, confirm: `Start ${title} control` })) return;
+                if (!await confirmation.ask({ title: `Start this ${title.toLowerCase()} check?`, message: `${scope === 'CASH' ? 'While you count, no one can record cash coming in or going out.' : scope === 'STOCK' ? 'While you count, no one can record sales, returns or other stock changes.' : 'While you count, no one can record sales, returns, stock changes or cash coming in or going out.'} Count first. You will see the numbers in the shop records after you confirm your count. Finish or cancel this check to allow those records again.`, confirm: `Start ${title.toLowerCase()} check` })) return;
                 await command('start', { on_duty: onDuty });
             } catch (e) { error.value = message(e); }
         }
@@ -262,13 +276,13 @@ export const CashControlsPanel = {
             try {
                 const result = (await apiRequest(`${root}/${selectedId.value}/adjustment-preview`, { method: 'POST', body: JSON.stringify({ ...adjustment.value, reason: adjustmentReason.value }) })).data;
                 adjustmentPreview.value = result;
-                if (result.already_saved) { notice.value = 'This exact Stock adjustment is already saved.'; unknown.value = false; clearMarker(); adjustment.value = null; adjustmentReason.value = ''; await load(true); }
+                if (result.already_saved) { notice.value = 'This stock change is already saved.'; unknown.value = false; clearMarker(); adjustment.value = null; adjustmentReason.value = ''; await load(true); }
             } catch (e) { error.value = message(e); }
             finally { pending.value = false; }
         }
         async function postAdjustment() {
             if (!adjustmentPreview.value || pending.value || props.readOnly || !online.value) return;
-            if (await confirmation.ask({ title: 'Apply this Stock variance once?', message: `Apply ${adjustmentPreview.value.quantity_delta} to current Stock ${adjustmentPreview.value.current_quantity}, resulting in ${adjustmentPreview.value.quantity_after}. Later movements remain included. The source evidence remains immutable.`, confirm: 'Apply Stock adjustment' })) {
+            if (await confirmation.ask({ title: 'Save this stock change?', message: `Stock in the records will change from ${adjustmentPreview.value.current_quantity} to ${adjustmentPreview.value.quantity_after}. Sales and stock changes made after the count are kept. Your earlier count will not change.`, confirm: 'Save stock change' })) {
                 await command('adjust', { ...adjustment.value, reason: adjustmentReason.value, review_fingerprint: adjustmentPreview.value.review_fingerprint }, unknown.value && savedMarker.value?.action === 'adjust');
                 adjustmentPreview.value = null;
             }
@@ -304,160 +318,162 @@ export const CashControlsPanel = {
             action('Next page', () => { page.value++; work(); }, pending.value || loading.value || !online.value || page.value >= max.value),
         ]);
         return () => h('section', { class: 'commercial-panel', 'aria-labelledby': 'cash-control-title' }, [
-            h('h1', { id: 'cash-control-title' }, `${title} control`),
-            h('p', `Count the physical ${title === 'Full' ? 'Cash and Stock' : title}, commit the observations, then review the frozen result. A variance records a difference, not proof that a Staff member caused it.`),
+            h('h1', { id: 'cash-control-title' }, `${title} check`),
+            h('p', `${scope === 'CASH' ? 'Count the cash in your shop.' : scope === 'STOCK' ? 'Count each item in your shop.' : 'Count the cash and each item in your shop.'} Save your count, then confirm it. Compare it with the shop records and add a reason if the numbers differ. A difference does not tell us who caused it.`),
             ...feedback(error.value, notice.value),
-            props.readOnly && h(UiInformationPanel, { title: 'View only', message: 'You can inspect permitted saved records, but cannot change this control.' }),
-            !online.value && h(UiInformationPanel, { title: 'Connect to continue', message: `${title} control requires the server. Saved progress stays on the server; unsaved input is not queued offline.` }),
-            storageWarning.value && h(UiInformationPanel, { title: 'Keep this reference', message: `Recovery storage is unavailable or needs review. Keep this page open and copy ${savedMarker.value?.control_public_id || selectedId.value || startId.value}. Do not clear site storage to dismiss uncertain work.` }),
-            unknown.value && h(UiInformationPanel, { title: 'Check saved status before continuing', message: `The reply is unconfirmed. Original reference: ${savedMarker.value?.control_public_id || selectedId.value || startId.value}. No automatic retry will run.` }),
-            action('Check saved status', () => load(true), pending.value || loading.value || !online.value),
-            loading.value ? h(UiLoading, { label: `Loading ${title} control` }) : !selectedId.value ? h('div', [
+            props.readOnly && h(UiInformationPanel, { title: 'You can only look at this check', message: 'You can look at saved checks, but you cannot change them.' }),
+            !online.value && h(UiInformationPanel, { title: 'Connect to continue', message: `Connect to the internet to use this page. Anything already saved is safe. New entries cannot be saved while you are offline.` }),
+            storageWarning.value && h(UiInformationPanel, { title: 'Keep this check number', message: `Keep this page open and copy this number: ${savedMarker.value?.control_public_id || selectedId.value || startId.value}. We could not keep it in this browser. Ask for help before clearing browser data.` }),
+            unknown.value && h(UiInformationPanel, { title: 'Check what was saved first', message: `We do not yet know if your last action was saved. Tap “Check what was saved”. Keep this number: ${savedMarker.value?.control_public_id || selectedId.value || startId.value}. We will not send it again unless you choose to.` }),
+            action('Check what was saved', () => load(true), pending.value || loading.value || !online.value),
+            loading.value ? h(UiLoading, { label: `Loading ${title} check` }) : !selectedId.value ? h('div', [
                 has('start') && h('form', { class: 'commercial-form', onSubmit: start }, [
-                    h('h2', `Start a ${title} control`),
-                    h('p', 'On-duty context is optional. Add known duty times only; unknown times can stay empty.'),
-                    field('cash-members-search', 'Find on-duty members', search.value, v => { search.value = v; }, { type: 'search', disabled: blocked.value }),
-                    action('Find members', memberSearch, blocked.value),
+                    h('h2', `Start a ${title.toLowerCase()} check`),
+                    h('p', 'You can add who worked in the shop. Leave any time you do not know empty. If the person is still working, leave “Finished work” empty.'),
+                    field('cash-members-search', 'Who worked in the shop?', search.value, v => { search.value = v; }, { type: 'search', disabled: blocked.value }),
+                    action('Find staff', memberSearch, blocked.value),
                     ...members.value.map(member => h('div', { key: member.public_id, class: 'ui-card' }, [
                         h('label', [h('input', { type: 'checkbox', checked: !!duty.value[member.public_id], disabled: blocked.value,
                             onChange: event => { if (event.target.checked) updateDuty(member, 'notes', ''); else { const copy = { ...duty.value }; delete copy[member.public_id]; duty.value = copy; } } }), ` ${member.display_name}`]),
                         duty.value[member.public_id] && h('div', [
-                            field(`duty-start-${member.public_id}`, 'Duty began (optional)', duty.value[member.public_id].starts_at || '', v => updateDuty(member, 'starts_at', v), { type: 'datetime-local', disabled: blocked.value }),
-                            field(`duty-end-${member.public_id}`, 'Duty ended (optional)', duty.value[member.public_id].ends_at || '', v => updateDuty(member, 'ends_at', v), { type: 'datetime-local', disabled: blocked.value }),
-                            field(`duty-note-${member.public_id}`, 'Duty context (optional)', duty.value[member.public_id].notes || '', v => updateDuty(member, 'notes', v), { maxlength: 500, disabled: blocked.value }),
+                            field(`duty-start-${member.public_id}`, 'Started work (leave empty if not known)', duty.value[member.public_id].starts_at || '', v => updateDuty(member, 'starts_at', v), { type: 'datetime-local', disabled: blocked.value }),
+                            field(`duty-end-${member.public_id}`, 'Finished work (leave empty if still working)', duty.value[member.public_id].ends_at || '', v => updateDuty(member, 'ends_at', v), { type: 'datetime-local', disabled: blocked.value }),
+                            field(`duty-note-${member.public_id}`, 'Note about their work (you can leave this empty)', duty.value[member.public_id].notes || '', v => updateDuty(member, 'notes', v), { maxlength: 500, disabled: blocked.value }),
                         ]),
                     ])),
-                    memberPages.value > 1 && pages('Member pages', memberPage, memberPages, memberSearch),
-                    h('p', `${Object.keys(duty.value).length} on-duty members selected.`),
-                    submit(`Start ${title} control`, blocked.value, { loading: pending.value }),
+                    memberPages.value > 1 && pages('Staff pages', memberPage, memberPages, memberSearch),
+                    h('p', `${Object.keys(duty.value).length} people added.`),
+                    submit(`Start ${title.toLowerCase()} check`, blocked.value, { loading: pending.value }),
                 ]),
-                h('h2', `${title} control history`),
-                !error.value && !records.value.length && h('p', `No ${title} controls on this page.`),
+                h('h2', `Past ${title.toLowerCase()} checks`),
+                !error.value && !records.value.length && h('p', `No ${title.toLowerCase()} checks on this page.`),
                 ...records.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [
-                    h('h3', labels[row.status] || row.status), h('p', `Cutoff (UTC): ${row.cutoff_at}`),
-                    action(`View ${title} control`, () => choose(row.public_id), pending.value || unknown.value),
+                    h('h3', labels[row.status] || 'Check saved'), h('p', `Started: ${when(row.cutoff_at)}`),
+                    action(`Open this check`, () => choose(row.public_id), pending.value || unknown.value),
                 ])),
-                pages(`${title} control pages`, listPage, listPages, () => load(false)),
+                pages(`${title} check pages`, listPage, listPages, () => load(false)),
             ]) : control.value ? h('div', [
-                action(`Back to ${title} controls`, () => choose(null), pending.value || unknown.value),
-                h('h2', labels[control.value.status] || control.value.status),
-                h('p', `Reference: ${control.value.public_id}`),
-                hasCash && h('p', `Cash period (UTC): ${control.value.cash_period_starts_at} to ${control.value.cutoff_at}`),
-                hasStock && h('p', `Stock period (UTC): ${control.value.stock_period_starts_at} to ${control.value.cutoff_at}`),
-                control.value.generation_changed && h(UiInformationPanel, { title: 'Server generation changed', message: 'This control cannot progress. An authorized user must abort it safely and start a new one.' }),
-                h('h3', 'Device readiness'),
-                h('p', `${control.value.readiness.resolved} of ${control.value.readiness.required} pinned Devices resolved.`),
+                action(`Back to ${title} checks`, () => choose(null), pending.value || unknown.value),
+                h('h2', labels[control.value.status] || 'Check saved'),
+                h('p', ({ COUNTING: 'Enter what you counted and save it. Check each saved number before you confirm the count.', COUNTS_COMMITTED: 'The count cannot be changed now. Someone allowed to check the counts can compare the numbers next.', REVIEW: 'Compare your count with the shop records. Save a reason for each difference, then finish the check.', FINALIZED: 'This check is finished. The counts cannot be changed. You can add a note if you find out more later.', ABORTED: 'This check was cancelled. Your entries were kept, but they will not be used as a finished count.' })[control.value.status]),
+                h('p', `Check number: ${control.value.public_id}`),
+                hasCash && h('p', `Cash records from ${when(control.value.cash_period_starts_at)} to ${when(control.value.cutoff_at)}`),
+                hasStock && h('p', `Stock records from ${when(control.value.stock_period_starts_at)} to ${when(control.value.cutoff_at)}`),
+                control.value.generation_changed && h(UiInformationPanel, { title: 'This check must be started again', message: 'DawaTrack has changed since this check started. Ask the shop owner to cancel this check and start again. Your saved work will be kept.' }),
+                h('h3', 'Check shop phones and computers'),
+                h('p', 'Open this check on each shop phone or computer listed below and tap the ready button. If one is not available, the owner can give a reason to skip it. All must be ready or skipped before you confirm the count. This does not send any unsaved sales from a phone.'),
+                h('p', `${control.value.readiness.resolved} of ${control.value.readiness.required} shop phones or computers checked.`),
                 control.value.status !== 'FINALIZED' && control.value.status !== 'ABORTED' && control.value.current_device_public_id && control.value.current_device_required
-                    && action('Acknowledge this Device online', acknowledge, blocked.value || control.value.generation_changed),
+                    && action('This phone or computer is ready', acknowledge, blocked.value || control.value.generation_changed),
                 ...devices.value.map(device => h('article', { key: device.public_id, class: 'ui-card' }, [
-                    h('h4', device.display_name), h('p', `${device.decision === 'ACKNOWLEDGED' ? 'Acknowledged' : device.decision === 'EXCLUDED' ? 'Explicitly excluded' : 'Waiting'} — Device ${device.device_status.toLowerCase()}`),
+                    h('h4', device.display_name), h('p', `${device.decision === 'ACKNOWLEDGED' ? 'Ready' : device.decision === 'EXCLUDED' ? 'Skipped with a reason' : 'Waiting'} — ${({ ACTIVE: 'in use', REVOKED: 'access removed', PENDING: 'not ready yet' })[device.device_status] || 'ask the owner to check'}`),
                     device.reason && h('p', `Reason: ${device.reason}`),
-                    device.decided_by && h('p', `Decision by ${device.decided_by}`),
+                    device.decided_by && h('p', `Checked by ${device.decided_by}`),
                     props.isOwner && has('exclude_device') && !device.decision && ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'].includes(control.value.status)
-                        && action('Exclude this Device', () => confirmCommand('exclude', { device_public_id: device.public_id, reason: reason.value }, 'Exclude this Device?', 'Its unavailable information may affect confidence in the count. Your explicit reason will remain in the evidence.'), blocked.value || !reason.value.trim()),
+                        && action('Skip this phone or computer', () => confirmCommand('exclude', { device_public_id: device.public_id, reason: reason.value }, 'Skip this phone or computer?', 'This phone or computer has not been checked. Some shop records may still be on it. The reason you give for skipping it will be saved.'), blocked.value || !reason.value.trim()),
                 ])),
-                pages('Readiness pages', devicePage, devicePages, () => load(true)),
+                pages('Phone and computer pages', devicePage, devicePages, () => load(true)),
                 control.value.status === 'COUNTING' && h('div', [
-                    h('p', 'Expected quantities, costs, Cash and variances stay hidden until count commitment and authorized review.'),
+                    h('p', 'Count what is in the shop first. Save each count, then confirm it. After that, a person allowed to check the numbers can compare them with the shop records.'),
                     has('count') && control.value.count && h('form', { class: 'commercial-form', onSubmit: event => {
                         event.preventDefault(); command('count', { amount: amount.value, expected_updated_at: control.value.count.revision });
                     } }, [
-                        field('cash-actual', 'Physical Cash counted', amount.value, v => { amount.value = v; }, { inputmode: 'decimal', required: true, disabled: blocked.value }),
-                        h('p', `Saved server observation: ${control.value.count.actual_amount === null ? 'Not counted yet' : `₦${control.value.count.actual_amount}`}`),
-                        submit('Save physical count', blocked.value, { loading: pending.value }),
-                        has('commit') && action('Commit and lock this count', () => confirmCommand('commit', commitBody(), 'Commit these physical observations?', 'The observation becomes read-only. Expected values are revealed only to authorized reviewers.'), blocked.value || !control.value.readiness.complete || control.value.count.actual_amount === null || cash(amount.value) !== control.value.count.actual_amount || (hasStock && (!control.value.stock_progress.all_counted || stockDirty.value))),
+                        field('cash-actual', 'Cash you counted', amount.value, v => { amount.value = v; }, { inputmode: 'decimal', required: true, disabled: blocked.value }),
+                        h('p', `Saved cash count: ${control.value.count.actual_amount === null ? 'Not counted yet' : `₦${control.value.count.actual_amount}`}`),
+                        submit('Save cash count', blocked.value, { loading: pending.value }),
+                        has('commit') && action(hasStock ? 'Confirm cash and item counts' : 'Confirm this count', () => confirmCommand('commit', commitBody(), 'Keep these counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), blocked.value || !control.value.readiness.complete || control.value.count.actual_amount === null || cash(amount.value) !== control.value.count.actual_amount || (hasStock && (!control.value.stock_progress.all_counted || stockDirty.value))),
                     ]),
                 ]),
-                control.value.status === 'COUNTS_COMMITTED' && has('review') && action('Open review', () => command('review'), blocked.value || control.value.generation_changed),
-                control.value.can_review_values && control.value.snapshot && h('section', { 'aria-label': 'Frozen Cash review' }, [
-                    h('h3', 'Frozen result'),
-                    control.value.previous_cash_kind === 'STANDARD' && validId(control.value.previous_cash_public_id) && action('View previous Cash control', () => predecessor(control.value.previous_cash_public_id, control.value.previous_cash_scope || 'CASH'), pending.value || unknown.value),
-                    props.isOwner && control.value.previous_cash_kind === 'OPENING' && action('View Starting cash', () => emit('navigate', '#opening-cash'), pending.value || unknown.value),
-                    props.isOwner && action('View activity', () => emit('navigate', '#audit'), pending.value || unknown.value),
+                control.value.status === 'COUNTS_COMMITTED' && has('review') && action('Compare the numbers', () => command('review'), blocked.value || control.value.generation_changed),
+                control.value.can_review_values && control.value.snapshot && h('section', { 'aria-label': 'Compare cash counts' }, [
+                    h('h3', 'Compare your count with the shop records'),
+                    control.value.previous_cash_kind === 'STANDARD' && validId(control.value.previous_cash_public_id) && action('Open the last cash check', () => predecessor(control.value.previous_cash_public_id, control.value.previous_cash_scope || 'CASH'), pending.value || unknown.value),
+                    props.isOwner && control.value.previous_cash_kind === 'OPENING' && action('Open starting cash', () => emit('navigate', '#opening-cash'), pending.value || unknown.value),
+                    props.isOwner && action('See shop activity', () => emit('navigate', '#audit'), pending.value || unknown.value),
                     h('dl', { class: 'trading-facts' }, Object.entries(componentLabels).map(([key, label]) => h('div', [h('dt', label), h('dd', `₦${control.value.snapshot[key]}`)]))),
-                    h('p', `Expected Cash: ₦${control.value.snapshot.expected_amount}`), h('p', `Physical Cash: ₦${control.value.snapshot.actual_amount}`),
-                    h('p', `${control.value.snapshot.variance_amount.startsWith('-') ? 'Shortage' : control.value.snapshot.variance_amount === '0.00' ? 'Balanced' : 'Surplus'}: ₦${control.value.snapshot.variance_amount}`),
-                    control.value.snapshot.explanation && h('p', `Saved explanation: ${control.value.snapshot.explanation}`),
+                    h('p', `Cash in the shop records: ₦${control.value.snapshot.expected_amount}`), h('p', `Cash you counted: ₦${control.value.snapshot.actual_amount}`),
+                    h('p', differenceText(control.value.snapshot.variance_amount, true)),
+                    control.value.snapshot.explanation && h('p', `Saved reason: ${control.value.snapshot.explanation}`),
                     control.value.status === 'REVIEW' && h('form', { class: 'commercial-form', onSubmit: event => {
                         event.preventDefault(); command('explain', { explanation: explanation.value, expected_updated_at: control.value.count.revision });
-                    } }, [field('cash-explanation', 'Explain the variance', explanation.value, v => { explanation.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value, required: true }), submit('Save explanation', blocked.value, { loading: pending.value })]),
-                    !hasStock && control.value.status === 'REVIEW' && has('finalize') && action('Finalize Cash control', () => confirmCommand('finalize', {}, 'Finalize this Cash control?', 'The observations, variance and explanation become immutable. This actual Cash becomes the next baseline; no balancing movement is created.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || explanation.value !== (control.value.snapshot.explanation || '')),
-                    h('h3', 'Staff responsibility context'),
-                    ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${row.context_role.replaceAll('_', ' ').toLowerCase()}${row.context_starts_at ? `; from ${row.context_starts_at} UTC` : ''}${row.context_ends_at ? `; to ${row.context_ends_at} UTC` : ''}${row.notes ? `; ${row.notes}` : ''}`)),
-                    pages('Staff context pages', staffPage, staffPages, () => load(true)),
+                    } }, [field('cash-explanation', 'Why are the numbers different?', explanation.value, v => { explanation.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value, required: true }), submit('Save reason', blocked.value, { loading: pending.value })]),
+                    !hasStock && control.value.status === 'REVIEW' && has('finalize') && action('Finish cash check', () => confirmCommand('finalize', {}, 'Finish this cash check?', 'The count and reason cannot be changed after this. The next cash check will start from the cash you counted. This will not add or remove any money.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || explanation.value !== (control.value.snapshot.explanation || '')),
+                    h('h3', 'Who took part in this check?'),
+                    ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${roles[row.context_role] || 'Took part'}${row.context_starts_at ? `; from ${when(row.context_starts_at)}` : ''}${row.context_ends_at ? `; to ${when(row.context_ends_at)}` : ''}${row.notes ? `; ${row.notes}` : ''}`)),
+                    pages('People pages', staffPage, staffPages, () => load(true)),
                 ]),
                 ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'].includes(control.value.status) && (has('abort') || (props.isOwner && has('exclude_device'))) && h('div', [
-                    field('cash-control-reason', 'Reason for exclusion or abort', reason.value, v => { reason.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value }),
-                    has('abort') && action(`Abort ${title} control`, () => confirmCommand('abort', { reason: reason.value }, `Abort this ${title} control?`, 'Saved observations remain as aborted evidence. This control will not advance either applicable predecessor chain.'), blocked.value || !reason.value.trim()),
+                    field('cash-control-reason', 'Why are you skipping a phone or computer, or cancelling this check?', reason.value, v => { reason.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value }),
+                    has('abort') && action(`Cancel ${title.toLowerCase()} check`, () => confirmCommand('abort', { reason: reason.value }, `Cancel this ${title.toLowerCase()} check?`, 'Your entries will be kept, but this count will not be used for the next check. You can start again.'), blocked.value || !reason.value.trim()),
                 ]),
-                control.value.status === 'ABORTED' && h('p', `Abort reason: ${control.value.abort_reason}`),
+                control.value.status === 'ABORTED' && h('p', `Reason for cancelling: ${control.value.abort_reason}`),
                 control.value.status === 'FINALIZED' && control.value.can_review_values && h('div', [
-                    h('h3', 'Later variance notes'),
-                    ...notes.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [h('h4', row.note_type.replaceAll('_', ' ').toLowerCase()), h('p', row.note_text), row.variance_public_id && h('p', `Variance: ${row.variance_public_id}`), h('p', `${row.author_name} — ${row.created_at} UTC`), h('small', row.public_id)])),
-                    pages('Variance note pages', notePage, notePages, () => load(true)),
+                    h('h3', 'Notes added after the check'),
+                    ...notes.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [h('h4', noteLabels[row.note_type] || 'Note'), h('p', row.note_text), row.variance_public_id && h('p', `Difference number: ${row.variance_public_id}`), h('p', `${row.author_name} — ${when(row.created_at)}`), h('small', row.public_id)])),
+                    pages('Note pages', notePage, notePages, () => load(true)),
                     has('note') && (hasStock ? validId(noteVariance.value) : control.value.variance_public_id) && h('form', { class: 'commercial-form', onSubmit: event => {
                         event.preventDefault(); command('note', { public_id: noteId.value, note_type: noteType.value, note_text: noteText.value, ...(hasStock ? { variance_public_id: noteVariance.value } : {}) }, unknown.value && savedMarker.value?.action === 'note');
                     } }, [
-                        selectField('cash-note-type', 'Note type', noteType.value, v => { noteType.value = v; }, [['EXPLANATION', 'Explanation'], ['INVESTIGATION_FINDING', 'Investigation finding'], ['REVIEW_NOTE', 'Review note']], { disabled: pending.value || props.readOnly || !online.value }),
-                        field('cash-note', 'Append a later note', noteText.value, v => { noteText.value = v; }, { multiline: true, maxlength: 2000, required: true, disabled: pending.value || props.readOnly || !online.value }),
-                        submit(unknown.value ? 'Retry this same note reference' : 'Append variance note', pending.value || props.readOnly || !online.value || (unknown.value && savedMarker.value?.action !== 'note'), { loading: pending.value }),
+                        selectField('cash-note-type', 'What is this note about?', noteType.value, v => { noteType.value = v; }, [['EXPLANATION', 'Reason for the difference'], ['INVESTIGATION_FINDING', 'What we found out'], ['REVIEW_NOTE', 'Other note']], { disabled: pending.value || props.readOnly || !online.value }),
+                        field('cash-note', 'Add a note', noteText.value, v => { noteText.value = v; }, { multiline: true, maxlength: 2000, required: true, disabled: pending.value || props.readOnly || !online.value }),
+                        submit(unknown.value ? 'Try saving this same note again' : 'Save note', pending.value || props.readOnly || !online.value || (unknown.value && savedMarker.value?.action !== 'note'), { loading: pending.value }),
                     ]),
                 ]),
-                hasStock && h('section', { 'aria-label': 'Stock observations' }, [
-                    h('h3', 'Frozen Stock dataset'),
-                    h('p', `${control.value.stock_progress.counted} of ${control.value.stock_progress.total} Products counted. Zero must be explicitly saved.`),
-                    control.value.previous_stock_public_id && action('View previous Stock-containing control', () => predecessor(control.value.previous_stock_public_id, control.value.previous_stock_scope), pending.value || unknown.value),
-                    h('form', { onSubmit: event => { event.preventDefault(); stockPage.value = 1; load(true); } }, [field('stock-control-search', 'Find frozen Product', stockSearch.value, v => { stockSearch.value = v; }, { type: 'search', maxlength: 100, disabled: pending.value }), submit('Find Product', pending.value || !online.value)]),
+                hasStock && h('section', { 'aria-label': 'Item counts' }, [
+                    h('h3', 'Items to count'),
+                    h('p', `${control.value.stock_progress.counted} of ${control.value.stock_progress.total} items counted. Enter 0 and save it if you have none of an item.`),
+                    control.value.previous_stock_public_id && action('Open the last stock check', () => predecessor(control.value.previous_stock_public_id, control.value.previous_stock_scope), pending.value || unknown.value),
+                    h('form', { onSubmit: event => { event.preventDefault(); stockPage.value = 1; load(true); } }, [field('stock-control-search', 'Find an item', stockSearch.value, v => { stockSearch.value = v; }, { type: 'search', maxlength: 100, disabled: pending.value }), submit('Find item', pending.value || !online.value)]),
                     ...stockRows.value.map(row => {
                         const draft = stockDrafts.value[row.product_public_id];
                         return h('article', { key: row.product_public_id, class: 'ui-card' }, [
                             h('h4', `${row.name} (${row.unit_name})`), h('small', row.product_public_id),
-                            row.actual_quantity !== undefined && h('p', `Saved physical quantity: ${row.actual_quantity === null ? 'Not counted' : row.actual_quantity}`),
+                            row.actual_quantity !== undefined && h('p', `Saved item count: ${row.actual_quantity === null ? 'Not counted' : row.actual_quantity}`),
                             control.value.status === 'COUNTING' && has('count') && row.revision !== undefined && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row); } }, [
-                                field(`stock-actual-${row.product_public_id}`, 'Physical quantity counted', draft?.actual_quantity ?? row.actual_quantity ?? '', v => stockDraft(row, 'actual_quantity', v), { inputmode: 'decimal', required: true, disabled: blocked.value }),
-                                submit('Save Stock observation', blocked.value || !draft || !quantity(draft.actual_quantity)),
+                                field(`stock-actual-${row.product_public_id}`, 'How many did you count?', draft?.actual_quantity ?? row.actual_quantity ?? '', v => stockDraft(row, 'actual_quantity', v), { inputmode: 'decimal', required: true, disabled: blocked.value }),
+                                submit('Save item count', blocked.value || !draft || !quantity(draft.actual_quantity)),
                             ]),
-                            row.expected_quantity !== undefined && h('div', [h('p', `Frozen expected: ${row.expected_quantity}; average unit cost: ₦${row.expected_average_unit_cost}; cost basis: ${row.cost_basis_state}`),
-                                h('p', `Variance: ${row.variance_quantity} (${row.variance_quantity.startsWith('-') ? 'shortage' : row.variance_quantity === '0.0000' ? 'balanced' : 'surplus'})`),
-                                row.explanation && h('p', `Saved explanation: ${row.explanation}`),
-                                control.value.status === 'REVIEW' && has('review') && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row, true); } }, [field(`stock-explain-${row.product_public_id}`, 'Explain Stock variance', draft?.explanation ?? row.explanation ?? '', v => stockDraft(row, 'explanation', v), { multiline: true, maxlength: 500, required: true, disabled: blocked.value }), submit('Save Stock explanation', blocked.value || !draft)]),
+                            row.expected_quantity !== undefined && h('div', [h('p', `Items in the shop records: ${row.expected_quantity}. ${row.cost_basis_state === "UNESTABLISHED" ? "Buying price is not yet known." : `Buying price used per item: ₦${row.expected_average_unit_cost}. ${costLabels[row.cost_basis_state] || "Buying price needs checking"}.`}`),
+                                h('p', differenceText(row.variance_quantity)),
+                                row.explanation && h('p', `Saved reason: ${row.explanation}`),
+                                control.value.status === 'REVIEW' && has('review') && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row, true); } }, [field(`stock-explain-${row.product_public_id}`, 'Why is the item count different?', draft?.explanation ?? row.explanation ?? '', v => stockDraft(row, 'explanation', v), { multiline: true, maxlength: 500, required: true, disabled: blocked.value }), submit('Save reason', blocked.value || !draft)]),
                             ]),
-                            draft && action('Use saved Stock observation', () => { const copy = { ...stockDrafts.value }; delete copy[row.product_public_id]; stockDrafts.value = copy; }, blocked.value),
-                            row.variance_public_id && h('p', `Variance reference: ${row.variance_public_id}`),
-                            row.variance_public_id && has('note') && action('Annotate this Stock variance', () => { noteVariance.value = row.variance_public_id; }, blocked.value),
-                            row.adjustment && h('p', `Linked Stock adjustment: ${row.adjustment.public_id}; ${row.adjustment.posted_at} UTC`),
-                            row.variance_public_id && !row.adjustment && control.value.stock_adjustment_eligible && has('adjust') && action('Review Stock adjustment', () => { adjustment.value = { movement_public_id: crypto.randomUUID(), variance_public_id: row.variance_public_id }; adjustmentReason.value = ''; adjustmentPreview.value = null; }, blocked.value || !!adjustment.value),
+                            draft && action('Drop my changes and use the saved count', () => { const copy = { ...stockDrafts.value }; delete copy[row.product_public_id]; stockDrafts.value = copy; }, blocked.value),
+                            row.variance_public_id && h('p', `Difference number: ${row.variance_public_id}`),
+                            row.variance_public_id && has('note') && action('Add a note about this difference', () => { noteVariance.value = row.variance_public_id; }, blocked.value),
+                            row.adjustment && h('p', `Stock change saved: ${when(row.adjustment.posted_at)}. Number: ${row.adjustment.public_id}`),
+                            row.variance_public_id && !row.adjustment && control.value.stock_adjustment_eligible && has('adjust') && action('Change the stock record', () => { adjustment.value = { movement_public_id: crypto.randomUUID(), variance_public_id: row.variance_public_id }; adjustmentReason.value = ''; adjustmentPreview.value = null; }, blocked.value || !!adjustment.value),
                         ]);
                     }),
-                    pages('Stock observation pages', stockPage, stockPages, () => load(true)),
-                    !hasCash && control.value.status === 'COUNTING' && has('count') && has('commit') && action('Commit and lock all Stock observations', () => confirmCommand('commit', commitBody(), 'Commit all Stock observations?', 'Every saved quantity becomes read-only. Review will reveal the frozen expected quantities and costs.'), blocked.value || !control.value.stock_progress.all_counted || !control.value.readiness.complete || stockDirty.value),
-                    control.value.status === 'REVIEW' && has('finalize') && action(`Finalize ${title} control`, () => confirmCommand('finalize', {}, `Finalize this ${title} control?`, 'Every nonzero variance needs a saved explanation. Evidence becomes immutable. No Stock adjustment or balancing Cash movement is created automatically.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || stockDirty.value || (hasCash && explanation.value !== (control.value.snapshot?.explanation || ''))),
-                    control.value.can_review_values && !hasCash && h('div', [h('h3', 'Staff responsibility context'), ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${row.context_role}${row.context_starts_at ? `; from ${row.context_starts_at} UTC` : ''}${row.context_ends_at ? `; to ${row.context_ends_at} UTC` : ''}${row.notes ? `; ${row.notes}` : ''}`)), pages('Stock Staff context pages', staffPage, staffPages, () => load(true))]),
-                    control.value.variance_public_id && has('note') && action('Annotate the Cash variance', () => { noteVariance.value = control.value.variance_public_id; }, blocked.value),
-                    noteVariance.value && h('p', `Selected note variance: ${noteVariance.value}`),
+                    pages('Item count pages', stockPage, stockPages, () => load(true)),
+                    !hasCash && control.value.status === 'COUNTING' && has('count') && has('commit') && action('Confirm all item counts', () => confirmCommand('commit', commitBody(), 'Keep all these item counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), blocked.value || !control.value.stock_progress.all_counted || !control.value.readiness.complete || stockDirty.value),
+                    control.value.status === 'REVIEW' && has('finalize') && action(`Finish ${title.toLowerCase()} check`, () => confirmCommand('finalize', {}, `Finish this ${title.toLowerCase()} check?`, 'Add a reason for each difference first. After this, the count and reasons cannot be changed. Stock stays as it is until you choose to change the stock record. This will not add or remove any money.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || stockDirty.value || (hasCash && explanation.value !== (control.value.snapshot?.explanation || ''))),
+                    control.value.can_review_values && !hasCash && h('div', [h('h3', 'Who took part in this check?'), ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${roles[row.context_role] || 'Took part'}${row.context_starts_at ? `; from ${when(row.context_starts_at)}` : ''}${row.context_ends_at ? `; to ${when(row.context_ends_at)}` : ''}${row.notes ? `; ${row.notes}` : ''}`)), pages('People pages', staffPage, staffPages, () => load(true))]),
+                    control.value.variance_public_id && has('note') && action('Add a note about the cash difference', () => { noteVariance.value = control.value.variance_public_id; }, blocked.value),
+                    noteVariance.value && h('p', `This note is for difference number: ${noteVariance.value}`),
                 ]),
-                adjustment.value && h('section', { 'aria-label': 'Stock variance adjustment' }, [
-                    h('h3', 'Review one Stock variance adjustment'),
-                    h('p', `Original movement reference: ${adjustment.value.movement_public_id}; variance: ${adjustment.value.variance_public_id}`),
-                    field('stock-adjust-reason', 'Reason for Stock adjustment', adjustmentReason.value, v => { adjustmentReason.value = v; adjustmentPreview.value = null; }, { multiline: true, required: true, maxlength: 500, disabled: pending.value || props.readOnly || !online.value }),
-                    action('Preview original Stock adjustment', previewAdjustment, pending.value || loading.value || props.readOnly || !online.value || !adjustmentReason.value.trim()),
-                    adjustmentPreview.value && h('div', [h('p', `Frozen expected ${adjustmentPreview.value.frozen_expected_quantity}; physical ${adjustmentPreview.value.frozen_actual_quantity}; signed variance ${adjustmentPreview.value.quantity_delta}. Current Stock ${adjustmentPreview.value.current_quantity}; after adjustment ${adjustmentPreview.value.quantity_after}. Average cost ₦${adjustmentPreview.value.average_unit_cost}; ${adjustmentPreview.value.cost_basis_state}.`), action('Confirm original Stock adjustment', postAdjustment, pending.value || props.readOnly || !online.value)]),
-                    !unknown.value && action('Cancel adjustment review', () => { adjustment.value = adjustmentPreview.value = null; adjustmentReason.value = ''; }, pending.value),
+                adjustment.value && h('section', { 'aria-label': 'Change the stock record' }, [
+                    h('h3', 'Review one Change the stock record'),
+                    h('p', `Stock change number: ${adjustment.value.movement_public_id}; difference number: ${adjustment.value.variance_public_id}`),
+                    field('stock-adjust-reason', 'Why are you changing the stock record?', adjustmentReason.value, v => { adjustmentReason.value = v; adjustmentPreview.value = null; }, { multiline: true, required: true, maxlength: 500, disabled: pending.value || props.readOnly || !online.value }),
+                    action('See the stock change first', previewAdjustment, pending.value || loading.value || props.readOnly || !online.value || !adjustmentReason.value.trim()),
+                    adjustmentPreview.value && h('div', [h('p', `When you counted, the records showed ${adjustmentPreview.value.frozen_expected_quantity} items. You counted ${adjustmentPreview.value.frozen_actual_quantity}. The stock record now shows ${adjustmentPreview.value.current_quantity}. It will change to ${adjustmentPreview.value.quantity_after}. ${adjustmentPreview.value.cost_basis_state === "UNESTABLISHED" ? "Buying price is not yet known." : `Buying price used per item stays ₦${adjustmentPreview.value.average_unit_cost}. ${costLabels[adjustmentPreview.value.cost_basis_state] || "Buying price needs checking"}.`}`), action('Save this stock change', postAdjustment, pending.value || props.readOnly || !online.value)]),
+                    !unknown.value && action('Leave the stock record as it is', () => { adjustment.value = adjustmentPreview.value = null; adjustmentReason.value = ''; }, pending.value),
                 ]),
-                control.value.can_review_values && h('section', { 'aria-label': 'Late operation evidence' }, [h('h3', 'Late operations associated with this cutoff'), h('p', 'Original occurrence and posting times remain unchanged. These links do not rewrite counts or create Cash balancing movements.'),
-                    !lateRows.value.length && h('p', 'No late-operation associations on this page.'),
-                    ...lateRows.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [h('p', `${row.affected_scope}: ${row.source_resource_type} ${row.source_public_id}`), h('p', `Occurred ${row.occurred_at} UTC; posted ${row.posted_at} UTC; cutoff ${row.cutoff_at} UTC`)])), pages('Late operation pages', latePage, latePages, () => load(true))]),
+                control.value.can_review_values && h('section', { 'aria-label': 'Shop records added later' }, [h('h3', 'Shop records added after this check started'), h('p', 'These records were saved after the check started, but happened earlier. Your earlier count stays the same. No money is added or removed to cover a difference.'),
+                    !lateRows.value.length && h('p', 'No records added later on this page.'),
+                    ...lateRows.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [h('p', `${sourceLabels[row.source_resource_type] || "Shop record"}: ${row.source_public_id}`), h('p', `Happened: ${when(row.occurred_at)}. Saved: ${when(row.posted_at)}. Check started: ${when(row.cutoff_at)}.`)])), pages('Later record pages', latePage, latePages, () => load(true))]),
                 sourceChoices.value.length > 0 && h('form', { class: 'commercial-form', onSubmit: sourceStatus }, [
-                    h('h3', 'Check a saved transaction reference'),
-                    h('p', 'This check shows only whether a record exists and its saved state. It does not reveal amounts or prove a changed command was accepted.'),
-                    selectField('cash-source-kind', 'Record kind', sourceKind.value, v => { sourceKind.value = v; }, sourceChoices.value),
-                    field('cash-source-reference', 'Original public reference', sourceId.value, v => { sourceId.value = v; }),
-                    submit('Check transaction reference', pending.value || !online.value || !validId(sourceId.value)),
-                    sourceResult.value && h('p', `${sourceResult.value.state}. ${sourceResult.value.guidance}`),
+                    h('h3', 'Find a saved sale or payment'),
+                    h('p', 'Enter the number from the sale or payment you tried to save. This shows whether that record was saved. It does not check any changes you made to it later.'),
+                    selectField('cash-source-kind', 'What did you save?', sourceKind.value, v => { sourceKind.value = v; }, sourceChoices.value),
+                    field('cash-source-reference', 'Sale or payment number', sourceId.value, v => { sourceId.value = v; }),
+                    submit('Find saved record', pending.value || !online.value || !validId(sourceId.value)),
+                    sourceResult.value && h('p', `${sourceResult.value.found ? 'A saved record was found. You can open it on its own page to check the details.' : 'No saved record was found yet. Your earlier save may still finish. Keep the same record number.'}`),
                 ]),
             ]) : h('div', [
-                h('p', 'The control could not be loaded. A404 read does not prove an earlier request failed.'),
-                unknown.value && savedMarker.value?.action === 'start' && has('start') && action('Continue original start reference', () => {
+                h('p', 'We could not open this check. This does not tell us whether your last action was saved. Keep the same check number and try loading it again.'),
+                unknown.value && savedMarker.value?.action === 'start' && has('start') && action('Try starting with the same check number', () => {
                     unknown.value = false; selectedId.value = null; emit('navigate', rootHash); load(false);
                 }, pending.value || !online.value),
             ]),
