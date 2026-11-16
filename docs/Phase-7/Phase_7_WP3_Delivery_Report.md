@@ -2,7 +2,7 @@
 
 **16 November 2026 (Africa/Lagos). WP2 Owner-accepted; WP3 implemented for native manual review. WP4 not authorized.** [Acceptance source](../acceptance/2026-11-16-phase-07-wp2-owner-acceptance.md). No individual native outcome is inferred from package acceptance.
 
-Follow-up: [shared control-page error investigation](Phase_7_WP3_Control_Error_Fix.md) documents the corrected error presentation/load gate and the Owner-confirmed DEVICE_SETUP_REQUIRED response; migration/schema inspection remains pending. Use its separate inventory for the updated candidate; the hashes below describe the original WP3 delivery.
+Follow-up: [shared control-page error investigation](Phase_7_WP3_Control_Error_Fix.md) documents the corrected error presentation/load gate and the Owner-confirmed DEVICE_SETUP_REQUIRED response; the Owner’s migration status confirms all nine Phase7 migrations pending; local application and page reload are awaiting their outcome. Use its separate inventory for the updated candidate; the hashes below describe the original WP3 delivery.
 
 ## Delivered behavior
 

@@ -1,10 +1,10 @@
 # Phase 7 WP3 — shared control-page error investigation
 
-16 November 2026 (Africa/Lagos). Follow-up to WP3 `e84bb31`, prompted by generic failures on Cash, Stock and Full pages plus an uncertain start. **The Owner supplied a handled HTTP503 response with DEVICE_SETUP_REQUIRED.** This confirms the shared DeviceSchema readiness check is refusing control access. The precise missing table/column/Device Audit FK awaits migration status/schema inspection. Screenshots alone did not identify it. No migration or production change has been performed.
+16 November 2026 (Africa/Lagos). Follow-up to WP3 `e84bb31`, prompted by generic failures on Cash, Stock and Full pages plus an uncertain start. **The Owner supplied a handled HTTP503 response with DEVICE_SETUP_REQUIRED.** This confirms the shared DeviceSchema readiness check is refusing control access. The Owner subsequently supplied migration status showing all nine Phase7 App migrations pending (no group/time/batch). The installed schema is still Phase6; this confirms unapplied Phase7 migrations as the cause. Screenshots alone did not identify it. No migration or production change has been performed.
 
 ## Confirmed defects and corrections
 
-The shared commercial message helper replaced every5xx response with generic text, including explicit DEVICE_SETUP_REQUIRED, CASH_CONTROL_SETUP_REQUIRED, STOCK_CONTROL_SETUP_REQUIRED and READINESS_SETUP_REQUIRED responses. All three control history APIs use the shared Device/evidence schema checks, so missing common setup can produce the same banner everywhere. The supplied response subsequently confirms DEVICE_SETUP_REQUIRED; which Device prerequisite is missing remains to be inspected.
+The shared commercial message helper replaced every5xx response with generic text, including explicit DEVICE_SETUP_REQUIRED, CASH_CONTROL_SETUP_REQUIRED, STOCK_CONTROL_SETUP_REQUIRED and READINESS_SETUP_REQUIRED responses. All three control history APIs use the shared Device/evidence schema checks, so missing common setup can produce the same banner everywhere. The supplied response subsequently confirms DEVICE_SETUP_REQUIRED; the pending Device migrations explain the first failed prerequisite, with all WP2/WP3 schema migrations also pending.
 
 Known503 setup codes now use a narrow allowlist of locally authored operator instructions. Unexpected500/503 codes, server details and arbitrary setup-like codes remain redacted; support references remain visible. No database guard, FK requirement or Device readiness requirement is bypassed.
 
@@ -12,7 +12,22 @@ The start form also stayed enabled after a failed initial history request. A suc
 
 ## Confirmed response and remaining setup inspection
 
-The Owner supplied Cash history error.code=DEVICE_SETUP_REQUIRED, alongside request.completed503 logs and no unexpected-exception log. Cash/Stock/Full share the same Device preflight. Starting cash and existing Sales/Customer/Product endpoints returning200 do not demonstrate the new Phase7 Device schema is complete. Inspect `php spark migrate:status`, especially CreatePhaseSevenRegisteredDevices and AddPhaseSevenAuditDeviceForeignKey, before choosing the missing-migration or partial-DDL recovery path.
+The Owner supplied Cash history error.code=DEVICE_SETUP_REQUIRED, alongside request.completed503 logs and no unexpected-exception log. Cash/Stock/Full share the same Device preflight. Starting cash and existing Sales/Customer/Product endpoints returning200 do not demonstrate the new Phase7 Device schema is complete. The subsequent migration-status output confirms all nine Phase7 App migrations are pending; the new schema must be applied through the documented backed-up procedure.
+
+## Confirmed remediation on the Owner’s local database
+
+The supplied migration status marks CreatePhaseSevenRegisteredDevices, AddPhaseSevenAuditDeviceForeignKey, the six WP2 evidence migrations and AddPhaseSevenStockVarianceForeignKey as pending. Existing Settings/Shield and Phase1–6 App migrations are applied.
+
+After an identified local database backup, run from the same configured checkout:
+
+    php spark migrate --namespace App
+    php spark migrate:status
+
+Use the existing XAMPP PHP executable if needed. Inspect all nine Phase7 rows as applied, then explicitly reload Cash/Stock/Full pages. If any migration fails, stop and inspect that failure/physical DDL before retry; do not drop tables or forge history. Apply migrations OR the raw SQL route, not both. No destructive repair or setup-guard bypass is needed for this confirmed pending-migration state.
+
+For the uncertain start, retain its original UUID and Check saved status after setup succeeds. If no control exists, Continue original start reference preserves that UUID for the explicit retry; do not clear browser storage or manufacture a replacement identity. A successful page load is separate from a successful control lifecycle.
+
+At the time of this record, instructions were supplied to the Owner; successful local migration and page reload are awaiting their outcome. No database operation was performed from the implementation workspace.
 
 ## Reference diagnostic procedure
 
@@ -30,4 +45,4 @@ Run `php spark migrate:status` to inspect applied/pending App migrations in the 
 
 Updated source/public assets and a separate [fix inventory](Phase_7_WP3_Control_Error_Fix_Artifact_Manifest.json) bind this follow-up. The original WP3 inventory/report remain historical. The current manual guide uses the follow-up inventory. No project dependency or test framework is added.
 
-Scratch actual Vue rendering with mocked API/dialog methods verifies all three scopes: safe503 explanation/support reference, blocked Start/direct submit after failed load, explicit GET refresh restoring the form after recovery, no false empty history, unexpected5xx redaction and preservation of the original uncertain-start UUID. Existing Stock/Full and Cash UI probes remain passing. The deployed503 code is Owner-supplied evidence; the probes do not confirm corrected native MySQL setup, HTTP/cookies or an actual successful control start.
+Scratch actual Vue rendering with mocked API/dialog methods verifies all three scopes: safe503 explanation/support reference, blocked Start/direct submit after failed load, explicit GET refresh restoring the form after recovery, no false empty history, unexpected5xx redaction and preservation of the original uncertain-start UUID. Existing Stock/Full and Cash UI probes remain passing. The deployed503 code and pending-migration status are Owner-supplied evidence; the probes do not confirm corrected native MySQL setup, HTTP/cookies or an actual successful control start.
