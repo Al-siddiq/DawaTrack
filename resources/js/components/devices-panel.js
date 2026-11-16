@@ -1,7 +1,7 @@
 import { apiRequest } from '../api/http-client.js';
 import { field, action, submit, feedback, message } from './commercial-ui.js';
 import { useTradingConfirm } from './management-ui.js';
-import { UiLoading, UiStatusPanel } from './ui/index.js';
+import { UiLoading, UiInformationPanel } from './ui/index.js';
 import { useNavigationGuard } from '../shared/workspace-navigation.js';
 
 const { h, ref, computed, onMounted, onUnmounted } = window.Vue;
@@ -126,8 +126,8 @@ export const DevicesPanel = {
             h('h1', { id: 'devices-title' }, 'Shop devices'),
             h('p', 'An installation identifies this browser in this Shop. Your login and permissions still control what you can do. Device status does not enable offline business work.'),
             ...feedback(error.value, notice.value),
-            !online.value && h(UiStatusPanel, { title: 'Connect to check devices', message: 'Device management needs the internet. Previously displayed status has been cleared.' }),
-            unknown.value && h(UiStatusPanel, { title: 'Check saved status', message: 'The reply was not confirmed. Refresh before another action. If registration saved without its browser proof, the Owner can use explicit recovery with the same installation reference.' }),
+            !online.value && h(UiInformationPanel, { title: 'Connect to check devices', message: 'Device management needs the internet. Previously displayed status has been cleared.' }),
+            unknown.value && h(UiInformationPanel, { title: 'Check saved status', message: 'The reply was not confirmed. Refresh before another action. If registration saved without its browser proof, the Owner can use explicit recovery with the same installation reference.' }),
             action('Check saved status', load, loading.value || pending.value || !online.value),
             loading.value ? h(UiLoading, { label: 'Loading devices' }) : h('div', [
                 h('h2', 'This browser'),

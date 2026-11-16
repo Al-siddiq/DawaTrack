@@ -104,3 +104,8 @@ financial.reverse authorizes a standalone reversal and is required for every cor
 ## Phase 7 WP1
 
 Device administration is current PRIMARY_OWNER-only under FULL locked authority; active Staff can read/validate own cookie-proven installation only. No Device credential supplies membership/grants. New independent reconciliation.start/commit/abort/exclude_device/note join existing view/count/review/finalize/adjust; reserved for later standard commands, no Staff grants auto-expanded. Shop context exposes view_devices for own status and manage_devices for Owner presentation; server authority always rechecks. Existing scope writers recheck locked entitlement/membership/grants. Standard COUNTING blind-read foundation is server-enforced, OPENING exception retained. Device actions share a20/minute identity bucket.
+
+
+## Phase 7 WP2 — Cash actions
+
+reconciliation.view gates all control reads/commands. Start adds start; count adds count; commit count+commit; review/explain review; finalize review+finalize; abort abort; note review+note. Exclusion additionally requires current PRIMARY_OWNER+exclude_device. ACK is narrow view+current active same-Shop Device proof with target-bound receipt, not Device administration or offline authority. Current active membership/FULL/grants rechecked under roots. Review values require committed counts/current review and no concurrent blind Cash count for that actor; predecessor details/notes cannot bypass. Source-status additionally rechecks owning source view grants and exposes no money. Staff grants are never expanded.

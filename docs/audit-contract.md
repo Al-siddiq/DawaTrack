@@ -138,3 +138,8 @@ The closed FINANCIAL vocabulary adds financial_movement.reversed and financial_m
 ## Phase 7 WP1 Device attribution
 
 The deferred Device parent/FK is added by forward migrations. Existing tenantUser callers remain Device-null. tenantDevice may be used only after actual current-cookie proof is verified; validator independently requires TENANT authority and ACTIVE same-Tenant/Shop Device. Owner enrollment/recovery/revocation are user-attributed administrative decisions, not unproven Device actors. device.registered/renamed/revoked/credential_recovered/validated use SYNC category and registered_device resource, redacted bounded metadata and final change publication. No arbitrary client Device ID or credential enters Audit.
+
+
+## Phase 7 WP2 — Cash and readiness evidence
+
+Typed actions reconciliation.cash_started/device_required/cash_counted/cash_committed/cash_reviewed/cash_explained/cash_finalized/cash_aborted/device_acknowledged/device_excluded/variance_note_added use RECONCILIATION category and reconciliation_session aggregate. Start records cutoff/selected generation/predecessor and bounded count/digest; per-Device membership events causally reference start. Actual ACK uses cookie-validated tenantDevice actor; exclusion is reasoned Owner authority. Later note Audit holds public identity/type and short reason, not2000-character note body. All required Audit precedes final generation publication; normalized variance and baseline advancement are atomic, no silent history edits.

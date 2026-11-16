@@ -40,3 +40,8 @@ Implemented as read-only query over accepted existing schema. Group Sales-owned 
 ## Phase 7 WP1
 
 registered_devices is schema v1.1 §16.1; deferred audit_events.actor_device_id parent FK now exists after Device migration. Service validates active same-Shop Device authority as well as FK existence. No offline trust/provision/sync state is fabricated; last_validated_at is set only after explicit current-cookie validation. Historical session/financial-count and all prior migration definitions remain unchanged.
+
+
+## Phase 7 WP2
+
+Standard Cash uses existing session/financial-count definitions and actual-baseline rollover. New Stock counts/variances/notes/Staff contexts/Device acknowledgements follow v1.1; supporting scope keys let variance FKs prove source count belongs to the same control. ACK/EXCLUDED is insert-once, no pending row/table. Relevant-set membership is typed per-Device start Audit plus count/digest, never rewritten from live Device list. Actual/variance draft fields satisfy existing CHECKs but remain hidden in blind DTOs. Stock adjustment FK/lifecycle remains WP3.

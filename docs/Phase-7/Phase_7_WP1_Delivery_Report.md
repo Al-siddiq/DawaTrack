@@ -2,6 +2,8 @@
 
 **15 November 2026 (Africa/Lagos). Implemented for Owner native manual review; not Owner-accepted, merged or deployed.** The plan is Owner-accepted and only WP1 is authorized. Base main `4266400`; accepted planning prerequisite `bf5a358` included because the plan is not yet merged. Branch `codex/phase-7-wp1-devices-control-20261115` targets main directly and contains the documentation plan prerequisite plus WP1.
 
+**Progression update — 16 November 2026:** [Owner accepted WP1 and authorized WP2](../acceptance/2026-11-16-phase-07-wp1-owner-acceptance.md). Original delivery-time execution limits below are retained; individual native results were not supplied.
+
 ## Delivered
 
 - Online Owner Device enrollment, bounded list/status, rename, reasoned revoke and explicit same-installation proof recovery; Staff only own-cookie status/online validation.

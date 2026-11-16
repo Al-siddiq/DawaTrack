@@ -5,7 +5,7 @@
 **Reviewed baseline:** merged main at `4266400` (closure PR #49), following Phase 6 WP4 integration PR #48 (`1677106`). Application content matches accepted WP4 `9483c57`; closure content matches the previously prepared handover.
 **Delivery model:** four sequential, independently deliverable work packages. Each is implemented only after its authorization and accepted before its successor begins.
 
-[Owner plan approval / WP1 authorization](../acceptance/2026-11-15-phase-07-plan-owner-approval.md). WP1 delivery remains subject to native manual review; WP2–WP4 are not authorized.
+[Owner plan approval / WP1 authorization](../acceptance/2026-11-15-phase-07-plan-owner-approval.md). WP1 is Owner-accepted; WP2 only is authorized and delivered for native manual review. WP3–WP4 are not authorized. See [WP1 acceptance](../acceptance/2026-11-16-phase-07-wp1-owner-acceptance.md).
 
 ## 1. Authority and entry position
 

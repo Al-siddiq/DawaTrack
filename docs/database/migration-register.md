@@ -134,3 +134,8 @@ WP4 introduces no migration, raw SQL artifact or schema change. It reads existin
 ## Phase 7 WP1 — online Device foundation
 
 Apply after Phase6: 2026-11-15-100000 CreatePhaseSevenRegisteredDevices, then100100 AddPhaseSevenAuditDeviceForeignKey. SQL twins: phase-07/20261115100000_registered_devices.sql and20261115100100_audit_device_fk.sql. Actor keys match Shield INT UNSIGNED; Domain IDs BIGINT UNSIGNED. Audit preflight refuses orphan/foreign Device context before FK; never rewrite protected Audit. Reverse dependency order only for empty disposable development fixtures; populated Device/Audit context refuses destructive down. Native empty/upgrade/partial-DDL/restore checks remain Owner gates. No count/variance/ack/provision/receipt/cursor schema in WP1.
+
+
+## Phase 7 WP2 — Cash evidence schema
+
+Six paired forward migrations after WP1: 2026-11-15-100200 AddPhaseSevenEvidenceScopeKeys;100300 CreatePhaseSevenStockCounts;100400 CreatePhaseSevenVariances;100500 CreatePhaseSevenVarianceNotes;100600 CreatePhaseSevenStaffContexts;100700 CreatePhaseSevenDeviceAcknowledgements. Matching phase-07 SQL timestamps20261115100200–100700. Two supporting UNIQUE keys on already globally unique IDs enable MySQL8.4 same-control/source and same-Shop Device composite FKs; no columns or prior DDL are rewritten. Stock-count table is schema prerequisite of full approved variance source constraints, not exposed Stock behavior. Child-first empty-development rollback only; populated evidence refuses down. Native fresh/upgrade/CHECK/FK/partial-DDL/restore remains a manual gate. See [WP2 contract](../Phase-7/Phase_7_WP2_Integration_Contracts.md).

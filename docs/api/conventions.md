@@ -66,3 +66,8 @@ The scoped Financial Movement history GET accepts the optional `movement_type` f
 ## Phase 7 WP1 Device/control APIs
 
 See [complete contract](../Phase-7/Phase_7_WP1_Integration_Contracts.md). Authenticated Shop /devices collection/current plus explicit register/current-validate/rename/revoke/recover commands. Owner-only collection/admin; active Staff own-cookie status/validation. No generic Device CRUD or expected-Cash route. Closed DTOs, no-store/CSRF, stable errors and bounded pagination; cookie proof never appears in JSON. BLIND_COUNT_ACTIVE denies revealing source reads for standard counting actors; no standard session route activated here.
+
+
+## Phase 7 WP2 — standard Cash/readiness API
+
+Authenticated Shop /cash-controls provides bounded history, start/detail, readiness/challenge/acknowledge/exclude, count/commit/review/explain/finalize/abort, Staff context, append-only notes and blind-safe source-status. See [complete method/grant/DTO contract](../Phase-7/Phase_7_WP2_Integration_Contracts.md). No generic reconciliation CRUD, public expected-Cash or Stock/Full route. Closed command DTOs, exact decimal strings, private no-store/CSRF/correlation, revision conflicts and same-identity recovery apply. Money review projection is absent until commitment/current review; historical controls and notes respect active blindness.

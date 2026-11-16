@@ -5,6 +5,7 @@ export const shopPages = Object.freeze([
     { id: 'customers', label: 'Customers', icon: 'customers', hash: '#customers', prefixes: ['#customers/debts', '#customers/debt/'], capability: 'view_customers', group: 'customers' },
     { id: 'sale-history', label: 'Sales', icon: 'sales', hash: '#sale-history', prefixes: ['#sale/'], capability: 'view_sale_drafts', group: 'menu' },
     { id: 'intakes', label: 'Stock deliveries', icon: 'add', hash: '#intakes', capability: 'view_inventory', group: 'stock', parent: 'Stock', parentId: 'products', sidebar: false, trackEdits: true },
+    { id: 'cash-controls', label: 'Cash control', icon: 'cash', hash: '#cash-controls', prefixes: ['#cash-controls/'], capability: 'view_cash_controls', group: 'menu', section: 'Work', trackEdits: true },
     { id: 'financial-movements', label: 'Money movements', icon: 'cash', hash: '#financial-movements', prefixes: ['#financial-movements/'], capability: 'view_financial_movements', group: 'menu', section: 'Work' },
     { id: 'devices', label: 'Shop devices', icon: 'settings', hash: '#devices', capability: 'view_devices', group: 'menu', section: 'Manage shop', trackEdits: true },
     { id: 'staff', label: 'Staff', icon: 'staff', hash: '#staff', capability: 'manage_staff', group: 'menu', section: 'Manage shop', trackEdits: true },

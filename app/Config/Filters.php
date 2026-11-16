@@ -150,6 +150,8 @@ class Filters extends BaseFilters
                 'auth/a/*',
                 'platform-admin/mfa/*',
                 'api/v1/platform/*',
+                'api/v1/shop/cash-controls',
+                'api/v1/shop/cash-controls/*',
                 'api/v1/shop/devices',
                 'api/v1/shop/devices/*',
                 'api/v1/shop/staff',

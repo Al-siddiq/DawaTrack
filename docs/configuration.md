@@ -51,3 +51,8 @@ Phase 2 Audit query limits are code-owned security policy: maximum page size 50,
 ## Phase 7 WP1 Device configuration
 
 No dependency or new deployment secret is introduced. Production installation proof uses host-only __Host-dt_device Secure/HttpOnly/SameSite Strict Path=/ cookie; non-production name dt_device, still Secure outside HTTP development. Random proof verifier is stored in registered_devices; no reusable password/PIN/browser-JS proof storage. Existing session/CSRF/HTTPS policy remains. Before Device use apply the two approved migrations and check native MySQL constraints. Cookie retention is not an offline entitlement lease.
+
+
+## Phase 7 WP2 readiness configuration
+
+Reuse the existing private deployment encryption.key with at least32 bytes and OpenSSL; ReadinessProof derives a separate purpose key (CashReadiness:v1), never a source default/new secret. Five-minute receipt binds user/membership/current Device/control/generation/exact string watermark. Token remains memory/POST only, not URL/storage/Audit. New starts and proof issuance/use fail closed on missing setup. Safe abort and post-final notes do not require decrypting an old proof. Existing production HTTPS/Device cookie/session/CSRF policy unchanged; actual behavior requires native acceptance. Cash-control writes share30/minute identity throttle; user-triggered acknowledgement is not an auto heartbeat.

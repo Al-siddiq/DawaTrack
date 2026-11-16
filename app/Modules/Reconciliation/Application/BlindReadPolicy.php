@@ -50,4 +50,26 @@ final class BlindReadPolicy
             }
         }
     }
+    /** Also protects predecessor control DTOs/notes from becoming a blind-count bypass. */
+    public function blocksScope(ShopContext $context, string $scope): bool
+    {
+        $rows = $this->database->query(
+            "SELECT started_by_user_id FROM reconciliation_sessions WHERE tenant_id=? AND shop_id=? AND control_kind='STANDARD' AND status='COUNTING' AND scope IN (?, 'FULL')",
+            [$context->tenantId, $context->shopId, $scope],
+        )->getResultArray();
+        if (!$rows) {
+            return false;
+        }
+        $member = $this->database->table('tenant_memberships')->where([
+            'tenant_id' => $context->tenantId, 'id' => $context->membershipId, 'user_id' => $context->userId, 'status' => 'ACTIVE',
+        ])->get()->getRowArray();
+        if ($member && ($member['role'] === 'PRIMARY_OWNER' || $this->database->table('membership_permission_grants')->where([
+            'tenant_id' => $context->tenantId, 'membership_id' => $context->membershipId,
+            'permission_code' => 'reconciliation.count', 'revoked_at' => null,
+        ])->countAllResults() > 0)) {
+            return true;
+        }
+        return in_array($context->userId, array_map('intval', array_column($rows, 'started_by_user_id')), true);
+    }
+
 }
