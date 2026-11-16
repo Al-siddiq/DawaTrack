@@ -12,7 +12,7 @@ Run from the DawaTrack checkout:
     composer install
     npm ci
     npm run build
-    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Start_Setup_Artifact_Manifest.json
+    npm run ui:release:check -- --output=docs/Phase-7/Phase_7_WP3_Cash_Start_Artifact_Manifest.json
     php spark migrate:status
 
 Record exact commit, inventory hash, PHP/Composer/MySQL/browser versions, Shop hostname/timezone and actors/grants. Do not regenerate inventory to hide edits. Only exact CRLF-only changes can use the established --fix-line-endings recovery followed by a plain check.
@@ -26,11 +26,13 @@ For an empty installation retain Settings → Shield → App ordering. The new m
 
 Open the configured Shop address and normal Menu → Stock control / Full control; not a reference gallery. Existing Cash control remains available.
 
-For the shared control-page error follow-up and the deployed evidence still needed, see [investigation](Phase-7/Phase_7_WP3_Control_Error_Fix.md). The original WP3 and first fix inventories are historical; the command above checks the current plain-English and Start-setup candidate.
+For the shared control-page error follow-up and the deployed evidence still needed, see [investigation](Phase-7/Phase_7_WP3_Control_Error_Fix.md). The original WP3 and first fix inventories are historical; the command above checks the current plain-English and Cash Start candidate.
 
 The menu now says **Cash check**, **Stock check** and **Cash and stock check**. Save each count, then use **Confirm this count** (or **Confirm all item counts** / **Confirm cash and item counts**). **Compare the numbers** opens the next step. **Finish check** keeps the final result; **Cancel check** stops the attempt but keeps its saved entries. **Check what was saved** loads the saved result without sending it again. These labels replace the old UI terms in the steps below; the API and case numbers stay the same. See [what changed](Phase-7/Phase_7_WP3_Plain_English.md).
 
 The remaining Start refusal was traced to an empty private app key, with OpenSSL ready. See [the cause and private setup steps](Phase-7/Phase_7_WP3_Start_Setup_Fix.md). A fresh known refusal and an earlier unknown save are handled separately; keep the same original check number.
+
+After private setup, Start reached an old field-name lookup error. The current candidate fixes the Sales and customer-payment lookups; see [the cause and checks](Phase-7/Phase_7_WP3_Cash_Start_Fix.md). Keep the same check number when trying again.
 
 ## Test fixtures
 

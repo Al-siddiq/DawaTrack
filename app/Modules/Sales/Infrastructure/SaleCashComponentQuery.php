@@ -80,11 +80,11 @@ final class SaleCashComponentQuery
     private function requireReady(): void
     {
         $rows = $this->database->query(
-            "SELECT table_name,column_name FROM information_schema.columns
+            "SELECT table_name AS source_table,column_name AS source_column FROM information_schema.columns
              WHERE table_schema=DATABASE() AND table_name IN ('sales','sale_payments')",
         )->getResultArray();
         $columns = [];
-        foreach ($rows as $row) $columns[$row['table_name']][$row['column_name']] = true;
+        foreach ($rows as $row) $columns[$row['source_table']][$row['source_column']] = true;
         $required = [
             'sales' => ['id', 'tenant_id', 'shop_id', 'public_id', 'kind', 'status', 'reversal_of_sale_id', 'correlation_id'],
             'sale_payments' => ['id', 'tenant_id', 'shop_id', 'sale_id', 'direction', 'channel', 'amount', 'posted_at', 'reversal_of_payment_id', 'correlation_id'],

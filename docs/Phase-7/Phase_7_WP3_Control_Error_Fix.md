@@ -2,6 +2,8 @@
 
 16 November 2026 (Africa/Lagos). Follow-up to WP3 `e84bb31`, prompted by generic failures on Cash, Stock and Full pages plus an uncertain start. **The Owner supplied a handled HTTP503 response with DEVICE_SETUP_REQUIRED.** This confirms the shared DeviceSchema readiness check is refusing control access. The Owner subsequently supplied migration status showing all nine Phase7 App migrations pending (no group/time/batch). The installed schema is still Phase6; this confirms unapplied Phase7 migrations as the cause. Screenshots alone did not identify it. No migration or production change has been performed.
 
+This records the first error-message fix. Later setup results and the current candidate are in [the Cash Start follow-up](Phase_7_WP3_Cash_Start_Fix.md); use its inventory for current checks.
+
 ## Confirmed defects and corrections
 
 The shared commercial message helper replaced every5xx response with generic text, including explicit DEVICE_SETUP_REQUIRED, CASH_CONTROL_SETUP_REQUIRED, STOCK_CONTROL_SETUP_REQUIRED and READINESS_SETUP_REQUIRED responses. All three control history APIs use the shared Device/evidence schema checks, so missing common setup can produce the same banner everywhere. The supplied response subsequently confirms DEVICE_SETUP_REQUIRED; the pending Device migrations explain the first failed prerequisite, with all WP2/WP3 schema migrations also pending.

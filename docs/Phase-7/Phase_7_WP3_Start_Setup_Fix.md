@@ -15,7 +15,7 @@ The owner was given these steps to carry out on their own computer:
 
 There was no existing key to replace in the reported setup. An existing configured key on another installation must be kept; do not rotate it for this fix. The web app must use PHP with OpenSSL as well as the CLI. See [the setup guide](../operations/phase-07-wp3-stock-full.md#start-says-the-app-settings-are-not-ready).
 
-Local key entry and a successful Start still await the owner’s result. No secret value was requested, read, generated for that computer, stored in the repository or included in this report. No extra migration, default key or weakened check was added.
+The owner later reported a new error at Sales cash calculation, showing execution has passed the readiness setup check. See the later [Cash Start field-name fix](Phase_7_WP3_Cash_Start_Fix.md) and its current inventory. A successful Start still awaits their result. No secret value was requested, read, generated for that computer, stored in the repository or included in this report. No extra migration, default key or weakened check was added.
 
 ## What changed in the page
 
@@ -29,4 +29,4 @@ The actual Vue component was run in a scratch host with mocked API/dialog method
 
 The actual ReadinessProof class was also run in PHP8.3 WebAssembly with synthetic data. Empty and short keys returned the same503 code the owner supplied. A synthetic key passed an OpenSSL encode/decode round trip; a changed receipt was rejected. No key or receipt was printed. This is separate from native XAMPP/HTTP/Device verification.
 
-The frontend build, JavaScript syntax, source/public match and [new exact file check](Phase_7_WP3_Start_Setup_Artifact_Manifest.json) pass. Earlier inventories remain historical. The [manual guide](../manual-verification-phase-07-wp3.md) now uses this candidate’s inventory. The original 48 integrated cases and12 WP3 cases retain their recorded statuses; a successful page request is not a full case Pass. No merge, deployment, cash/stock entry or database change was performed here. WP4 has not started.
+The frontend build, JavaScript syntax, source/public match and [new exact file check](Phase_7_WP3_Start_Setup_Artifact_Manifest.json) pass. Earlier inventories remain historical. This inventory binds this settings-message fix. The [manual guide](../manual-verification-phase-07-wp3.md) uses the latest Cash Start candidate’s inventory. The original 48 integrated cases and12 WP3 cases retain their recorded statuses; a successful page request is not a full case Pass. No merge, deployment, cash/stock entry or database change was performed here. WP4 has not started.
