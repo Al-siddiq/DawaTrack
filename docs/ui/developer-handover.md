@@ -73,3 +73,17 @@ Money movements gains contextual Owner took money and Add money to shop, with ex
 ## Phase 6 final handover — 14 November 2026
 
 WP1–WP4 are Owner-accepted; [complete closure](../Phase-6/Phase_6_Closure_Report.md) and [final release/rollback operations](../operations/phase-06-final-release.md) are prepared. Whole-phase decision and production release remain pending. Preserve independent view/record/reverse/correct grants and Primary Owner checks, immutable exact signed effects, Cash guard/lock/Audit/change atomicity, contextual history/correction links and same-ID recovery. Expected Cash stays internal/read-only; five-type history filters reuse the existing shell. No automatic balancing or offline financial replay. Native runtime and device/accessibility observations remain separate from package acceptance.
+
+
+## Phase 7 WP1 — Shop devices
+
+DevicesPanel joins the existing registry/Menu/sidebar with shared controls/dialog/dirty/unknown-result protection. Staff own-installation status only; Owner bounded enrollment/list/name/revoke/recovery. Safe marker stores public/device UUIDs in host/user/Shop namespace, never proof/body/reason. Clear records on failed/offline refresh; no automatic repost. New standard control routes remain absent. [Contracts](../Phase-7/Phase_7_WP1_Integration_Contracts.md), [native guide](../manual-verification-phase-07-wp1.md).
+
+
+## Phase 7 WP2 — Cash control workspace
+
+CashControlsPanel uses existing Menu/registry/shared fields/dialog/navigation guard. Server-only blind/review DTOs; no client expected-Cash arithmetic. Source/ref checks are permission-aware and nonfinancial. Parent navigation approves record changes; unknown outcomes hold original control/action/note IDs only in scoped session marker. User input retained across recoverable error; source records cleared on failed/offline refresh; no reconnect POST/offline queue. Readiness receipt exists in memory only. Review/notes/Staff context are bounded; source/predecessor blindness enforced server-side. Shared information notices now use the correct component interface, including WP1 Device notices. [Native guide](../manual-verification-phase-07-wp2.md).
+
+## Plain words in all future work
+
+The owner restated the plain-English rule on16 November 2026. Follow [the writing guide](plain-english.md) for every new or changed shop screen. Root [AGENTS.md](../../AGENTS.md) carries this instruction for future project work. Cash/Stock/Full labels now say Cash check, Stock check and Cash and stock check. Internal routes, fields and states keep their existing names.

@@ -133,3 +133,18 @@ financial_movement.recorded now covers SHOP_EXPENSE, OWNER_WITHDRAWAL and OWNER_
 ## Phase 6 WP3 — immutable reversal and correction evidence
 
 The closed FINANCIAL vocabulary adds financial_movement.reversed and financial_movement.corrected on financial_movement. A standalone reversal writes one exact-opposite REVERSAL row and one required-reason Audit event. An atomic correction writes the inverse and FINANCIAL_CORRECTION replacement, each with its own required-reason Audit event, same canonical request correlation, and minimized source/counterpart public UUIDs, type, channel, signed amount and fingerprints. All rows and Audit events share the owning CommercialAccess transaction; financial_movement change publication occurs once, last. No Audit or change is emitted by GET/preview or failed commands. Original rows remain immutable. Audit DTOs never expose raw metadata or internal numeric IDs.
+
+
+## Phase 7 WP1 Device attribution
+
+The deferred Device parent/FK is added by forward migrations. Existing tenantUser callers remain Device-null. tenantDevice may be used only after actual current-cookie proof is verified; validator independently requires TENANT authority and ACTIVE same-Tenant/Shop Device. Owner enrollment/recovery/revocation are user-attributed administrative decisions, not unproven Device actors. device.registered/renamed/revoked/credential_recovered/validated use SYNC category and registered_device resource, redacted bounded metadata and final change publication. No arbitrary client Device ID or credential enters Audit.
+
+
+## Phase 7 WP2 — Cash and readiness evidence
+
+Typed actions reconciliation.cash_started/device_required/cash_counted/cash_committed/cash_reviewed/cash_explained/cash_finalized/cash_aborted/device_acknowledged/device_excluded/variance_note_added use RECONCILIATION category and reconciliation_session aggregate. Start records cutoff/selected generation/predecessor and bounded count/digest; per-Device membership events causally reference start. Actual ACK uses cookie-validated tenantDevice actor; exclusion is reasoned Owner authority. Later note Audit holds public identity/type and short reason, not2000-character note body. All required Audit precedes final generation publication; normalized variance and baseline advancement are atomic, no silent history edits.
+
+
+## Phase 7 WP3
+
+WP3 adds control_started/counted/committed/reviewed/explained/finalized/aborted, stock_expected/counted/explained/variance_finalized/adjusted and late_operation_associated actions under reconciliation.*. Per-Product stock_expected links causally to start; Stock adjustment uses Inventory Audit with source UUIDs/delta/current before/after. Deduplicated SYSTEM late associations preserve original source times and refresh the control through publication. Notes keep text in approved note rows, not unbounded Audit metadata. See [integration contract](Phase-7/Phase_7_WP3_Integration_Contracts.md).

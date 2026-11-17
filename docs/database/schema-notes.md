@@ -35,3 +35,18 @@ WP4 adds no DDL or index. Product, Intake and movement queries are capped and de
 ## Phase 5 WP4 derived statement
 
 Implemented as read-only query over accepted existing schema. Group Sales-owned adjustment effects by commercial source; normal/inverse payment headers affect debt once, allocations explain them. Source ordering uses disjoint DECIMAL surrogate keys internally. No schema change, statement persistence, mutable balance/status or Phase10 cursor table. See Phase5 WP4 contracts and release/closure handover.
+
+
+## Phase 7 WP1
+
+registered_devices is schema v1.1 §16.1; deferred audit_events.actor_device_id parent FK now exists after Device migration. Service validates active same-Shop Device authority as well as FK existence. No offline trust/provision/sync state is fabricated; last_validated_at is set only after explicit current-cookie validation. Historical session/financial-count and all prior migration definitions remain unchanged.
+
+
+## Phase 7 WP2
+
+Standard Cash uses existing session/financial-count definitions and actual-baseline rollover. New Stock counts/variances/notes/Staff contexts/Device acknowledgements follow v1.1; supporting scope keys let variance FKs prove source count belongs to the same control. ACK/EXCLUDED is insert-once, no pending row/table. Relevant-set membership is typed per-Device start Audit plus count/digest, never rewritten from live Device list. Actual/variance draft fields satisfy existing CHECKs but remain hidden in blind DTOs. Stock adjustment FK/lifecycle remains WP3.
+
+
+## Phase 7 WP3
+
+Stock counts retain expected quantity/cost in approved rows; causal per-Product start Audit freezes name/unit/cost-state/version and membership digest. The deferred scoped Stock Movement variance FK is now activated with a MySQL8.4 candidate key. No adjustment-status table or mutable balance is introduced. See [integration contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md).

@@ -20,3 +20,8 @@ Phase 2 WP3 keeps normal Platform Audit and Tenant-support Audit separate. Norma
 ## Phase 4 WP1 stabilization
 
 Shield Email2FA verify establishes recent Admin MFA only after successful action completion; redirect visits cannot refresh it. Intake draft mutations lock/recheck the same header as posting. Staff reset Audit uses approved access-invalidated metadata; cache revocation occurs only after successful DB commit, preserving rollback semantics. Cache durability/recovery response normalization remain separately tracked; no blanket claim of complete security remediation is made. DNS verification compares the challenge hash at final update; platform hostname policy uses DAWATRACK_PLATFORM_DOMAIN.
+
+
+## Phase 7 WP3 integration
+
+Stock/Full now share Cash lifecycle/authority/readiness with server-bound scopes and blind DTOs. Inventory owns reviewed one-effect Stock delta against the current position; late source Audit and control refresh publish in the source transaction. Existing Cash API/recovery markers remain compatible. See the [complete WP3 contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md), [native guide](../manual-verification-phase-07-wp3.md) and [operations](../operations/phase-07-wp3-stock-full.md). Native verification remains open.

@@ -117,6 +117,7 @@ final class ReturnService
             $c,
             ["sale.view", "sale.return"],
             function () use ($c, $id, $input) {
+                (new \App\Modules\Reconciliation\Application\StockControlGuard($this->db))->assertCanAffectStock($c);
                 [$root, $row] = $this->draft($c, $id);
                 DraftInput::version(
                     $row,

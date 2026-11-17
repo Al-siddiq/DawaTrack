@@ -22,6 +22,7 @@ final class ChangeSequenceService
         'shop_brand_asset',
         'shop_domain',
         'subscription',
+        'registered_device',
         'financial_movement',
         'debt_payment',
         'receivable_adjustment',
@@ -53,6 +54,30 @@ final class ChangeSequenceService
                 throw new \InvalidArgumentException('Change publication accepts ChangeCommand values only.');
             }
             $this->validate($command);
+        }
+        $late = new \App\Modules\Reconciliation\Application\LateOperationAssociation(
+            $this->database, new \App\Modules\Audit\Application\AuditService($this->database, $this->requestContext),
+        );
+        $refreshes = [];
+        foreach ($commands as $command) {
+            if ($command->resourceType === 'reconciliation_session' && $command->kind === \App\Modules\Sync\Domain\ChangeKind::UPSERT) {
+                $refreshes[$command->tenantId . '|' . $command->shopId . '|' . $command->resourcePublicId] = true;
+            }
+        }
+        $seen = [];
+        foreach ($commands as $command) {
+            $key = $command->tenantId . '|' . $command->shopId . '|' . $command->resourceType . '|' . $command->resourcePublicId;
+            if (!isset($seen[$key])) {
+                $controlId = $late->associate($command);
+                if ($controlId !== null) {
+                    $refreshKey = $command->tenantId . '|' . $command->shopId . '|' . $controlId;
+                    if (!isset($refreshes[$refreshKey])) {
+                        $commands[] = new ChangeCommand($command->tenantId, $command->shopId, 'reconciliation_session', $controlId);
+                        $refreshes[$refreshKey] = true;
+                    }
+                }
+                $seen[$key] = true;
+            }
         }
         $generation = $this->lockActiveGeneration();
         $published = [];

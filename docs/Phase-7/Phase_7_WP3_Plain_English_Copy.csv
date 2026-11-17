@@ -1,0 +1,13 @@
+internal_or_old_term,shop_page_copy,source,status
+Cash / Stock / Full control,Cash / Stock / Cash and stock check,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Commit observations,Confirm this count,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Review frozen result,Compare your count with the shop records,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Variance,Say how much less or more was counted,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Finalize,Finish check,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Abort,Cancel check,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+On-duty context,Who worked in the shop?,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Acknowledge Device,This phone or computer is ready,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Exclude Device,Skip this phone or computer,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Immutable count,You cannot change this count,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Reconciliation adjustment,Change the stock record,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending
+Unconfirmed outcome,We do not yet know if this was saved,resources/js/components/cash-controls-panel.js; resources/js/shared/workspace-registry.js,Implemented; owner reading check pending

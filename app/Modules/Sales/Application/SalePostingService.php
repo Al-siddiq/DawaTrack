@@ -72,6 +72,7 @@ final class SalePostingService
                 if ($existing["status"] === "POSTED") {
                     return;
                 }
+                (new \App\Modules\Reconciliation\Application\StockControlGuard($this->database))->assertCanAffectStock($context);
                 if ($cash !== "0.00") {
                     (new CashControlGuard(
                         $this->database,

@@ -29,6 +29,7 @@ final class ProductService
         $input = ProductInput::from($values); $publicId = Uuid::v4(); $now = UtcTimestamp::now();
         $this->database->transException(true)->transBegin();
         try {
+            (new \App\Modules\Reconciliation\Application\ControlScopeGuard($this->database))->lockRoots($context, ['product.manage']);
             $this->database->table('products')->insert(['public_id'=>$publicId,'tenant_id'=>$context->tenantId,'name'=>$input->name,'normalized_name'=>$this->normalizer->normalize($input->name),'unit_name'=>$input->unitName,'current_selling_price'=>$input->sellingPrice,'status'=>'ACTIVE','created_by_user_id'=>$context->userId,'created_at'=>$now,'updated_at'=>$now]);
             $productId = (int) $this->database->insertID();
             $this->database->table('stock_positions')->insert(['tenant_id'=>$context->tenantId,'shop_id'=>$context->shopId,'product_id'=>$productId,'expected_quantity'=>'0.0000','low_stock_threshold'=>'0.0000','average_unit_cost'=>'0.000000','cost_basis_state'=>'UNESTABLISHED','last_movement_id'=>null,'version'=>0,'created_at'=>$now,'updated_at'=>$now]);
@@ -44,6 +45,7 @@ final class ProductService
         $this->authorize($context, PermissionCode::ProductManage); $input = ProductInput::from($values); $publicId = strtolower($publicId);
         $this->database->transException(true)->transBegin();
         try {
+            (new \App\Modules\Reconciliation\Application\ControlScopeGuard($this->database))->lockRoots($context, ['product.manage']);
             $product = $this->locked($context,$publicId);
             if ($input->unitName !== $product['unit_name'] && $this->hasMovementHistory((int)$product['id'])) throw new ApiException('PRODUCT_UNIT_IMMUTABLE','The base unit cannot change after stock history exists. Create a new Product for a different unit.',409);
             $after=['name'=>$input->name,'normalized_name'=>$this->normalizer->normalize($input->name),'unit_name'=>$input->unitName,'current_selling_price'=>$input->sellingPrice];
@@ -59,6 +61,7 @@ final class ProductService
         $this->authorize($context, PermissionCode::ProductManage); $publicId=strtolower($publicId);
         $this->database->transException(true)->transBegin();
         try {
+            (new \App\Modules\Reconciliation\Application\ControlScopeGuard($this->database))->lockRoots($context, ['product.manage']);
             $product=$this->locked($context,$publicId); if($product['status']!=='ACTIVE') throw new ApiException('PRODUCT_ALREADY_INACTIVE','This Product is already inactive.',409);
             $now=UtcTimestamp::now(); $this->database->table('products')->where('id',$product['id'])->update(['status'=>'INACTIVE','deactivated_at'=>$now,'updated_at'=>$now]);
             $this->audit->append(new AuditAppendCommand(AuditActor::tenantUser($context->userId,$context->membershipId,$context->tenantId,$context->shopId),'product.deactivated',AuditCategory::INVENTORY,'product',$publicId,$reason,['before'=>'ACTIVE','after'=>'INACTIVE']));

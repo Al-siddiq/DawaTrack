@@ -64,3 +64,12 @@ Customers now has a contextual **Money customers owe** view, Customer bill list 
 ## Phase 5 WP2 collection extension
 
 Inside Customer bills, Receive payment opens exact review/confirm, automatic/explicit allocation and receipt/history using shared components/icons. A same-ID unknown-result flow and minimal scoped tab marker protect retries; no offline queue. [WP2 developer contract](../Phase-5/Phase_5_WP2_Integration_Contracts.md), [operations](../operations/phase-05-debt-collection.md) and [native checklist P5-11–P5-23](../manual-verification-phase-05-wp2.md). Use the new WP2 artifact inventory path when checking its release. Previous UI programme/WP1 acceptance does not pre-accept WP2.
+
+
+## Phase 7 WP3 integration
+
+Stock/Full now share Cash lifecycle/authority/readiness with server-bound scopes and blind DTOs. Inventory owns reviewed one-effect Stock delta against the current position; late source Audit and control refresh publish in the source transaction. Existing Cash API/recovery markers remain compatible. See the [complete WP3 contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md), [native guide](../manual-verification-phase-07-wp3.md) and [operations](../operations/phase-07-wp3-stock-full.md). Native verification remains open.
+
+## Words shop users can understand
+
+Follow the [plain-English writing guide](plain-english.md) in all future work. Every page should explain where the user is, what they can do and the next step. The Phase7 cash and stock checks use this guide for titles, buttons, messages and help text.

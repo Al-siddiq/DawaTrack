@@ -76,3 +76,13 @@ Commercial compensation publishes new/source/root Sale identities, inverse Stock
 ## WP4-D — 2026-11-06
 
 D consumes authoritative record refreshes and normalizes mutation responses via public GET detail. It adds no sync resource or offline command queue. Transient settlement/review resets on reload; financial effects remain exclusively in B/C atomic publication. Draft/replacement preparation is not misreported as payment or credit success.
+
+
+## Phase 7 WP1 Device foundation
+
+registered_device is allowlisted as a scoped aggregate change resource. Real Device commands append Audit and publish UPSERT last in their owning transaction; exact no-op retries publish nothing. This supplies no pull/cursor/provision/PIN/receipt transport. Real acknowledgements and typed start set/cutoff capture remain WP2; [WP1 contract](../Phase-7/Phase_7_WP1_Integration_Contracts.md) fixes the handoff without manufacturing readiness.
+
+
+## Phase 7 WP2 — standard Cash cutoff/readiness
+
+Start holds source/control/Device roots and fresh snapshot before final active-generation watermark lock, binds exact sequence to already-owned control row and publishes reconciliation_session last. Control lookup does not lock a joined generation before domain work. Later mutations reject changed epoch; abort/later note can publish current aggregate notification without rewriting frozen epoch/values. Device ACK also publishes its validated Device aggregate. Readiness receipt is purpose-separated opaque five-minute online proof of exact delivered target, never a Device pull cursor, receipt table, offline provision or outbox claim. Source operations still use owning services and posted-time later periods; full late transport/association remains later package/phase scope.

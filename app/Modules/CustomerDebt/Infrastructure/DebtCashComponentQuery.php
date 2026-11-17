@@ -19,11 +19,11 @@ final class DebtCashComponentQuery
     {
         (new DebtSchema($this->database))->requireReady();
         $columns = $this->database->query(
-            "SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=DATABASE()
+            "SELECT table_name AS source_table,column_name AS source_column FROM information_schema.columns WHERE table_schema=DATABASE()
              AND table_name IN ('debt_payments','debt_payment_allocations')",
         )->getResultArray();
         $available = [];
-        foreach ($columns as $column) $available[$column['table_name']][$column['column_name']] = true;
+        foreach ($columns as $column) $available[$column['source_table']][$column['source_column']] = true;
         foreach ([
             'debt_payments' => ['id','tenant_id','shop_id','public_id','customer_id','channel','amount','posted_at','correlation_id','reversal_of_debt_payment_id'],
             'debt_payment_allocations' => ['tenant_id','shop_id','debt_payment_id','amount'],

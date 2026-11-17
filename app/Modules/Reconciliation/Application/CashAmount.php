@@ -18,9 +18,9 @@ final class CashAmount
         ) {
             throw new ApiException(
                 "VALIDATION_FAILED",
-                "Enter a non-negative Cash amount with at most two decimal places.",
+                "Enter cash of 0 or more. Use no more than two numbers after the decimal point.",
                 422,
-                ["amount" => ["Use a Cash amount such as 0.00 or 12500.50."]],
+                ["amount" => ["Enter cash such as 0.00 or 12500.50."]],
             );
         }
         [$whole, $fraction] = array_pad(explode(".", trim($input), 2), 2, "");

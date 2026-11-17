@@ -35,6 +35,8 @@ export function render(_ctx, _cache) {
   const _component_ui_alert = _resolveComponent("ui-alert")
   const _component_ui_button = _resolveComponent("ui-button")
   const _component_FinancialMovementsPanel = _resolveComponent("FinancialMovementsPanel")
+  const _component_CashControlsPanel = _resolveComponent("CashControlsPanel")
+  const _component_DevicesPanel = _resolveComponent("DevicesPanel")
   const _component_OpeningCashPanel = _resolveComponent("OpeningCashPanel")
   const _component_CustomerPanel = _resolveComponent("CustomerPanel")
   const _component_SaleHistoryPanel = _resolveComponent("SaleHistoryPanel")
@@ -95,7 +97,7 @@ export function render(_ctx, _cache) {
                         icon: "stock",
                         onClick: _cache[0] || (_cache[0] = $event => (_ctx.workspaceNavigation.request('#products')))
                       }, {
-                        default: _withCtx(() => [...(_cache[6] || (_cache[6] = [
+                        default: _withCtx(() => [...(_cache[9] || (_cache[9] = [
                           _createTextVNode("Products and stock", -1 /* CACHED */)
                         ]))]),
                         _: 1 /* STABLE */
@@ -105,7 +107,7 @@ export function render(_ctx, _cache) {
                         icon: "add",
                         onClick: _cache[1] || (_cache[1] = $event => (_ctx.workspaceNavigation.request('#intakes')))
                       }, {
-                        default: _withCtx(() => [...(_cache[7] || (_cache[7] = [
+                        default: _withCtx(() => [...(_cache[10] || (_cache[10] = [
                           _createTextVNode("Stock deliveries and starting stock", -1 /* CACHED */)
                         ]))]),
                         _: 1 /* STABLE */
@@ -123,49 +125,92 @@ export function render(_ctx, _cache) {
                       onNavigate: _cache[2] || (_cache[2] = $event => (_ctx.workspaceNavigation.request($event)))
                     }, null, 8 /* PROPS */, ["is-owner", "permissions", "read-only", "hash", "recovery-scope"]))
                   : _createCommentVNode("v-if", true),
+                (_ctx.page==='cash-controls' && _ctx.context.capabilities.view_cash_controls)
+                  ? (_openBlock(), _createBlock(_component_CashControlsPanel, {
+                      key: "cash-controls",
+                      permissions: _ctx.context.permissions,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
+                      "read-only": _ctx.readOnly,
+                      hash: _ctx.workspaceNavigation.hash.value,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
+                      onNavigate: _cache[3] || (_cache[3] = $event => (_ctx.workspaceNavigation.request($event)))
+                    }, null, 8 /* PROPS */, ["permissions", "is-owner", "read-only", "hash", "recovery-scope"]))
+                  : _createCommentVNode("v-if", true),
+                (_ctx.page==='stock-controls' && _ctx.context.capabilities.view_cash_controls)
+                  ? (_openBlock(), _createBlock(_component_CashControlsPanel, {
+                      "control-scope": "STOCK",
+                      key: "stock-controls",
+                      permissions: _ctx.context.permissions,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
+                      "read-only": _ctx.readOnly,
+                      hash: _ctx.workspaceNavigation.hash.value,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
+                      onNavigate: _cache[4] || (_cache[4] = $event => (_ctx.workspaceNavigation.request($event)))
+                    }, null, 8 /* PROPS */, ["permissions", "is-owner", "read-only", "hash", "recovery-scope"]))
+                  : _createCommentVNode("v-if", true),
+                (_ctx.page==='full-controls' && _ctx.context.capabilities.view_cash_controls)
+                  ? (_openBlock(), _createBlock(_component_CashControlsPanel, {
+                      "control-scope": "FULL",
+                      key: "full-controls",
+                      permissions: _ctx.context.permissions,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
+                      "read-only": _ctx.readOnly,
+                      hash: _ctx.workspaceNavigation.hash.value,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
+                      onNavigate: _cache[5] || (_cache[5] = $event => (_ctx.workspaceNavigation.request($event)))
+                    }, null, 8 /* PROPS */, ["permissions", "is-owner", "read-only", "hash", "recovery-scope"]))
+                  : _createCommentVNode("v-if", true),
+                (_ctx.page==='devices' && _ctx.context.capabilities.view_devices)
+                  ? (_openBlock(), _createBlock(_component_DevicesPanel, {
+                      key: 7,
+                      "is-owner": _ctx.context.role==='PRIMARY_OWNER',
+                      "read-only": _ctx.readOnly,
+                      "recovery-scope": _ctx.context.current_user?.recovery_scope||''
+                    }, null, 8 /* PROPS */, ["is-owner", "read-only", "recovery-scope"]))
+                  : _createCommentVNode("v-if", true),
                 (_ctx.page==='opening-cash' && _ctx.context.capabilities.manage_opening_cash)
                   ? (_openBlock(), _createBlock(_component_OpeningCashPanel, {
-                      key: 4,
+                      key: 8,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='customers' && _ctx.context.capabilities.view_customers)
                   ? (_openBlock(), _createBlock(_component_CustomerPanel, {
-                      key: 5,
+                      key: 9,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly,
                       hash: _ctx.workspaceNavigation.hash.value,
                       "recovery-scope": _ctx.context.current_user?.recovery_scope||'',
-                      onNavigate: _cache[3] || (_cache[3] = $event => (_ctx.workspaceNavigation.request($event)))
+                      onNavigate: _cache[6] || (_cache[6] = $event => (_ctx.workspaceNavigation.request($event)))
                     }, null, 8 /* PROPS */, ["permissions", "read-only", "hash", "recovery-scope"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='sale-history' && _ctx.context.capabilities.view_sale_drafts)
                   ? (_openBlock(), _createBlock(_component_SaleHistoryPanel, {
-                      key: 6,
+                      key: 10,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["permissions", "read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='sale-drafts' && _ctx.context.capabilities.view_sale_drafts)
                   ? (_openBlock(), _createBlock(_component_SaleDraftPanel, {
-                      key: 7,
+                      key: 11,
                       permissions: _ctx.context.permissions,
                       "read-only": _ctx.readOnly
                     }, null, 8 /* PROPS */, ["permissions", "read-only"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='home')
                   ? (_openBlock(), _createBlock(_component_workspace_home, {
-                      key: 8,
+                      key: 12,
                       context: _ctx.context,
                       access: _ctx.access,
                       items: _ctx.navigation,
                       "user-name": _ctx.context.current_user?.display_name||_ctx.presentation.userName,
-                      onNavigate: _cache[4] || (_cache[4] = $event => (_ctx.workspaceNavigation.request($event)))
+                      onNavigate: _cache[7] || (_cache[7] = $event => (_ctx.workspaceNavigation.request($event)))
                     }, null, 8 /* PROPS */, ["context", "access", "items", "user-name"]))
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='intakes' && _ctx.context.capabilities.view_inventory)
                   ? (_openBlock(), _createBlock(_component_intakes_panel, {
-                      key: 9,
+                      key: 13,
                       intakes: _ctx.intakes,
                       inventory: _ctx.inventoryActions,
                       "read-only": _ctx.readOnly
@@ -173,7 +218,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='products' && _ctx.context.capabilities.view_inventory)
                   ? (_openBlock(), _createBlock(_component_products_panel, {
-                      key: 10,
+                      key: 14,
                       products: _ctx.products,
                       inventory: _ctx.inventoryActions,
                       context: _ctx.context,
@@ -182,7 +227,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (['staff','settings','branding','domains','subscription'].includes(_ctx.page) && _ctx.navigation.some(item=>item.id===_ctx.page))
                   ? (_openBlock(), _createBlock(_component_owner_panel, {
-                      key: 11,
+                      key: 15,
                       page: _ctx.page,
                       model: _ctx.ownerTools,
                       "read-only": _ctx.readOnly
@@ -190,13 +235,13 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.page==='audit' && _ctx.context.capabilities.view_audit)
                   ? (_openBlock(), _createBlock(_component_audit_panel, {
-                      key: 12,
+                      key: 16,
                       mode: "owner"
                     }))
                   : _createCommentVNode("v-if", true),
                 (_ctx.notice)
                   ? (_openBlock(), _createBlock(_component_ui_alert, {
-                      key: 13,
+                      key: 17,
                       severity: "success",
                       message: _ctx.notice,
                       persistent: !['Shop details saved.','Staff account created.'].includes(_ctx.notice)
@@ -204,7 +249,7 @@ export function render(_ctx, _cache) {
                   : _createCommentVNode("v-if", true),
                 (_ctx.dialog.open)
                   ? (_openBlock(), _createBlock(_component_ui_dialog, {
-                      key: 14,
+                      key: 18,
                       open: _ctx.dialog.open,
                       busy: _ctx.dialog.pending,
                       "initial-focus": "#action-reason",
@@ -220,7 +265,7 @@ export function render(_ctx, _cache) {
                               "busy-label": "Saving change…",
                               onClick: _ctx.confirmDialog
                             }, {
-                              default: _withCtx(() => [...(_cache[10] || (_cache[10] = [
+                              default: _withCtx(() => [...(_cache[13] || (_cache[13] = [
                                 _createTextVNode("Confirm", -1 /* CACHED */)
                               ]))]),
                               _: 1 /* STABLE */
@@ -247,11 +292,11 @@ export function render(_ctx, _cache) {
                         (_ctx.dialog.type==='status')
                           ? (_openBlock(), _createElementBlock("p", _hoisted_5, _toDisplayString(_ctx.dialog.member.status==='ACTIVE'?'This person will no longer be able to use their Staff account. Past records stay.':'This person will be able to sign in again with their allowed actions.'), 1 /* TEXT */))
                           : _createCommentVNode("v-if", true),
-                        _cache[11] || (_cache[11] = _createElementVNode("label", { for: "action-reason" }, "Reason", -1 /* CACHED */)),
+                        _cache[14] || (_cache[14] = _createElementVNode("label", { for: "action-reason" }, "Reason", -1 /* CACHED */)),
                         _withDirectives(_createElementVNode("textarea", {
                           id: "action-reason",
                           ref: "dialogReason",
-                          "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => ((_ctx.dialog.reason) = $event)),
+                          "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => ((_ctx.dialog.reason) = $event)),
                           disabled: _ctx.dialog.pending || Boolean(_ctx.temporaryCredential),
                           class: "form-control",
                           rows: "3",
@@ -273,9 +318,9 @@ export function render(_ctx, _cache) {
                           : _createCommentVNode("v-if", true),
                         (_ctx.temporaryCredential)
                           ? (_openBlock(), _createElementBlock("div", _hoisted_7, [
-                              _cache[8] || (_cache[8] = _createElementVNode("strong", null, "Temporary password — copy it now:", -1 /* CACHED */)),
+                              _cache[11] || (_cache[11] = _createElementVNode("strong", null, "Temporary password — copy it now:", -1 /* CACHED */)),
                               _createElementVNode("code", _hoisted_8, _toDisplayString(_ctx.temporaryCredential), 1 /* TEXT */),
-                              _cache[9] || (_cache[9] = _createElementVNode("p", null, "It will not be shown again.", -1 /* CACHED */))
+                              _cache[12] || (_cache[12] = _createElementVNode("p", null, "It will not be shown again.", -1 /* CACHED */))
                             ]))
                           : _createCommentVNode("v-if", true)
                       ]),
@@ -296,12 +341,12 @@ export function render(_ctx, _cache) {
               icon: "refresh",
               onClick: _ctx.load
             }, {
-              default: _withCtx(() => [...(_cache[12] || (_cache[12] = [
+              default: _withCtx(() => [...(_cache[15] || (_cache[15] = [
                 _createTextVNode("Reload your shop", -1 /* CACHED */)
               ]))]),
               _: 1 /* STABLE */
             }, 8 /* PROPS */, ["onClick"]),
-            _cache[13] || (_cache[13] = _createElementVNode("a", { href: "/logout" }, "Sign out", -1 /* CACHED */))
+            _cache[16] || (_cache[16] = _createElementVNode("a", { href: "/logout" }, "Sign out", -1 /* CACHED */))
           ]))
   ]))
 }

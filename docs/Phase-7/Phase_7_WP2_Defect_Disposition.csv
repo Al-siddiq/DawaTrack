@@ -1,0 +1,5 @@
+item_id,type,severity,status,description,disposition
+P7-WP2-GAP-01,verification_gap,high,Open native gate,Native MySQL migrations composite FKs checks snapshot DECIMAL locks and rollback not executed here,Run backed-up native guide and record observations before release
+P7-WP2-GAP-02,verification_gap,high,Open native gate,HTTP CSRF real cookie Device receipts generation recovery real device accessibility and restore not executed here,Owner native manual review required; no inferred Pass
+P7-WP2-FIX-01,integration_fix,medium,Source corrected native review open,WP1 Device and new Cash notices used wrong shared status-panel props,Use shared information panels; host probe checks visible unknown/offline notices
+P7-WP2-BOUNDARY-01,planned_scope,info,Deferred as approved,Stock count table is only full-schema dependency and Stock Full adjustment lifecycles remain WP3,No placeholder Stock Full control or adjustment route activated

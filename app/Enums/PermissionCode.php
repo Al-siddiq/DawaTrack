@@ -31,6 +31,11 @@ enum PermissionCode: string
     case FinancialCorrect = 'financial.correct';
     case FinancialReverse = 'financial.reverse';
     case ReconciliationView = 'reconciliation.view';
+    case ReconciliationStart = 'reconciliation.start';
+    case ReconciliationCommit = 'reconciliation.commit';
+    case ReconciliationAbort = 'reconciliation.abort';
+    case ReconciliationExcludeDevice = 'reconciliation.exclude_device';
+    case ReconciliationNote = 'reconciliation.note';
     case ReconciliationCount = 'reconciliation.count';
     case ReconciliationReview = 'reconciliation.review';
     case ReconciliationFinalize = 'reconciliation.finalize';

@@ -25,7 +25,9 @@ $this->states=new CostStateReconstructor();
  public function reverse(ShopContext $context,string $intakePublicId,string $reason): string{$this->authorize($context);
 $reason=SensitiveReason::require($reason);
 $this->database->transException(true)->transBegin();
-try{$intake=$this->database->query('SELECT * FROM stock_intakes WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$context->shopId,strtolower($intakePublicId)])->getRowArray();
+try{
+(new \App\Modules\Reconciliation\Application\StockControlGuard($this->database))->assertCanAffectStock($context, ['inventory.reverse']);
+$intake=$this->database->query('SELECT * FROM stock_intakes WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$context->shopId,strtolower($intakePublicId)])->getRowArray();
 if(!$intake)throw new ApiException('INTAKE_NOT_FOUND','The Stock Intake was not found.',404);
 if($intake['status']!=='POSTED')throw new ApiException('INTAKE_NOT_POSTED','Only a posted Stock Intake can be reversed.',409);
 if($intake['reversal_of_intake_id']!==null)throw new ApiException('REVERSAL_OF_REVERSAL_NOT_ALLOWED','Use a Correction instead of reversing a reversal.',409);

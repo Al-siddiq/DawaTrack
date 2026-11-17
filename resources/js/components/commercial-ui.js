@@ -47,8 +47,18 @@ const errorCopy = {
     SALE_HAS_EFFECTIVE_RETURNS: 'This sale already has returns. Check those returns before trying to cancel the sale.',
     REPLACEMENT_EXISTS: 'A replacement already exists. Open that record instead of creating another.',
     PERMISSION_DENIED: 'You are not allowed to do this. Ask your shop owner for help.',
+    EXPECTED_CASH_EVIDENCE_INVALID: 'Some saved cash records need checking. Open the related sale or customer payment, or ask the shop owner for help.',
     REQUEST_TIMEOUT: 'We could not confirm the result in time. Check the saved record before trying again.',
     NETWORK_ERROR: 'We cannot reach DawaTrack. Check your connection and the saved status before trying again.',
 };
-export const message = error => [error.status >= 500 ? 'DawaTrack could not complete the request. Check the saved status before trying again.' : errorCopy[error.code] || error.message, ...(error.status >= 500 ? [] : Object.values(error.details ?? {}).flat()), error.requestId && `Support reference: ${error.requestId}`].filter(Boolean).join(' ');
+// Only these public setup codes have operator-safe text. Unexpected 5xx stay redacted.
+const setupCopy = {
+    DEVICE_SETUP_REQUIRED: 'Phones and computers are not yet set up for this check. Ask the person who sets up DawaTrack for your shop to help.',
+    CASH_CONTROL_SETUP_REQUIRED: 'Cash and stock checks are not yet ready to use. Ask the person who sets up DawaTrack for your shop to finish the setup.',
+    STOCK_CONTROL_SETUP_REQUIRED: 'Stock checks are not yet ready to use. Ask the person who sets up DawaTrack for your shop to finish the setup.',
+    EXPECTED_CASH_SETUP_REQUIRED: 'Some sales or customer payment records are not ready for this cash check. Ask the person who sets up DawaTrack for your shop to help.',
+    READINESS_SETUP_REQUIRED: 'DawaTrack cannot check shop phones and computers yet. Ask the person who sets up DawaTrack for your shop to help.',
+};
+export const setupMessage = error => error.status === 503 ? setupCopy[error.code] || null : null;
+export const message = error => [setupMessage(error) || (error.status >= 500 ? 'We could not load or save this. Check what was saved before trying again.' : errorCopy[error.code] || error.message), ...(error.status >= 500 ? [] : Object.values(error.details ?? {}).flat()), error.requestId && `Number for help: ${error.requestId}`].filter(Boolean).join(' ');
 export const pager = (page, disabled, load) => h(UiPagination, { page: page.page, totalPages: page.total_pages, busy: disabled, onPageRequest: load });

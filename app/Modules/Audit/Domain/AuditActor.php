@@ -12,6 +12,7 @@ final readonly class AuditActor
         public ?int $membershipId,
         public ?int $tenantId,
         public ?int $shopId,
+        public ?int $deviceId = null,
     ) {
     }
 
@@ -22,6 +23,12 @@ final readonly class AuditActor
         int $shopId,
     ): self {
         return new self(AuditAuthority::TENANT, $userId, $membershipId, $tenantId, $shopId);
+    }
+
+    public static function tenantDevice(
+        int $userId, int $membershipId, int $tenantId, int $shopId, int $deviceId,
+    ): self {
+        return new self(AuditAuthority::TENANT, $userId, $membershipId, $tenantId, $shopId, $deviceId);
     }
 
     public static function platformUser(int $userId, ?int $tenantId = null, ?int $shopId = null): self

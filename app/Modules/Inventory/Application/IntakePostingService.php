@@ -27,6 +27,8 @@ final class IntakePostingService
     {
         $this->authorize($context);$publicId=strtolower($publicId);$this->database->transException(true)->transBegin();
         try {
+(new \App\Modules\Reconciliation\Application\StockControlGuard($this->database))->assertCanAffectStock($context, ['inventory.intake']);
+
             $intake=$this->database->query('SELECT * FROM stock_intakes WHERE tenant_id=? AND shop_id=? AND public_id=? FOR UPDATE',[$context->tenantId,$context->shopId,$publicId])->getRowArray();
             if(!$intake)throw new ApiException('INTAKE_NOT_FOUND','The Stock Intake was not found.',404);if($intake['status']!=='DRAFT')throw new ApiException('INTAKE_ALREADY_POSTED','This Stock Intake has already been posted.',409);
             $replacementOriginal=null;$replacementReason=null;

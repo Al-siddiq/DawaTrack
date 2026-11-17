@@ -2,7 +2,7 @@ import { UiButton } from './primitives.js';
 const { h, ref, watch, nextTick, onMounted, onBeforeUnmount, useId } = window.Vue;
 let activeOverlay = null;
 
-/** One native modal at a time. The browser supplies focus containment and inert background. */
+/** One native modal at a time. The browser supplies the inert background; Tab stays within the dialog. */
 export const UiDialog = {
     inheritAttrs: false,
     props: {
@@ -42,6 +42,20 @@ export const UiDialog = {
                 (target ?? heading.value)?.focus();
             } catch (error) { element.value?.close(); release(); emit('close-error', error); }
         }
+        function containTab(event) {
+            if (event.key !== 'Tab' || event.altKey || event.ctrlKey || event.metaKey || event.defaultPrevented) return;
+            const dialog = element.value;
+            if (!dialog?.open) return;
+            const targets = [...dialog.querySelectorAll('a[href], button, input, select, textarea, [tabindex]')]
+                .filter(node => node.tabIndex >= 0 && !node.matches(':disabled') && !node.closest('[inert]')
+                    && node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden');
+            const first = targets[0], last = targets.at(-1), current = document.activeElement;
+            if (!first || !targets.includes(current) || (event.shiftKey ? current === first : current === last)) {
+                event.preventDefault();
+                (event.shiftKey ? last : first)?.focus();
+                if (!first) heading.value?.focus();
+            }
+        }
         async function requestClose(reason = 'close') {
             if (!props.closable || props.busy || guardPending) return;
             guardPending = true;
@@ -61,6 +75,7 @@ export const UiDialog = {
             ...attrs, ref: element, class: ['ui-dialog', props.variant === 'sheet' && ['ui-sheet', `ui-sheet--${props.placement}`], attrs.class],
             'aria-labelledby': `${id}-title`, 'aria-describedby': props.description ? `${id}-description` : undefined,
             'aria-modal': 'true', 'aria-busy': props.busy ? 'true' : undefined,
+            onKeydown: [attrs.onKeydown, containTab].flat().filter(Boolean),
             onCancel: event => { event.preventDefault(); requestClose('escape'); },
             onClose: async () => {
                 if (!alive || !props.open) { release(); return; }

@@ -55,6 +55,9 @@ final class CommercialReversalService
         ) {
             (new CashControlGuard($this->db))->assertCanAffectCash($c);
         }
+        if ($cashGuard) {
+            (new \App\Modules\Reconciliation\Application\StockControlGuard($this->db))->assertCanAffectStock($c);
+        }
         $root = $this->e->root($c, $pre, true);
         $row = $this->e->header($c, $id, true);
         if ($this->e->reversal($c, (int) $row["id"])) {
