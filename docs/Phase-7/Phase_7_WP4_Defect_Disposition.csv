@@ -1,0 +1,11 @@
+id,severity,item,disposition,evidence,release_state
+WP4-01,Medium,Stock list loads all rows on each read/save,Fixed candidate,Bounded 137-item PHP/SQLite probe; full digest retained,Native query-plan/timing review pending
+WP4-02,High,Free-text cancel/exclusion reasons could reveal expected values to blind readers,Fixed candidate,Scoped DTO redaction; actual PHP DTO probe; native cross-route case pending,Native P7-42 gate
+WP4-03,Medium,Generation-changed page still offered progress actions,Fixed candidate,UI blocks count/confirm/ack/explain and allows reasoned cancel; browser fixture probe,Native P7-41 gate
+WP4-04,Low,Multiple Full late sources appended duplicate control refreshes,Fixed candidate,Actual publication class probe with mocked source/DB,Native transaction proof pending
+WP4-05,Medium,Tab can leave native confirmation dialog,Fixed candidate,Explicit Tab wrap; actual headless browser keyboard check,Physical device and assistive-technology gate pending
+WP4-06,Low,Extra detail GET and stale response follow-up work,Fixed candidate,Reuse scoped success DTO once; explicit recovery stays GET,Native request-count observation pending
+GATE-01,High,Native migrations arithmetic FK and rollback coverage not supplied,Open verification blocker,P7-01 through P7-48 registers retain Not run,Release HOLD
+GATE-02,High,Native source concurrency failure atomicity generation and real cookie/CSRF coverage not supplied,Open verification blocker,P7-38 through P7-43 and P7-45,Release HOLD
+GATE-03,High,Native bounded-query timing backup restore and compatible rollback not rehearsed,Open verification blocker,P7-46 and P7-47,Release HOLD
+GATE-04,High,Whole-phase Owner acceptance against exact candidate absent,Pending Owner decision,P7-48 and release decision record,Release HOLD

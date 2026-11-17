@@ -1,5 +1,7 @@
 # Phase 7 — Reconciliation Control Engine: strategic implementation plan
 
+Current handover (17 November 2026): WP1–WP3 accepted; [WP4 candidate](Phase_7_WP4_Delivery_Report.md) prepared. Whole-phase native acceptance and release are pending. Historical planning text below is retained.
+
 **Date:** 15 November 2026 (Africa/Lagos)
 **Status:** OWNER-ACCEPTED — 15 November 2026; WP1 only authorized. See the dated approval record.
 **Reviewed baseline:** merged main at `4266400` (closure PR #49), following Phase 6 WP4 integration PR #48 (`1677106`). Application content matches accepted WP4 `9483c57`; closure content matches the previously prepared handover.

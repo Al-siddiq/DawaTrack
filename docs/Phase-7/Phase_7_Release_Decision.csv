@@ -1,0 +1,14 @@
+field,value,evidence,status
+reviewed_commit,Pending,Exact WP4 PR head,Pending
+content_sha256,347a3a4075c6cd623e68f323f3d2de30cced1592f601aad109b190db76b4b26b,Phase_7_WP4_Artifact_Manifest.json,Recorded
+manifest_file_sha256,4f94a55b99a3bf9ebc72e8152aaf581f4899e20e7f3454251448af7c8b835f55,Phase_7_WP4_Artifact_Manifest.json,Recorded
+native_environment,Not supplied,Record PHP Composer MySQL OS server browser SQL mode engine hostname and times,Pending
+native_results,48 Not run,Phase_7_WP4_Integrated_Manual_Results.csv,Pending
+backup_restore,Not rehearsed here,operations/phase-07-final-handover.md,Pending
+compatible_rollback,Accepted WP3 c9d8b996a830ce1ce3248a46d7516d7524e1ea80,Rehearse with existing Phase7 schema and evidence,Pending native rehearsal
+wp4_owner_review,Not recorded,Owner exact-candidate decision,Pending
+whole_phase_acceptance,Not recorded,Owner exact commit inventory and evidence decision,Pending
+release_decision,HOLD,High verification blockers remain,Pending
+merge_authorization,Not recorded,Separate integration decision,Pending
+deployment_authorization,Not recorded,Separate operation window operator and protected backup record,Pending
+phase8_authorization,Not recorded,Separate plan and instruction,Outside WP4

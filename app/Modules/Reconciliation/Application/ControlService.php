@@ -194,7 +194,7 @@ class ControlService
             }
             $this->status($control, ['COUNTING']);
             if ($this->hasStock()) {
-                $revision = StockCountEvidence::revision($id, $rows, $cash);
+                $revision = (new StockCountEvidence($this->database))->commitRevision($context, $control, $cash);
                 if (!is_string($input['expected_commit_revision'] ?? null) || !hash_equals($revision, $input['expected_commit_revision'])) {
                     throw new ApiException('CASH_CONTROL_STALE', 'A saved count has changed. Reload and check all saved counts before confirming them.', 409);
                 }
@@ -496,14 +496,7 @@ class ControlService
         return $this->command($context, [$explain ? 'reconciliation.review' : 'reconciliation.count'], function () use ($context, $id, $input, $product, $value, $explain): string {
             $control = $this->repository->control($context, $id, true);
             $this->status($control, [$explain ? 'REVIEW' : 'COUNTING']);
-            $rows = (new StockCountEvidence($this->database))->rows($context, $control, true);
-            $row = null;
-            foreach ($rows as $candidate) {
-                if ($candidate['product_public_id'] === $product) {
-                    $row = $candidate;
-                    break;
-                }
-            }
+            $row = (new StockCountEvidence($this->database))->one($context, $control, $product, true);
             if ($row === null) {
                 throw new ApiException('STOCK_COUNT_NOT_FOUND', 'This item is not on the list for this check.', 404);
             }

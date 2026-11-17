@@ -12,6 +12,7 @@ const cash = value => {
     const [whole, fraction = ''] = text.split('.');
     return `${whole}.${fraction.padEnd(2, '0')}`;
 };
+const isRecoveredAbort = (record, marker) => record?.status === 'ABORTED' && marker?.action === 'abort' && record.public_id === marker.control_public_id;
 const utc = value => value ? new Date(value).toISOString().replace('T', ' ').replace('Z', '000') : null;
 const labels = { COUNTING: 'Count now', COUNTS_COMMITTED: 'Count confirmed', REVIEW: 'Compare the numbers', FINALIZED: 'Finished', ABORTED: 'Cancelled' };
 const roles = { ON_DUTY: 'Worked in the shop', COUNTER: 'Counted', REVIEWER: 'Checked the numbers', FINALIZER: 'Finished the check' };
@@ -60,6 +61,7 @@ export const CashControlsPanel = {
         const has = code => props.permissions.includes(`reconciliation.${code}`);
         const stepHelp = status => {
             if (props.readOnly) return 'You can look at this saved check, but you cannot change it.';
+            if (control.value?.generation_changed && ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'].includes(status)) return has('abort') ? 'This check cannot continue after DawaTrack changed. Give a reason and cancel it, then start again.' : 'This check cannot continue after DawaTrack changed. Ask the shop owner to cancel it and start again.';
             if (status === 'COUNTING') return has('count')
                 ? `Enter what you counted and save it. ${has('commit') ? 'Check each saved number before you confirm the count.' : 'Someone allowed to confirm the count must continue from here.'}`
                 : 'Counting is still in progress. You can look at the check, but you are not allowed to enter a count. Ask the person counting to save and confirm it.';
@@ -70,10 +72,11 @@ export const CashControlsPanel = {
                 ? `Compare your count with the shop records. Save a reason for each difference. ${has('finalize') ? 'Then finish the check.' : 'Someone allowed to finish the check will finish it.'}`
                 : 'The counts are being checked. You can look at the saved details you are allowed to see.';
             if (status === 'FINALIZED') return `This check is finished. The counts cannot be changed. ${has('review') && has('note') ? 'You can add a note if you find out more later.' : 'Ask the shop owner if you find out more later.'}`;
-            if (status === 'ABORTED') return 'This check was cancelled. Your entries were kept, but they will not be used as a finished count.';
+            if (status === 'ABORTED') return 'This check was cancelled. Counts you already saved were kept, but they will not be used as a finished count.';
             return 'Open this check to see what was saved.';
         };
         const blocked = computed(() => pending.value || loading.value || !loaded.value || props.readOnly || !online.value || unknown.value);
+        const progressBlocked = computed(() => blocked.value || !!control.value?.generation_changed);
         const key = `dt:pending-${scope === 'CASH' ? 'cash-control' : slug}:${location.host}:${props.recoveryScope}`;
         let revision = 0, alive = true;
         const dirty = computed(() => stockDirty.value || adjustmentReason.value.trim() || noteText.value.trim() || reason.value.trim() || Object.keys(duty.value).length
@@ -120,7 +123,7 @@ export const CashControlsPanel = {
             // The parent navigation guard approves the route; its hash watcher loads the next record.
             emit('navigate', id ? `${rootHash}/${id}` : rootHash);
         }
-        async function load(preserve = true) {
+        async function load(preserve = true, savedDetail = null) {
             const request = ++revision;
             const id = selectedId.value;
             loading.value = true;
@@ -136,7 +139,14 @@ export const CashControlsPanel = {
                     records.value = result.data.controls;
                     listPages.value = result.meta.pagination.total_pages;
                 } else {
-                    const result = await apiRequest(`${root}/${id}`);
+                    // A successful command already returns the current scoped detail.
+                    // Reuse it once; explicit status checks always make a fresh GET.
+                    const reusable = savedDetail?.public_id === id && savedDetail?.scope === scope
+                        && labels[savedDetail?.status] && savedDetail?.readiness
+                        && typeof savedDetail?.can_review_values === 'boolean'
+                        && (!hasStock || savedDetail.stock_progress);
+                    const result = reusable ? { data: savedDetail } : await apiRequest(`${root}/${id}`);
+                    if (!alive || request !== revision) return;
                     const value = result.data;
                     const requests = [apiRequest(`${root}/${id}/readiness?page=${devicePage.value}&per_page=20`)];
                     if (value.can_review_values) requests.push(apiRequest(`${root}/${id}/staff?page=${staffPage.value}&per_page=20`));
@@ -171,6 +181,7 @@ export const CashControlsPanel = {
                     }
                     if (unknown.value) notice.value = 'Here is what was saved. Keep the same check or note number if you need to try again.';
                 }
+                if (isRecoveredAbort(control.value, savedMarker.value)) { stockDrafts.value = {}; reason.value = ''; }
                 loaded.value = true;
                 if (unknown.value && savedMarker.value?.action === 'adjust') {
                     const status = (await apiRequest(`${root}/${id}/adjustment-status?public_id=${savedMarker.value.movement_public_id}`)).data;
@@ -197,6 +208,7 @@ export const CashControlsPanel = {
         }
         async function command(actionName, body = {}, allowRetry = false) {
             if (pending.value || loading.value || !loaded.value || props.readOnly || !online.value || (unknown.value && !allowRetry)) return;
+            if (control.value?.generation_changed && !['start', 'abort', 'note', 'adjust'].includes(actionName)) return;
             const id = actionName === 'start' ? startId.value : selectedId.value;
             if (!validId(id)) return;
             pending.value = true;
@@ -206,17 +218,18 @@ export const CashControlsPanel = {
             remember(actionName, id);
             try {
                 const path = actionName === 'start' ? root : `${root}/${id}/${actionName}`;
-                await apiRequest(path, { method: 'POST', body: JSON.stringify(actionName === 'start' ? { public_id: id, ...body } : body) });
+                const response = await apiRequest(path, { method: 'POST', body: JSON.stringify(actionName === 'start' ? { public_id: id, ...body } : body) });
                 unknown.value = false;
                 clearMarker();
                 if (actionName === 'note') { noteId.value = crypto.randomUUID(); noteText.value = ''; }
                 if (actionName === 'adjust') { adjustment.value = adjustmentPreview.value = null; adjustmentReason.value = ''; }
+                if (actionName === 'abort') stockDrafts.value = {};
                 if (actionName === 'start') { duty.value = {}; startId.value = crypto.randomUUID(); }
                 reason.value = '';
                 notice.value = 'Saved. The page now shows your saved work.';
                 selectedId.value = id;
                 emit('navigate', `${rootHash}/${id}`);
-                await load(hasStock && ['count', 'explain'].includes(actionName) && !!body.product_public_id);
+                await load(hasStock && ['count', 'explain'].includes(actionName) && !!body.product_public_id, actionName === 'adjust' ? null : response.data);
             } catch (e) {
                 error.value = message(e);
                 // Start checks this setting before any new control row is written.
@@ -239,11 +252,11 @@ export const CashControlsPanel = {
             } catch (e) { error.value = message(e); }
         }
         async function confirmCommand(name, body, title, text) {
-            if (blocked.value) return;
+            if (blocked.value || (name !== 'abort' && control.value?.generation_changed)) return;
             if (await confirmation.ask({ title, message: text, confirm: 'Confirm', danger: name === 'abort' })) await command(name, body);
         }
         async function acknowledge() {
-            if (blocked.value) return;
+            if (progressBlocked.value) return;
             pending.value = true;
             error.value = '';
             let receipt;
@@ -282,7 +295,7 @@ export const CashControlsPanel = {
         }
         async function saveStock(row, explain = false) {
             const draft = stockDrafts.value[row.product_public_id];
-            if (!draft || blocked.value) return;
+            if (!draft || progressBlocked.value) return;
             const before = draft;
             await command(explain ? 'explain' : 'count', { product_public_id: row.product_public_id,
                 [explain ? 'explanation' : 'actual_quantity']: draft[explain ? 'explanation' : 'actual_quantity'], expected_updated_at: draft.revision });
@@ -391,7 +404,7 @@ export const CashControlsPanel = {
                     device.reason && h('p', `Reason: ${device.reason}`),
                     device.decided_by && h('p', `Checked by ${device.decided_by}`),
                     props.isOwner && has('exclude_device') && !device.decision && ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'].includes(control.value.status)
-                        && action('Skip this phone or computer', () => confirmCommand('exclude', { device_public_id: device.public_id, reason: reason.value }, 'Skip this phone or computer?', 'This phone or computer has not been checked. Some shop records may still be on it. The reason you give for skipping it will be saved.'), blocked.value || !reason.value.trim()),
+                        && action('Skip this phone or computer', () => confirmCommand('exclude', { device_public_id: device.public_id, reason: reason.value }, 'Skip this phone or computer?', 'This phone or computer has not been checked. Some shop records may still be on it. The reason you give for skipping it will be saved.'), progressBlocked.value || !reason.value.trim()),
                 ])),
                 pages('Phone and computer pages', devicePage, devicePages, () => load(true)),
                 control.value.status === 'COUNTING' && h('div', [
@@ -399,10 +412,10 @@ export const CashControlsPanel = {
                     has('count') && control.value.count && h('form', { class: 'commercial-form', onSubmit: event => {
                         event.preventDefault(); command('count', { amount: amount.value, expected_updated_at: control.value.count.revision });
                     } }, [
-                        field('cash-actual', 'Cash you counted', amount.value, v => { amount.value = v; }, { inputmode: 'decimal', required: true, disabled: blocked.value }),
+                        field('cash-actual', 'Cash you counted', amount.value, v => { amount.value = v; }, { inputmode: 'decimal', required: true, disabled: progressBlocked.value }),
                         h('p', `Saved cash count: ${control.value.count.actual_amount === null ? 'Not counted yet' : `₦${control.value.count.actual_amount}`}`),
-                        submit('Save cash count', blocked.value, { loading: pending.value }),
-                        has('commit') && action(hasStock ? 'Confirm cash and item counts' : 'Confirm this count', () => confirmCommand('commit', commitBody(), 'Keep these counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), blocked.value || !control.value.readiness.complete || control.value.count.actual_amount === null || cash(amount.value) !== control.value.count.actual_amount || (hasStock && (!control.value.stock_progress.all_counted || stockDirty.value))),
+                        submit('Save cash count', progressBlocked.value, { loading: pending.value }),
+                        has('commit') && action(hasStock ? 'Confirm cash and item counts' : 'Confirm this count', () => confirmCommand('commit', commitBody(), 'Keep these counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), progressBlocked.value || !control.value.readiness.complete || control.value.count.actual_amount === null || cash(amount.value) !== control.value.count.actual_amount || (hasStock && (!control.value.stock_progress.all_counted || stockDirty.value))),
                     ]),
                 ]),
                 control.value.status === 'COUNTS_COMMITTED' && has('review') && action('Compare the numbers', () => command('review'), blocked.value || control.value.generation_changed),
@@ -417,7 +430,7 @@ export const CashControlsPanel = {
                     control.value.snapshot.explanation && h('p', `Saved reason: ${control.value.snapshot.explanation}`),
                     control.value.status === 'REVIEW' && h('form', { class: 'commercial-form', onSubmit: event => {
                         event.preventDefault(); command('explain', { explanation: explanation.value, expected_updated_at: control.value.count.revision });
-                    } }, [field('cash-explanation', 'Why are the numbers different?', explanation.value, v => { explanation.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value, required: true }), submit('Save reason', blocked.value, { loading: pending.value })]),
+                    } }, [field('cash-explanation', 'Why are the numbers different?', explanation.value, v => { explanation.value = v; }, { multiline: true, maxlength: 500, disabled: progressBlocked.value, required: true }), submit('Save reason', progressBlocked.value, { loading: pending.value })]),
                     !hasStock && control.value.status === 'REVIEW' && has('finalize') && action('Finish cash check', () => confirmCommand('finalize', {}, 'Finish this cash check?', 'The count and reason cannot be changed after this. The next cash check will start from the cash you counted. This will not add or remove any money.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || explanation.value !== (control.value.snapshot.explanation || '')),
                     h('h3', 'Who took part in this check?'),
                     ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${roles[row.context_role] || 'Took part'}${row.context_starts_at ? `; from ${when(row.context_starts_at)}` : ''}${row.context_ends_at ? `; to ${when(row.context_ends_at)}` : ''}${row.notes ? `; ${row.notes}` : ''}`)),
@@ -425,9 +438,9 @@ export const CashControlsPanel = {
                 ]),
                 ['COUNTING', 'COUNTS_COMMITTED', 'REVIEW'].includes(control.value.status) && (has('abort') || (props.isOwner && has('exclude_device'))) && h('div', [
                     field('cash-control-reason', 'Why are you skipping a phone or computer, or cancelling this check?', reason.value, v => { reason.value = v; }, { multiline: true, maxlength: 500, disabled: blocked.value }),
-                    has('abort') && action(`Cancel ${title.toLowerCase()} check`, () => confirmCommand('abort', { reason: reason.value }, `Cancel this ${title.toLowerCase()} check?`, 'Your entries will be kept, but this count will not be used for the next check. You can start again.'), blocked.value || !reason.value.trim()),
+                    has('abort') && action(`Cancel ${title.toLowerCase()} check`, () => confirmCommand('abort', { reason: reason.value }, `Cancel this ${title.toLowerCase()} check?`, 'Counts you already saved will be kept. Unsaved entries will not be used. This check will not be used for the next check. You can start again.'), blocked.value || !reason.value.trim()),
                 ]),
-                control.value.status === 'ABORTED' && h('p', `Reason for cancelling: ${control.value.abort_reason}`),
+                control.value.status === 'ABORTED' && h('p', control.value.abort_reason ? `Reason for cancelling: ${control.value.abort_reason}` : 'Ask the shop owner for the reason this check was cancelled.'),
                 control.value.status === 'FINALIZED' && control.value.can_review_values && h('div', [
                     h('h3', 'Notes added after the check'),
                     ...notes.value.map(row => h('article', { key: row.public_id, class: 'ui-card' }, [h('h4', noteLabels[row.note_type] || 'Note'), h('p', row.note_text), row.variance_public_id && h('p', `Difference number: ${row.variance_public_id}`), h('p', `${row.author_name} — ${when(row.created_at)}`), h('small', row.public_id)])),
@@ -451,13 +464,13 @@ export const CashControlsPanel = {
                             h('h4', `${row.name} (${row.unit_name})`), h('small', row.product_public_id),
                             row.actual_quantity !== undefined && h('p', `Saved item count: ${row.actual_quantity === null ? 'Not counted' : row.actual_quantity}`),
                             control.value.status === 'COUNTING' && has('count') && row.revision !== undefined && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row); } }, [
-                                field(`stock-actual-${row.product_public_id}`, 'How many did you count?', draft?.actual_quantity ?? row.actual_quantity ?? '', v => stockDraft(row, 'actual_quantity', v), { inputmode: 'decimal', required: true, disabled: blocked.value }),
-                                submit('Save item count', blocked.value || !draft || !quantity(draft.actual_quantity)),
+                                field(`stock-actual-${row.product_public_id}`, 'How many did you count?', draft?.actual_quantity ?? row.actual_quantity ?? '', v => stockDraft(row, 'actual_quantity', v), { inputmode: 'decimal', required: true, disabled: progressBlocked.value }),
+                                submit('Save item count', progressBlocked.value || !draft || !quantity(draft.actual_quantity)),
                             ]),
                             row.expected_quantity !== undefined && h('div', [h('p', `Items in the shop records: ${row.expected_quantity}. ${row.cost_basis_state === "UNESTABLISHED" ? "Buying price is not yet known." : `Buying price used per item: ₦${row.expected_average_unit_cost}. ${costLabels[row.cost_basis_state] || "Buying price needs checking"}.`}`),
                                 h('p', differenceText(row.variance_quantity)),
                                 row.explanation && h('p', `Saved reason: ${row.explanation}`),
-                                control.value.status === 'REVIEW' && has('review') && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row, true); } }, [field(`stock-explain-${row.product_public_id}`, 'Why is the item count different?', draft?.explanation ?? row.explanation ?? '', v => stockDraft(row, 'explanation', v), { multiline: true, maxlength: 500, required: true, disabled: blocked.value }), submit('Save reason', blocked.value || !draft)]),
+                                control.value.status === 'REVIEW' && has('review') && h('form', { onSubmit: event => { event.preventDefault(); saveStock(row, true); } }, [field(`stock-explain-${row.product_public_id}`, 'Why is the item count different?', draft?.explanation ?? row.explanation ?? '', v => stockDraft(row, 'explanation', v), { multiline: true, maxlength: 500, required: true, disabled: progressBlocked.value }), submit('Save reason', progressBlocked.value || !draft)]),
                             ]),
                             draft && action('Drop my changes and use the saved count', () => { const copy = { ...stockDrafts.value }; delete copy[row.product_public_id]; stockDrafts.value = copy; }, blocked.value),
                             row.variance_public_id && h('p', `Difference number: ${row.variance_public_id}`),
@@ -467,7 +480,7 @@ export const CashControlsPanel = {
                         ]);
                     }),
                     pages('Item count pages', stockPage, stockPages, () => load(true)),
-                    !hasCash && control.value.status === 'COUNTING' && has('count') && has('commit') && action('Confirm all item counts', () => confirmCommand('commit', commitBody(), 'Keep all these item counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), blocked.value || !control.value.stock_progress.all_counted || !control.value.readiness.complete || stockDirty.value),
+                    !hasCash && control.value.status === 'COUNTING' && has('count') && has('commit') && action('Confirm all item counts', () => confirmCommand('commit', commitBody(), 'Keep all these item counts?', 'You cannot change these counts after this. Next, a person allowed to check them can compare them with the shop records.'), progressBlocked.value || !control.value.stock_progress.all_counted || !control.value.readiness.complete || stockDirty.value),
                     control.value.status === 'REVIEW' && has('finalize') && action(`Finish ${title.toLowerCase()} check`, () => confirmCommand('finalize', {}, `Finish this ${title.toLowerCase()} check?`, 'Add a reason for each difference first. After this, the count and reasons cannot be changed. Stock stays as it is until you choose to change the stock record. This will not add or remove any money.'), blocked.value || !control.value.readiness.complete || control.value.generation_changed || stockDirty.value || (hasCash && explanation.value !== (control.value.snapshot?.explanation || ''))),
                     control.value.can_review_values && !hasCash && h('div', [h('h3', 'Who took part in this check?'), ...staff.value.map(row => h('p', { key: `${row.membership_public_id}:${row.context_role}` }, `${row.display_name}: ${roles[row.context_role] || 'Took part'}${row.context_starts_at ? `; from ${when(row.context_starts_at)}` : ''}${row.context_ends_at ? `; to ${when(row.context_ends_at)}` : ''}${row.notes ? `; ${row.notes}` : ''}`)), pages('People pages', staffPage, staffPages, () => load(true))]),
                     control.value.variance_public_id && has('note') && action('Add a note about the cash difference', () => { noteVariance.value = control.value.variance_public_id; }, blocked.value),

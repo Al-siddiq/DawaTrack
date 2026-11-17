@@ -50,7 +50,7 @@ class ControlQuery
         return (new DebtReadSnapshot($this->database))->run(function () use ($context, $id, $cookie): array {
             $control = $this->repository->control($context, $id);
             $count = $this->hasCash() ? $this->repository->count($context, (int) $control['id']) : null;
-            $stock = $this->hasStock() ? (new StockCountEvidence($this->database))->rows($context, $control) : [];
+            $stock = $this->hasStock() ? (new StockCountEvidence($this->database))->progress($context, $control) : null;
             $readiness = $this->repository->readiness($context, $control);
             $reviewer = $this->access->allows($context, 'reconciliation.review');
             $counter = $this->access->allows($context, 'reconciliation.count');
@@ -59,6 +59,9 @@ class ControlQuery
             $safe['cutoff_change_sequence'] = (string) $control['cutoff_change_sequence'];
             $safe['readiness'] = ['required' => $readiness['required'], 'resolved' => $readiness['resolved'], 'complete' => $readiness['complete']];
             $blind = $this->blind($context);
+            if ($blind || !$reviewer) {
+                unset($safe['abort_reason']);
+            }
             $safe['can_review_values'] = $reviewer && $control['counts_committed_at'] !== null && !$blind;
             if ($count !== null && ($counter || $reviewer) && (!$blind || $control['status'] === 'COUNTING')) {
                 $safe['count'] = ['actual_amount' => $count['actual_amount'], 'revision' => $count['updated_at'], 'saved_at' => $count['counted_at'], 'committed_at' => $count['committed_at']];
@@ -84,10 +87,10 @@ class ControlQuery
             $safe['has_cash'] = $this->hasCash();
             $safe['has_stock'] = $this->hasStock();
             if ($this->hasStock()) {
-                $counted = count(array_filter($stock, static fn($row) => $row['actual_quantity'] !== null));
-                $safe['stock_progress'] = ['total' => count($stock), 'counted' => $counted, 'all_counted' => $counted === count($stock)];
+                $safe['stock_progress'] = $stock;
                 if ($counter || $reviewer) {
-                    $safe['commit_revision'] = StockCountEvidence::revision($id, $stock, $count);
+                    $safe['commit_revision'] = $control['status'] === 'COUNTING'
+                        ? (new StockCountEvidence($this->database))->commitRevision($context, $control, $count, $stock) : null;
                 }
                 $latest = $this->database->query("SELECT id FROM reconciliation_sessions WHERE tenant_id=? AND shop_id=? AND scope IN ('STOCK','FULL') AND status='FINALIZED' ORDER BY cutoff_at DESC,id DESC LIMIT 1", [$context->tenantId, $context->shopId])->getRowArray();
                 $activeStock = $this->database->query("SELECT id FROM reconciliation_sessions WHERE tenant_id=? AND shop_id=? AND scope IN ('STOCK','FULL') AND status IN ('COUNTING','COUNTS_COMMITTED','REVIEW') LIMIT 1", [$context->tenantId, $context->shopId])->getRowArray();
@@ -109,8 +112,13 @@ class ControlQuery
             $control = $this->repository->control($context, $id);
             $state = $this->repository->readiness($context, $control);
             $devices = array_slice($state['devices'], ($page - 1) * $perPage, $perPage);
+            $showReasons = $this->access->allows($context, 'reconciliation.review') && !$this->blind($context)
+                && ($control['counts_committed_at'] !== null || $control['status'] === 'ABORTED');
             foreach ($devices as &$device) {
                 unset($device['_id']);
+                if (!$showReasons) {
+                    unset($device['reason']);
+                }
             }
             unset($device);
             return ['devices' => $devices, 'required' => $state['required'], 'resolved' => $state['resolved'], 'complete' => $state['complete'],
@@ -220,14 +228,16 @@ class ControlQuery
         }
         return (new DebtReadSnapshot($this->database))->run(function () use ($context, $id, $search, $page, $perPage): array {
             $control = $this->repository->control($context, $id);
-            $rows = (new StockCountEvidence($this->database))->rows($context, $control);
+            $slice = (new StockCountEvidence($this->database))->page($context, $control, $search, $page, $perPage);
+            $rows = $slice['rows'];
             $blind = $this->blind($context);
             $review = $this->access->allows($context, 'reconciliation.review') && $control['counts_committed_at'] !== null && !$blind;
             $observe = ($this->access->allows($context, 'reconciliation.count') || $this->access->allows($context, 'reconciliation.review'))
                 && (!$blind || $control['status'] === 'COUNTING');
             $variances = [];
-            if ($review && $control['status'] === 'FINALIZED') {
-                $links = $this->database->query("SELECT v.stock_count_id,v.public_id variance_public_id,v.quantity_variance,m.public_id adjustment_public_id,m.posted_at adjusted_at FROM reconciliation_variances v LEFT JOIN stock_movements m ON m.tenant_id=v.tenant_id AND m.shop_id=v.shop_id AND m.reconciliation_variance_id=v.id AND m.source_kind='RECON_VARIANCE' AND m.movement_type='RECONCILIATION_ADJUSTMENT' WHERE v.tenant_id=? AND v.shop_id=? AND v.reconciliation_session_id=? AND v.variance_kind='STOCK'", [$context->tenantId, $context->shopId, $control['id']])->getResultArray();
+            if ($review && $control['status'] === 'FINALIZED' && $rows !== []) {
+                $marks = implode(',', array_fill(0, count($rows), '?'));
+                $links = $this->database->query("SELECT v.stock_count_id,v.public_id variance_public_id,v.quantity_variance,m.public_id adjustment_public_id,m.posted_at adjusted_at FROM reconciliation_variances v LEFT JOIN stock_movements m ON m.tenant_id=v.tenant_id AND m.shop_id=v.shop_id AND m.reconciliation_variance_id=v.id AND m.source_kind='RECON_VARIANCE' AND m.movement_type='RECONCILIATION_ADJUSTMENT' WHERE v.tenant_id=? AND v.shop_id=? AND v.reconciliation_session_id=? AND v.variance_kind='STOCK' AND v.stock_count_id IN ($marks) LIMIT ?", [$context->tenantId, $context->shopId, $control['id'], ...array_column($rows, 'id'), count($rows) + 1])->getResultArray();
                 foreach ($links as $link) {
                     if (isset($variances[$link['stock_count_id']])) {
                         throw new ApiException('STOCK_CONTROL_EVIDENCE_INVALID', 'More than one stock change was found for this difference. Keep the records and ask the shop owner for help.', 409);
@@ -235,10 +245,9 @@ class ControlQuery
                     $variances[$link['stock_count_id']] = $link;
                 }
             }
-            $filtered = array_values(array_filter($rows, static fn($row) => $search === '' || mb_stripos($row['name'] . ' ' . $row['unit_name'], $search) !== false));
-            $total = count($filtered);
+            $total = $slice['total'];
             $out = [];
-            foreach (array_slice($filtered, ($page - 1) * $perPage, $perPage) as $row) {
+            foreach ($rows as $row) {
                 $safe = ['product_public_id' => $row['product_public_id'], 'name' => $row['name'], 'unit_name' => $row['unit_name']];
                 if ($observe) {
                     $safe += ['actual_quantity' => $row['actual_quantity'], 'revision' => $row['updated_at'], 'saved_at' => $row['counted_at'], 'committed_at' => $row['committed_at']];
