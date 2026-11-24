@@ -51,6 +51,9 @@ $ok(str_contains($routes, "shop/reports/sales', 'Api\\SalesReportController::ind
 $ok(str_contains($shop, "'view_sales_workspace' => \$hasPermission('sale.view') || \$hasPermission('report.view')"), 'Sales workspace visibility derives from existing independent grants');
 $ok(str_contains($registry, "prefixes: ['#sale/', '#sales-reports']") && str_contains($registry, "capability: 'view_sales_workspace'"), 'Existing Sales workspace resolves the report-only route');
 $ok(str_contains($history, "includes('report.view')") && str_contains($history, "includes('sale.view')"), 'Sales history and report UI remain separately permission-aware');
+$ok($history === $read('public/assets/js/components/sale-history-panel.js'), 'Published Sales workspace module exactly matches its source');
+$ok($panel === $read('public/assets/js/components/sales-reports-panel.js'), 'Published Sales report module exactly matches its source');
+$ok($registry === $read('public/assets/js/shared/workspace-registry.js'), 'Published Shop navigation module exactly matches its source');
 $ok(str_contains($panel, 'Sales after returns') && str_contains($panel, 'Cash after refunds') && str_contains($panel, 'Gross profit before shop expenses'), 'Report labels use plain language');
 $ok(str_contains($plain, 'without accounting knowledge') && str_contains($plain, 'Gross profit before shop expenses'), 'Plain-English policy documents the Sales report language');
 
