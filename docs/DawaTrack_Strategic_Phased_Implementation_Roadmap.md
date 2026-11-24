@@ -521,7 +521,7 @@ Bank reconciliation, offline finalization, silent device exclusion, automatic Ca
 
 ## Phase 8 — Authoritative Reporting and Operational Dashboard
 
-**Implementation plan prepared — 24 November 2026:** [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). The plan preserves this roadmap's scope and exclusions. Implementation has not started and awaits Owner plan acceptance plus an explicit WP1 commencement instruction.
+**Owner plan accepted — 24 November 2026; WP1 underway:** [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). WP1 implements Sales/payment mix/Gross Profit reporting under the existing Sales, Inventory, Identity and Shop UI ownership rules. Native verification and WP1 Owner acceptance remain pending; WP2/WP3 have not started.
 
 ### Objective
 Turn authoritative transactions into useful Phase 1 summaries without a second truth.
