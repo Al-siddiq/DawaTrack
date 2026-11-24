@@ -6,7 +6,7 @@ DawaTrack is a modular CodeIgniter 4 application for Nigerian chemist/PPMV opera
 
 **Phase 7 is CLOSED by explicit Owner whole-phase acceptance.** The Owner confirms that Phase 7 was reviewed, tested and verified. The accepted programme includes WP1–WP4; WP4 PR #53 is merged to main at `98cb8d4ee99c8668a18aa92993b7828dc982902f`. See the [dated Owner acceptance](docs/acceptance/2026-11-24-phase-07-owner-closure.md), [Phase 7 closure report](docs/Phase-7/Phase_7_Closure_Report.md), [closure checklist](docs/Phase-7/Phase_7_Closure_Checklist.md) and [final operations handover](docs/operations/phase-07-final-handover.md). Production deployment remains a separate operational decision.
 
-**Phase 8 — Authoritative Reporting and Operational Dashboard:** the [three-package implementation plan](docs/Phase-8/Phase_8_Implementation_Plan.md) has been prepared against the Strategic Roadmap, Technical Blueprint and Database Schema Design v1.1. Phase 8 implementation has not started; WP1 awaits Owner acceptance of the plan and an explicit commencement instruction.
+**Phase 8 — Authoritative Reporting and Operational Dashboard:** the [three-package implementation plan](docs/Phase-8/Phase_8_Implementation_Plan.md) was accepted by the Owner on 24 November 2026. **WP1 — Sales, Payment Mix and Gross Profit Reports is underway.** [WP1 integration contract](docs/Phase-8/Phase_8_WP1_Integration_Contracts.md) · [WP1 delivery report](docs/Phase-8/Phase_8_WP1_Delivery_Report.md) · [Native manual guide](docs/manual-verification-phase-08-wp1.md). Native database/browser verification and WP1 Owner acceptance remain pending; WP2 has not started.
 
 Historical Phase 5 and Phase 6 package/acceptance records remain linked in their respective sections below. Historical delivery reports and manual registers are not rewritten by the Phase 7 closure record.
 
@@ -67,5 +67,5 @@ Phase 7 was reviewed, tested, verified and accepted by the Owner on 24 November 
 
 ## Phase 8 — Authoritative Reporting and Operational Dashboard
 
-[Three-package implementation plan](docs/Phase-8/Phase_8_Implementation_Plan.md). The plan covers Sales/payment mix/Gross Profit; Stock, Customer debt and Reconciliation reports; and the integrated Shop dashboard with export only if separately approved. No duplicate reporting truth or offline report persistence is introduced. Implementation awaits Owner plan acceptance and explicit WP1 commencement.
+The Owner accepted the three-package [implementation plan](docs/Phase-8/Phase_8_Implementation_Plan.md) on 24 November 2026. WP1 Sales reports are underway. [Integration contract](docs/Phase-8/Phase_8_WP1_Integration_Contracts.md) · [Delivery report](docs/Phase-8/Phase_8_WP1_Delivery_Report.md) · [Manual guide](docs/manual-verification-phase-08-wp1.md) · [Manual result register](docs/Phase-8/Phase_8_WP1_Manual_Results.csv). Native verification and Owner acceptance remain pending. WP2/WP3 have not started.
 
