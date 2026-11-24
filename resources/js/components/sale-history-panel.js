@@ -6,7 +6,8 @@ import { CommercialActions } from './commercial-actions.js';
 import { apiRequest } from '../api/http-client.js';
 import { get, money, field, action, submit, feedback, message, pager } from './commercial-ui.js';
 import { SaleReceipt } from './sale-receipt.js';
-const { h, ref, reactive, onMounted, onUnmounted, nextTick } = window.Vue;
+import { SalesReportsPanel } from './sales-reports-panel.js';
+const { h, ref, reactive, onMounted, onUnmounted, nextTick, watch } = window.Vue;
 export const SaleHistoryPanel = {
     props: { permissions: { type: Array, default: () => [] }, readOnly: { type: Boolean, default: true } },
     setup(props) {
@@ -14,19 +15,42 @@ export const SaleHistoryPanel = {
         let alive = true;
         const announceWorkspaceHash = hash => { if (alive) replaceLocation(hash); };
         const rows = ref([]), selected = ref(null), pending = ref(false), error = ref(''), heading = ref(null), childBusy = ref(false);
-        useNavigationGuard(({ hash }) => (pending.value || childBusy.value) && (hash.startsWith('#sale/') || hash === '#sale-history') ? { hard: true, message: 'Wait for this record to finish loading before opening another sale.' } : null);
+        const canViewSales = () => props.permissions.includes('sale.view');
+        const canViewReports = () => props.permissions.includes('report.view');
+        const reportMode = ref(canViewReports() && !canViewSales());
+        watch(() => props.permissions.includes('report.view'), allowed => {
+            if (!allowed && reportMode.value) {
+                selected.value = null;
+                if (canViewSales()) { reportMode.value = false; announceWorkspaceHash('#sale-history'); load(1); }
+                else announceWorkspaceHash('#home');
+            }
+        });
+        watch(() => props.permissions.includes('sale.view'), allowed => {
+            if (!allowed && !reportMode.value) {
+                selected.value = null; rows.value = [];
+                if (canViewReports()) { reportMode.value = true; announceWorkspaceHash('#sales-reports'); }
+                else announceWorkspaceHash('#home');
+            }
+        });
+        useNavigationGuard(({ hash }) => (pending.value || childBusy.value) && (hash.startsWith('#sale/') || hash === '#sale-history' || hash === '#sales-reports') ? { hard: true, message: 'Wait for this record to finish loading before opening another sale.' } : null);
         const filters = reactive({ search: '', from: '', to: '', kind: 'ALL' });
         const pagination = reactive({ page: 1, total_pages: 0 });
         async function run(operation) { if (pending.value) return; pending.value = true; error.value = ''; try { await operation(); } catch (e) { error.value = message(e); } finally { pending.value = false; } }
-        async function load(page = 1) { await run(async () => { const result = await apiRequest(`/api/v1/shop/sales?${new URLSearchParams({ ...filters, page, per_page: 20 })}`); rows.value = result.data; Object.assign(pagination, result.meta.pagination); }); }
-        async function open(id) { await run(async () => { const value = await get(`/api/v1/shop/sales/${id}`); if (!alive) return; if (value.status === 'DRAFT' && value.kind === 'SALE') { location.hash = `#sale-draft/${value.public_id}`; return; } selected.value = value; announceWorkspaceHash(`#sale/${value.public_id}`); await nextTick(); heading.value?.focus(); }); }
+        async function load(page = 1) { if (!canViewSales()) return; await run(async () => { const result = await apiRequest(`/api/v1/shop/sales?${new URLSearchParams({ ...filters, page, per_page: 20 })}`); rows.value = result.data; Object.assign(pagination, result.meta.pagination); }); }
+        async function open(id) { if (!canViewSales()) return; await run(async () => { const value = await get(`/api/v1/shop/sales/${id}`); if (!alive) return; if (value.status === 'DRAFT' && value.kind === 'SALE') { location.hash = `#sale-draft/${value.public_id}`; return; } selected.value = value; announceWorkspaceHash(`#sale/${value.public_id}`); await nextTick(); heading.value?.focus(); }); }
         function adopt(value, sourceId = null) { if (!alive) return; if (sourceId && selected.value?.public_id !== sourceId) return; childBusy.value = false; selected.value = value; error.value = ''; if (value) { announceWorkspaceHash(`#sale/${value.public_id}`); open(value.public_id); } else back(); }
-        const hashChange = () => { const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/); if (match) open(match[1]); else if (location.hash === '#sale-history' && selected.value) back(); };
-        function back() { selected.value = null; announceWorkspaceHash('#sale-history'); load(pagination.page); }
-        onMounted(() => { const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/); if (match) open(match[1]); else load(); window.addEventListener('hashchange', hashChange); });
+        const hashChange = () => { const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/); if (match && canViewSales()) { reportMode.value = false; open(match[1]); } else if (match && canViewReports()) { selected.value = null; reportMode.value = true; announceWorkspaceHash('#sales-reports'); } else if (location.hash === '#sales-reports' && canViewReports()) { selected.value = null; reportMode.value = true; } else if (location.hash === '#sales-reports' && canViewSales()) { reportMode.value = false; announceWorkspaceHash('#sale-history'); } else if (location.hash === '#sale-history') { if (!canViewSales() && canViewReports()) { reportMode.value = true; announceWorkspaceHash('#sales-reports'); } else { reportMode.value = false; if (selected.value) back(); else if (canViewSales()) load(); } } };
+        function back() { selected.value = null; reportMode.value = false; announceWorkspaceHash('#sale-history'); load(pagination.page); }
+        function showReport() { if (!canViewReports() || pending.value || childBusy.value) return; selected.value = null; reportMode.value = true; announceWorkspaceHash('#sales-reports'); }
+        function showSales() { if (!canViewSales() || pending.value || childBusy.value) return; selected.value = null; reportMode.value = false; announceWorkspaceHash('#sale-history'); load(1); }
+        onMounted(() => { const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/); if (match && canViewSales()) open(match[1]); else if (match && canViewReports()) { reportMode.value = true; announceWorkspaceHash('#sales-reports'); } else if ((location.hash === '#sales-reports' && canViewReports()) || (!canViewSales() && canViewReports())) { reportMode.value = true; if (location.hash !== '#sales-reports') announceWorkspaceHash('#sales-reports'); } else if (location.hash === '#sales-reports' && canViewSales()) { reportMode.value = false; announceWorkspaceHash('#sale-history'); load(); } else if (canViewSales()) load(); window.addEventListener('hashchange', hashChange); });
         onUnmounted(() => { alive = false; window.removeEventListener('hashchange', hashChange); });
         return () => h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': pending.value }, [
-            h('h2', { ref: heading, tabindex: '-1' }, selected.value ? (selected.value.status === 'DRAFT' ? 'Unfinished return' : 'Saved receipt') : 'Sales and returns'),
+            h('h2', { ref: heading, tabindex: '-1' }, selected.value ? (selected.value.status === 'DRAFT' ? 'Unfinished return' : 'Saved receipt') : (reportMode.value ? 'Sales report' : 'Sales and returns')),
+            !selected.value && h('div', { class: 'ui-actions' }, [
+                canViewReports() ? action('Sales report', showReport, pending.value || childBusy.value) : null,
+                canViewSales() ? action('Sales and returns', showSales, pending.value || childBusy.value) : null,
+            ]),
             ...feedback(error.value, ''), confirmation.render(),
             selected.value ? h('div', { class: 'trading-stack' }, [
                 h('div', { class: 'ui-actions' }, [action('Back to sales', () => confirmation.guard(back, '#sale-history'), pending.value || childBusy.value), action('Reload saved record', () => confirmation.guard(() => open(selected.value.public_id)), pending.value || childBusy.value)]),
@@ -34,7 +58,7 @@ export const SaleHistoryPanel = {
                 selected.value.status === 'DRAFT'
                     ? h(ReturnEditor, { key: selected.value.public_id, record: selected.value, permissions: props.permissions, readOnly: props.readOnly || pending.value, onBusy: value => { childBusy.value = value; }, onOpen: ((id) => value => adopt(value, id))(selected.value.public_id) })
                     : h('div', { class: 'trading-stack' }, [h(SaleReceipt, { sale: selected.value, permissions: props.permissions }), h(CommercialActions, { key: selected.value.public_id, sale: selected.value, permissions: props.permissions, readOnly: props.readOnly || pending.value, onBusy: value => { childBusy.value = value; }, onOpen: ((id) => value => adopt(value, id))(selected.value.public_id) })]),
-            ]) : h('div', { class: 'trading-stack' }, [
+            ]) : reportMode.value ? h(SalesReportsPanel, { permissions: props.permissions }) : h('div', { class: 'trading-stack' }, [
                 h('p', 'Find a sale, print a receipt or open a return.'),
                 h('form', { onSubmit: event => { event.preventDefault(); load(); }, class: 'commercial-filters' }, [
                     field('history-search', 'Customer or receipt number', filters.search, value => { filters.search = value; }, { type: 'search', maxlength: 160 }),
