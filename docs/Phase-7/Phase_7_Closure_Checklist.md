@@ -1,18 +1,19 @@
-# Phase 7 closure checklist
+# Phase 7 — closure checklist
 
-17 November 2026 (Africa/Lagos). This is a prepared closure handover, not a declaration that Phase7 is closed.
+**24 November 2026 (Africa/Lagos). Phase 7 is CLOSED by explicit Owner whole-phase acceptance.**
 
-- [x] Owner acceptance of WP1–WP3 and authorization of WP4 recorded.
-- [x] Final32-requirement/source matrix prepared; original IDs and historical package records retained.
-- [x] Integrated48-case register and WP4 twelve-case register prepared without invented results.
-- [x] WP4 code fixes, plain words, source/public build and exact inventory prepared.
-- [x] Module/API/security/Device/sync/migration/access/UI contracts linked in final operations guide.
-- [x] Backup/restore/compatible rollback procedure and separate release decision prepared.
-- [ ] Native cases observed and reviewed; defects corrected/rechecked; every roadmap criterion supported.
-- [ ] Native performance, failure/concurrency, real HTTP/cookie/CSRF and physical accessibility checks complete.
-- [ ] Protected backup restored successfully; compatible WP3 rollback rehearsed.
-- [ ] All high/critical release blockers closed with evidence.
-- [ ] WP4 accepted and whole-phase Owner acceptance recorded against exact commit/inventory.
-- [ ] Separate merge/deployment decisions and outcome recorded if authorized.
+| Gate | Closure state | Evidence / boundary |
+|---|---|---|
+| Approved Phase 7 scope and WP1–WP4 delivery | Owner-accepted | Original work-package contracts and delivery records retained |
+| WP1–WP3 package acceptance | Recorded | Dated Owner acceptance records under `docs/acceptance/` |
+| WP4 final integration | Merged | PR #53; main integration commit `98cb8d4ee99c8668a18aa92993b7828dc982902f` |
+| Owner whole-phase review | Accepted | Owner confirms Phase 7 reviewed, tested, verified and accepted on 24 November 2026 |
+| Requirement/source traceability | Preserved | Original 32 requirement IDs and source matrix retained |
+| Manual verification traceability | Preserved | Original integrated 48-case and WP4 12-case registers retained; no historical result rewritten |
+| Defect and engineering observations | Preserved | Historical disposition remains available; Owner acceptance supersedes the pending Owner-decision gate |
+| Phase 7 documentation closure | Complete | Closure report, dated acceptance and updated release/handover records |
+| Production deployment | Separate | No deployment is claimed or authorized by phase closure |
+| Production backup/restore/rollback execution | Separate operational record | No new execution evidence is invented |
+| Phase 8 boundary | Established | Three-package plan prepared; implementation awaits Owner plan acceptance and WP1 instruction |
 
-Phase8 is outside this package. Open native gates mean release HOLD; they are not silently waived or called completed.
+The Owner's whole-phase decision closes Phase 7. Historical case-level and operational evidence remains exactly as recorded; acceptance does not retroactively create missing individual observations. See [closure report](Phase_7_Closure_Report.md), [Owner acceptance](../acceptance/2026-11-24-phase-07-owner-closure.md), [release decision](Phase_7_Release_Decision.md) and [final handover](../operations/phase-07-final-handover.md).
