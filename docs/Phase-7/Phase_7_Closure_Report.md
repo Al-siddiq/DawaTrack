@@ -12,7 +12,7 @@ This supersedes the earlier pending whole-phase acceptance and Owner-acceptance 
 
 ## 2. Accepted source and programme
 
-The Phase 7 WP4 integration PR is [#53](https://github.com/Al-siddiq/DawaTrack/pull/53), merged to main at `98cb8d4ee99c8668a18aa92993b7828dc982902f). This is the repository integration reference recorded for closure. No separate runtime checkout SHA or environment manifest was supplied with the Owner's acceptance message.
+The Phase 7 WP4 integration PR is [#53](https://github.com/Al-siddiq/DawaTrack/pull/53), merged to main at `98cb8d4ee99c8668a18aa92993b7828dc982902f`). This is the repository integration reference recorded for closure. No separate runtime checkout SHA or environment manifest was supplied with the Owner's acceptance message.
 
 | Work package | Accepted scope | Historical delivery/acceptance reference |
 |---|---|---|
