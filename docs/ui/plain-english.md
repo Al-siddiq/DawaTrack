@@ -31,3 +31,20 @@ Use familiar names for people, notes and saved states. Show shop times in Nigeri
 Technical identifiers in code, APIs, migration files and developer records can remain unchanged. They are not shop-page labels. A code used only to get help may remain where needed.
 
 Before handing over a screen, read its menu label, heading, buttons, prompts, status, errors and empty state aloud. Check that a trader can follow the next step. Render every stage as well as the start page. A developer check does not replace the owner trying the screen with real shop users.
+
+
+## Phase 8 Sales report language
+
+A Sales report must be understandable without accounting knowledge. Use short labels and explain each amount beside it. Avoid unexplained words such as revenue, net sales, COGS, margin, turnover or reconciliation variance on Shop pages.
+
+| Report label | Explain it this way |
+|---|---|
+| Sales after returns | Sales minus returns and cancelled sales. |
+| Cash after refunds | Cash received, less Cash paid back to customers. |
+| Bank transfers after refunds | Transfers received, less transfers paid back. |
+| Credit after returns | Money customers still needed to pay when goods were sold, less credit removed by returns. |
+| Gross profit before shop expenses | What remained after the cost of the goods sold. Shop expenses have not been taken out. |
+
+Show the Shop dates, Shop time zone and last refresh time. Do not call Gross Profit net profit. If a user cannot see profit, say that their access does not include profit figures and direct them to the Shop Owner. Do not show a blank, zero or masked-looking profit amount that could be mistaken for a real result.
+
+The existing Sales workspace remains the entry point. A Staff member with `report.view` can open the report; `sale.view` separately controls Sales and Returns history; `sale.profit.view` separately controls Gross Profit and cost values. The Primary Owner continues to use the existing role-derived authority. Do not introduce a new role or broaden Staff grants.
