@@ -1,0 +1,13 @@
+case_id,scenario,status,commit,environment,actor,expected,actual,evidence,reviewer,observed_at,defect
+P8-01,"Today report",Not run,,,,,,,,,
+P8-02,"This month report",Not run,,,,,,,,,
+P8-03,"Custom date and Shop timezone boundary",Not run,,,,,,,,,
+P8-04,"Cash-only Sales",Not run,,,,,,,,,
+P8-05,"Transfer-only and mixed Sales",Not run,,,,,,,,,
+P8-06,"Credit Sales and Receivable evidence",Not run,,,,,,,,,
+P8-07,"Returns and compensation",Not run,,,,,,,,,
+P8-08,"Debt collection is not new Sales",Not run,,,,,,,,,
+P8-09,"Historical cost snapshot",Not run,,,,,,,,,
+P8-10,"Expenses remain separate",Not run,,,,,,,,,
+P8-11,"Profit permission masking",Not run,,,,,,,,,
+P8-12,"Range validation, empty/error, responsive and accessibility",Not run,,,,,,,,,
