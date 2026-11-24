@@ -1,14 +1,13 @@
 field,value,evidence,status
-reviewed_commit,Pending,Exact WP4 PR head,Pending
-content_sha256,347a3a4075c6cd623e68f323f3d2de30cced1592f601aad109b190db76b4b26b,Phase_7_WP4_Artifact_Manifest.json,Recorded
-manifest_file_sha256,4f94a55b99a3bf9ebc72e8152aaf581f4899e20e7f3454251448af7c8b835f55,Phase_7_WP4_Artifact_Manifest.json,Recorded
-native_environment,Not supplied,Record PHP Composer MySQL OS server browser SQL mode engine hostname and times,Pending
-native_results,48 Not run,Phase_7_WP4_Integrated_Manual_Results.csv,Pending
-backup_restore,Not rehearsed here,operations/phase-07-final-handover.md,Pending
-compatible_rollback,Accepted WP3 c9d8b996a830ce1ce3248a46d7516d7524e1ea80,Rehearse with existing Phase7 schema and evidence,Pending native rehearsal
-wp4_owner_review,Not recorded,Owner exact-candidate decision,Pending
-whole_phase_acceptance,Not recorded,Owner exact commit inventory and evidence decision,Pending
-release_decision,HOLD,High verification blockers remain,Pending
-merge_authorization,Not recorded,Separate integration decision,Pending
-deployment_authorization,Not recorded,Separate operation window operator and protected backup record,Pending
-phase8_authorization,Not recorded,Separate plan and instruction,Outside WP4
+phase_decision,OWNER ACCEPTED — PHASE 7 CLOSED,2026-11-24-phase-07-owner-closure.md,Recorded
+owner_review,Reviewed tested and verified per explicit Owner confirmation,2026-11-24-phase-07-owner-closure.md,Accepted
+accepted_work_packages,WP1;WP2;WP3;WP4,Phase_7_Closure_Report.md,Accepted
+integrated_source,98cb8d4ee99c8668a18aa92993b7828dc982902f,PR #53 merged to main,Recorded
+requirements_traceability,32 original requirement IDs preserved,Phase_7_WP4_Final_Requirements_Matrix.csv,Preserved
+manual_case_traceability,48 integrated cases and 12 WP4 cases preserved,Phase_7_WP4_Integrated_Manual_Results.csv;Phase_7_WP4_Manual_Results.csv,Preserved
+case_level_results,Historical registers unchanged; no new per-case result supplied in closure instruction,Original result registers,Not rewritten
+artifact_manifest,Original WP4 manifest retained,Phase_7_WP4_Artifact_Manifest.json,Preserved
+production_deployment,Not reported or performed by this closure,Separate operational release record,Separate decision
+production_migration,Not performed by closure documentation,Separate operational release record,Separate decision
+backup_restore_rollback,No new execution claim,operations/phase-07-final-handover.md,Separate operational record
+phase8_plan,Three-package plan prepared; implementation awaits plan acceptance and WP1 instruction,../Phase-8/Phase_8_Implementation_Plan.md,Prepared
