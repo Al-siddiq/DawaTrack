@@ -462,6 +462,8 @@ General ledger, payroll, accounts payable, bank reconciliation or automatic bill
 
 ## Phase 7 — Reconciliation Control Engine
 
+**Status — 24 November 2026: CLOSED by explicit Owner whole-phase acceptance.** The Owner confirms Phase 7 was reviewed, tested and verified. See the [dated acceptance](acceptance/2026-11-24-phase-07-owner-closure.md), [closure report](Phase-7/Phase_7_Closure_Report.md), [closure checklist](Phase-7/Phase_7_Closure_Checklist.md) and [final operational handover](operations/phase-07-final-handover.md). Production deployment remains a separate operational decision; historical case registers and engineering observations are preserved without rewriting.
+
 ### Objective
 Implement the highest-risk accountability workflow: opening Cash plus Cash, Stock and Full Reconciliation with immutable cutoff evidence.
 
@@ -518,6 +520,8 @@ Bank reconciliation, offline finalization, silent device exclusion, automatic Ca
 ---
 
 ## Phase 8 — Authoritative Reporting and Operational Dashboard
+
+**Implementation plan prepared — 24 November 2026:** [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). The plan preserves this roadmap's scope and exclusions. Implementation has not started and awaits Owner plan acceptance plus an explicit WP1 commencement instruction.
 
 ### Objective
 Turn authoritative transactions into useful Phase 1 summaries without a second truth.
