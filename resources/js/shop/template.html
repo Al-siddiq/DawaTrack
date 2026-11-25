@@ -21,6 +21,7 @@
     <CustomerPanel v-if="page==='customers' && context.capabilities.view_customers" :permissions="context.permissions" :read-only="readOnly" :hash="workspaceNavigation.hash.value" :recovery-scope="context.current_user?.recovery_scope||''" @navigate="workspaceNavigation.request($event)" />
     <SaleHistoryPanel v-if="page==='sale-history' && context.capabilities.view_sales_workspace" :permissions="context.permissions" :read-only="readOnly" />
     <SaleDraftPanel v-if="page==='sale-drafts' && context.capabilities.view_sale_drafts" :permissions="context.permissions" :read-only="readOnly" />
+    <OperationalReportsPanel v-if="page==='operational-reports' && context.capabilities.view_operational_reports" :capabilities="context.capabilities" :permissions="context.permissions" @navigate="workspaceNavigation.request($event)" />
 
     <workspace-home v-if="page==='home'" :context="context" :access="access" :items="navigation" :user-name="context.current_user?.display_name||presentation.userName" @navigate="workspaceNavigation.request($event)" />
 
