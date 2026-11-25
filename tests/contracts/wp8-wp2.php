@@ -64,7 +64,7 @@ $assert(str_contains($reconciliation, "'reconciliation.view'"), 'Reconciliation 
 $assert(str_contains($reconciliation, "'reconciliation.review'"), 'Variance fields require independent review authority');
 $assert(str_contains($reconciliation, 'BlindReadPolicy'), 'Reconciliation report reuses blind-read policy');
 $assert(str_contains($reconciliation, "s.control_kind='STANDARD' AND s.status='FINALIZED'"), 'Only standard finalized checks are reported');
-$assert(str_contains($reconciliation, 'variance_amount'), 'Cash variance uses persisted signed evidence');
+$assert(str_contains($reconciliation, 'amount_variance'), 'Cash variance uses persisted signed evidence');
 $assert(str_contains($reconciliation, 'quantity_variance<0'), 'Stock shortage items preserve negative variance sign');
 $assert(str_contains($reconciliation, 'quantity_variance>0'), 'Stock surplus items preserve positive variance sign');
 $assert(str_contains($reconciliation, 'blocksScope'), 'Blind-count scope blocks sensitive variance fields');
