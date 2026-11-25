@@ -212,3 +212,5 @@ p { color: var(--dt-muted); line-height: 1.65; }
 .sales-report-details .sales-report-help { margin-top:.65rem; }
 .sales-report-workspace .ui-alert { margin-block:.25rem; }
 @media(max-width:35rem){.sales-report-filters{grid-template-columns:1fr}.sales-report-period-head{align-items:flex-start;flex-direction:column}.sales-report-line{align-items:flex-start}}
+
+.sales-report-header-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
