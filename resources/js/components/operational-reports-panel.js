@@ -52,7 +52,7 @@ function moneyMetric(label, value, currency, explanation = '') {
 function cashDifference(value, currency) {
     if (value === null || value === undefined) return 'No recorded difference';
     const amount = String(value);
-    if (/^-?0(?:\\.0+)?$/.test(amount)) return 'The cash count matched the expected amount.';
+    if (/^-?0(?:\.0+)?$/.test(amount)) return 'The cash count matched the expected amount.';
     const short = amount.startsWith('-');
     const absolute = short ? amount.slice(1) : amount;
     return 'Cash was ' + (short ? 'short by ' : 'over by ') + money(absolute, currency)
