@@ -39,3 +39,14 @@ Phase 6 WP1: Money movements is a single sidebar/Menu Work destination, shown by
 ## Phase 6 WP2 — 13 November 2026
 
 The existing financial-movements destination adds /withdrawal and /introduction contextual routes for the active Owner with financial.view/record and writable access. Staff may still view authorized records but cannot expose Owner forms through direct hashes. No new sidebar or bottom destination. Context capability record_owner_movements mirrors the UI rule but does not replace locked server authorization. Interrupted-save route restoration preserves action and UUID.
+
+
+## Phase 8 WP1 — Sales summary
+
+The existing Sales Menu destination is visible when the server-derived `view_sales_workspace` capability is true: the actor has either `sale.view` or `report.view`. This is a navigation hint only.
+
+- A report-only Staff member can open the Sales summary but does not gain Sales history, receipt or Sale detail access.
+- Existing Sales history still requires `sale.view` on its own API routes.
+- The Sales summary route independently requires `report.view`.
+- Gross Profit and all COGS fields additionally require `sale.profit.view`; report.view does not imply profit access.
+- No new bottom navigation destination is added. The report is inside the existing Sales workspace and keeps the current Menu grouping.
