@@ -1,9 +1,9 @@
 import { UiBadge, UiLoading, UiRecordList, UiSheet, UiAccordion, UiStatusPanel } from './ui/index.js';
 import { field, action, submit, feedback, pager, money } from './commercial-ui.js';
 import { useTradingConfirm, selectField, facts, stateLabel, note, fieldSummary } from './trading-ui.js';
-const { h, ref, computed, onMounted, onUnmounted } = window.Vue;
+const { h, ref, computed, onMounted, onUnmounted, watch } = window.Vue;
 export const ProductsPanel = {
-    props: { products: Object, inventory: Object, context: Object, readOnly: Boolean },
+    props: { products: Object, inventory: Object, context: Object, readOnly: Boolean, hash: { type: String, default: '#products' } },
     setup(props) {
         const sheetCloseWarning = ref(false);
         const confirmation = useTradingConfirm(), online = ref(navigator.onLine);
@@ -11,6 +11,11 @@ export const ProductsPanel = {
         onMounted(() => { window.addEventListener('online', connection); window.addEventListener('offline', connection); });
         onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
         const busy = computed(() => props.products.pending || props.products.loading || props.inventory.pending);
+        watch(() => props.hash, hash => {
+            const match = /^#products\\/([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i.exec(hash);
+            if (match) props.products.open({ public_id: match[1] });
+            else if (props.products.selected) props.products.close();
+        }, { immediate: true });
         const blocked = computed(() => busy.value || props.readOnly || !online.value);
         const doSubmit = work => event => { event.preventDefault(); if (!blocked.value) work(); };
         const guard = work => () => confirmation.guard(work, '#products');
