@@ -7,7 +7,7 @@ const debtStates = {
     OUTSTANDING: 'Unpaid',
     PARTIAL: 'Partly paid',
     SETTLED: 'Paid',
-    NO_DEBT: 'No unpaid bills',
+    NO_DEBT: 'No bills in this Shop',
 };
 const costStates = {
     VALID: 'Buying price is recorded',
