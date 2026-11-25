@@ -106,9 +106,9 @@ export const SalesReportsPanel = {
                 reportCard('Sales after returns', report.value.sales.amount, 'Sales minus returns and cancelled sales.'),
                 reportCard('Cash after refunds', report.value.payments.cash_amount, 'Cash received, less Cash paid back to customers.'),
                 reportCard('Bank transfers after refunds', report.value.payments.transfer_amount, 'Bank transfers received, less transfers paid back.'),
-                reportCard('Credit after returns', report.value.payments.credit_amount, 'Money customers still needed to pay when goods were sold, less credit removed by returns. Later debt payments are not counted as new Sales.'),
+                reportCard('Customers allowed to pay later', report.value.payments.credit_amount, 'This is the part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales.'),
                 props.permissions.includes('sale.profit.view') && report.value.gross_profit ? reportCard(
-                    'Gross profit before shop expenses',
+                    'Money left after paying for goods',
                     report.value.gross_profit.amount,
                     report.value.gross_profit.message,
                 ) : h(UiInformationPanel, {
