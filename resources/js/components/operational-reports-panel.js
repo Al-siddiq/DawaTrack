@@ -216,12 +216,12 @@ export const OperationalReportsPanel = {
             return h('p', { class: 'sales-report-refreshed' }, 'Last updated: ' + data.refreshed_at + ' (' + (data.shop?.timezone_name || 'Shop time') + ').');
         }
         function staleNote(state) {
-            return state.stale && h(UiAlert, { severity: 'warning', message: 'This is the last successful report. It may be out of date; refresh before making decisions.', dismissible: false });
+            return state.stale && h(UiAlert, { severity: 'warning', message: state.error + ' The last successful report is shown and may be out of date; refresh before making decisions.', dismissible: false });
         }
         function sectionError(state, reload) {
             return [
                 state.loading && h(UiLoading, { label: 'Loading report…' }),
-                state.error && h(UiAlert, { severity: state.stale ? 'warning' : 'error', message: state.error, dismissible: false }),
+                state.error && !state.stale && h(UiAlert, { severity: 'error', message: state.error, dismissible: false }),
                 state.error && h(UiButton, { variant: 'secondary', disabled: !online.value, onClick: reload }, () => 'Try again'),
             ].filter(Boolean);
         }
