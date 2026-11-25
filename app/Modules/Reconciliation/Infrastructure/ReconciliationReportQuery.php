@@ -85,7 +85,7 @@ final class ReconciliationReportQuery
                     "SELECT COUNT(DISTINCT s.id) variance_checks
                      FROM reconciliation_sessions s
                      JOIN reconciliation_variances v ON v.tenant_id=s.tenant_id AND v.shop_id=s.shop_id
-                        AND v.reconciliation_session_id=s.id AND v.variance_kind='CASH' AND v.variance_amount<>0
+                        AND v.reconciliation_session_id=s.id AND v.variance_kind='CASH' AND v.amount_variance<>0
                      WHERE $baseWhere",
                     $baseBinds,
                 )->getRowArray();
@@ -111,8 +111,8 @@ final class ReconciliationReportQuery
             if ($cashVisible || $stockVisible) {
                 $columns = [];
                 if ($cashVisible) {
-                    $columns[] = "MAX(CASE WHEN v.variance_kind='CASH' THEN v.variance_amount ELSE NULL END) cash_variance_amount";
-                    $select .= ',v.cash_variance_amount';
+                    $columns[] = "MAX(CASE WHEN v.variance_kind='CASH' THEN v.amount_variance ELSE NULL END) cash_amount_variance";
+                    $select .= ',v.cash_amount_variance';
                 }
                 if ($stockVisible) {
                     $columns[] = "SUM(CASE WHEN v.variance_kind='STOCK' AND v.quantity_variance<0 THEN 1 ELSE 0 END) stock_shortage_items";
@@ -154,8 +154,8 @@ final class ReconciliationReportQuery
                     },
                 ];
                 if ($cashVisible) {
-                    $amount = $row['cash_variance_amount'] ?? null;
-                    $item['cash_variance_amount'] = $amount === null ? null : (string) $amount;
+                    $amount = $row['cash_amount_variance'] ?? null;
+                    $item['cash_amount_variance'] = $amount === null ? null : (string) $amount;
                     $item['has_cash_variance'] = $amount !== null && (string) $amount !== '0.00';
                 }
                 if ($stockVisible) {
