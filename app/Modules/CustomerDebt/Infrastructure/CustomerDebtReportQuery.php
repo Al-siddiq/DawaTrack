@@ -43,6 +43,11 @@ final class CustomerDebtReportQuery
         $search = trim($search);
         [$page, $size] = $this->paginationInput($input);
         (new DebtSchema($this->database))->requireReady();
+        foreach (['customers', 'receivables', 'receivable_adjustments'] as $table) {
+            if (!$this->database->tableExists($table)) {
+                throw new ApiException('DEBT_SETUP_REQUIRED', 'Customer balances are not ready. Ask the shop owner to complete the approved application update.', 503);
+            }
+        }
 
         return (new DebtReadSnapshot($this->database))->run(function () use ($context, $status, $customerStatus, $search, $page, $size): array {
             $shop = $this->database->table('shops')->select('timezone_name,currency_code')
