@@ -76,3 +76,8 @@ Authenticated Shop /cash-controls provides bounded history, start/detail, readin
 ## Phase 7 WP3 integration
 
 Stock/Full now share Cash lifecycle/authority/readiness with server-bound scopes and blind DTOs. Inventory owns reviewed one-effect Stock delta against the current position; late source Audit and control refresh publish in the source transaction. Existing Cash API/recovery markers remain compatible. See the [complete WP3 contract](../Phase-7/Phase_7_WP3_Integration_Contracts.md), [native guide](../manual-verification-phase-07-wp3.md) and [operations](../operations/phase-07-wp3-stock-full.md). Native verification remains open.
+
+
+## Phase 8 WP1 Sales report
+
+`GET /api/v1/shop/reports/sales` is a read-only Shop-scoped report route. It accepts optional `from` and `to` Shop-local dates (`YYYY-MM-DD`) and `group_by=DAY|MONTH`; the default is the current Shop month through the current Shop date, and the maximum range is 366 inclusive days. The server derives Tenant, Shop, timezone and currency. `report.view` is required; Gross Profit/COGS fields are omitted unless `sale.profit.view` is also active. Responses use the canonical envelope and `Cache-Control: no-store, private`. See [WP1 integration contract](../Phase-8/Phase_8_WP1_Integration_Contracts.md).
