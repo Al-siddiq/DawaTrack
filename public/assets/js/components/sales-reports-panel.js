@@ -40,6 +40,7 @@ export const SalesReportsPanel = {
     props: { permissions: { type: Array, default: () => [] } },
     setup(props) {
         let alive = true;
+        let refreshAfterPending = false;
         const period = ref('TODAY');
         const fromDate = ref('');
         const toDate = ref('');
@@ -71,11 +72,21 @@ export const SalesReportsPanel = {
             } catch (failure) {
                 if (alive) error.value = failure.message || 'The report could not be loaded. Check your connection and try again.';
             } finally {
-                if (alive) pending.value = false;
+                if (alive) {
+                    pending.value = false;
+                    if (refreshAfterPending) {
+                        refreshAfterPending = false;
+                        load();
+                    }
+                }
             }
         }
 
-        watch(() => props.permissions.includes('sale.profit.view'), () => { if (alive && !pending.value) load(); });
+        watch(() => props.permissions.includes('sale.profit.view'), () => {
+            if (!alive) return;
+            if (pending.value) refreshAfterPending = true;
+            else load();
+        });
         onMounted(load);
         onUnmounted(() => { alive = false; });
 
