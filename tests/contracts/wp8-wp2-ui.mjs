@@ -26,6 +26,8 @@ for (const phrase of [
     'Products counted below expected stock',
     'Products counted above expected stock',
     'Last updated:',
+    'last successful report',
+    'may be out of date',
     'You are offline.',
     'Open Stock record',
     'View customer bills',
