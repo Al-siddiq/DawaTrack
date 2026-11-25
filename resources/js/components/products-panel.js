@@ -4,7 +4,8 @@ import { useTradingConfirm, selectField, facts, stateLabel, note, fieldSummary }
 const { h, ref, computed, onMounted, onUnmounted, watch } = window.Vue;
 export const ProductsPanel = {
     props: { products: Object, inventory: Object, context: Object, readOnly: Boolean, hash: { type: String, default: '#products' } },
-    setup(props) {
+    emits: ['navigate'],
+    setup(props, { emit }) {
         const sheetCloseWarning = ref(false);
         const confirmation = useTradingConfirm(), online = ref(navigator.onLine);
         const connection = () => { online.value = navigator.onLine; };
@@ -12,7 +13,7 @@ export const ProductsPanel = {
         onUnmounted(() => { window.removeEventListener('online', connection); window.removeEventListener('offline', connection); });
         const busy = computed(() => props.products.pending || props.products.loading || props.inventory.pending);
         watch(() => props.hash, hash => {
-            const match = /^#products\\/([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i.exec(hash);
+            const match = /^#products\/([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i.exec(hash);
             if (match) props.products.open({ public_id: match[1] });
             else if (props.products.selected) props.products.close();
         }, { immediate: true });
@@ -45,7 +46,7 @@ export const ProductsPanel = {
         function detail() {
             const p = props.products, a = props.inventory, row = p.selected;
             return h('div', { class: 'trading-stack' }, [
-                h('article', { class: 'commercial-card' }, [h('div', { class: 'trading-task-header' }, [h('h2', row.name), status(row)]), facts([['Stock left', `${row.expected_quantity} ${row.unit_name}`], ['Selling price per unit', money(row.current_selling_price)], ['Low stock alert at', `${row.low_stock_threshold} ${row.unit_name}`]]), row.average_unit_cost != null && facts([['Recorded cost per unit', money(row.average_unit_cost)], ['Cost record', stateLabel(row.cost_basis_state)]]), row.is_negative_stock && note('Stock is below zero. Check the stock record and correct any missing entries.', 'warning'), h('div', { class: 'ui-actions' }, [action('Back to products', guard(p.close), busy.value), p.canManage && action('Edit product', guard(p.beginEdit), blocked.value, 'btn-outline-primary', { icon: 'edit' })])]),
+                h('article', { class: 'commercial-card' }, [h('div', { class: 'trading-task-header' }, [h('h2', row.name), status(row)]), facts([['Stock left', `${row.expected_quantity} ${row.unit_name}`], ['Selling price per unit', money(row.current_selling_price)], ['Low stock alert at', `${row.low_stock_threshold} ${row.unit_name}`]]), row.average_unit_cost != null && facts([['Recorded cost per unit', money(row.average_unit_cost)], ['Cost record', stateLabel(row.cost_basis_state)]]), row.is_negative_stock && note('Stock is below zero. Check the stock record and correct any missing entries.', 'warning'), h('div', { class: 'ui-actions' }, [action('Back to products', guard(() => emit('navigate', '#products')), busy.value), p.canManage && action('Edit product', guard(p.beginEdit), blocked.value, 'btn-outline-primary', { icon: 'edit' })])]),
                 h('div', { class: 'trading-grid' }, [h('div', { class: 'trading-stack' }, [
                     props.context.capabilities.adjust_inventory && h(UiAccordion, { title: 'Low stock alert' }, { default: () => h('form', { class: 'commercial-form', onSubmit: doSubmit(p.updateThreshold) }, [field('product-threshold', 'Show a low stock alert at', p.threshold, value => { p.threshold = value; }, { inputmode: 'decimal', disabled: blocked.value || !p.canAdjust, errors: p.fieldErrors.low_stock_threshold || [], help: `Quantity in ${row.unit_name}.` }), submit('Save alert level', blocked.value || !p.canAdjust, { loading: p.pending })]) }),
                     a.canAdjust && h(UiAccordion, { title: 'Record damaged, missing or corrected stock' }, { default: () => h('form', { class: 'commercial-form', onSubmit: doSubmit(async () => { if (await confirmation.ask({ title: 'Save this stock change?', message: `Recorded stock will change from ${row.expected_quantity} to ${a.resultingStock} ${row.unit_name}. The reason and original record will be kept.`, confirm: 'Save stock change' })) a.record(); }) }, [
