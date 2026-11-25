@@ -9,6 +9,7 @@ export const shopPages = Object.freeze([
     { id: 'stock-controls', label: 'Stock check', icon: 'stock', hash: '#stock-controls', prefixes: ['#stock-controls/'], capability: 'view_cash_controls', group: 'menu', section: 'Work', trackEdits: true },
     { id: 'full-controls', label: 'Cash and stock check', icon: 'activity', hash: '#full-controls', prefixes: ['#full-controls/'], capability: 'view_cash_controls', group: 'menu', section: 'Work', trackEdits: true },
     { id: 'financial-movements', label: 'Money movements', icon: 'cash', hash: '#financial-movements', prefixes: ['#financial-movements/'], capability: 'view_financial_movements', group: 'menu', section: 'Work' },
+    { id: 'operational-reports', label: 'Shop reports', icon: 'reports', hash: '#shop-reports', capability: 'view_operational_reports', group: 'menu', section: 'Work' },
     { id: 'devices', label: 'Shop devices', icon: 'settings', hash: '#devices', capability: 'view_devices', group: 'menu', section: 'Manage shop', trackEdits: true },
     { id: 'staff', label: 'Staff', icon: 'staff', hash: '#staff', capability: 'manage_staff', group: 'menu', section: 'Manage shop', trackEdits: true },
     { id: 'settings', label: 'Shop details', icon: 'settings', hash: '#settings', capability: 'manage_shop_settings', group: 'menu', parent: 'Shop settings', section: 'Shop settings', trackEdits: true },
