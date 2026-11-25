@@ -58,6 +58,7 @@ $ok(str_contains($registry, "id: 'sale-drafts'") && str_contains($registry, "cap
 $ok(str_contains($template, "page==='sale-history' && context.capabilities.view_sale_drafts"), 'Existing generated Shop template mounts the shared Sales workspace for report-only Staff');
 $ok(str_contains($history, "includes('report.view')") && str_contains($history, "includes('sale.view')"), 'Sales history and report UI remain separately permission-aware');
 $ok(str_contains($panel, 'refreshAfterPending') && str_contains($panel, "includes('sale.profit.view')"), 'Profit visibility refreshes after permission changes, including an in-flight report');
+$ok(str_contains($panel, "addEventListener('offline'") && str_contains($panel, "addEventListener('online'") && str_contains($panel, 'not saved for offline use'), 'Offline state hides old report values and reconnect refreshes online data');
 $ok($history === $read('public/assets/js/components/sale-history-panel.js'), 'Published Sales workspace module exactly matches its source');
 $ok($panel === $read('public/assets/js/components/sales-reports-panel.js'), 'Published Sales report module exactly matches its source');
 $ok($registry === $read('public/assets/js/shared/workspace-registry.js'), 'Published Shop navigation module exactly matches its source');
