@@ -60,7 +60,7 @@ $ok(str_contains($history, "includes('report.view')") && str_contains($history, 
 $ok($history === $read('public/assets/js/components/sale-history-panel.js'), 'Published Sales workspace module exactly matches its source');
 $ok($panel === $read('public/assets/js/components/sales-reports-panel.js'), 'Published Sales report module exactly matches its source');
 $ok($registry === $read('public/assets/js/shared/workspace-registry.js'), 'Published Shop navigation module exactly matches its source');
-$ok(str_contains($panel, 'Money from sales after returns') && str_contains($panel, 'Cash after refunds') && str_contains($panel, 'Money left after paying for goods') && str_contains($panel, 'Customers allowed to pay later'), 'Report labels use everyday words');
+$ok(str_contains($panel, 'Money from sales after returns') && str_contains($panel, 'Cash after refunds') && str_contains($panel, 'Money left after paying for goods') && str_contains($panel, 'Money customers can pay later'), 'Report labels use everyday words');
 $ok(str_contains($plain, 'without accounting knowledge') && str_contains($plain, 'Money left after paying for goods'), 'Plain-English policy documents the Sales report language');
 
 echo PHP_EOL . $checks . " Phase 8 WP1 source contract checks passed." . PHP_EOL;
