@@ -51,7 +51,7 @@ Record the exact IDs, amounts, posted_at instants, source links and grants in th
 
 ### P8-06 — Credit Sales
 1. Post a Sale with a customer and an unpaid balance/Receivable.
-2. Expected: Credit after returns equals the Sale's original credit evidence. No Customer phone or private notes are exposed.
+2. Expected: Money customers can pay later equals the Sale's original credit evidence. No Customer phone or private notes are exposed.
 
 ### P8-07 — Returns and compensation
 1. Post a partial Return, then a full Return in a separate fixture, and a compensation for an eligible Return.
