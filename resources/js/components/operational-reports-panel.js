@@ -84,7 +84,7 @@ export const OperationalReportsPanel = {
     },
     emits: ['navigate'],
     setup(props, { emit }) {
-        const stock = reactive({ data: null, loading: false, error: '', page: 1, per_page: 20, state: 'ALL', search: '' });
+        const stock = reactive({ data: null, loading: false, error: '', stale: false, queryKey: null, page: 1, per_page: 20, state: 'ALL', search: '' });
         const debt = reactive({ data: null, loading: false, error: '', page: 1, per_page: 20, status: 'OWING', customer_status: 'ALL', search: '' });
         const reconciliation = reactive({ data: null, loading: false, error: '', page: 1, per_page: 20, scope: 'ALL' });
         const online = ref(navigator.onLine);
@@ -122,6 +122,13 @@ export const OperationalReportsPanel = {
                 state.data = response.data;
             } catch (failure) {
                 if (alive && controllers[name] === controller && failure.name !== 'AbortError') {
+                    const sensitiveFailure = [401, 403, 409, 422, 503].includes(failure.status);
+                    if (sensitiveFailure) {
+                        state.data = null;
+                        state.stale = false;
+                    } else {
+                        state.stale = Boolean(state.data);
+                    }
                     state.error = failureText(failure, name === 'stock' ? 'Stock' : name === 'debt' ? 'Customer balances' : 'Reconciliation');
                 }
             } finally {
@@ -164,9 +171,9 @@ export const OperationalReportsPanel = {
         function connection() {
             online.value = navigator.onLine;
             if (!online.value) {
-                Object.assign(stock, { data: null, loading: false, error: 'You are offline. Connect to see the current Stock position.' });
-                Object.assign(debt, { data: null, loading: false, error: 'You are offline. Connect to see the latest customer balances.' });
-                Object.assign(reconciliation, { data: null, loading: false, error: 'You are offline. Connect to see the saved Reconciliation results.' });
+                Object.assign(stock, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the current Stock position.' });
+                Object.assign(debt, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the latest customer balances.' });
+                Object.assign(reconciliation, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the saved Reconciliation results.' });
                 Object.keys(controllers).forEach(stop);
             } else {
                 refreshAll();
@@ -203,10 +210,13 @@ export const OperationalReportsPanel = {
             if (!data?.refreshed_at) return null;
             return h('p', { class: 'sales-report-refreshed' }, 'Last updated: ' + data.refreshed_at + ' (' + (data.shop?.timezone_name || 'Shop time') + ').');
         }
+        function staleNote(state) {
+            return state.stale && h(UiAlert, { severity: 'warning', message: 'This is the last successful report. It may be out of date; refresh before making decisions.', dismissible: false });
+        }
         function sectionError(state, reload) {
             return [
                 state.loading && h(UiLoading, { label: 'Loading report…' }),
-                state.error && h(UiAlert, { severity: 'error', message: state.error, dismissible: false }),
+                state.error && h(UiAlert, { severity: state.stale ? 'warning' : 'error', message: state.error, dismissible: false }),
                 state.error && h(UiButton, { variant: 'secondary', disabled: !online.value, onClick: reload }, () => 'Try again'),
             ].filter(Boolean);
         }
@@ -224,7 +234,8 @@ export const OperationalReportsPanel = {
                     h(UiButton, { type: 'submit', icon: 'search', loading: stock.loading }, () => 'Find products'),
                 ]),
                 ...sectionError(stock, () => loadStock(stock.page)),
-                data && !stock.error && [
+                data && (!stock.error || stock.stale) && [
+                    staleNote(stock),
                     h('p', { class: 'sales-report-period-note' }, 'Current Shop stock · ' + data.shop.timezone_name),
                     h('div', { class: 'sales-report-metrics' }, [
                         metric('Products with stock records', data.summary.product_count),
@@ -276,7 +287,8 @@ export const OperationalReportsPanel = {
                     h(UiButton, { type: 'submit', icon: 'search', loading: debt.loading }, () => 'Find balances'),
                 ]),
                 ...sectionError(debt, () => loadDebt(debt.page)),
-                data && !debt.error && [
+                data && (!debt.error || debt.stale) && [
+                    staleNote(debt),
                     h('p', { class: 'sales-report-period-note' }, 'Balances checked for ' + data.shop_date + ' · Shop time: ' + data.shop.timezone_name),
                     h('div', { class: 'sales-report-metrics' }, [
                         metric('Customers in this list', data.summary.customer_count),
@@ -319,7 +331,8 @@ export const OperationalReportsPanel = {
                     h(UiButton, { type: 'submit', icon: 'search', loading: reconciliation.loading }, () => 'Find checks'),
                 ]),
                 ...sectionError(reconciliation, () => loadReconciliation(reconciliation.page)),
-                data && !reconciliation.error && [
+                data && (!reconciliation.error || reconciliation.stale) && [
+                    staleNote(reconciliation),
                     h('p', { class: 'sales-report-period-note' }, 'Only finished checks are included · Shop time: ' + data.shop.timezone_name),
                     h('div', { class: 'sales-report-metrics' }, [
                         metric('Finished checks', data.summary.finalized_count),
