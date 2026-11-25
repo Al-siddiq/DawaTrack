@@ -79,7 +79,7 @@ $assert(str_contains($routes, "shop/reports/customer-debt"), 'Customer Debt repo
 $assert(str_contains($routes, "shop/reports/reconciliation"), 'Reconciliation report route is registered');
 $assert(str_contains($shop, "'view_stock_report' => \$hasPermission('report.view') && \$hasPermission('inventory.view')"), 'Stock UI capability is permission-derived');
 $assert(str_contains($shop, "'view_customer_debt_report' => \$hasPermission('report.view') && \$hasPermission('customer.view') && \$hasPermission('debt.view')"), 'Debt UI capability requires both source grants');
-$assert(str_contains($shop, "'view_reconciliation_report' => $hasPermission('report.view') && \$hasPermission('reconciliation.view')"), 'Reconciliation UI capability is permission-derived');
+$assert(str_contains($shop, "'view_reconciliation_report' => \$hasPermission('report.view') && \$hasPermission('reconciliation.view')"), 'Reconciliation UI capability is permission-derived');
 $assert(str_contains($registry, "capability: 'view_operational_reports'"), 'Shop reports navigation uses server capability');
 $assert(str_contains($app, 'OperationalReportsPanel'), 'Shop app registers operational reports panel');
 $assert(str_contains($template, 'OperationalReportsPanel'), 'Shop template mounts operational reports panel');
