@@ -67,11 +67,11 @@ function selectControl(id, label, value, options, onChange) {
         }, options.map(([option, text]) => h('option', { value: option }, text))),
     ]);
 }
-function textControl(id, label, value, onInput) {
+function textControl(id, label, value, onInput, maxLength = 160) {
     return h('label', { for: id }, [
         label,
         h('input', {
-            id, class: 'form-control', type: 'search', maxlength: 160,
+            id, class: 'form-control', type: 'search', maxlength: maxLength,
             value, onInput: event => onInput(event.target.value),
         }),
     ]);
@@ -231,7 +231,7 @@ export const OperationalReportsPanel = {
             return h('section', { class: 'sales-report-section', 'aria-busy': stock.loading }, [
                 reportHeader('Stock position', 'See how much stock is recorded now and which products need attention.', stock, () => loadStock(stock.page)),
                 h('form', { class: 'sales-report-filters', onSubmit: event => { event.preventDefault(); loadStock(1); } }, [
-                    textControl('stock-report-search', 'Find a product', stock.search, value => { stock.search = value; }),
+                    textControl('stock-report-search', 'Find a product', stock.search, value => { stock.search = value; }, 100),
                     selectControl('stock-report-state', 'Show products', stock.state, [
                         ['ALL', 'All products'], ['LOW', 'Low stock'], ['NEGATIVE', 'Below zero'],
                         ['NORMAL', 'Stock above alert level'], ['RETAINED', 'Last known buying price'], ['UNESTABLISHED', 'Buying price not known'],
