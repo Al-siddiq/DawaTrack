@@ -47,7 +47,7 @@ Success uses the established API envelope and returns:
     "gross_profit": {
       "amount": "4200.00",
       "provisional": false,
-      "label": "Gross profit before shop expenses",
+      "label": "Money left after paying for goods",
       "message": "This is what remained after the cost of the goods sold. Shop expenses have not been taken out."
     },
     "profit_visible": true
@@ -88,9 +88,9 @@ The service verifies with MySQL DECIMAL arithmetic that Cash + Transfer + Credit
 
 Only when `sale.profit.view` is granted, the service sums signed `sale_items.line_sales_amount - sale_items.line_cogs_amount`. The line COGS amount is the historical snapshot recorded with the Sale/Return; today's Stock cost is never substituted. Return and compensation signs follow their source operation.
 
-The existing Inventory `CommercialCostHistory` and `CostStateReconstructor` are used to detect an `UNESTABLISHED` historical cost basis. If any included source Sale item has that state, the result is marked provisional and the UI explains that it is an estimate. A missing source movement or cost link fails safely.
+The existing Inventory `CommercialCostHistory` and `CostStateReconstructor` are used to detect an `UNESTABLISHED` historical cost basis. If any included source Sale item has that state, the result is marked provisional and the UI explains that it is an estimate. Original-item links are followed through Return and Return-compensation lines to the original Sale Item before checking its historical Stock movement. A missing source movement or cost link fails safely.
 
-Gross Profit is explicitly before Shop expenses. Phase 8 WP1 does not calculate net profit or subtract Financial Movement expenses.
+The screen calls this **Money left after paying for goods** and explains that it is Gross Profit before Shop bills and other expenses. Phase 8 WP1 does not calculate net profit or subtract Financial Movement expenses.
 
 ## 3. Authorization and roles
 
@@ -99,7 +99,7 @@ Gross Profit is explicitly before Shop expenses. Phase 8 WP1 does not calculate 
 - Staff require an active explicit `report.view` grant. Existing grants are not expanded.
 - `sale.profit.view` independently gates every Gross Profit/COGS amount. `report.view` does not imply it.
 - Existing `sale.view` independently controls the Sales and Returns history/detail view. A Staff member with only `report.view` sees the Sales report and never triggers the Sales history API.
-- The existing Shop workspace capability `view_sales_workspace` is presentation metadata derived from `sale.view OR report.view`; it is not a new permission and never replaces server authorization.
+- The existing Shop workspace capability `view_sales_workspace` is presentation metadata derived from `sale.view OR report.view`; it is not a new permission and never replaces server authorization. The shared template's legacy `view_sale_drafts` mount hint uses the same union only to mount the Sales workspace. The `Sell` destination is separately gated by `view_sale_entry`, derived only from `sale.view`, so report-only Staff cannot open draft Sales. Sales APIs continue to require `sale.view`.
 - READ_ONLY allows authorized report reads. BLOCKED/CLOSED and inactive/foreign Shop context remain denied by existing access rules.
 
 No new permission code is introduced. `report.view` and `sale.profit.view` already exist in the closed permission catalogue.
