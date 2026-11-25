@@ -284,7 +284,7 @@ export const OperationalReportsPanel = {
                     textControl('debt-report-search', 'Customer name', debt.search, value => { debt.search = value; }),
                     selectControl('debt-report-status', 'Show balances', debt.status, [
                         ['OWING', 'Still to pay'], ['OUTSTANDING', 'Unpaid'], ['PARTIAL', 'Partly paid'],
-                        ['OVERDUE', 'Payment overdue'], ['SETTLED', 'Paid'], ['NO_DEBT', 'No unpaid bills'], ['ALL', 'All'],
+                        ['OVERDUE', 'Payment overdue'], ['SETTLED', 'Paid'], ['ALL', 'All'],
                     ], value => { debt.status = value; }),
                     selectControl('debt-report-customer-status', 'Customer records', debt.customer_status, [
                         ['ALL', 'Active and inactive'], ['ACTIVE', 'Active'], ['INACTIVE', 'Inactive'],
@@ -312,7 +312,7 @@ export const OperationalReportsPanel = {
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Still to pay'), h('strong', money(row.outstanding_amount, data.shop.currency_code))]),
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Payment overdue'), h('strong', money(row.overdue_amount, data.shop.currency_code))]),
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Bills'), h('strong', String(row.bill_count))]),
-                                h('div', { class: 'sales-report-line' }, [h('span', 'Earliest unpaid due date'), h('strong', row.earliest_due_date || 'No due date recorded')]),
+                                h('div', { class: 'sales-report-line' }, [h('span', 'Next due date'), h('strong', row.next_due_date || 'No due date recorded')]),
                                 row.customer_status === 'INACTIVE' && h('p', { class: 'sales-report-help' }, 'Inactive customer — past bills are kept.'),
                                 row.is_overdue && h(UiAlert, { severity: 'warning', message: row.overdue_bill_count + ' bill(s) are overdue.', dismissible: false }),
                             ]),
