@@ -105,7 +105,7 @@ export const OperationalReportsPanel = {
         function failureText(failure, domain) {
             if (failure?.status === 403) return 'Your current access does not allow this report. Ask the shop owner for help.';
             if (failure?.status === 503) return failure.message || domain + ' information is not ready. Ask the administrator to check the application setup.';
-            return 'We could not load this report. Check your connection and try again.';
+            return 'We could not refresh this report. Check your connection and try again.';
         }
         async function load(name, state, path, filters) {
             if (!online.value || state.loading) return;
@@ -178,7 +178,7 @@ export const OperationalReportsPanel = {
             if (!online.value) {
                 Object.assign(stock, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the current Stock position.' });
                 Object.assign(debt, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the latest customer balances.' });
-                Object.assign(reconciliation, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see the saved Reconciliation results.' });
+                Object.assign(reconciliation, { data: null, loading: false, stale: false, queryKey: null, error: 'You are offline. Connect to see finalized Reconciliation results.' });
                 Object.keys(controllers).forEach(stop);
             } else {
                 refreshAll();
