@@ -41,6 +41,7 @@ export const SalesReportsPanel = {
     setup(props) {
         let alive = true;
         let refreshAfterPending = false;
+        const online = ref(typeof navigator === 'undefined' || navigator.onLine !== false);
         const period = ref('TODAY');
         const fromDate = ref('');
         const toDate = ref('');
@@ -50,6 +51,7 @@ export const SalesReportsPanel = {
 
         async function load() {
             if (pending.value) return;
+            if (!online.value) { report.value = null; error.value = ''; return; }
             pending.value = true;
             error.value = '';
             report.value = null;
@@ -65,12 +67,12 @@ export const SalesReportsPanel = {
             }
             try {
                 const response = await apiRequest(`/api/v1/shop/reports/sales?${params.toString()}`);
-                if (!alive) return;
+                if (!alive || !online.value) return;
                 report.value = response.data;
                 fromDate.value = response.data.period.from_date;
                 toDate.value = response.data.period.to_date;
             } catch (failure) {
-                if (alive) error.value = failure.message || 'The report could not be loaded. Check your connection and try again.';
+                if (alive && online.value) error.value = failure.message || 'The report could not be loaded. Check your connection and try again.';
             } finally {
                 if (alive) {
                     pending.value = false;
@@ -87,8 +89,22 @@ export const SalesReportsPanel = {
             if (pending.value) refreshAfterPending = true;
             else load();
         });
-        onMounted(load);
-        onUnmounted(() => { alive = false; });
+        const handleOffline = () => { online.value = false; report.value = null; error.value = ''; };
+        const handleOnline = () => {
+            online.value = true;
+            if (pending.value) refreshAfterPending = true;
+            else load();
+        };
+        onMounted(() => {
+            window.addEventListener('offline', handleOffline);
+            window.addEventListener('online', handleOnline);
+            load();
+        });
+        onUnmounted(() => {
+            alive = false;
+            window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('online', handleOnline);
+        });
 
         return () => h('div', { class: 'trading-stack sales-report-panel', 'aria-busy': pending.value }, [
             h('section', { class: 'commercial-card' }, [
@@ -116,6 +132,7 @@ export const SalesReportsPanel = {
                     submit('Show report', pending.value, { loading: pending.value, busyLabel: 'Loading report…' }),
                 ]),
             ]),
+            !online.value ? h(UiInformationPanel, { severity: 'warning', title: 'You are offline', message: 'Connect to the internet to see the latest Sales report. This report is not saved for offline use.' }) : null,
             error ? h(UiAlert, { severity: 'error', message: error, dismissible: false }) : null,
             pending.value && h(UiLoading, { label: 'Getting the latest saved Sales…' }),
             report.value ? h('div', { class: 'trading-stack' }, [
