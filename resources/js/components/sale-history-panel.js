@@ -51,7 +51,7 @@ export const SaleHistoryPanel = {
         });
         onUnmounted(() => { alive = false; window.removeEventListener('hashchange', hashChange); window.removeEventListener('dt:location', hashChange); window.removeEventListener('dt:navigated', hashChange); });
         return () => h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': pending.value }, [
-            h('h2', { ref: heading, tabindex: '-1' }, reportOpen.value ? 'Sales summary' : (selected.value ? (selected.value.status === 'DRAFT' ? 'Unfinished return' : 'Saved receipt') : 'Sales and returns')),
+            !reportOpen.value && h('h2', { ref: heading, tabindex: '-1' }, selected.value ? (selected.value.status === 'DRAFT' ? 'Unfinished return' : 'Saved receipt') : 'Sales and returns'),
             ...feedback(error.value, ''), confirmation.render(),
             reportOpen.value ? h(SalesReportPanel, { permissions: props.permissions, onBack: backFromReport }) : selected.value ? h('div', { class: 'trading-stack' }, [
                 h('div', { class: 'ui-actions' }, [action('Back to sales', () => confirmation.guard(back, '#sale-history'), pending.value || childBusy.value), action('Reload saved record', () => confirmation.guard(() => open(selected.value.public_id)), pending.value || childBusy.value)]),
