@@ -37,6 +37,9 @@ The report uses everyday labels and explains Credit and Gross Profit. The Gross 
 ## 5. Verification status
 
 - GitHub source updates: prepared on the feature branch.
+- PHP syntax checks for the fetched SalesReportQuery and SalesReportController source: **Passed** (isolated `php -l`; this is not an application runtime test).
+- JavaScript syntax checks for the fetched SalesReportPanel and SalesHistoryPanel source: **Passed** (`node --check`; this is not a browser test).
+- Frontend asset build: **Not run**. The repository checkout/dependencies are not available in this execution environment; generated `public/assets/` files were deliberately not hand-edited. Run the established `npm run build` in the repository checkout before integrating/deploying this candidate.
 - Native PHP/CodeIgniter HTTP execution: **Not run in this environment**.
 - Native MySQL reconciliation fixtures and EXPLAIN/EXPLAIN ANALYZE: **Not run**.
 - Browser/device/keyboard/accessibility review: **Not run**.
