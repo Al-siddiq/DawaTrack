@@ -7,7 +7,8 @@ The [29-entry register](navigation-map.csv) retains original mappings. Current a
 | manage_staff / manage_shop_settings / manage_branding / manage_domains | PRIMARY_OWNER |
 | view_subscription / manage_opening_cash / view_audit | PRIMARY_OWNER |
 | view_customers | customer.view |
-| view_sale_drafts | sale.view |
+| view_sale_entry | sale.view |
+| view_sales_workspace | sale.view OR report.view |
 | view_inventory | inventory.view |
 | manage_products / adjust_inventory / manage_intakes / reverse_inventory | product.manage / inventory.adjust / inventory.intake / inventory.reverse |
 
@@ -17,7 +18,7 @@ Implemented C registry: ID, approved label/copy key, semantic icon, parent, bott
 
 Phone: Home / Sell / Stock / Customers / Menu. Omit unauthorized destinations; never show a dead target. Sales/returns/settings use Menu as current group. Stock deliveries/starting stock stay under Stock. Desktop: work destinations plus authorized Owner links; no duplicated bottom bar. Admin: Shops, Add shop, Plans, Web addresses, Activity under actual platform grants. Plans is existing subscription operations, not a new feature. Customers are records, not an unsupported portal.
 
-Current BLOCKED/CLOSED navigation in Shop limits to home/activity; preserve actual policy when C integrates it. Other server access modes and refreshed denials must be handled explicitly. Navigation visibility never replaces backend authorization or permits fetching hidden customer/cost data.
+Current BLOCKED/CLOSED navigation in Shop limits to home/activity; preserve actual policy when C integrates it. Other server access modes and refreshed denials must be handled explicitly. Navigation visibility never replaces backend authorization or permits fetching hidden customer/cost data. `view_sale_drafts` is retained as a Shop-template mount hint for the shared Sales workspace and is derived from `sale.view OR report.view`; it is not an authorization grant. The separate `view_sale_entry` capability keeps the Sell destination and draft-entry routes hidden from report-only Staff. Every Sales draft/history API continues to enforce its own `sale.view` permission.
 
 C now integrates the registry into real Shop/Admin shells. Every current destination remains reachable with its actual authority; use workspace-shells.md and the C checklist. Full task-body migration/copy remains UI-3. Design samples never override server rules.
 
