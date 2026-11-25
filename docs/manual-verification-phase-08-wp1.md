@@ -74,10 +74,10 @@ Record the exact IDs, amounts, posted_at instants, source links and grants in th
 
 ### P8-11 — Profit permission masking
 1. Sign in as Staff A with report.view only. Open Shop → Sales.
-2. Expected: the report opens directly; no Sales-history request is made. Try a direct saved-sale URL; it returns to the report and does not show receipt details.
-3. Sign in as Staff B with sale.view only. Expected: Sales and Returns history is available, but the Sales report tab is not shown. A direct report hash returns to Sales history.
+2. Expected: the report opens directly; no Sales-history request is made; the Sell destination and draft routes are not available. Try a direct saved-sale URL and a direct draft URL; both remain unavailable and do not show receipt/draft details.
+3. Sign in as Staff B with sale.view only. Expected: Sales and Returns history and the Sell destination are available, but the Sales report tab is not shown. A direct report hash returns to Sales history.
 4. Sign in as Staff C with report.view + sale.view but without sale.profit.view. Inspect the screen and report response.
-5. Expected: Sales/payment totals are visible; gross_profit is null and no COGS/profit values are returned. Staff D and Owner can see Gross Profit. Revoking sale.profit.view hides the figure; revoking report.view or sale.view removes that corresponding view on the next access refresh.
+5. Expected: Sales/payment totals are visible; the screen says “Money left after paying for goods” is not available for this Staff member; gross_profit is null and no COGS/profit values are returned. Staff D and Owner can see Gross Profit. Revoking sale.profit.view hides the figure; revoking report.view or sale.view removes that corresponding view on the next access refresh.
 
 ### P8-12 — Range, pagination, empty/error and device checks
 1. Try invalid dates, reversed dates, a range longer than 366 days and unsupported period.
