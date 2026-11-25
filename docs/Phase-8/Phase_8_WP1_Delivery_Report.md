@@ -29,7 +29,7 @@
 
 The report is inside the existing Shop Sales workspace. Staff with `report.view` can see the report; Staff with `sale.view` can see Sales/Returns history; users with both can switch between them. Primary Owner behavior remains role-derived. Gross Profit visibility remains separately governed by `sale.profit.view`.
 
-The labels and explanations avoid accounting shorthand. The screen explains Sales after returns, Cash after refunds, Bank transfers after refunds, Credit after returns, and Gross Profit before Shop expenses in everyday words. It displays Shop dates, Shop timezone and last refresh time.
+The labels and explanations use everyday words: money from sales after returns, Cash after refunds, bank transfers after refunds, customers allowed to pay later, and money left after paying for goods. The Gross Profit meaning is explained without expecting accounting knowledge. It displays Shop dates, Shop timezone and last refresh time.
 
 ## 4. Verification status
 
