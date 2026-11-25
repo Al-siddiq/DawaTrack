@@ -49,7 +49,7 @@ $assert(str_contains($permissions, "case ReportView = 'report.view'"), 'existing
 $assert(str_contains($registry, "capability: 'view_sales_workspace'"), 'navigation uses server capability hint');
 $assert(str_contains($registry, "'#sales-report'"), 'Sales summary hash is routed within existing Sales workspace');
 $assert(str_contains($history, "props.permissions.includes('sale.view')"), 'report-only users do not gain Sales history');
-$assert(str_contains($panel, 'Gross profit (before shop expenses)'), 'plain-language Gross Profit label exists');
+$assert(str_contains($panel, 'Money left after product costs'), 'plain-language Gross Profit label exists');
 $assert(str_contains($panel, 'Credit added to customer bills'), 'Credit is explained in everyday language');
 $assert(str_contains($panel, 'Last updated:'), 'report freshness is displayed');
 $assert(str_contains($contract, 'Debt collection is not joined into this report as new revenue'), 'debt collection is excluded from Sales');
