@@ -111,8 +111,8 @@ final class ReconciliationReportQuery
             if ($cashVisible || $stockVisible) {
                 $columns = [];
                 if ($cashVisible) {
-                    $columns[] = "MAX(CASE WHEN v.variance_kind='CASH' THEN v.amount_variance ELSE NULL END) cash_amount_variance";
-                    $select .= ',v.cash_amount_variance';
+                    $columns[] = "MAX(CASE WHEN v.variance_kind='CASH' THEN v.amount_variance ELSE NULL END) cash_variance_amount";
+                    $select .= ',v.cash_variance_amount';
                 }
                 if ($stockVisible) {
                     $columns[] = "SUM(CASE WHEN v.variance_kind='STOCK' AND v.quantity_variance<0 THEN 1 ELSE 0 END) stock_shortage_items";
@@ -154,8 +154,8 @@ final class ReconciliationReportQuery
                     },
                 ];
                 if ($cashVisible) {
-                    $amount = $row['cash_amount_variance'] ?? null;
-                    $item['cash_amount_variance'] = $amount === null ? null : (string) $amount;
+                    $amount = $row['cash_variance_amount'] ?? null;
+                    $item['cash_variance_amount'] = $amount === null ? null : (string) $amount;
                     $item['has_cash_variance'] = $amount !== null && (string) $amount !== '0.00';
                 }
                 if ($stockVisible) {
