@@ -119,10 +119,11 @@ final class ReconciliationReportQuery
                     $columns[] = "SUM(CASE WHEN v.variance_kind='STOCK' AND v.quantity_variance>0 THEN 1 ELSE 0 END) stock_surplus_items";
                     $select .= ',COALESCE(v.stock_shortage_items,0) stock_shortage_items,COALESCE(v.stock_surplus_items,0) stock_surplus_items';
                 }
-                $join = ' LEFT JOIN (SELECT v.reconciliation_session_id,' . implode(',', $columns) . '
+                $join = ' LEFT JOIN (SELECT v.tenant_id,v.shop_id,v.reconciliation_session_id,' . implode(',', $columns) . '
                     FROM reconciliation_variances v
                     WHERE v.tenant_id=? AND v.shop_id=?
-                    GROUP BY v.reconciliation_session_id) v ON v.reconciliation_session_id=s.id';
+                    GROUP BY v.tenant_id,v.shop_id,v.reconciliation_session_id) v
+                    ON v.tenant_id=s.tenant_id AND v.shop_id=s.shop_id AND v.reconciliation_session_id=s.id';
                 $binds = [$context->tenantId, $context->shopId, ...$binds];
             }
             $where = "s.tenant_id=? AND s.shop_id=? AND s.control_kind='STANDARD' AND s.status='FINALIZED'";
