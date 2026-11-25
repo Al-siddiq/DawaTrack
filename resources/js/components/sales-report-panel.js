@@ -82,7 +82,8 @@ export const SalesReportPanel = {
                 amountLine('Transfer received', row.transfer_received),
                 amountLine('Transfer refunded', row.transfer_refunded),
                 amountLine('Credit added to customer bills', row.credit_created),
-                amountLine('Credit removed or restored', row.credit_adjustments_decrease),
+                amountLine('Credit added back to customer bills', row.credit_adjustments_increase),
+                amountLine('Credit removed from customer bills', row.credit_adjustments_decrease),
             ];
             if (report.value?.profit_visible) details.push(amountLine('Gross profit before expenses', row.gross_profit));
             return h('article', { class: 'sales-report-period-card', key: row.period_start }, [
@@ -117,7 +118,7 @@ export const SalesReportPanel = {
                     h('h2', { tabindex: '-1' }, 'Sales summary'),
                     h('p', 'See how much the shop sold and how customers paid. Only saved sales and returns are included.'),
                 ]),
-                h(UiButton, { variant: 'secondary', icon: 'back', onClick: () => emit('back') }, () => 'Back to sales'),
+                h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'Back to sales'),
             ]),
             h('form', {
                 class: 'sales-report-filters',
