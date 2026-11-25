@@ -24,7 +24,15 @@ export const SaleHistoryPanel = {
         async function open(id) { await run(async () => { const value = await get(`/api/v1/shop/sales/${id}`); if (!alive) return; if (value.status === 'DRAFT' && value.kind === 'SALE') { location.hash = `#sale-draft/${value.public_id}`; return; } selected.value = value; announceWorkspaceHash(`#sale/${value.public_id}`); await nextTick(); heading.value?.focus(); }); }
         function adopt(value, sourceId = null) { if (!alive) return; if (sourceId && selected.value?.public_id !== sourceId) return; childBusy.value = false; selected.value = value; error.value = ''; if (value) { announceWorkspaceHash(`#sale/${value.public_id}`); open(value.public_id); } else back(); }
         const hashChange = () => {
-            if (location.hash === '#sales-report') { reportOpen.value = true; selected.value = null; return; }
+            if (location.hash === '#sales-report') {
+                if (!props.permissions.includes('report.view')) {
+                    reportOpen.value = false;
+                    if (props.permissions.includes('sale.view')) { announceWorkspaceHash('#sale-history'); load(); }
+                    else announceWorkspaceHash('#home');
+                    return;
+                }
+                reportOpen.value = true; selected.value = null; return;
+            }
             if (location.hash === '#sale-history') {
                 const leavingReport = reportOpen.value;
                 reportOpen.value = false;
@@ -43,7 +51,10 @@ export const SaleHistoryPanel = {
         }
         function back() { selected.value = null; announceWorkspaceHash('#sale-history'); load(pagination.page); }
         onMounted(() => {
-            if (location.hash === '#sales-report' || !props.permissions.includes('sale.view')) { reportOpen.value = true; }
+            if (location.hash === '#sales-report' && !props.permissions.includes('report.view')) {
+                if (props.permissions.includes('sale.view')) { announceWorkspaceHash('#sale-history'); load(); }
+                else announceWorkspaceHash('#home');
+            } else if (location.hash === '#sales-report' || !props.permissions.includes('sale.view')) { reportOpen.value = true; }
             else { const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/); if (match) open(match[1]); else load(); }
             window.addEventListener('hashchange', hashChange);
             window.addEventListener('dt:location', hashChange);
