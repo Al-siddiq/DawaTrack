@@ -110,11 +110,11 @@ The report is reached through the existing Shop **Sales** workspace. Users who h
 
 The screen uses short explanations:
 
-- **Sales after returns:** Sales minus returns and cancelled sales.
+- **Money from sales after returns:** The value of goods sold, less goods returned or cancelled.
 - **Cash after refunds:** Cash received, less Cash paid back to customers.
 - **Bank transfers after refunds:** Transfers received, less transfers paid back.
-- **Credit after returns:** Money customers still needed to pay when goods were sold, less credit removed by returns.
-- **Gross profit before shop expenses:** What remained after the cost of goods sold; Shop expenses have not been taken out.
+- **Money customers can pay later:** The part of sales customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales.
+- **Money left after paying for goods:** Money left after paying for the goods sold. Shop bills and other expenses have not been taken out.
 
 The page shows the Shop dates, Shop timezone and last refresh time. It does not use charts that could obscure the amounts. No local report cache or offline freshness claim is introduced. Source-detail navigation is shown only when the user also has `sale.view`.
 
