@@ -53,7 +53,7 @@ export const SaleHistoryPanel = {
         return () => h('section', { class: 'workspace commercial-workspace trading-screen ui-scope', 'aria-busy': pending.value }, [
             h('h2', { ref: heading, tabindex: '-1' }, reportOpen.value ? 'Sales summary' : (selected.value ? (selected.value.status === 'DRAFT' ? 'Unfinished return' : 'Saved receipt') : 'Sales and returns')),
             ...feedback(error.value, ''), confirmation.render(),
-            reportOpen.value ? h(SalesReportPanel, { onBack: backFromReport }) : selected.value ? h('div', { class: 'trading-stack' }, [
+            reportOpen.value ? h(SalesReportPanel, { permissions: props.permissions, onBack: backFromReport }) : selected.value ? h('div', { class: 'trading-stack' }, [
                 h('div', { class: 'ui-actions' }, [action('Back to sales', () => confirmation.guard(back, '#sale-history'), pending.value || childBusy.value), action('Reload saved record', () => confirmation.guard(() => open(selected.value.public_id)), pending.value || childBusy.value)]),
                 pending.value && h(UiLoading, { label: 'Loading saved record…' }),
                 selected.value.status === 'DRAFT'
