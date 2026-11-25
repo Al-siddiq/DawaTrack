@@ -25,6 +25,7 @@ $stock = $read('app/Modules/Inventory/Infrastructure/StockReportQuery.php');
 $debt = $read('app/Modules/CustomerDebt/Infrastructure/CustomerDebtReportQuery.php');
 $reconciliation = $read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
 $controller = $read('app/Controllers/Api/OperationalReportController.php');
+$commercialController = $read('app/Controllers/Api/CommercialController.php');
 $routes = $read('app/Config/Routes.php');
 $shop = $read('app/Controllers/Api/ShopController.php');
 $registry = $read('resources/js/shared/workspace-registry.js');
@@ -77,6 +78,10 @@ $assert(str_contains($controller, 'ReconciliationReportQuery'), 'Controller dele
 $assert(str_contains($routes, "shop/reports/stock"), 'Stock report route is registered');
 $assert(str_contains($routes, "shop/reports/customer-debt"), 'Customer Debt report route is registered');
 $assert(str_contains($routes, "shop/reports/reconciliation"), 'Reconciliation report route is registered');
+$assert(substr_count($routes, "['filter' => 'authenticated']") > 0 && str_contains($routes, "shop/reports/stock"), 'Report endpoints follow authenticated route convention');
+$assert(str_contains($commercialController, 'Cache-Control'), 'Shared commercial controller owns report HTTP headers');
+$assert(str_contains($commercialController, 'no-store, private'), 'Report responses are private and not cacheable');
+$assert(str_contains($commercialController, 'ShopContext::resolve'), 'Report requests use server-resolved Shop context');
 $assert(str_contains($shop, "'view_stock_report' => \$hasPermission('report.view') && \$hasPermission('inventory.view')"), 'Stock UI capability is permission-derived');
 $assert(str_contains($shop, "'view_customer_debt_report' => \$hasPermission('report.view') && \$hasPermission('customer.view') && \$hasPermission('debt.view')"), 'Debt UI capability requires both source grants');
 $assert(str_contains($shop, "'view_reconciliation_report' => \$hasPermission('report.view') && \$hasPermission('reconciliation.view')"), 'Reconciliation UI capability is permission-derived');
