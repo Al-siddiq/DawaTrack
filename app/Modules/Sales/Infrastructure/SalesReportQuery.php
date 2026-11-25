@@ -271,7 +271,10 @@ final class SalesReportQuery
         $row['payment_mix_matches_sales'] = $row['payment_mix_total'] === $row['net_sales'];
         if ($profitVisible) {
             $row['cost_of_sales_net'] = SaleMoney::difference($row['cost_of_sales_added'], $row['cost_of_returns_and_cancellations']);
-            $row['gross_profit'] = SaleMoney::difference($row['net_sales'], $row['cost_of_sales_net']);
+            $row['gross_profit'] = SaleMoney::difference(
+                SaleMoney::sum([$row['sales_added'], $row['cost_of_returns_and_cancellations']]),
+                SaleMoney::sum([$row['returns_and_cancellations'], $row['cost_of_sales_added']]),
+            );
         } else {
             unset($row['cost_of_sales_added'], $row['cost_of_returns_and_cancellations']);
         }
