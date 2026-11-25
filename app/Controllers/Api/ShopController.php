@@ -66,7 +66,6 @@ final class ShopController extends BaseController
                     'collect_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record'),
                     'allocate_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record') && $hasPermission('debt.payment.allocate'),
                     'view_sale_drafts' => $hasPermission('sale.view'),
-                    'view_sales_reports' => $hasPermission('report.view'),
                     'view_sales_workspace' => $hasPermission('sale.view') || $hasPermission('report.view'),
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),
