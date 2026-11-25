@@ -71,6 +71,8 @@ $assert(str_contains($reconciliation, 'quantity_variance>0'), 'Stock surplus ite
 $assert(str_contains($reconciliation, 'blocksScope'), 'Blind-count scope blocks sensitive variance fields');
 $assert(str_contains($reconciliation, 'detail_hash'), 'Finalized report rows link to existing authorized detail');
 $assert(str_contains($reconciliation, 'reconciliation_sessions'), 'Reconciliation report reads persisted sessions');
+$assert(!str_contains($reconciliation, 'expected_amount') && !str_contains($reconciliation, 'actual_amount'), 'Reconciliation summary does not expose blind count values');
+$assert(!str_contains($reconciliation, 'explanation'), 'Reconciliation summary does not expose review reasons');
 
 $assert(str_contains($controller, 'StockReportQuery'), 'Controller delegates Stock to Inventory owner');
 $assert(str_contains($controller, 'CustomerDebtReportQuery'), 'Controller delegates debt to CustomerDebt owner');
