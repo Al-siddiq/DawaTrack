@@ -17,6 +17,17 @@ function shopTime(value, timezone) {
     }).format(date);
 }
 
+function shopDate(value) {
+    if (!value) return 'Not available';
+    const date = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('en-NG', { timeZone: 'UTC', dateStyle: 'medium' }).format(date);
+}
+
+function shopTimezoneLabel(value) {
+    return value === 'Africa/Lagos' ? 'Nigeria time' : value;
+}
+
 function reportCard(title, amount, explanation) {
     return h('article', { class: 'commercial-card' }, [
         h('h3', title),
@@ -99,8 +110,8 @@ export const SalesReportsPanel = {
             report.value ? h('div', { class: 'trading-stack' }, [
                 h('section', { class: 'commercial-card' }, [
                     h('h3', 'Your Sales at a glance'),
-                    h('p', `Shop dates: ${report.value.period.from_date} to ${report.value.period.to_date}`),
-                    h('p', { class: 'trading-record-meta' }, `Time shown for this Shop: ${report.value.period.timezone}`),
+                    h('p', `Shop dates: ${shopDate(report.value.period.from_date)} to ${shopDate(report.value.period.to_date)}`),
+                    h('p', { class: 'trading-record-meta' }, `Time shown for this Shop: ${shopTimezoneLabel(report.value.period.timezone)}`),
                     h('p', { class: 'trading-record-meta' }, `Last updated: ${shopTime(report.value.period.refreshed_at, report.value.period.timezone)}`),
                     h('p', 'These figures show how Sales were paid. They are not the money currently in the till or bank.'),
                 ]),
@@ -114,8 +125,8 @@ export const SalesReportsPanel = {
                     report.value.gross_profit.message,
                 ) : h(UiInformationPanel, {
                     severity: 'info',
-                    title: 'Profit figures are not shown',
-                    message: 'You cannot see profit figures with your current access. Ask the Shop Owner if you need them.',
+                    title: 'Money left after paying for goods is not shown',
+                    message: 'Your current access does not include this figure. Ask the Shop Owner if you need it.',
                 }),
                 h('section', { class: 'commercial-card' }, [
                     h('h3', 'Saved records in this date range'),
