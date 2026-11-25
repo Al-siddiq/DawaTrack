@@ -43,12 +43,12 @@ final class ReconciliationReportQuery
             }
         }
 
-        $review = $this->access->allows($context, 'reconciliation.review');
-        $blind = new BlindReadPolicy($this->database);
-        $cashVisible = $review && !$blind->blocksScope($context, 'CASH');
-        $stockVisible = $review && !$blind->blocksScope($context, 'STOCK');
-
-        return (new DebtReadSnapshot($this->database))->run(function () use ($context, $scope, $page, $size, $cashVisible, $stockVisible): array {
+        return (new DebtReadSnapshot($this->database))->run(function () use ($context, $scope, $page, $size): array {
+            // Re-evaluate reviewer authority and blind-count state inside the same read snapshot.
+            $review = $this->access->allows($context, 'reconciliation.review');
+            $blind = new BlindReadPolicy($this->database);
+            $cashVisible = $review && !$blind->blocksScope($context, 'CASH');
+            $stockVisible = $review && !$blind->blocksScope($context, 'STOCK');
             $shop = $this->database->table('shops')->select('timezone_name,currency_code')
                 ->where(['tenant_id' => $context->tenantId, 'id' => $context->shopId])->get()->getRowArray();
             if (!$shop) {
