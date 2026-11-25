@@ -17,10 +17,10 @@ The three report families remain in their existing owning modules. The API contr
 
 ### Backend and API
 
-- `Inventory\\Infrastructure\\StockReportQuery`: scoped current Stock Position summary, threshold-derived low-stock state, negative positions, exact DECIMAL confirmed valuation, retained/unestablished cost-state caveats and bounded stable Product pagination.
-- `CustomerDebt\\Infrastructure\\CustomerDebtReportQuery`: scoped Customer balance and overdue summary built from `ReceivableBalanceQuery::projection()` and `DebtReadSnapshot`, with derived settlement state, Shop-local due-date evaluation, bounded pagination and minimal Customer identity.
-- `Reconciliation\\Infrastructure\\ReconciliationReportQuery`: finalized STANDARD Cash/Stock/Full evidence only, signed Cash and per-Product Stock variance summaries, independent review authority, blind-count visibility checks, composite Tenant/Shop joins and authorized detail links.
-- `Api\\OperationalReportController`: three read-only transport actions using the existing `CommercialController` response, request-context, AccessGate and no-store behavior.
+- `StockReportQuery`: scoped current Stock Position summary, threshold-derived low-stock state, negative positions, exact DECIMAL confirmed valuation, retained/unestablished cost-state caveats and bounded stable Product pagination.
+- `CustomerDebtReportQuery`: scoped Customer balance and overdue summary built from `ReceivableBalanceQuery::projection()` and `DebtReadSnapshot`, with derived settlement state, Shop-local due-date evaluation, bounded pagination and minimal Customer identity.
+- `ReconciliationReportQuery`: finalized STANDARD Cash/Stock/Full evidence only, signed Cash and per-Product Stock variance summaries, independent review authority, blind-count visibility checks, composite Tenant/Shop joins and authorized detail links.
+- `OperationalReportController`: three read-only transport actions using the existing `CommercialController` response, request-context, AccessGate and no-store behavior.
 - Routes:
   - `GET /api/v1/shop/reports/stock`
   - `GET /api/v1/shop/reports/customer-debt`
@@ -42,7 +42,7 @@ The three report families remain in their existing owning modules. The API contr
 - `Phase_8_WP2_Source_Matrix.csv`
 - `Phase_8_WP2_Manual_Results.csv` — P8-13–P8-24 reserved, all currently Not run.
 - `Phase_8_WP2_Manual_Verification_Guide.md`
-- `2026-11-25-phase-08-wp1-owner-acceptance.md) — records the explicit Owner decision to accept/close WP1 for sequencing while preserving its unrun P8-01–P8-12 manual outcomes as Not run.
+- `docs/acceptance/2026-11-25-phase-08-wp1-owner-acceptance.md` — records the explicit Owner decision to accept/close WP1 for sequencing while preserving its unrun P8-01–P8-12 manual outcomes as Not run.
 
 Static test files:
 
@@ -60,7 +60,7 @@ Static test files:
 
 ## 5. Verification status — not claimed as passed
 
-The implementation branch was authored through the connected repository interface. The local Windows PHP/MySQL/Node environment was not available to execute commands from this delivery session. Therefore none of the following is represented as Pass:
+The source changes and documentation are committed on the GitHub branch. I do not have access to execute commands inside the user's local Windows PHP/MySQL/Node environment from this delivery session. Therefore none of the following is represented as Pass:
 
 - PHP syntax lint for the new/changed PHP files;
 - Node syntax check for the new/changed JavaScript;
