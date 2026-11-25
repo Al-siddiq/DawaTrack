@@ -249,6 +249,7 @@ export const OperationalReportsPanel = {
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Low-stock alert at'), h('strong', row.low_stock_threshold + ' ' + row.unit_name)]),
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Cost record'), h('strong', costStates[row.cost_basis_state] || row.cost_basis_state)]),
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Stock value'), h('strong', row.stock_value === null ? 'Not included in confirmed value' : money(row.stock_value, data.shop.currency_code))]),
+                                row.product_status === 'INACTIVE' && h('p', { class: 'sales-report-help' }, 'Inactive product — past Stock records are kept.'),
                             ]),
                             h(UiButton, { variant: 'secondary', onClick: () => emit('navigate', '#products/' + row.product_public_id) }, () => 'Open Stock record'),
                         ])))
