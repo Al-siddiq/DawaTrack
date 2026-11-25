@@ -64,7 +64,7 @@ $assert(str_contains($reconciliation, "'reconciliation.view'"), 'Reconciliation 
 $assert(str_contains($reconciliation, "'reconciliation.review'"), 'Variance fields require independent review authority');
 $assert(str_contains($reconciliation, 'BlindReadPolicy'), 'Reconciliation report reuses blind-read policy');
 $assert(str_contains($reconciliation, "s.control_kind='STANDARD' AND s.status='FINALIZED'"), 'Only standard finalized checks are reported');
-$assert(str_contains($reconciliation, 'amount_variance'), 'Cash variance uses persisted signed evidence');
+$assert(str_contains($reconciliation, 'variance_amount'), 'Cash variance uses persisted signed evidence');
 $assert(str_contains($reconciliation, 'quantity_variance<0'), 'Stock shortage items preserve negative variance sign');
 $assert(str_contains($reconciliation, 'quantity_variance>0'), 'Stock surplus items preserve positive variance sign');
 $assert(str_contains($reconciliation, 'blocksScope'), 'Blind-count scope blocks sensitive variance fields');
@@ -78,7 +78,7 @@ $assert(str_contains($routes, "shop/reports/stock"), 'Stock report route is regi
 $assert(str_contains($routes, "shop/reports/customer-debt"), 'Customer Debt report route is registered');
 $assert(str_contains($routes, "shop/reports/reconciliation"), 'Reconciliation report route is registered');
 $assert(str_contains($shop, "'view_stock_report' => \$hasPermission('report.view') && \$hasPermission('inventory.view')"), 'Stock UI capability is permission-derived');
-$assert(str_contains($shop, "'view_customer_debt_report' => $hasPermission('report.view') && \$hasPermission('customer.view') && \$hasPermission('debt.view')"), 'Debt UI capability requires both source grants');
+$assert(str_contains($shop, "'view_customer_debt_report' => \$hasPermission('report.view') && \$hasPermission('customer.view') && \$hasPermission('debt.view')"), 'Debt UI capability requires both source grants');
 $assert(str_contains($shop, "'view_reconciliation_report' => $hasPermission('report.view') && \$hasPermission('reconciliation.view')"), 'Reconciliation UI capability is permission-derived');
 $assert(str_contains($registry, "capability: 'view_operational_reports'"), 'Shop reports navigation uses server capability');
 $assert(str_contains($app, 'OperationalReportsPanel'), 'Shop app registers operational reports panel');
