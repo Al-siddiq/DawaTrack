@@ -213,7 +213,7 @@ final class SalesReportQuery
             SELECT
                 CAST(COALESCE(SUM(CASE WHEN p.channel='CASH' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount WHEN p.direction='REFUND' THEN -p.amount ELSE 0.00 END ELSE 0.00 END),0.00) AS CHAR) cash_amount,
                 CAST(COALESCE(SUM(CASE WHEN p.channel='TRANSFER' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount WHEN p.direction='REFUND' THEN -p.amount ELSE 0.00 END ELSE 0.00 END),0.00) AS CHAR) transfer_amount,
-                COALESCE(SUM(CASE WHEN p.direction NOT IN ('RECEIPT','REFUND') OR p.channel NOT IN ('CASH','TRANSFER') THEN 1 ELSE 0 END),0) invalid_count
+                COALESCE(SUM(CASE WHEN p.direction NOT IN ('RECEIPT','REFUND') OR p.channel NOT IN ('CASH','TRANSFER') OR (s.kind='SALE' AND p.direction<>'RECEIPT') OR (s.kind='RETURN' AND p.direction<>'REFUND') THEN 1 ELSE 0 END),0) invalid_count
             FROM sale_payments p
             JOIN sales s ON s.tenant_id=p.tenant_id AND s.shop_id=p.shop_id AND s.id=p.sale_id
             WHERE p.tenant_id=? AND p.shop_id=? AND s.status='POSTED' AND s.posted_at>=? AND s.posted_at<?
