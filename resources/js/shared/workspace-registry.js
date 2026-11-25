@@ -1,6 +1,6 @@
 export const shopPages = Object.freeze([
     { id: 'home', label: 'Home', icon: 'home', hash: '#home', group: 'home' },
-    { id: 'sale-drafts', label: 'Sell', icon: 'sell', hash: '#sale-drafts', prefixes: ['#sale-draft/', '#sale-drafts/'], capability: 'view_sale_drafts', group: 'sell' },
+    { id: 'sale-drafts', label: 'Sell', icon: 'sell', hash: '#sale-drafts', prefixes: ['#sale-draft/', '#sale-drafts/'], capability: 'view_sale_entry', group: 'sell' },
     { id: 'products', label: 'Stock', icon: 'stock', hash: '#products', capability: 'view_inventory', group: 'stock', trackEdits: true },
     { id: 'customers', label: 'Customers', icon: 'customers', hash: '#customers', prefixes: ['#customers/debts', '#customers/debt/'], capability: 'view_customers', group: 'customers' },
     { id: 'sale-history', label: 'Sales', icon: 'sales', hash: '#sale-history', prefixes: ['#sale/', '#sales-reports'], capability: 'view_sales_workspace', group: 'menu', section: 'Work' },
