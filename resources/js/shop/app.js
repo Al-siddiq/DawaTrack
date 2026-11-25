@@ -12,6 +12,7 @@ import { permittedShopPages, readWorkspacePresentation } from '../shared/workspa
 import { useWorkspaceNavigation } from '../shared/workspace-navigation.js';
 import { UiDialog, UiButton, UiAlert } from '../components/ui/index.js';
 import { SaleHistoryPanel } from '../components/sale-history-panel.js';
+import { OperationalReportsPanel } from '../components/operational-reports-panel.js';
 import { phaseOneApi } from '../api/phase-one.js';
 import { groupedPermissions } from './permission-groups.js';
 import { render } from './render.js';
@@ -37,7 +38,7 @@ const {
 
 export const ShopApp = {
     render,
-    components: { CashControlsPanel, DevicesPanel, FinancialMovementsPanel, OwnerPanel, ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel },
+    components: { CashControlsPanel, DevicesPanel, FinancialMovementsPanel, OwnerPanel, ProductsPanel, IntakesPanel, WorkspaceShell, WorkspaceHome, UiLoading, UiInformationPanel, UiDialog, UiButton, UiAlert, AuditPanel, OpeningCashPanel, CustomerPanel, SaleDraftPanel, SaleHistoryPanel, OperationalReportsPanel },
 
     setup() {
         const presentation = readWorkspacePresentation(document.getElementById('shop-app'));
