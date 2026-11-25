@@ -82,7 +82,7 @@ Read `sale_payments` linked to posted Sales/Returns/compensations in the same Sh
 
 Credit is the original amount of posted Sale Receivables created in the period plus sale-owned Receivable adjustments posted in the period (`RETURN_REDUCTION`, Sale-cancellation `CORRECTION_DECREASE`, and the corresponding `REVERSAL`). Generic bill corrections have no Sales source and are excluded. Debt payment allocations/collections are excluded: collecting an old bill is not a new Sale.
 
-The service verifies with MySQL DECIMAL arithmetic that Cash + Transfer + Credit equals Sales after returns. It also verifies that the signed Sale Item sales total equals the signed Sales header total. An inconsistent source set fails safely with `COMMERCIAL_EVIDENCE_INVALID`; the report does not silently display a plausible but unbalanced total.
+The service checks each posted Sale, Return and compensation row to confirm that its saved item lines add up to that record's header total. It then verifies with MySQL DECIMAL arithmetic that Cash + Transfer + Credit equals Sales after returns and that the signed item total equals the signed header total. An inconsistent source set fails safely with `COMMERCIAL_EVIDENCE_INVALID`; the report does not silently display a plausible but unbalanced total.
 
 ### Gross Profit
 
