@@ -45,7 +45,7 @@ Sales reports must be understandable without accounting knowledge. Use the words
 | Receivable / debtor | Customer bill / amount left to pay |
 | Credit Sales | Sales left on a customer bill |
 | COGS | Cost of the products sold |
-| Gross margin / margin | Gross profit (before shop expenses), with a plain explanation |
+| Gross margin / margin | Money left after product costs (gross profit before shop expenses), with a plain explanation |
 | Net Profit | Do not show this in Phase 8; it is outside the approved scope |
 | Reporting period | Dates shown |
 | Refreshed at | Last updated |
