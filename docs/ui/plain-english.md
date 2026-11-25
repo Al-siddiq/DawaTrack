@@ -39,12 +39,12 @@ A Sales report must be understandable without accounting knowledge. Use short la
 
 | Report label | Explain it this way |
 |---|---|
-| Sales after returns | Sales minus returns and cancelled sales. |
+| Money from sales after returns | The value of goods sold, less goods returned or cancelled. |
 | Cash after refunds | Cash received, less Cash paid back to customers. |
 | Bank transfers after refunds | Transfers received, less transfers paid back. |
-| Credit after returns | Money customers still needed to pay when goods were sold, less credit removed by returns. |
-| Gross profit before shop expenses | What remained after the cost of the goods sold. Shop expenses have not been taken out. |
+| Customers allowed to pay later | The part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales. |
+| Money left after paying for goods | This is Gross Profit: money left after paying for the goods sold. Shop bills and other expenses have not been taken out. |
 
 Show the Shop dates, Shop time zone and last refresh time. Do not call Gross Profit net profit. If a user cannot see profit, say that their access does not include profit figures and direct them to the Shop Owner. Do not show a blank, zero or masked-looking profit amount that could be mistaken for a real result.
 
-The existing Sales workspace remains the entry point. A Staff member with `report.view` can open the report; `sale.view` separately controls Sales and Returns history; `sale.profit.view` separately controls Gross Profit and cost values. The Primary Owner continues to use the existing role-derived authority. Do not introduce a new role or broaden Staff grants.
+The existing Sales workspace remains the entry point. A Staff member with `report.view` can open the report; `sale.view` separately controls Sales and Returns history and the Sell destination; `sale.profit.view` separately controls the money-left-after-goods figure and cost values. Use the simple screen label first and explain the technical name only where it helps. The Primary Owner continues to use the existing role-derived authority. Do not introduce a new role or broaden Staff grants.
