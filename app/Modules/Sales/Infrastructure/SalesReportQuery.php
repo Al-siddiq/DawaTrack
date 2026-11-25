@@ -177,32 +177,33 @@ final class SalesReportQuery
         return $this->database->query(
             <<<'SQL'
             WITH scoped_sales AS (
-                SELECT s.id,s.kind,s.total_amount,s.reversal_of_sale_id,original_sale.kind source_kind,
+                SELECT s.id,s.kind,s.total_amount,s.reversal_of_sale_id,
+                    COUNT(i.id) line_count,
+                    CAST(COALESCE(SUM(i.line_sales_amount),0.00) AS DECIMAL(19,2)) line_sales_amount,
                     CASE
                         WHEN s.reversal_of_sale_id IS NOT NULL THEN CASE WHEN original_sale.kind='SALE' THEN -1 ELSE 1 END
                         WHEN s.kind='SALE' THEN 1 ELSE -1
                     END effect_sign
                 FROM sales s
                 LEFT JOIN sales original_sale ON original_sale.tenant_id=s.tenant_id AND original_sale.shop_id=s.shop_id AND original_sale.id=s.reversal_of_sale_id
+                LEFT JOIN sale_items i ON i.tenant_id=s.tenant_id AND i.shop_id=s.shop_id AND i.sale_id=s.id
                 WHERE s.tenant_id=? AND s.shop_id=? AND s.status='POSTED' AND s.posted_at>=? AND s.posted_at<?
+                GROUP BY s.id,s.kind,s.total_amount,s.reversal_of_sale_id,original_sale.kind
             ), sales_totals AS (
                 SELECT
                     CAST(COALESCE(SUM(total_amount*effect_sign),0.00) AS CHAR) sales_after_returns,
-                    SUM(CASE WHEN reversal_of_sale_id IS NULL AND kind='SALE' THEN 1 ELSE 0 END) sale_count,
-                    SUM(CASE WHEN reversal_of_sale_id IS NULL AND kind='RETURN' THEN 1 ELSE 0 END) return_count,
-                    SUM(CASE WHEN reversal_of_sale_id IS NOT NULL THEN 1 ELSE 0 END) cancellation_count
+                    COALESCE(SUM(CASE WHEN reversal_of_sale_id IS NULL AND kind='SALE' THEN 1 ELSE 0 END),0) sale_count,
+                    COALESCE(SUM(CASE WHEN reversal_of_sale_id IS NULL AND kind='RETURN' THEN 1 ELSE 0 END),0) return_count,
+                    COALESCE(SUM(CASE WHEN reversal_of_sale_id IS NOT NULL THEN 1 ELSE 0 END),0) cancellation_count,
+                    COALESCE(SUM(line_count),0) line_count,
+                    CAST(COALESCE(SUM(line_sales_amount*effect_sign),0.00) AS CHAR) line_sales_amount,
+                    COALESCE(SUM(CASE WHEN line_count=0 OR line_sales_amount<>total_amount THEN 1 ELSE 0 END),0) invalid_line_count
                 FROM scoped_sales
-            ), line_totals AS (
-                SELECT COUNT(i.id) line_count,
-                    CAST(COALESCE(SUM(i.line_sales_amount*ss.effect_sign),0.00) AS CHAR) line_sales_amount
-                FROM scoped_sales ss
-                LEFT JOIN sale_items i ON i.tenant_id=? AND i.shop_id=? AND i.sale_id=ss.id
             )
-            SELECT sales_totals.*,line_totals.line_count,line_totals.line_sales_amount
-            FROM sales_totals CROSS JOIN line_totals
+            SELECT * FROM sales_totals
             SQL,
-            [$context->tenantId, $context->shopId, $start, $end, $context->tenantId, $context->shopId],
-        )->getRowArray() ?? throw new \RuntimeException('Sales summary was not returned.');
+            [$context->tenantId, $context->shopId, $start, $end],
+        )->getRowArray() ?? throw new RuntimeException('Sales summary was not returned.');
     }
 
     private function paymentTotals(ShopContext $context, string $start, string $end): array
@@ -249,9 +250,8 @@ final class SalesReportQuery
 
     private function assertEvidence(array $sales, array $payments, array $credit): void
     {
-        $recordCount = (int) $sales['sale_count'] + (int) $sales['return_count'] + (int) $sales['cancellation_count'];
-        if ($recordCount > 0 && (int) $sales['line_count'] === 0) {
-            throw new ApiException('COMMERCIAL_EVIDENCE_INVALID', 'A saved Sales record has no item details. Ask the Shop Owner to review the linked records.', 409);
+        if ((int) ($sales['invalid_line_count'] ?? 0) > 0) {
+            throw new ApiException('COMMERCIAL_EVIDENCE_INVALID', 'A saved Sale or Return has missing item details or item totals that do not match its saved total. Ask the Shop Owner to review the linked records.', 409);
         }
         $lineMatches = $this->database->query(
             'SELECT CAST(? AS DECIMAL(19,2))=CAST(? AS DECIMAL(19,2)) matches',
