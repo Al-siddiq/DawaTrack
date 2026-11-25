@@ -42,7 +42,7 @@ A Sales report must be understandable without accounting knowledge. Use short la
 | Money from sales after returns | The value of goods sold, less goods returned or cancelled. |
 | Cash after refunds | Cash received, less Cash paid back to customers. |
 | Bank transfers after refunds | Transfers received, less transfers paid back. |
-| Customers allowed to pay later | The part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales. |
+| Money customers can pay later | The part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales. |
 | Money left after paying for goods | This is Gross Profit: money left after paying for the goods sold. Shop bills and other expenses have not been taken out. |
 
 Show the Shop dates, Shop time zone and last refresh time. Do not call Gross Profit net profit. If a user cannot see profit, say that their access does not include profit figures and direct them to the Shop Owner. Do not show a blank, zero or masked-looking profit amount that could be mistaken for a real result.
