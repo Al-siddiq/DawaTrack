@@ -116,7 +116,7 @@ The screen uses short explanations:
 - **Money customers can pay later:** The part of sales customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales.
 - **Money left after paying for goods:** Money left after paying for the goods sold. Shop bills and other expenses have not been taken out.
 
-The page shows the Shop dates, Shop timezone and last refresh time. It does not use charts that could obscure the amounts. No local report cache or offline freshness claim is introduced. Source-detail navigation is shown only when the user also has `sale.view`.
+The page shows the Shop dates, Shop timezone and last refresh time. It does not use charts that could obscure the amounts. If the browser goes offline, current figures are cleared and the page explains that the report is not saved for offline use; reconnecting triggers a fresh online read. No local report cache or offline freshness claim is introduced. Source-detail navigation is shown only when the user also has `sale.view`.
 
 ## 5. Database and performance boundary
 
