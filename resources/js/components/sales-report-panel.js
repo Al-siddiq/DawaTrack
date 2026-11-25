@@ -120,8 +120,7 @@ export const SalesReportPanel = {
                     h('p', 'See how much the shop sold and how customers paid. Only saved sales and returns are included.'),
                 ]),
                 h('div', { class: 'sales-report-header-actions' }, [
-                    props.permissions.includes('sale.view') && h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'View saved sales'),
-                    h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'Back'),
+                    h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => props.permissions.includes('sale.view') ? 'View saved sales' : 'Back to Home'),
                 ]),
             ]),
             h('form', {
