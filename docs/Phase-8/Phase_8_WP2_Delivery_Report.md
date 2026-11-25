@@ -4,6 +4,7 @@
 **Package:** WP2 — Stock, Customer Debt and Reconciliation Reports  
 **Branch:** `feature/phase-8-wp2-stock-debt-reconciliation`  
 **Base:** Owner-accepted WP1 candidate `feature/phase-8-wp1-sales-reporting`  
+**Review:** [Draft PR #57](https://github.com/Al-siddiq/DawaTrack/pull/57) — clean against the WP1 branch; not merged.  
 **Status:** Implementation candidate delivered for local build, native verification and Owner manual acceptance. Not merged.  
 **Controlling plan:** `Phase_8_Implementation_Plan.md` (Owner accepted 25 November 2026).
 
@@ -78,4 +79,4 @@ The existing frontend build must generate `public/assets/` from `resources/`. Ge
 
 WP2 is ready for local syntax/static checks, the locked frontend build and Owner-led native manual verification. The manual register remains Not run until observed evidence is supplied.
 
-**Stop here. Do not begin WP3. Do not merge the WP2 branch or integrate to `main` until the Owner reviews the manual evidence and explicitly accepts WP2.** Production deployment and operational release remain separate decisions.
+**Stop here. Do not begin WP3. Do not merge the WP2 branch or integrate to `main` until the Owner reviews the manual evidence and explicitly accepts WP2.** PR #57 intentionally targets the WP1 branch to keep the WP2 diff isolated; after WP1 is integrated, retarget WP2 to `main` without duplicating the WP1 changes. Production deployment and operational release remain separate decisions.
