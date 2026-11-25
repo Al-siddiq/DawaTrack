@@ -37,6 +37,11 @@ final class ReconciliationReportQuery
 
         (new CashControlSchema($this->database))->requireReady();
         (new StockControlSchema($this->database))->requireReady();
+        foreach (['reconciliation_sessions', 'reconciliation_financial_counts'] as $table) {
+            if (!$this->database->tableExists($table)) {
+                throw new ApiException('CASH_CONTROL_SETUP_REQUIRED', 'Reconciliation setup is incomplete. Ask the administrator to check the approved migrations.', 503);
+            }
+        }
 
         $review = $this->access->allows($context, 'reconciliation.review');
         $blind = new BlindReadPolicy($this->database);
