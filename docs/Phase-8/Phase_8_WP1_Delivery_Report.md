@@ -20,7 +20,7 @@
 - Sale, Return and compensation signs are explicit and source-linked.
 - Cash/Transfer use posted Sale payment receipt/refund evidence.
 - Credit uses posted Receivables and sale-owned return/cancellation adjustments; collections and generic bill corrections are not counted as new Sales.
-- Sales header/item and payment/credit composition are checked with MySQL DECIMAL arithmetic. Inconsistent evidence is rejected, not silently presented.
+- Each saved Sales header is checked against its own item lines before aggregation; payment/credit composition is then checked with MySQL DECIMAL arithmetic. Inconsistent evidence is rejected, not silently presented.
 - Gross Profit uses historical Sale Item COGS snapshots and the existing Inventory cost-state reconstruction. It is hidden unless `sale.profit.view` is independently granted.
 - Shop-local date boundaries are converted to UTC and filtered using `posted_at`.
 - No schema, migration, SQL twin, index, dependency, Audit write, new permission, duplicate ledger, export or offline report storage is added.
