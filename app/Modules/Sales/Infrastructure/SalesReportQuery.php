@@ -211,8 +211,9 @@ final class SalesReportQuery
         return $this->database->query(
             <<<'SQL'
             SELECT
-                CAST(COALESCE(SUM(CASE WHEN p.channel='CASH' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount ELSE -p.amount END ELSE 0.00 END),0.00) AS CHAR) cash_amount,
-                CAST(COALESCE(SUM(CASE WHEN p.channel='TRANSFER' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount ELSE -p.amount END ELSE 0.00 END),0.00) AS CHAR) transfer_amount
+                CAST(COALESCE(SUM(CASE WHEN p.channel='CASH' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount WHEN p.direction='REFUND' THEN -p.amount ELSE 0.00 END ELSE 0.00 END),0.00) AS CHAR) cash_amount,
+                CAST(COALESCE(SUM(CASE WHEN p.channel='TRANSFER' THEN CASE WHEN p.direction='RECEIPT' THEN p.amount WHEN p.direction='REFUND' THEN -p.amount ELSE 0.00 END ELSE 0.00 END),0.00) AS CHAR) transfer_amount,
+                COALESCE(SUM(CASE WHEN p.direction NOT IN ('RECEIPT','REFUND') OR p.channel NOT IN ('CASH','TRANSFER') THEN 1 ELSE 0 END),0) invalid_count
             FROM sale_payments p
             JOIN sales s ON s.tenant_id=p.tenant_id AND s.shop_id=p.shop_id AND s.id=p.sale_id
             WHERE p.tenant_id=? AND p.shop_id=? AND s.status='POSTED' AND s.posted_at>=? AND s.posted_at<?
@@ -250,6 +251,9 @@ final class SalesReportQuery
 
     private function assertEvidence(array $sales, array $payments, array $credit): void
     {
+        if ((int) ($payments['invalid_count'] ?? 0) > 0) {
+            throw new ApiException('COMMERCIAL_EVIDENCE_INVALID', 'A saved payment has an unsupported type. Ask the Shop Owner to review the linked records.', 409);
+        }
         if ((int) ($sales['invalid_line_count'] ?? 0) > 0) {
             throw new ApiException('COMMERCIAL_EVIDENCE_INVALID', 'A saved Sale or Return has missing item details or item totals that do not match its saved total. Ask the Shop Owner to review the linked records.', 409);
         }
