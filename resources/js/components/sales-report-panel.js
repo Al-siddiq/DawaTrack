@@ -4,6 +4,7 @@ import { apiRequest } from '../api/http-client.js';
 const { h, ref, onMounted, onUnmounted } = window.Vue;
 
 export const SalesReportPanel = {
+    props: { permissions: { type: Array, default: () => [] } },
     emits: ['back'],
     setup(_props, { emit }) {
         const report = ref(null);
@@ -118,7 +119,10 @@ export const SalesReportPanel = {
                     h('h2', { tabindex: '-1' }, 'Sales summary'),
                     h('p', 'See how much the shop sold and how customers paid. Only saved sales and returns are included.'),
                 ]),
-                h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'Back to sales'),
+                h('div', { class: 'sales-report-header-actions' }, [
+                    props.permissions.includes('sale.view') && h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'View saved sales'),
+                    h(UiButton, { variant: 'secondary', onClick: () => emit('back') }, () => 'Back'),
+                ]),
             ]),
             h('form', {
                 class: 'sales-report-filters',
