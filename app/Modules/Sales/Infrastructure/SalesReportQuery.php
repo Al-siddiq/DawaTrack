@@ -75,7 +75,7 @@ final class SalesReportQuery
             ]);
         }
 
-        [$bucketSql, $bucketParams, $dates] = $this->buckets($from, $to, $timezone);
+        [$bucketSql, $bucketParams, $dates] = $this->buckets($from, $to);
         $scopeParams = [$context->tenantId, $context->shopId];
 
         $salesRows = $this->database->query(
@@ -212,7 +212,7 @@ final class SalesReportQuery
     }
 
     /** @return array{0:string,1:list<string>,2:list<string>} */
-    private function buckets(DateTimeImmutable $from, DateTimeImmutable $to, DateTimeZone $timezone): array
+    private function buckets(DateTimeImmutable $from, DateTimeImmutable $to): array
     {
         $parts = [];
         $params = [];
