@@ -51,7 +51,7 @@ No report read creates Audit events or mutates source evidence. No cache, export
 
 - Low stock is derived exactly as `expected_quantity <= low_stock_threshold`; no second low-stock flag is stored.
 - Negative stock remains visible and separately counted. It is not silently corrected.
-- Confirmed Stock value is the SQL DECIMAL aggregate of `expected_quantity × average_unit_cost`, rounded to two currency decimals, only for positive quantity with `cost_basis_state='VALID'`.
+- Confirmed Stock value is the SQL DECIMAL aggregate of `expected_quantity × average_unit_cost`, rounded to two currency decimals per Product position and then summed, matching the Inventory line-amount precision, only for positive quantity with `cost_basis_state='VALID'`.
 - `RETAINED` and `UNESTABLISHED` cost states are shown as states, not false-precision valuations. Their retained/unknown basis is excluded from confirmed Stock value. Negative positions are also excluded from confirmed value.
 - The response says whether valuation is complete and reports retained, unestablished and negative-position counts separately.
 - No quantity total is formed across Products with different units.
@@ -116,7 +116,7 @@ Customer items contain only public UUID, display name, active/inactive status, b
 - Read only `control_kind='STANDARD'` and `status='FINALIZED'` persisted sessions. Opening Cash baseline controls are not reported as standard checks.
 - Never reconstruct a finalized result from current Sales, Stock, Debt or Financial Movement records.
 - Session totals classify CASH, STOCK and FULL separately. A FULL session contributes once to the finalized session count; its Cash and Stock variance evidence remains in the separate respective variance families.
-- Cash variance preserves the stored sign: actual minus expected. The response returns a signed decimal string for each finalized session when authorized. The UI explains a negative amount as a shortage and a positive amount as more cash counted than expected.
+- Cash variance reads `reconciliation_variances.amount_variance` and preserves the stored sign: actual minus expected. The response returns a signed decimal string for each finalized session when authorized. Stock variance reads `reconciliation_variances.quantity_variance`. The UI explains a negative amount as a shortage and a positive amount as more cash counted than expected.
 - Stock quantities use Product-specific units. The report counts Product shortage and surplus variance rows; it does not add unlike units into one misleading quantity.
 - Variance summaries count sessions/items; Cash amounts are not summed across historical sessions because later controls use the prior finalized actual as their new baseline.
 - Without `reconciliation.review`, or while the existing blind-count policy blocks a scope, the corresponding variance values/counts are omitted. Expected amounts/quantities, blind values, review reasons, abort reasons, note text, Device details and other private evidence are never serialized.
