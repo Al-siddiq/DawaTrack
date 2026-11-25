@@ -35,10 +35,10 @@ The labels and explanations use everyday words: money from sales after returns, 
 
 | Verification | Status |
 |---|---|
-| Repository source review and contract alignment | Completed during implementation |
+| Repository source review and contract alignment | 21/21 source-level assertions manually confirmed against the feature-branch files; this is not a PHP test execution |
 | Documentation/source consistency | Prepared; review in PR |
 | Native PHP syntax/lint | Not run in this environment |
-| WP1 source contract guard (`php tests/contracts/p8-wp1.php`) | Added; not run in this environment |
+| WP1 source contract guard (`php tests/contracts/p8-wp1.php`) | Added and extended; PHP execution not run in this environment |
 | CodeIgniter route/service integration | Not run in a native app environment |
 | MySQL 8.4 SQL execution and evidence fixtures | Not run |
 | EXPLAIN/representative-volume performance | Not run |
