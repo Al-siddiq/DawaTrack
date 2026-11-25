@@ -68,7 +68,8 @@ final class SalesReportQuery
             ]);
         }
 
-        $groupBy = strtoupper((string) ($input['group_by'] ?? 'DAY'));
+        $rawGroupBy = $input['group_by'] ?? 'DAY';
+        $groupBy = is_string($rawGroupBy) ? strtoupper($rawGroupBy) : '';
         if (! in_array($groupBy, ['DAY', 'MONTH'], true)) {
             throw new ApiException('REPORT_GROUP_INVALID', 'Choose daily or monthly results.', 422, [
                 'group_by' => ['Choose Daily or Monthly.'],
