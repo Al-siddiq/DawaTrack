@@ -42,6 +42,7 @@ $ok(str_contains($query, "new DateTimeZone(\$shop['timezone_name'])"), 'Shop tim
 $ok(str_contains($query, "RETURN_REDUCTION','CORRECTION_DECREASE','REVERSAL"), 'Credit includes only Sale-owned return/cancellation adjustments');
 $ok(!str_contains($query, 'debt_payment_allocations') && !str_contains($query, 'debt_payments'), 'Debt collection is not included as new Sales');
 $ok(str_contains($query, "p.direction='RECEIPT'") && str_contains($query, "p.direction='REFUND'"), 'Cash and Transfer use signed receipt/refund evidence');
+$ok(str_contains($query, "s.kind='SALE' AND p.direction<>'RECEIPT'") && str_contains($query, "s.kind='RETURN' AND p.direction<>'REFUND'"), 'Payment direction must agree with its Sale or Return source');
 $ok(str_contains($query, 'line_cogs_amount') && str_contains($query, 'CommercialCostHistory') && str_contains($query, 'CostStateReconstructor'), 'Gross Profit uses historical Sale Item cost evidence');
 $ok(str_contains($costHistory, 'chainsThrough') && str_contains($costHistory, 'array_chunk($targets, 500, true)'), 'Historical cost-state reads are batched in bounded product groups');
 $ok(str_contains($query, 'linked_item.original_sale_item_id,item.original_sale_item_id,item.id') && str_contains($query, 'LIMIT 25001'), 'Historical cost lookup follows cancelled Return lines and caps target rows');
@@ -59,6 +60,7 @@ $ok(str_contains($template, "page==='sale-history' && context.capabilities.view_
 $ok(str_contains($history, "includes('report.view')") && str_contains($history, "includes('sale.view')"), 'Sales history and report UI remain separately permission-aware');
 $ok(str_contains($panel, 'refreshAfterPending') && str_contains($panel, "includes('sale.profit.view')"), 'Profit visibility refreshes after permission changes, including an in-flight report');
 $ok(str_contains($panel, "addEventListener('offline'") && str_contains($panel, "addEventListener('online'") && str_contains($panel, 'not saved for offline use'), 'Offline state hides old report values and reconnect refreshes online data');
+$ok(str_contains($panel, 'error.value ? h(UiAlert') && str_contains($panel, 'message: error.value'), 'Report error ref is rendered as its current message');
 $ok($history === $read('public/assets/js/components/sale-history-panel.js'), 'Published Sales workspace module exactly matches its source');
 $ok($panel === $read('public/assets/js/components/sales-reports-panel.js'), 'Published Sales report module exactly matches its source');
 $ok($registry === $read('public/assets/js/shared/workspace-registry.js'), 'Published Shop navigation module exactly matches its source');
