@@ -74,7 +74,7 @@ Each item contains Product public UUID/name/unit/status, expected quantity, low-
 
 | Field | Accepted values | Default |
 |---|---|---|
-| `status` | `ALL`, `OWING`, `OUTSTANDING`, `PARTIAL`, `SETTLED`, `OVERDUE`, `NO_DEBT` | `OWING` |
+| `status` | `ALL`, `OWING`, `OUTSTANDING`, `PARTIAL`, `SETTLED`, `OVERDUE` | `OWING` |
 | `customer_status` | `ACTIVE`, `INACTIVE`, `ALL` | `ALL` |
 | `search` | Literal Customer display name only, maximum 160 characters | empty |
 | `page` | Integer 1–100000 | 1 |
@@ -84,7 +84,7 @@ Each item contains Product public UUID/name/unit/status, expected quantity, low-
 
 - Outstanding is derived from original Receivable amount, all effective signed adjustments and effective payment allocations, including linked reversals/compensations exactly once. It is never read from a mutable stored balance.
 - Customer collections reduce Receivables; they are not Sales revenue.
-- Settlement is derived as NO_DEBT (no Receivables), SETTLED (positive historical bill count and zero outstanding), PARTIAL (positive outstanding and positive effective collection), or OUTSTANDING.
+- Settlement is derived as NO_DEBT (no Receivables in the current Shop projection), SETTLED (positive historical bill count and zero outstanding), PARTIAL (positive outstanding and positive effective collection), or OUTSTANDING.
 - Overdue requires positive outstanding and an established `due_date` earlier than the server-derived Shop-local date. No due date and due today are not overdue.
 - Customer-level totals are computed across all of that Customer's bills before Customer status filtering, matching the existing CustomerDebt semantics. Report list summary totals cover all matching Customers, not just the current page.
 - Literal name search never searches private phone/notes. The report response contains no Customer phone, private notes, internal IDs, Audit metadata, COGS or profit.
