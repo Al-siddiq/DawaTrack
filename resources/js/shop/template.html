@@ -26,7 +26,7 @@
     <workspace-home v-if="page==='home'" :context="context" :access="access" :items="navigation" :user-name="context.current_user?.display_name||presentation.userName" @navigate="workspaceNavigation.request($event)" />
 
     <intakes-panel v-if="page==='intakes' && context.capabilities.view_inventory" :intakes="intakes" :inventory="inventoryActions" :read-only="readOnly" />
-    <products-panel v-if="page==='products' && context.capabilities.view_inventory" :products="products" :inventory="inventoryActions" :context="context" :read-only="readOnly" />
+    <products-panel v-if="page==='products' && context.capabilities.view_inventory" :products="products" :inventory="inventoryActions" :context="context" :read-only="readOnly" :hash="workspaceNavigation.hash.value" />
 
     <owner-panel v-if="['staff','settings','branding','domains','subscription'].includes(page) && navigation.some(item=>item.id===page)" :page="page" :model="ownerTools" :read-only="readOnly" />
     <audit-panel v-if="page==='audit' && context.capabilities.view_audit" mode="owner"></audit-panel>
