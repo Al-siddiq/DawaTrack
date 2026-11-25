@@ -46,6 +46,7 @@ $ok(str_contains($query, 'line_cogs_amount') && str_contains($query, 'Commercial
 $ok(str_contains($costHistory, 'chainsThrough') && str_contains($costHistory, 'array_chunk($targets, 500, true)'), 'Historical cost-state reads are batched in bounded product groups');
 $ok(str_contains($query, 'linked_item.original_sale_item_id,item.original_sale_item_id,item.id') && str_contains($query, 'LIMIT 25001'), 'Historical cost lookup follows cancelled Return lines and caps target rows');
 $ok(str_contains($query, 'REPEATABLE READ, READ ONLY'), 'Report calculations share one read-only snapshot');
+$ok(str_contains($query, 'invalid_line_count') && str_contains($query, 'line_sales_amount<>total_amount'), 'Each saved Sale/Return item total is checked before aggregation');
 $ok(str_contains($query, 'REPORT_RANGE_TOO_WIDE') && str_contains($query, '365'), 'Custom dates and historical cost checks are bounded');
 $ok(preg_match('/\b(INSERT|UPDATE|DELETE|ALTER|DROP|TRUNCATE)\b/i', $query) === 0, 'Sales report query has no write or DDL statements');
 $ok(str_contains($controller, 'SalesReportQuery') && str_contains($controller, 'getGet()'), 'Controller maps a GET-only report query');
