@@ -7,6 +7,7 @@ const panel = read('resources/js/components/sales-report-panel.js');
 const history = read('resources/js/components/sale-history-panel.js');
 const registry = read('resources/js/shared/workspace-registry.js');
 const css = read('resources/css/app.scss');
+const template = read('resources/js/shop/template.html');
 
 for (const phrase of [
     'Sales summary',
@@ -24,6 +25,7 @@ for (const phrase of [
 
 assert.ok(history.includes('SalesReportPanel'), 'Sales history workspace mounts the report panel');
 assert.ok(registry.includes('view_sales_workspace'), 'Sales menu follows server capability');
+assert.ok(template.includes("context.capabilities.view_sales_workspace"), 'Sales workspace mounts for report-only staff');
 assert.ok(css.includes('.sales-report-period-card'), 'Responsive report styles are present');
 assert.ok(!panel.includes('Net profit'), 'UI does not label Gross Profit as Net Profit');
 
