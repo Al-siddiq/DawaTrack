@@ -86,7 +86,7 @@ export const SalesReportPanel = {
                 amountLine('Credit added back to customer bills', row.credit_adjustments_increase),
                 amountLine('Credit removed from customer bills', row.credit_adjustments_decrease),
             ];
-            if (report.value?.profit_visible) details.push(amountLine('Gross profit before expenses', row.gross_profit));
+            if (report.value?.profit_visible) details.push(amountLine('Money left after product costs', row.gross_profit));
             return h('article', { class: 'sales-report-period-card', key: row.period_start }, [
                 h('header', { class: 'sales-report-period-head' }, [
                     h('h3', dateLabel(row.period_start)),
@@ -162,8 +162,9 @@ export const SalesReportPanel = {
                 ]),
                 report.value.profit_visible
                     ? h('section', { class: 'sales-report-profit' }, [
-                        h('h3', 'Gross profit (before shop expenses)'),
+                        h('h3', 'Money left after product costs'),
                         h('strong', { class: 'sales-report-profit-value' }, money(report.value.summary.gross_profit)),
+                        h('p', 'This is also called gross profit before shop expenses.'),
                         h('p', report.value.profit_explanation),
                         h('p', { class: 'sales-report-help' }, report.value.profit_cost_note),
                     ])
