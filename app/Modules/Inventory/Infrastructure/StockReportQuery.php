@@ -105,7 +105,7 @@ SQL, $scope)->getRowArray();
                     CASE WHEN sp.expected_quantity<0 THEN 1 ELSE 0 END is_negative_stock,
                     CASE WHEN sp.cost_basis_state='VALID' AND sp.expected_quantity>0 THEN CAST(sp.average_unit_cost AS CHAR) ELSE NULL END average_unit_cost,
                     CASE WHEN sp.cost_basis_state='VALID' AND sp.expected_quantity>0
-                         THEN CAST(ROUND(sp.expected_quantity*sp.average_unit_cost,2) AS DECIMAL(19,2))
+                         THEN CAST(ROUND(sp.expected_quantity*sp.average_unit_cost,2) AS DECIMAL(38,2))
                          ELSE NULL END product_stock_value
                  FROM stock_positions sp
                  JOIN products p ON p.tenant_id=sp.tenant_id AND p.id=sp.product_id
