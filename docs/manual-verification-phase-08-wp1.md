@@ -83,7 +83,7 @@ Record the exact IDs, amounts, posted_at instants, source links and grants in th
 1. Try invalid dates, reversed dates, a range longer than 366 days and unsupported period.
 2. Try a Shop with no posted Sales.
 3. Repeat on phone, tablet and desktop; test keyboard focus and screen-reader labels.
-4. Expected: invalid requests return safe validation errors; empty periods show valid zero totals; no source evidence leaks; the layout remains readable; Shop dates/timezone/last refresh are clear; no report data is presented as offline-current. The aggregate report has no unbounded detail list or pagination; when the user has sale.view, the existing Sales/Returns history pagination continues to work.
+4. Expected: invalid requests return safe validation errors; empty periods show valid zero totals; no source evidence leaks; the layout remains readable; Shop dates/timezone/last refresh are clear; when offline, displayed figures are cleared and a plain offline message appears; reconnecting loads a fresh report. The aggregate report has no unbounded detail list or pagination; when the user has sale.view, the existing Sales/Returns history pagination continues to work.
 
 ## Evidence to retain
 
