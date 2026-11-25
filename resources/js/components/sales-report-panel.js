@@ -153,7 +153,8 @@ export const SalesReportPanel = {
                         metric('Transfer received', report.value.summary.transfer_received),
                         metric('Transfer refunded', report.value.summary.transfer_refunded),
                         metric('Credit added to customer bills', report.value.summary.credit_created, 'This is the part customers still needed to pay when the sale was saved.'),
-                        metric('Credit reduced or restored', report.value.summary.credit_adjustments_decrease, 'This includes bill changes linked to returns and cancellations.'),
+                        metric('Credit added back to customer bills', report.value.summary.credit_adjustments_increase),
+                        metric('Credit removed from customer bills', report.value.summary.credit_adjustments_decrease, 'This includes bill changes linked to returns and cancellations.'),
                     ]),
                 ]),
                 report.value.profit_visible
