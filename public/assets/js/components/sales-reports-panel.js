@@ -133,7 +133,7 @@ export const SalesReportsPanel = {
                 ]),
             ]),
             !online.value ? h(UiInformationPanel, { severity: 'warning', title: 'You are offline', message: 'Connect to the internet to see the latest Sales report. This report is not saved for offline use.' }) : null,
-            error ? h(UiAlert, { severity: 'error', message: error, dismissible: false }) : null,
+            error.value ? h(UiAlert, { severity: 'error', message: error.value, dismissible: false }) : null,
             pending.value && h(UiLoading, { label: 'Getting the latest saved Sales…' }),
             report.value ? h('div', { class: 'trading-stack' }, [
                 h('section', { class: 'commercial-card' }, [
