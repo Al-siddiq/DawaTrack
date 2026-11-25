@@ -86,7 +86,7 @@ Each item contains Product public UUID/name/unit/status, expected quantity, low-
 - Customer collections reduce Receivables; they are not Sales revenue.
 - Settlement is derived as NO_DEBT (no Receivables in the current Shop projection), SETTLED (positive historical bill count and zero outstanding), PARTIAL (positive outstanding and positive effective collection), or OUTSTANDING.
 - Overdue requires positive outstanding and an established `due_date` earlier than the server-derived Shop-local date. No due date and due today are not overdue.
-- Customer-level totals are computed across all of that Customer's bills before Customer status filtering, matching the existing CustomerDebt semantics. Report list summary totals cover all matching Customers, not just the current page.
+- Customer-level totals are computed across all of that Customer's Receivables in the current Shop before Customer status filtering, matching the existing CustomerDebt semantics. The Customer directory remains Tenant-scoped as in the existing CustomerDebt query; no other Shop's Receivable amounts enter this report. Report list summary totals cover all matching Customers, not just the current page.
 - Literal name search never searches private phone/notes. The report response contains no Customer phone, private notes, internal IDs, Audit metadata, COGS or profit.
 - Contradictory balance evidence fails closed with `DEBT_EVIDENCE_INVALID` (409); it never becomes a zero placeholder.
 
