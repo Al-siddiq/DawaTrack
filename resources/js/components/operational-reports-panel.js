@@ -85,8 +85,8 @@ export const OperationalReportsPanel = {
     emits: ['navigate'],
     setup(props, { emit }) {
         const stock = reactive({ data: null, loading: false, error: '', stale: false, queryKey: null, page: 1, per_page: 20, state: 'ALL', search: '' });
-        const debt = reactive({ data: null, loading: false, error: '', page: 1, per_page: 20, status: 'OWING', customer_status: 'ALL', search: '' });
-        const reconciliation = reactive({ data: null, loading: false, error: '', page: 1, per_page: 20, scope: 'ALL' });
+        const debt = reactive({ data: null, loading: false, error: '', stale: false, queryKey: null, page: 1, per_page: 20, status: 'OWING', customer_status: 'ALL', search: '' });
+        const reconciliation = reactive({ data: null, loading: false, error: '', stale: false, queryKey: null, page: 1, per_page: 20, scope: 'ALL' });
         const online = ref(navigator.onLine);
         let alive = true;
         const controllers = { stock: null, debt: null, reconciliation: null };
@@ -114,12 +114,17 @@ export const OperationalReportsPanel = {
             controllers[name] = controller;
             state.loading = true;
             state.error = '';
-            state.data = null;
             try {
                 const suffix = query(filters);
+                if (state.queryKey !== suffix) {
+                    state.data = null;
+                    state.stale = false;
+                    state.queryKey = suffix;
+                }
                 const response = await apiRequest(path + (suffix ? '?' + suffix : ''), { signal: controller.signal });
                 if (!alive || controllers[name] !== controller) return;
                 state.data = response.data;
+                state.stale = false;
             } catch (failure) {
                 if (alive && controllers[name] === controller && failure.name !== 'AbortError') {
                     const sensitiveFailure = [401, 403, 409, 422, 503].includes(failure.status);
