@@ -72,11 +72,11 @@ final class SalesReportQuery
                     'provisional' => (int) $sales['line_count'] > 0
                         ? $this->hasUnestablishedCost($context, $startUtc, $endUtc)
                         : false,
-                    'label' => 'Gross profit before shop expenses',
+                    'label' => 'Money left after paying for goods',
                 ];
                 $grossProfit['message'] = $grossProfit['provisional']
-                    ? 'Some item costs were not established when they were sold. Treat this figure as an estimate.'
-                    : 'This is what remained after the cost of the goods sold. Shop expenses have not been taken out.';
+                    ? 'Some goods did not have a known cost when they were sold. Treat this amount as an estimate.'
+                    : 'This is the money left after paying for the goods sold. Shop bills and other expenses have not been taken out.';
             }
 
             if (!$this->database->transCommit()) {
@@ -300,12 +300,15 @@ final class SalesReportQuery
             SELECT DISTINCT source_item.product_id,sm.id movement_id
             FROM sales s
             JOIN sale_items item ON item.tenant_id=s.tenant_id AND item.shop_id=s.shop_id AND item.sale_id=s.id
+            LEFT JOIN sale_items linked_item ON linked_item.tenant_id=item.tenant_id AND linked_item.shop_id=item.shop_id
+                AND linked_item.id=item.original_sale_item_id
             LEFT JOIN sale_items source_item ON source_item.tenant_id=item.tenant_id AND source_item.shop_id=item.shop_id
-                AND source_item.id=COALESCE(item.original_sale_item_id,item.id)
+                AND source_item.id=COALESCE(linked_item.original_sale_item_id,item.original_sale_item_id,item.id)
             LEFT JOIN stock_movements sm ON sm.tenant_id=source_item.tenant_id AND sm.shop_id=source_item.shop_id
                 AND sm.sale_item_id=source_item.id AND sm.source_kind='SALE_ITEM' AND sm.movement_type='SALE'
             WHERE s.tenant_id=? AND s.shop_id=? AND s.status='POSTED' AND s.posted_at>=? AND s.posted_at<?
             ORDER BY source_item.product_id,sm.id
+            LIMIT 25001
             SQL,
             [$context->tenantId, $context->shopId, $start, $end],
         )->getResultArray();
