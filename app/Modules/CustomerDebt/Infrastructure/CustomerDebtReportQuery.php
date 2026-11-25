@@ -87,7 +87,7 @@ final class CustomerDebtReportQuery
                 COALESCE(SUM(b.outstanding_amount),0.00) outstanding_amount,
                 COALESCE(SUM(CASE WHEN b.is_overdue=1 THEN b.outstanding_amount ELSE 0.00 END),0.00) overdue_amount,
                 COALESCE(SUM(CASE WHEN b.is_overdue=1 THEN 1 ELSE 0 END),0) overdue_bill_count,
-                MIN(CASE WHEN b.outstanding_amount>0 THEN b.due_date ELSE NULL END) next_due_date,
+                MIN(CASE WHEN b.outstanding_amount>0 THEN b.due_date ELSE NULL END) earliest_due_date,
                 COALESCE(SUM(b.invalid_balance),0) invalid_balance
                 FROM customers c
                 LEFT JOIN ($balances) b ON b.customer_id=c.id
@@ -152,7 +152,7 @@ final class CustomerDebtReportQuery
                     'outstanding_amount' => (string) $row['outstanding_amount'],
                     'overdue_amount' => (string) $row['overdue_amount'],
                     'overdue_bill_count' => (int) $row['overdue_bill_count'],
-                    'next_due_date' => $row['next_due_date'],
+                    'earliest_due_date' => $row['earliest_due_date'],
                     'settlement_state' => $row['settlement_state'],
                     'is_overdue' => (string) $row['overdue_amount'] !== '0.00',
                 ];
