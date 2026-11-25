@@ -1,7 +1,7 @@
 # Phase 8 WP1 — Sales reports delivery report
 
 **Implementation branch:** `codex/phase-08-wp1-sales-reports`  
-**Base:** `132ccdb5037a3b5cfc488f202509c703cd5f45d5`  
+**Base:** `d6e967cd5c4e95d490e9107a4d0c3b9b882a24bf`  
 **Status:** Implementation changes prepared; awaiting native verification and Owner acceptance. WP2 has not started.
 
 ## 1. Delivered source changes
