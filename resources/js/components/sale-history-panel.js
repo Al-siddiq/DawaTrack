@@ -25,9 +25,15 @@ export const SaleHistoryPanel = {
         function adopt(value, sourceId = null) { if (!alive) return; if (sourceId && selected.value?.public_id !== sourceId) return; childBusy.value = false; selected.value = value; error.value = ''; if (value) { announceWorkspaceHash(`#sale/${value.public_id}`); open(value.public_id); } else back(); }
         const hashChange = () => {
             if (location.hash === '#sales-report') { reportOpen.value = true; selected.value = null; return; }
-            if (location.hash === '#sale-history') { reportOpen.value = false; if (selected.value) back(); else if (props.permissions.includes('sale.view')) load(); return; }
+            if (location.hash === '#sale-history') {
+                const leavingReport = reportOpen.value;
+                reportOpen.value = false;
+                if (selected.value) { selected.value = null; load(); }
+                else if (leavingReport && props.permissions.includes('sale.view')) load();
+                return;
+            }
             const match = location.hash.match(/^#sale\/([a-f0-9-]{36})$/);
-            if (match && props.permissions.includes('sale.view')) { reportOpen.value = false; open(match[1]); }
+            if (match && props.permissions.includes('sale.view') && selected.value?.public_id !== match[1]) { reportOpen.value = false; open(match[1]); }
         };
         function showReport() { selected.value = null; reportOpen.value = true; announceWorkspaceHash('#sales-report'); }
         function backFromReport() {
