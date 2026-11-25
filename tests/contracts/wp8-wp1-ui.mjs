@@ -19,7 +19,7 @@ for (const phrase of [
     'Transfer received',
     'Transfer refunded',
     'Credit added to customer bills',
-    'Gross profit (before shop expenses)',
+    'Money left after product costs',
     'Last updated:',
 ]) assert.ok(panel.includes(phrase), 'Missing plain-language report text: ' + phrase);
 
