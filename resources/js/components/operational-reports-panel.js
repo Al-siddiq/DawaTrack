@@ -49,6 +49,15 @@ function moneyMetric(label, value, currency, explanation = '') {
         explanation && h('p', { class: 'sales-report-help' }, explanation),
     ]);
 }
+function cashDifference(value, currency) {
+    if (value === null || value === undefined) return 'No recorded difference';
+    const amount = String(value);
+    if (/^-?0(?:\\.0+)?$/.test(amount)) return 'The cash count matched the expected amount.';
+    const short = amount.startsWith('-');
+    const absolute = short ? amount.slice(1) : amount;
+    return 'Cash was ' + (short ? 'short by ' : 'over by ') + money(absolute, currency)
+        + ' (recorded difference ' + (short ? '-' : '+') + money(absolute, currency) + ').';
+}
 function selectControl(id, label, value, options, onChange) {
     return h('label', { for: id }, [
         label,
@@ -155,9 +164,9 @@ export const OperationalReportsPanel = {
         function connection() {
             online.value = navigator.onLine;
             if (!online.value) {
-                Object.assign(stock, { data: null, error: 'You are offline. Connect to see the current Stock position.' });
-                Object.assign(debt, { data: null, error: 'You are offline. Connect to see the latest customer balances.' });
-                Object.assign(reconciliation, { data: null, error: 'You are offline. Connect to see the saved Reconciliation results.' });
+                Object.assign(stock, { data: null, loading: false, error: 'You are offline. Connect to see the current Stock position.' });
+                Object.assign(debt, { data: null, loading: false, error: 'You are offline. Connect to see the latest customer balances.' });
+                Object.assign(reconciliation, { data: null, loading: false, error: 'You are offline. Connect to see the saved Reconciliation results.' });
                 Object.keys(controllers).forEach(stop);
             } else {
                 refreshAll();
@@ -321,9 +330,9 @@ export const OperationalReportsPanel = {
                         severity: 'warning', dismissible: false,
                         message: 'Some difference details are hidden because your access does not include review permission or a blind count is still in progress. Finish the count or ask an authorized reviewer.',
                     }),
-                    data.variance_visibility.cash && metric('Cash checks with a difference', data.summary.cash_variance_checks,
+                    data.variance_visibility.cash && reconciliation.scope !== 'STOCK' && metric('Cash checks with a difference', data.summary.cash_variance_checks,
                         'Each finished check is counted once. A Cash difference is not added to a later check.'),
-                    data.variance_visibility.stock && h('div', { class: 'sales-report-metrics' }, [
+                    data.variance_visibility.stock && reconciliation.scope !== 'CASH' && h('div', { class: 'sales-report-metrics' }, [
                         metric('Products counted below expected stock', data.summary.stock_shortage_items),
                         metric('Products counted above expected stock', data.summary.stock_surplus_items),
                     ]),
@@ -336,7 +345,7 @@ export const OperationalReportsPanel = {
                             h('p', { class: 'sales-report-help' }, 'Fixed check time: ' + when(row.cutoff_at, data.shop.timezone_name) + ' · Finished: ' + when(row.finalized_at, data.shop.timezone_name)),
                             data.variance_visibility.cash && row.scope !== 'STOCK' && h('div', { class: 'sales-report-line' }, [
                                 h('span', 'Cash difference (counted minus expected)'),
-                                h('strong', row.cash_variance_amount === null ? 'No recorded difference' : money(row.cash_variance_amount, data.shop.currency_code)),
+                                h('strong', cashDifference(row.cash_variance_amount, data.shop.currency_code)),
                             ]),
                             data.variance_visibility.stock && row.scope !== 'CASH' && h('div', { class: 'sales-report-period-summary' }, [
                                 h('div', { class: 'sales-report-line' }, [h('span', 'Products with a shortage'), h('strong', String(row.stock_shortage_items))]),
