@@ -83,7 +83,7 @@ Approved labels include:
 - “Credit added to customer bills”
 - “Credit added back to customer bills”
 - “Credit removed from customer bills”
-- “Gross profit (before shop expenses)”
+- “Money left after product costs” (with a short note that this is gross profit before shop expenses)
 
 The page explains that Credit is the part of a Sale left on a Customer bill, not money received. It explains that Gross Profit is Sales after Returns minus saved product costs and that Shop expenses have not been removed. It does not call Gross Profit “net profit”.
 
