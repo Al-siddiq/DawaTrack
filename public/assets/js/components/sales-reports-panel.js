@@ -17,6 +17,17 @@ function shopTime(value, timezone) {
     }).format(date);
 }
 
+function shopDate(value) {
+    if (!value) return 'Not available';
+    const date = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('en-NG', { timeZone: 'UTC', dateStyle: 'medium' }).format(date);
+}
+
+function shopTimezoneLabel(value) {
+    return value === 'Africa/Lagos' ? 'Nigeria time' : value;
+}
+
 function reportCard(title, amount, explanation) {
     return h('article', { class: 'commercial-card' }, [
         h('h3', title),
@@ -99,11 +110,12 @@ export const SalesReportsPanel = {
             report.value ? h('div', { class: 'trading-stack' }, [
                 h('section', { class: 'commercial-card' }, [
                     h('h3', 'Your Sales at a glance'),
-                    h('p', `Shop dates: ${report.value.period.from_date} to ${report.value.period.to_date}`),
-                    h('p', { class: 'trading-record-meta' }, `Time shown for this Shop: ${report.value.period.timezone}`),
+                    h('p', `Shop dates: ${shopDate(report.value.period.from_date)} to ${shopDate(report.value.period.to_date)}`),
+                    h('p', { class: 'trading-record-meta' }, `Time shown for this Shop: ${shopTimezoneLabel(report.value.period.timezone)}`),
                     h('p', { class: 'trading-record-meta' }, `Last updated: ${shopTime(report.value.period.refreshed_at, report.value.period.timezone)}`),
+                    h('p', 'These figures show how Sales were paid. They are not the money currently in the till or bank.'),
                 ]),
-                reportCard('Sales after returns', report.value.sales.amount, 'Sales minus returns and cancelled sales.'),
+                reportCard('Money from sales after returns', report.value.sales.amount, 'This is the value of goods sold, less goods returned or cancelled.'),
                 reportCard('Cash after refunds', report.value.payments.cash_amount, 'Cash received, less Cash paid back to customers.'),
                 reportCard('Bank transfers after refunds', report.value.payments.transfer_amount, 'Bank transfers received, less transfers paid back.'),
                 reportCard('Customers allowed to pay later', report.value.payments.credit_amount, 'This is the part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales.'),
@@ -113,13 +125,13 @@ export const SalesReportsPanel = {
                     report.value.gross_profit.message,
                 ) : h(UiInformationPanel, {
                     severity: 'info',
-                    title: 'Profit figures are not shown',
-                    message: 'You cannot see profit figures with your current access. Ask the Shop Owner if you need them.',
+                    title: 'Money left after paying for goods is not shown',
+                    message: 'Your current access does not include this figure. Ask the Shop Owner if you need it.',
                 }),
                 h('section', { class: 'commercial-card' }, [
                     h('h3', 'Saved records in this date range'),
                     h('p', `Sales: ${report.value.sales.sale_count} · Returns: ${report.value.sales.return_count} · Cancellations: ${report.value.sales.cancellation_count}`),
-                    h('p', 'Only saved records are included. Unfinished sales and returns are not counted.'),
+                    h('p', 'Only saved records are included. Unfinished sales and returns are not counted. Saved cancellations are included.'),
                     props.permissions.includes('sale.view') ? action('Open sales and returns', () => { location.hash = '#sale-history'; }) : null,
                 ]),
             ]) : null,
