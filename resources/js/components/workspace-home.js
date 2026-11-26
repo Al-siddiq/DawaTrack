@@ -1,5 +1,6 @@
 import { UiButton, UiLoading, UiAlert, UiEmptyState, UiInformationPanel, UiIcon } from './ui/index.js';
 import { apiRequest } from '../api/http-client.js';
+import { OperationalDashboardPanel } from './operational-dashboard-panel.js';
 const { h, ref, onMounted, onBeforeUnmount, computed } = window.Vue;
 export const WorkspaceHome = {
     props: { context: { type: Object, required: true }, access: { type: Object, required: true }, userName: String, items: { type: Array, default: () => [] } },
@@ -34,6 +35,7 @@ export const WorkspaceHome = {
                 allowed('sale-history') && shortcut('Sales', 'View saved sales and receipts.', 'sales', '#sale-history'),
                 allowed('subscription') && props.access.mode === 'READ_ONLY' && shortcut('View plan', 'See your current shop access.', 'plan', '#subscription'),
             ].filter(Boolean)),
+            props.context.permissions.includes('report.view') && h(OperationalDashboardPanel, { permissions: props.context.permissions, capabilities: props.context.capabilities, access: props.access, onNavigate: go }),
             error.value && h(UiAlert, { message: error.value, severity: 'error', dismissible: false }),
             loading.value && h(UiLoading, { label: 'Loading saved work…' }),
             error.value && h(UiButton, { variant: 'secondary', icon: 'refresh', onClick: load }, () => 'Reload saved work'),
