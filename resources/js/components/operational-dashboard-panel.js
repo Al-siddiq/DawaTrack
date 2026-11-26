@@ -42,6 +42,15 @@ function timeLabel(data) {
     }
 }
 
+function dateTimeLabel(value, timezone) {
+    if (!value) return 'Not available';
+    const raw = String(value);
+    const date = new Date(raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z');
+    if (Number.isNaN(date.getTime())) return raw;
+    try { return new Intl.DateTimeFormat('en-NG', { dateStyle: 'medium', timeStyle: 'short', timeZone: timezone || 'Africa/Lagos' }).format(date); }
+    catch { return raw; }
+}
+
 function reportUrl(path, params) {
     const query = params.toString();
     return path + (query ? '?' + query : '');
@@ -69,7 +78,6 @@ export const OperationalDashboardPanel = {
         const canStock = computed(() => props.capabilities.view_stock_report === true);
         const canDebt = computed(() => props.capabilities.view_customer_debt_report === true);
         const canReconciliation = computed(() => props.capabilities.view_reconciliation_report === true);
-        const hasReports = computed(() => canSales.value || canStock.value || canDebt.value || canReconciliation.value);
         const blocked = computed(() => ['BLOCKED', 'CLOSED'].includes(props.access.mode));
 
         async function loadOne(name, state, path, params) {
@@ -295,12 +303,16 @@ export const OperationalDashboardPanel = {
                     visibility.stock && metric('Products counted below expected Stock', count(summary.stock_shortage_items)),
                     visibility.stock && metric('Products counted above expected Stock', count(summary.stock_surplus_items)),
                 ].filter(Boolean)),
-                h('p', { class: 'dashboard-period' }, summary.latest_finalized_at ? 'Latest finished: ' + summary.latest_finalized_at : 'No finished checks recorded yet.'),
+                h('p', { class: 'dashboard-period' }, summary.latest_finalized_at ? 'Latest finished: ' + dateTimeLabel(summary.latest_finalized_at, data.shop?.timezone_name) : 'No finished checks recorded yet.'),
             ]);
         }
 
         return () => {
             if (!canSales.value && !canStock.value && !canDebt.value && !canReconciliation.value) return null;
+            if (blocked.value) return h('section', { class: 'operational-dashboard', 'aria-labelledby': 'operational-dashboard-title' }, [
+                h('div', [h('h2', { id: 'operational-dashboard-title' }, 'Shop overview'), h('p', 'A quick view of saved sales, current Stock, customer balances and finished shop checks.')]),
+                h(UiAlert, { severity: 'warning', message: 'Shop reports are unavailable while Shop access is blocked or closed.', dismissible: false }),
+            ]);
             return h('section', { class: 'operational-dashboard', 'aria-labelledby': 'operational-dashboard-title', 'aria-busy': refreshing.value }, [
                 h('div', { class: 'dashboard-heading' }, [
                     h('div', [
@@ -310,7 +322,6 @@ export const OperationalDashboardPanel = {
                     h(UiButton, { variant: 'secondary', icon: 'refresh', loading: refreshing.value, busyLabel: 'Refreshing…', disabled: offline.value || blocked.value, onClick: refreshAll }, () => 'Refresh overview'),
                 ]),
                 props.access.mode === 'READ_ONLY' && h(UiAlert, { severity: 'info', message: 'Read-only access: you can view these reports, but cannot make shop changes here.', dismissible: false }),
-                blocked.value && h(UiAlert, { severity: 'warning', message: 'Shop reports are unavailable while Shop access is blocked or closed.', dismissible: false }),
                 offline.value && h(UiAlert, { severity: 'warning', message: 'You are offline. Connect to see live shop reports. No report figures are saved on this device.', dismissible: false }),
                 canSales.value && h('form', { class: 'dashboard-period-form', onSubmit: event => { event.preventDefault(); applySalesPeriod(); } }, [
                     h('div', [
