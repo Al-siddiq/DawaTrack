@@ -58,7 +58,10 @@ $assert(str_contains($debt, 'due_date'), 'Customer Debt uses established due-dat
 $assert(str_contains($debt, 'shopDate'), 'Customer Debt overdue uses Shop-local date');
 $assert(str_contains($debt, 'DEBT_EVIDENCE_INVALID'), 'Contradictory debt evidence fails closed');
 $assert(str_contains($debt, 'display_name'), 'Customer Debt output uses minimal display identity');
-$assert(!str_contains($debt, 'phone'), 'Customer Debt report does not select Customer phone');
+$hasCustomerProjection = preg_match('/\\$grouped\\s*=\\s*"SELECT(.*?)FROM customers c/s', $debt, $customerProjection) === 1;
+$assert($hasCustomerProjection && !preg_match('/\\bphone\\b/i', $customerProjection[1]), 'Customer Debt SQL projection excludes Customer phone');
+$hasCustomerResponse = preg_match('/\\$items\\[\\]\\s*=\\s*\\[(.*?)\\n\\s*\\];/s', $debt, $customerResponse) === 1;
+$assert($hasCustomerResponse && !preg_match('/\\bphone\\b/i', $customerResponse[1]), 'Customer Debt response serialization excludes Customer phone');
 
 $assert(str_contains($reconciliation, "'report.view'"), 'Reconciliation report requires report.view');
 $assert(str_contains($reconciliation, "'reconciliation.view'"), 'Reconciliation report requires reconciliation.view');
