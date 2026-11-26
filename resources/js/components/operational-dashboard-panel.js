@@ -161,7 +161,7 @@ export const OperationalDashboardPanel = {
         }
 
         async function refreshAll() {
-            if (refreshing.value || offline.value || blocked.value) return;
+            if (refreshing.value || offline.value || blocked.value || [sales, stock, debt, reconciliation].some(state => state.loading)) return;
             refreshing.value = true;
             if (canSales.value && appliedFrom.value && appliedTo.value) {
                 from.value = appliedFrom.value;
@@ -342,7 +342,7 @@ export const OperationalDashboardPanel = {
                         h('h2', { id: 'operational-dashboard-title' }, 'Shop overview'),
                         h('p', 'A quick view of saved sales, current Stock, customer balances and finished shop checks.'),
                     ]),
-                    h(UiButton, { variant: 'secondary', icon: 'refresh', loading: refreshing.value, busyLabel: 'Refreshing…', disabled: offline.value || blocked.value, onClick: refreshAll }, () => 'Refresh overview'),
+                    h(UiButton, { variant: 'secondary', icon: 'refresh', loading: refreshing.value, busyLabel: 'Refreshing…', disabled: offline.value || blocked.value || [sales, stock, debt, reconciliation].some(state => state.loading), onClick: refreshAll }, () => 'Refresh overview'),
                 ]),
                 props.access.mode === 'READ_ONLY' && h(UiAlert, { severity: 'info', message: 'Read-only access: you can view these reports, but cannot make shop changes here.', dismissible: false }),
                 offline.value && h(UiAlert, { severity: 'warning', message: 'You are offline. Connect to see live shop reports. No report figures are saved on this device.', dismissible: false }),
