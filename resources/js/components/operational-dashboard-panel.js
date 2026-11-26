@@ -262,15 +262,20 @@ export const OperationalDashboardPanel = {
             const summary = data.summary || {};
             return h('div', { class: 'dashboard-card-content' }, [
                 h('p', { class: 'dashboard-period' }, 'Sales period: ' + dateLabel(data.period.from) + ' to ' + dateLabel(data.period.to) + ' · ' + data.period.timezone_name),
+                !summary.payment_mix_matches_sales && h(UiAlert, { severity: 'warning', message: 'Sales and payment records do not match for this period. Ask the shop owner to review the linked records.', dismissible: false }),
                 h('div', { class: 'dashboard-metrics' }, [
                     metric('Sales after returns', money(summary.net_sales, data.currency_code)),
                     metric('Sales before returns', money(summary.sales_added, data.currency_code)),
                     metric('Returns and cancelled sales', money(summary.returns_and_cancellations, data.currency_code)),
                     metric('Cash received', money(summary.cash_received, data.currency_code)),
+                    metric('Cash refunded', money(summary.cash_refunded, data.currency_code)),
                     metric('Transfer received', money(summary.transfer_received, data.currency_code)),
+                    metric('Transfer refunded', money(summary.transfer_refunded, data.currency_code)),
                     metric('Credit created', money(summary.credit_created, data.currency_code)),
+                    metric('Credit added back to customer bills', money(summary.credit_adjustments_increase, data.currency_code)),
+                    metric('Credit removed from customer bills', money(summary.credit_adjustments_decrease, data.currency_code)),
                     data.profit_visible
-                        ? metric('Gross profit before expenses', money(summary.gross_profit, data.currency_code))
+                        ? metric('Gross profit before expenses', money(summary.gross_profit, data.currency_code), data.profit_cost_note || '')
                         : metric('Product cost and profit', 'Not available', 'Your current access does not include these figures.'),
                 ]),
             ]);
