@@ -23,6 +23,7 @@ export const SaleHistoryPanel = {
             reportFrom.value = params.get('from') || '';
             reportTo.value = params.get('to') || '';
         };
+        if (isSalesReportHash()) readSalesReportPeriod();
         const reportOpen = ref(!props.permissions.includes('sale.view') && props.permissions.includes('report.view'));
         useNavigationGuard(({ hash }) => (pending.value || childBusy.value) && (hash.startsWith('#sale/') || hash === '#sale-history' || hash.startsWith('#sales-report')) ? { hard: true, message: 'Wait for this record to finish loading before opening another sale.' } : null);
         const filters = reactive({ search: '', from: '', to: '', kind: 'ALL' });
