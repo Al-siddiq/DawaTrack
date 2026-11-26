@@ -30,6 +30,8 @@ $debtQuery = $read('app/Modules/CustomerDebt/Infrastructure/CustomerDebtReportQu
 $reconciliationQuery = $read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
 $salesQuery = $read('app/Modules/Sales/Infrastructure/SalesReportQuery.php');
 $routes = $read('app/Config/Routes.php');
+$filters = $read('app/Config/Filters.php');
+$throttle = $read('app/Filters/SensitiveRateLimitFilter.php');
 $shop = $read('app/Controllers/Api/ShopController.php');
 $css = $read('resources/css/app.scss');
 $contract = $read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
@@ -70,6 +72,10 @@ $assert(str_contains($stockQuery, "'report.view'") && str_contains($debtQuery, "
 $assert(str_contains($shop, "'view_stock_report'") && str_contains($shop, "'view_customer_debt_report'") && str_contains($shop, "'view_reconciliation_report'"), 'Dashboard relies on existing server capabilities');
 $assert(!str_contains($dashboard, 'localStorage') && !str_contains($dashboard, 'indexedDB'), 'Dashboard does not persist report data locally');
 $assert(!str_contains($dashboard, 'setInterval') && !str_contains($dashboard, 'setTimeout'), 'Dashboard adds no polling or retry timer');
+$assert(str_contains($filters, "'api/v1/shop/reports/*'"), 'All report GET paths receive the established throttle filter');
+$assert(str_contains($throttle, '&& ! $isReportQuery'), 'Report GET requests are not skipped by the sensitive throttle');
+$assert(str_contains($throttle, 'return [20, 60]'), 'Report GET requests have a bounded per-user rate limit');
+$assert(str_contains($throttle, "return '/api/v1/shop/reports'"), 'All report routes share one per-user throttle bucket');
 $assert(str_contains($routes, "shop/reports/sales") && str_contains($routes, "shop/reports/stock") && str_contains($routes, "shop/reports/customer-debt") && str_contains($routes, "shop/reports/reconciliation"), 'Existing four source report routes remain registered');
 $assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3 adds no dashboard or export route');
 $assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
