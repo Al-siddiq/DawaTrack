@@ -191,7 +191,7 @@ export const OperationalDashboardPanel = {
                 state.data = null;
                 state.loading = false;
                 state.stale = false;
-                state.error = 'You are offline. Connect to see live shop reports.';
+                state.error = '';
             }
             refreshing.value = false;
         }
@@ -233,7 +233,7 @@ export const OperationalDashboardPanel = {
         }
 
         function card(title, subtitle, state, body, actionLabel, action) {
-            const status = state.loading && !state.data
+            const status = offline.value ? null : state.loading && !state.data
                 ? h(UiLoading, { label: 'Loading report…' })
                 : !state.data && state.error
                     ? h(UiAlert, { severity: 'error', message: state.error, dismissible: false })
