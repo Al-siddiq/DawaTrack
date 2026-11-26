@@ -336,7 +336,7 @@ export const OperationalDashboardPanel = {
                     canSales.value && card('Sales and payments', 'Saved Sales and returns for the selected period.', sales, salesCard, 'Open Sales report', openSales),
                     canStock.value && card('Current Stock', 'The latest saved Stock position, not a past-period total.', stock, stockCard, 'Open Stock report', openShopReports),
                     canDebt.value && card('Current customer balances', 'What customers still owe as of the Shop date.', debt, debtCard, 'Open Customer Debt report', openShopReports),
-                    canReconciliation.value && card('Latest finished checks', 'Finalized Cash, Stock and combined checks. Past results stay unchanged.', reconciliation, reconciliationCard, 'Open Reconciliation report', openShopReports),
+                    canReconciliation.value && card('Finished shop checks', 'Finalized Cash, Stock and combined checks. Past results stay unchanged.', reconciliation, reconciliationCard, 'Open Reconciliation report', openShopReports),
                 ].filter(Boolean)),
             ]);
         };
