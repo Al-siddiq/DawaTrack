@@ -47,6 +47,7 @@ assert.ok(dashboard.includes('new AbortController()'), 'Requests are cancellable
 assert.ok(dashboard.includes("addEventListener('offline'") && dashboard.includes("addEventListener('online'"), 'Offline and online transitions are handled');
 assert.ok(home.includes('OperationalDashboardPanel'), 'Dashboard is integrated into Shop Home');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
+assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
 assert.ok(salesPanel.includes('initialFrom') && salesPanel.includes('initialTo'), 'Sales report accepts selected dates');
 assert.ok(css.includes('.dashboard-grid') && css.includes('@media(max-width:35rem)'), 'Dashboard layout is responsive');
 assert.ok(contract.includes('Export is not approved and is not implemented'), 'Unapproved export remains excluded');
