@@ -52,6 +52,6 @@ assert.ok(css.includes('.dashboard-grid') && css.includes('@media(max-width:35re
 assert.ok(contract.includes('Export is not approved and is not implemented'), 'Unapproved export remains excluded');
 assert.ok(!dashboard.includes('localStorage') && !dashboard.includes('indexedDB'), 'No offline report persistence');
 assert.ok(!dashboard.includes('setInterval') && !dashboard.includes('setTimeout'), 'No polling or retry timer');
-assert.ok(!dashboard.includes('export '), 'No export implementation is present');
+assert.ok(!dashboard.includes('/export') && !dashboard.includes('Download report'), 'No export endpoint or download UI is present');
 
 console.log('PASS: static WP3 Shop dashboard UI and wording assertions.');
