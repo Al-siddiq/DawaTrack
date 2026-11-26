@@ -30,6 +30,10 @@ node --check resources/js/components/workspace-home.js
 node --check resources/js/components/sales-report-panel.js
 node --check resources/js/components/sale-history-panel.js
 
+php -l app/Config/Filters.php
+php -l app/Filters/SensitiveRateLimitFilter.php
+php -l tests/contracts/wp8-wp3.php
+
 php tests/contracts/wp8-wp3.php
 node tests/contracts/wp8-wp3-ui.mjs
 
