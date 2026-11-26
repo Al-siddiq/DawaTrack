@@ -27,8 +27,8 @@ function dateLabel(value) {
 function utcDate(value) {
     let raw = String(value);
     if (!raw.includes('T')) raw = raw.replace(' ', 'T');
-    raw = raw.replace(/(\\.\\d{3})\\d+/, '$1');
-    if (!/(Z|[+-]\\d{2}:\\d{2})$/i.test(raw)) raw += 'Z';
+    raw = raw.replace(/(\.\d{3})\d+/, '$1');
+    if (!/(Z|[+-]\d{2}:\d{2})$/i.test(raw)) raw += 'Z';
     return new Date(raw);
 }
 
