@@ -125,6 +125,7 @@ Use browser developer tools with Network preserve log enabled.
 6. Confirm Refresh overview triggers at most one request per authorized report family.
 7. Confirm leaving Home aborts in-flight dashboard requests and returning does not create duplicate concurrent requests.
 8. Confirm there is no polling timer or automatic repeated request loop.
+9. Confirm all four report GET routes share the existing per-user limit of 20 requests per 60 seconds. When exceeded, verify the canonical 429 `RATE_LIMITED` response and `Retry-After` header; do not mistake throttling for a source-report failure.
 
 ## 11. P8-32 — Query plans and pilot-shaped performance
 
