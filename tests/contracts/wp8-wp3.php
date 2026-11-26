@@ -38,6 +38,8 @@ $contract = $read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
 $matrix = $read('docs/Phase-8/Phase_8_WP3_Source_Matrix.csv');
 $manual = $read('docs/Phase-8/Phase_8_WP3_Manual_Results.csv');
 $guide = $read('docs/Phase-8/Phase_8_WP3_Manual_Verification_Guide.md');
+$performance = $read('docs/Phase-8/Phase_8_WP3_Performance_Notes.md');
+$operations = $read('docs/Phase-8/Phase_8_WP3_Operations_Handover.md');
 
 $assert(str_contains($dashboard, "'/api/v1/shop/reports/sales'"), 'Dashboard consumes accepted Sales report API');
 $assert(str_contains($dashboard, "'/api/v1/shop/reports/stock'"), 'Dashboard consumes accepted Stock report API');
@@ -85,5 +87,7 @@ $assert(str_contains($contract, 'not one database transaction'), 'Independent so
 $assert(str_contains($matrix, 'P8-25') && str_contains($matrix, 'P8-36'), 'WP3 source matrix maps all reserved manual cases');
 $assert(str_contains($manual, 'P8-25') && str_contains($manual, 'P8-36') && str_contains($manual, 'Not run'), 'WP3 manual register preserves unrun acceptance cases');
 $assert(str_contains($guide, 'P8-34') && str_contains($guide, 'EXPLAIN'), 'WP3 manual guide covers export disposition and query plans');
+$assert(str_contains($performance, 'No EXPLAIN or EXPLAIN ANALYZE output has been captured yet'), 'WP3 performance evidence is honestly marked pending');
+$assert(str_contains($operations, '20 requests per 60 seconds'), 'WP3 operations handover documents report rate limits');
 
 echo "PASS: {$checks} static Phase 8 WP3 source-contract assertions. Native database/HTTP/browser/accessibility/query-plan acceptance is separate.\n";
