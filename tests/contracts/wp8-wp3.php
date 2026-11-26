@@ -1,0 +1,82 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Static WP3 source-contract checks only. Native MySQL, HTTP, browser,
+ * accessibility, query-plan and Owner manual acceptance remain separate.
+ */
+$root = dirname(__DIR__, 2);
+$checks = 0;
+$read = static function (string $path) use ($root): string {
+    $file = $root . '/' . $path;
+    if (! is_file($file)) {
+        throw new RuntimeException('Missing WP3 source: ' . $path);
+    }
+    return (string) file_get_contents($file);
+};
+$assert = static function (bool $condition, string $label) use (&$checks): void {
+    if (! $condition) {
+        throw new RuntimeException('FAIL: ' . $label);
+    }
+    $checks++;
+};
+
+$dashboard = $read('resources/js/components/operational-dashboard-panel.js');
+$home = $read('resources/js/components/workspace-home.js');
+$salesPanel = $read('resources/js/components/sales-report-panel.js');
+$salesHistory = $read('resources/js/components/sale-history-panel.js');
+$stockQuery = $read('app/Modules/Inventory/Infrastructure/StockReportQuery.php');
+$debtQuery = $read('app/Modules/CustomerDebt/Infrastructure/CustomerDebtReportQuery.php');
+$reconciliationQuery = $read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
+$salesQuery = $read('app/Modules/Sales/Infrastructure/SalesReportQuery.php');
+$routes = $read('app/Config/Routes.php');
+$shop = $read('app/Controllers/Api/ShopController.php');
+$css = $read('resources/css/app.scss');
+$contract = $read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
+$matrix = $read('docs/Phase-8/Phase_8_WP3_Source_Matrix.csv');
+$manual = $read('docs/Phase-8/Phase_8_WP3_Manual_Results.csv');
+$guide = $read('docs/Phase-8/Phase_8_WP3_Manual_Verification_Guide.md');
+
+$assert(str_contains($dashboard, "'/api/v1/shop/reports/sales'"), 'Dashboard consumes accepted Sales report API');
+$assert(str_contains($dashboard, "'/api/v1/shop/reports/stock'"), 'Dashboard consumes accepted Stock report API');
+$assert(str_contains($dashboard, "'/api/v1/shop/reports/customer-debt'"), 'Dashboard consumes accepted Customer Debt report API');
+$assert(str_contains($dashboard, "'/api/v1/shop/reports/reconciliation'"), 'Dashboard consumes accepted Reconciliation report API');
+$assert(str_contains($dashboard, "props.permissions.includes('report.view')"), 'Dashboard Sales family requires report.view');
+$assert(str_contains($dashboard, 'view_stock_report === true'), 'Stock card uses existing source capability');
+$assert(str_contains($dashboard, 'view_customer_debt_report === true'), 'Debt card uses existing source capability');
+$assert(str_contains($dashboard, 'view_reconciliation_report === true'), 'Reconciliation card uses existing source capability');
+$assert(str_contains($dashboard, 'data.profit_visible'), 'Gross Profit card respects WP1 profit masking');
+$assert(str_contains($dashboard, 'data.variance_visibility'), 'Reconciliation card respects WP2 variance masking');
+$assert(str_contains($dashboard, "per_page: '1'"), 'WP2 dashboard requests use summary-only page size');
+$assert(str_contains($dashboard, "group_by: 'MONTH'"), 'Sales dashboard request uses compact monthly series');
+$assert(str_contains($dashboard, 'new AbortController()'), 'Dashboard requests are cancellable');
+$assert(str_contains($dashboard, "addEventListener('offline'"), 'Dashboard handles offline transition');
+$assert(str_contains($dashboard, "addEventListener('online'"), 'Dashboard refreshes when connection returns');
+$assert(str_contains($dashboard, 'state.stale'), 'Online network failures label retained figures stale');
+$assert(str_contains($dashboard, 'Last refreshed:'), 'Each dashboard card shows source freshness');
+$assert(str_contains($dashboard, 'Current Stock position'), 'Stock card is explicitly a current snapshot');
+$assert(str_contains($dashboard, 'Current customer balances'), 'Debt card is explicitly a current snapshot');
+$assert(str_contains($dashboard, 'Finalized Cash, Stock and combined checks'), 'Reconciliation card describes finalized evidence');
+$assert(str_contains($dashboard, '#sales-report'), 'Sales drill-down route is preserved');
+$assert(str_contains($dashboard, 'URLSearchParams'), 'Sales drill-down carries the selected period');
+$assert(str_contains($home, 'OperationalDashboardPanel'), 'Dashboard is integrated into existing Shop Home');
+$assert(str_contains($home, "props.context.permissions.includes('report.view')"), 'Shop Home only mounts dashboard for report viewers');
+$assert(str_contains($salesHistory, "location.hash.startsWith('#sales-report?')"), 'Sales history accepts period-bearing report hash');
+$assert(str_contains($salesHistory, 'initialFrom: reportFrom.value'), 'Sales report receives selected start date');
+$assert(str_contains($salesHistory, 'initialTo: reportTo.value'), 'Sales report receives selected end date');
+$assert(str_contains($salesPanel, 'initialFrom:'), 'Sales report supports dashboard-selected period');
+$assert(str_contains($salesPanel, 'load(Boolean(from.value && to.value))'), 'Sales report applies carried period on first load');
+$assert(str_contains($stockQuery, "'report.view'") && str_contains($debtQuery, "'report.view'") && str_contains($reconciliationQuery, "'report.view'") && str_contains($salesQuery, "'report.view'"), 'All source report queries independently authorize report.view');
+$assert(str_contains($shop, "'view_stock_report'") && str_contains($shop, "'view_customer_debt_report'") && str_contains($shop, "'view_reconciliation_report'"), 'Dashboard relies on existing server capabilities');
+$assert(!str_contains($dashboard, 'localStorage') && !str_contains($dashboard, 'indexedDB'), 'Dashboard does not persist report data locally');
+$assert(!str_contains($dashboard, 'setInterval') && !str_contains($dashboard, 'setTimeout'), 'Dashboard adds no polling or retry timer');
+$assert(str_contains($routes, "shop/reports/sales") && str_contains($routes, "shop/reports/stock") && str_contains($routes, "shop/reports/customer-debt") && str_contains($routes, "shop/reports/reconciliation"), 'Existing four source report routes remain registered');
+$assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3 adds no dashboard or export route');
+$assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
+$assert(str_contains($contract, 'Export is not approved and is not implemented'), 'Export disposition is documented');
+$assert(str_contains($contract, 'not one database transaction'), 'Independent source freshness is documented honestly');
+$assert(str_contains($matrix, 'P8-25') && str_contains($matrix, 'P8-36'), 'WP3 source matrix maps all reserved manual cases');
+$assert(str_contains($manual, 'P8-25') && str_contains($manual, 'P8-36') && str_contains($manual, 'Not run'), 'WP3 manual register preserves unrun acceptance cases');
+$assert(str_contains($guide, 'P8-34') && str_contains($guide, 'EXPLAIN'), 'WP3 manual guide covers export disposition and query plans');
+
+echo "PASS: {$checks} static Phase 8 WP3 source-contract assertions. Native database/HTTP/browser/accessibility/query-plan acceptance is separate.\n";
