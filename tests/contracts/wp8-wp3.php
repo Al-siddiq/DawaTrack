@@ -64,6 +64,7 @@ $assert(str_contains($dashboard, 'URLSearchParams'), 'Sales drill-down carries t
 $assert(str_contains($home, 'OperationalDashboardPanel'), 'Dashboard is integrated into existing Shop Home');
 $assert(str_contains($home, "props.context.permissions.includes('report.view')"), 'Shop Home only mounts dashboard for report viewers');
 $assert(str_contains($salesHistory, "location.hash.startsWith('#sales-report?')"), 'Sales history accepts period-bearing report hash');
+$assert(str_contains($salesHistory, 'if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales history initializes carried dates before Sales report child mounts');
 $assert(str_contains($salesHistory, 'initialFrom: reportFrom.value'), 'Sales report receives selected start date');
 $assert(str_contains($salesHistory, 'initialTo: reportTo.value'), 'Sales report receives selected end date');
 $assert(str_contains($salesPanel, 'initialFrom:'), 'Sales report supports dashboard-selected period');
