@@ -24,12 +24,20 @@ function dateLabel(value) {
     return new Intl.DateTimeFormat('en-NG', { dateStyle: 'medium', timeZone: 'UTC' }).format(date);
 }
 
+function utcDate(value) {
+    let raw = String(value);
+    if (!raw.includes('T')) raw = raw.replace(' ', 'T');
+    raw = raw.replace(/(\\.\\d{3})\\d+/, '$1');
+    if (!/(Z|[+-]\\d{2}:\\d{2})$/i.test(raw)) raw += 'Z';
+    return new Date(raw);
+}
+
 function timeLabel(data) {
     if (!data) return 'Refresh time not available';
     const timezone = data.period?.timezone_name || data.shop?.timezone_name || 'Africa/Lagos';
     const raw = data.as_of || data.refreshed_at;
     if (!raw) return 'Refresh time not available';
-    const date = new Date(String(raw).includes('T') ? raw : String(raw).replace(' ', 'T') + 'Z');
+    const date = utcDate(raw);
     if (Number.isNaN(date.getTime())) return 'Refresh time not available';
     try {
         return new Intl.DateTimeFormat('en-NG', {
@@ -45,7 +53,7 @@ function timeLabel(data) {
 function dateTimeLabel(value, timezone) {
     if (!value) return 'Not available';
     const raw = String(value);
-    const date = new Date(raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z');
+    const date = utcDate(raw);
     if (Number.isNaN(date.getTime())) return raw;
     try { return new Intl.DateTimeFormat('en-NG', { dateStyle: 'medium', timeStyle: 'short', timeZone: timezone || 'Africa/Lagos' }).format(date); }
     catch { return raw; }
