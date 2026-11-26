@@ -160,7 +160,11 @@ export const OperationalDashboardPanel = {
 
         function onOffline() {
             offline.value = true;
-            for (const name of Object.keys(controllers)) controllers[name].abort();
+            for (const name of Object.keys(controllers)) {
+                const controller = controllers[name];
+                delete controllers[name];
+                controller.abort();
+            }
             for (const state of [sales, stock, debt, reconciliation]) {
                 state.data = null;
                 state.loading = false;
@@ -206,25 +210,24 @@ export const OperationalDashboardPanel = {
             ]);
         }
 
-        function statusMessage(state) {
-            if (state.loading && !state.data) return h(UiLoading, { label: 'Loading report…' });
-            if (state.error && state.stale) return h(UiAlert, {
-                severity: 'warning',
-                message: state.error + ' The last successful figures are shown and may be out of date.',
-                dismissible: false,
-            });
-            if (state.error) return h(UiAlert, { severity: 'error', message: state.error, dismissible: false });
-            if (!state.data && !state.loading) return h(UiEmptyState, { title: 'No report available', message: 'Refresh to try again.' });
-            return null;
-        }
-
         function card(title, subtitle, state, body, actionLabel, action) {
-            const status = statusMessage(state);
+            const status = state.loading && !state.data
+                ? h(UiLoading, { label: 'Loading report…' })
+                : !state.data && state.error
+                    ? h(UiAlert, { severity: 'error', message: state.error, dismissible: false })
+                    : !state.data && !state.loading
+                        ? h(UiEmptyState, { title: 'No report available', message: 'Refresh to try again.' })
+                        : null;
             return h('article', { class: 'dashboard-card' }, [
                 h('div', { class: 'dashboard-card-heading' }, [
                     h('div', [h('h3', title), h('p', subtitle)]),
                     state.loading && state.data && h('span', { class: 'dashboard-refreshing', role: 'status' }, 'Updating…'),
                 ]),
+                state.error && state.stale && h(UiAlert, {
+                    severity: 'warning',
+                    message: state.error + ' The last successful figures are shown and may be out of date.',
+                    dismissible: false,
+                }),
                 status || (state.data && body(state.data)),
                 state.data && h('p', { class: 'dashboard-freshness' }, 'Last refreshed: ' + timeLabel(state.data)),
                 h('div', { class: 'dashboard-card-actions' }, [
