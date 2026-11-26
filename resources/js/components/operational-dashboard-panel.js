@@ -132,15 +132,17 @@ export const OperationalDashboardPanel = {
             }
         }
 
-        function salesParams() {
+        function salesParams(usePendingPeriod = false) {
             const params = new URLSearchParams({ group_by: 'MONTH' });
-            if (from.value) params.set('from', from.value);
-            if (to.value) params.set('to', to.value);
+            const start = usePendingPeriod ? from.value : appliedFrom.value;
+            const end = usePendingPeriod ? to.value : appliedTo.value;
+            if (start) params.set('from', start);
+            if (end) params.set('to', end);
             return params;
         }
 
-        async function loadSales() {
-            if (canSales.value) await loadOne('sales', sales, '/api/v1/shop/reports/sales', salesParams());
+        async function loadSales(usePendingPeriod = false) {
+            if (canSales.value) await loadOne('sales', sales, '/api/v1/shop/reports/sales', salesParams(usePendingPeriod));
         }
 
         async function loadStock() {
@@ -175,7 +177,7 @@ export const OperationalDashboardPanel = {
 
         async function applySalesPeriod() {
             if (!canSales.value || offline.value || blocked.value) return;
-            await loadSales();
+            await loadSales(true);
         }
 
         function onOffline() {
