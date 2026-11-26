@@ -78,6 +78,8 @@ export const OperationalDashboardPanel = {
         const reconciliation = reactive({ data: null, loading: false, error: '', stale: false, queryKey: null });
         const from = ref('');
         const to = ref('');
+        const appliedFrom = ref('');
+        const appliedTo = ref('');
         const refreshing = ref(false);
         const offline = ref(!navigator.onLine);
         let alive = true;
@@ -109,6 +111,8 @@ export const OperationalDashboardPanel = {
                 if (name === 'sales') {
                     from.value = from.value || response.data.period?.from || '';
                     to.value = to.value || response.data.period?.to || '';
+                    appliedFrom.value = response.data.period?.from || '';
+                    appliedTo.value = response.data.period?.to || '';
                 }
             } catch (failure) {
                 if (!alive || controllers[name] !== controller || failure.name === 'AbortError') return;
@@ -198,8 +202,8 @@ export const OperationalDashboardPanel = {
 
         function openSales() {
             const params = new URLSearchParams();
-            if (from.value) params.set('from', from.value);
-            if (to.value) params.set('to', to.value);
+            if (appliedFrom.value) params.set('from', appliedFrom.value);
+            if (appliedTo.value) params.set('to', appliedTo.value);
             const query = params.toString();
             emit('navigate', '#sales-report' + (query ? '?' + query : ''));
         }
@@ -247,7 +251,7 @@ export const OperationalDashboardPanel = {
                 status || (state.data && body(state.data)),
                 state.data && h('p', { class: 'dashboard-freshness' }, 'Last refreshed: ' + timeLabel(state.data)),
                 h('div', { class: 'dashboard-card-actions' }, [
-                    h(UiButton, { variant: 'secondary', disabled: state.loading, onClick: action }, () => actionLabel),
+                    h(UiButton, { variant: 'secondary', disabled: state.loading || !state.data, onClick: action }, () => actionLabel),
                 ]),
             ]);
         }
@@ -336,8 +340,8 @@ export const OperationalDashboardPanel = {
                         h('h3', 'Sales period'),
                         h('p', 'Choose the dates for the Sales figures. Other cards show the current position or latest finished checks.'),
                     ]),
-                    h('label', { for: 'dashboard-sales-from' }, ['From', h('input', { id: 'dashboard-sales-from', class: 'form-control', type: 'date', value: from.value, max: to.value || undefined, onInput: event => { from.value = event.target.value; } })]),
-                    h('label', { for: 'dashboard-sales-to' }, ['To', h('input', { id: 'dashboard-sales-to', class: 'form-control', type: 'date', value: to.value, min: from.value || undefined, onInput: event => { to.value = event.target.value; } })]),
+                    h('label', { for: 'dashboard-sales-from' }, ['From', h('input', { id: 'dashboard-sales-from', class: 'form-control', type: 'date', value: from.value, max: to.value || undefined, disabled: sales.loading && !sales.data, onInput: event => { from.value = event.target.value; } })]),
+                    h('label', { for: 'dashboard-sales-to' }, ['To', h('input', { id: 'dashboard-sales-to', class: 'form-control', type: 'date', value: to.value, min: from.value || undefined, disabled: sales.loading && !sales.data, onInput: event => { to.value = event.target.value; } })]),
                     h(UiButton, { type: 'submit', icon: 'search', loading: sales.loading, busyLabel: 'Updating Sales…', disabled: offline.value || blocked.value }, () => 'Update Sales period'),
                 ]),
                 h('div', { class: 'dashboard-grid' }, [
