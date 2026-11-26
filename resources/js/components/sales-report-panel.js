@@ -6,7 +6,7 @@ const { h, ref, onMounted, onUnmounted } = window.Vue;
 export const SalesReportPanel = {
     props: { permissions: { type: Array, default: () => [] }, initialFrom: { type: String, default: '' }, initialTo: { type: String, default: '' } },
     emits: ['back'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
         const report = ref(null);
         const loading = ref(false);
         const error = ref('');
