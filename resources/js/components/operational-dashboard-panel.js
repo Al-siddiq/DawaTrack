@@ -163,6 +163,10 @@ export const OperationalDashboardPanel = {
         async function refreshAll() {
             if (refreshing.value || offline.value || blocked.value) return;
             refreshing.value = true;
+            if (canSales.value && appliedFrom.value && appliedTo.value) {
+                from.value = appliedFrom.value;
+                to.value = appliedTo.value;
+            }
             try {
                 await Promise.all([
                     loadSales(),
