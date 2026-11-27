@@ -65,7 +65,7 @@ $assert(str_contains($dashboard, 'Finalized Cash, Stock and combined checks'), '
 $assert(str_contains($dashboard, '#sales-report'), 'Sales drill-down route is preserved');
 $assert(str_contains($dashboard, 'URLSearchParams'), 'Sales drill-down carries the selected period');
 $assert(str_contains($home, 'OperationalDashboardPanel'), 'Dashboard is integrated into existing Shop Home');
-$assert(strpos($home, 'OperationalDashboardPanel') < strpos($home, 'unfinishedSalesSection()'), 'Shop overview renders before unfinished sales');
+$assert(strpos($home, 'canViewReports.value && h(OperationalDashboardPanel') < strpos($home, 'unfinishedSalesSection(),'), 'Shop overview renders before unfinished sales');
 $assert(strpos($home, 'unfinishedSalesSection()') < strpos($home, 'quickActionsSection()'), 'Unfinished sales render before quick actions');
 $assert(str_contains($reconciliation, '$binds = [];') && str_contains($reconciliation, 'The variance subquery is first in SQL, followed by the outer Shop scope.'), 'Reconciliation list query binds only its actual SQL placeholders');
 $assert(str_contains($home, "props.context.permissions.includes('report.view')"), 'Shop Home only mounts dashboard for report viewers');
