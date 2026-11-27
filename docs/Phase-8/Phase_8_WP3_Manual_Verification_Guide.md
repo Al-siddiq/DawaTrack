@@ -3,7 +3,7 @@
 **Package:** WP3 — Shop Dashboard, Approved Export and Phase 8 Integration  
 **Branch:** `feature/phase-8-wp3-shop-dashboard`  
 **Predecessors:** WP1 and WP2 Owner-accepted source candidates.  
-**Status:** P8-25–P8-36 remain Not run until actual observations are recorded.  
+**Status:** P8-25–P8-37 remain Not run until actual observations are recorded.  
 **Environment:** Supported PHP 8.2+, CodeIgniter 4, Shield and MySQL 8.4 LTS.
 
 ## 1. Preserve local work and obtain the WP3 candidate
@@ -187,7 +187,15 @@ Check at approximately 360–390 px, 768 px and 1280–1440 px:
 - currency, period, timezone and freshness are available to screen readers;
 - zoom to 200% does not hide actions or important values.
 
-## 16. Evidence and stop point
+## 16. P8-37 — Home section order
+
+1. Sign in as the Shop Owner and open Home.
+2. Confirm Shop overview is the first Home content, with its four report cards at the top.
+3. Confirm Continue an unfinished sale follows the overview, including the empty state when no unfinished sale exists.
+4. Confirm the four primary quick-action cards follow the unfinished-sale section: New sale, Find a product, Customers and Sales, subject to the existing navigation permissions.
+5. Confirm the starting-cash reminder and any READ_ONLY plan shortcut do not appear before the Shop overview.
+
+## 17. Evidence and stop point
 
 For every P8-25–P8-36 row in `Phase_8_WP3_Manual_Results.csv`, record:
 
