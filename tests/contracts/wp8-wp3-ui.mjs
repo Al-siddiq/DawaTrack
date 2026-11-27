@@ -48,7 +48,11 @@ assert.ok(dashboard.includes('view_stock_report === true'), 'Stock card uses sou
 assert.ok(dashboard.includes('view_customer_debt_report === true'), 'Debt card uses source capability');
 assert.ok(dashboard.includes('view_reconciliation_report === true'), 'Reconciliation card uses source capability');
 assert.ok(dashboard.includes('profit_visible') && dashboard.includes('variance_visibility'), 'Source privacy masks are preserved');
-assert.ok(dashboard.includes("per_page: '1'"), 'Dashboard uses summary-only WP2 pages');
+assert.ok(dashboard.includes("per_page: '20'"), 'Dashboard uses the supported WP2 report page size');
+assert.ok(dashboard.includes("period: 'CUSTOM'") && dashboard.includes('from_date: start') && dashboard.includes('to_date: end'), 'Dashboard sends the accepted Sales report date contract');
+assert.ok(dashboard.includes("period: 'TODAY'"), 'Dashboard uses the accepted default Sales period');
+assert.ok(dashboard.includes('data.sales') && dashboard.includes('data.payments') && dashboard.includes('data.gross_profit.amount'), 'Sales card reads the authoritative Sales report response shape');
+assert.ok(dashboard.includes("'#sales-reports?'"), 'Sales drill-down preserves the selected custom date period');
 assert.ok(dashboard.includes('new AbortController()'), 'Requests are cancellable');
 assert.ok(dashboard.includes("addEventListener('offline'") && dashboard.includes("addEventListener('online'"), 'Offline and online transitions are handled');
 assert.ok(home.includes('OperationalDashboardPanel'), 'Dashboard is integrated into Shop Home');
@@ -59,7 +63,10 @@ assert.ok(home.includes("'What would you like to do?'"), 'Quick-action section u
 assert.ok(home.includes("'ui-home-actions'"), 'Four primary quick actions are grouped together');
 assert.ok(!home.includes("'Quick actions'"), 'Generic Quick actions heading is removed');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
-assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
+assert.ok(salesHistory.includes("location.hash.startsWith('#sales-reports')"), 'Sales drill-down accepts a period-bearing Sales reports hash');
+assert.ok(salesHistory.includes("selected.value ? h('div', { class: 'trading-stack' }, ["), 'Sales history renders the existing SalesReportsPanel without an undefined report branch');
+const salesReports = read('resources/js/components/sales-reports-panel.js');
+assert.ok(salesReports.includes("hashParams.get('from_date')") && salesReports.includes("hashParams.get('to_date')"), 'Sales report reads dashboard-selected dates');
 assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
 assert.ok(salesPanel.includes('initialFrom') && salesPanel.includes('initialTo'), 'Sales report accepts selected dates');
 assert.ok(css.includes('.dashboard-grid') && css.includes('@media(max-width:35rem)'), 'Dashboard layout is responsive');
