@@ -9,6 +9,7 @@ const salesHistory = read('resources/js/components/sale-history-panel.js');
 const salesPanel = read('resources/js/components/sales-report-panel.js');
 const css = read('resources/css/app.scss');
 const contract = read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
+const reconciliationQuery = read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
 
 for (const phrase of [
     'Shop overview',
@@ -51,6 +52,9 @@ assert.ok(dashboard.includes("per_page: '1'"), 'Dashboard uses summary-only WP2 
 assert.ok(dashboard.includes('new AbortController()'), 'Requests are cancellable');
 assert.ok(dashboard.includes("addEventListener('offline'") && dashboard.includes("addEventListener('online'"), 'Offline and online transitions are handled');
 assert.ok(home.includes('OperationalDashboardPanel'), 'Dashboard is integrated into Shop Home');
+assert.ok(home.indexOf('OperationalDashboardPanel') < home.indexOf('unfinishedSalesSection()'), 'Shop overview is first');
+assert.ok(home.indexOf('unfinishedSalesSection()') < home.indexOf('quickActionsSection()'), 'Unfinished sales precede quick actions');
+assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
 assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
 assert.ok(salesPanel.includes('initialFrom') && salesPanel.includes('initialTo'), 'Sales report accepts selected dates');
