@@ -29,6 +29,7 @@ $stockQuery = $read('app/Modules/Inventory/Infrastructure/StockReportQuery.php')
 $debtQuery = $read('app/Modules/CustomerDebt/Infrastructure/CustomerDebtReportQuery.php');
 $reconciliationQuery = $read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
 $salesQuery = $read('app/Modules/Sales/Infrastructure/SalesReportQuery.php');
+$salesController = $read('app/Controllers/Api/SalesReportController.php');
 $routes = $read('app/Config/Routes.php');
 $filters = $read('app/Config/Filters.php');
 $throttle = $read('app/Filters/SensitiveRateLimitFilter.php');
