@@ -17,7 +17,7 @@ This closes the whole programme after the sequential package decisions. It does 
 |---|---|---|---|
 | WP1 | Sales, Payment Mix and Gross Profit Reports | 25 Nov 2026 | [#56](https://github.com/Al-siddiq/DawaTrack/pull/56) |
 | WP2 | Stock, Customer Debt and Reconciliation Reports | 26 Nov 2026 | [#57](https://github.com/Al-siddiq/DawaTrack/pull/57) |
-| WP3 | Shop Dashboard and Phase 8 Integration; export excluded | 27 Nov 2026 | [#58](https://github.com/Al-siddiq/DawaTrack/pull/58) |
+| WP3 | Shop Dashboard and Phase 8 Integration; export excluded | 27 Nov 2026 | [WP3 Owner acceptance](../acceptance/2026-11-27-phase-08-wp3-owner-acceptance.md) · [#58](https://github.com/Al-siddiq/DawaTrack/pull/58) |
 
 The merge sequence preserves cumulative package ancestry:
 
@@ -81,7 +81,7 @@ The final integration commit contains the complete source/documentation/test inv
 - **WP1 documentation:** `Phase_8_WP1_Integration_Contracts.md`, `Phase_8_WP1_Source_Matrix.csv`, `Phase_8_WP1_Manual_Results.csv`, `Phase_8_WP1_Delivery_Report.md`.
 - **WP2 documentation:** `Phase_8_WP2_Integration_Contracts.md`, `Phase_8_WP2_Source_Matrix.csv`, `Phase_8_WP2_Manual_Results.csv`, `Phase_8_WP2_Manual_Verification_Guide.md`, `Phase_8_WP2_Delivery_Report.md`.
 - **WP3 documentation:** `Phase_8_WP3_Composition_Contract.md`, `Phase_8_WP3_Source_Matrix.csv`, `Phase_8_WP3_Manual_Results.csv`, `Phase_8_WP3_Manual_Verification_Guide.md`, `Phase_8_WP3_Performance_Notes.md`, `Phase_8_WP3_Operations_Handover.md`, `Phase_8_WP3_Delivery_Report.md`.
-- **Acceptance records:** WP1 and WP2 dated Owner acceptance records; this whole-phase closure record.
+- **Acceptance records:** WP1, WP2 and WP3 dated package Owner acceptance records; this whole-phase closure record.
 - **Contract checks:** `tests/contracts/wp8-wp1.php`, `tests/contracts/wp8-wp1-ui.mjs`, `tests/contracts/wp8-wp2.php`, `tests/contracts/wp8-wp2-ui.mjs`, `tests/contracts/wp8-wp3.php`, `tests/contracts/wp8-wp3-ui.mjs`.
 
 The commit also updates the README, strategic roadmap, Phase 8 plan status, API conventions, module map, navigation/permission notes and plain-English UI policy. The closure artifacts added after the integration commit are documentation-only commits on main.
