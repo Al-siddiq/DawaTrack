@@ -66,11 +66,20 @@ final class ShopController extends BaseController
                     'collect_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record'),
                     'allocate_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record') && $hasPermission('debt.payment.allocate'),
                     'view_sale_drafts' => $hasPermission('sale.view'),
+                    'view_sales_workspace' => $hasPermission('sale.view') || $hasPermission('report.view'),
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),
                     'adjust_inventory' => $hasPermission('inventory.adjust'),
                     'manage_intakes' => $hasPermission('inventory.intake'),
                     'reverse_inventory' => $hasPermission('inventory.reverse'),
+                    'view_stock_report' => $hasPermission('report.view') && $hasPermission('inventory.view'),
+                    'view_customer_debt_report' => $hasPermission('report.view') && $hasPermission('customer.view') && $hasPermission('debt.view'),
+                    'view_reconciliation_report' => $hasPermission('report.view') && $hasPermission('reconciliation.view'),
+                    'view_operational_reports' => $hasPermission('report.view') && (
+                        $hasPermission('inventory.view')
+                        || ($hasPermission('customer.view') && $hasPermission('debt.view'))
+                        || $hasPermission('reconciliation.view')
+                    ),
                 ],
                 'access' => [
                     'mode' => $decision->mode,

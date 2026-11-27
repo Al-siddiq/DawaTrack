@@ -1,0 +1,13 @@
+requirement_id,requirement,source_owner,authoritative_source,implementation,permission,manual_case,status
+P8-WP1-01,Daily monthly and custom date periods,Sales,shops.timezone_name plus posted sales timestamps,SalesReportQuery,report.view,P8-01;P8-02;P8-03,Implemented candidate
+P8-WP1-02,Sales before returns and cancellations,Sales,sales.kind total_amount posted_at,SalesReportQuery,report.view,P8-01;P8-02;P8-03;P8-07,Implemented candidate
+P8-WP1-03,Net Sales after returns and cancellations,Sales,posted sales and return headers,SalesReportQuery plus SaleMoney,report.view,P8-01;P8-07,Implemented candidate
+P8-WP1-04,Cash received and refunded,Sales,sale_payments direction channel,SalesReportQuery,report.view,P8-04;P8-07,Implemented candidate
+P8-WP1-05,Transfer received and refunded,Sales,sale_payments direction channel,SalesReportQuery,report.view,P8-05;P8-07,Implemented candidate
+P8-WP1-06,Credit created and linked bill adjustments,Sales plus CustomerDebt,credit_created_amount_snapshot and receivable_adjustments linked to sales,SalesReportQuery,report.view,P8-06;P8-07;P8-08,Implemented candidate
+P8-WP1-07,Debt collection is not new Sales,CustomerDebt,Debt Payment and allocation evidence excluded from Sales aggregation,SalesReportQuery,report.view,P8-08,Implemented candidate
+P8-WP1-08,Gross Profit uses historical costs,Sales plus Inventory,sale_items.line_cogs_amount snapshots,SalesReportQuery,report.view plus sale.profit.view,P8-09;P8-11,Implemented candidate
+P8-WP1-09,Expenses are not deducted,FinancialMovement,No expense aggregation or net-profit calculation in WP1,SalesReportQuery,report.view plus sale.profit.view,P8-10,Implemented candidate
+P8-WP1-10,Profit and COGS privacy,Identity plus Sales,PermissionService and CommercialAccess,SalesReportQuery and SalesReportPanel,sale.profit.view,P8-11,Implemented candidate
+P8-WP1-11,Report-only Staff navigation,Identity plus Shop UI,ShopController capabilities and existing workspace registry,ShopController;workspace-registry;SaleHistoryPanel,report.view,P8-11,Implemented candidate
+P8-WP1-12,Bounded and responsive reporting,Sales plus Shop UI,366-day maximum and existing UI conventions,SalesReportQuery and SalesReportPanel,report.view,P8-12,Implemented candidate

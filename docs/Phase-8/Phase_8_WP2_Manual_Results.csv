@@ -1,0 +1,13 @@
+case_id,required_verification,environment,synthetic_fixture_and_shop,actor_and_permissions,selected_scope_or_filter,expected_result,actual_result,status,evidence_reference,reviewer,observed_at_africa_lagos,notes
+P8-13,Current Stock levels against Stock Position,,,,,,,"Not run",,,,
+P8-14,Low-stock threshold derivation and threshold changes,,,,,,,"Not run",,,,
+P8-15,Stock value against quantity and valid cost basis,,,,,,,"Not run",,,,
+P8-16,UNESTABLISHED/RETAINED cost state is not presented as false precision,,,,,,,"Not run",,,,
+P8-17,Stock intake Sale Return and reversal effects reflected once,,,,,,,"Not run",,,,
+P8-18,Current Stock distinguished from historical Reconciliation count,,,,,,,"Not run",,,,
+P8-19,Customer outstanding balance against Receivable evidence,,,,,,,"Not run",,,,
+P8-20,Partial settled overdue derivation and due-date boundary,,,,,,,"Not run",,,,
+P8-21,Debt payment allocation adjustment and compensation counted once,,,,,,,"Not run",,,,
+P8-22,Customer private fields remain masked without authority,,,,,,,"Not run",,,,
+P8-23,Finalized Cash variance summary and actual-minus-expected sign,,,,,,,"Not run",,,,
+P8-24,Finalized Stock/Full variance summary without double counting,,,,,,,"Not run",,,,

@@ -521,7 +521,7 @@ Bank reconciliation, offline finalization, silent device exclusion, automatic Ca
 
 ## Phase 8 — Authoritative Reporting and Operational Dashboard
 
-**Implementation plan prepared — 24 November 2026:** [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). The plan preserves this roadmap's scope and exclusions. Implementation has not started and awaits Owner plan acceptance plus an explicit WP1 commencement instruction.
+**Implementation plan prepared — 24 November 2026:** [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). The plan preserves this roadmap's scope and exclusions. The Owner accepted the plan and authorized WP1 commencement on 25 November 2026. WP1 implementation candidate is in progress; native verification and package acceptance remain pending.
 
 ### Objective
 Turn authoritative transactions into useful Phase 1 summaries without a second truth.

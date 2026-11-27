@@ -31,3 +31,27 @@ Use familiar names for people, notes and saved states. Show shop times in Nigeri
 Technical identifiers in code, APIs, migration files and developer records can remain unchanged. They are not shop-page labels. A code used only to get help may remain where needed.
 
 Before handing over a screen, read its menu label, heading, buttons, prompts, status, errors and empty state aloud. Check that a trader can follow the next step. Render every stage as well as the start page. A developer check does not replace the owner trying the screen with real shop users.
+
+
+## Phase 8 Sales reports
+
+Sales reports must be understandable without accounting knowledge. Use the words shown on the screen and explain each amount in one short sentence.
+
+| Avoid | Use on the Shop screen |
+|---|---|
+| Revenue / turnover | Sales |
+| Net Sales | Sales after returns |
+| Payment composition | How customers paid |
+| Receivable / debtor | Customer bill / amount left to pay |
+| Credit Sales | Sales left on a customer bill |
+| COGS | Cost of the products sold |
+| Gross margin / margin | Money left after product costs (gross profit before shop expenses), with a plain explanation |
+| Net Profit | Do not show this in Phase 8; it is outside the approved scope |
+| Reporting period | Dates shown |
+| Refreshed at | Last updated |
+
+Explain that Cash and Transfer are money received or refunded. Explain that Credit is not money received; it is the part added to a Customer bill. Explain that collections of an old bill do not count as a new Sale.
+
+When showing Gross Profit, say: “This is sales after returns minus the saved cost of the products sold. Shop expenses have not been taken away.” Also explain that the cost saved when the Sale was recorded is used; a missing cost can make the figure incomplete.
+
+Use short headings, familiar words, readable amounts, and a clear next action. Do not rely on color alone. Show the selected dates and Shop time zone. Never display cost or profit details when the actor lacks `sale.profit.view`. Before acceptance, read every report label, explanation, warning and empty/error message aloud with a Shop user.
