@@ -21,7 +21,7 @@ This is the explicit whole-phase decision accepting WP1, WP2 and WP3 and authori
 | WP2 | Stock, Customer Debt and Reconciliation Reports | Accepted and closed 26 Nov 2026 | PR #57 |
 | WP3 | Shop Dashboard, conditional Export disposition and Phase 8 Integration | Accepted 27 Nov 2026 | PR #58 |
 
-The dated WP1 and WP2 package records remain preserved. This record completes the WP3 and whole-phase decision.
+The dated WP1 and WP2 package records remain preserved. The [WP3 package acceptance record](2026-11-27-phase-08-wp3-owner-acceptance.md) records the final package decision; this document records the whole-phase decision.
 
 ## Integrated source and ancestry
 
