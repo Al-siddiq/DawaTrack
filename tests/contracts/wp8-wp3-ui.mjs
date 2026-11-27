@@ -59,10 +59,14 @@ assert.ok(home.includes("'ui-home-actions'"), 'Four primary quick actions are gr
 assert.ok(!home.includes("'Quick actions'"), 'Generic Quick actions heading is removed');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
 for (const route of [
-    "shop/reports/sales', 'Api\\\\SalesReportController::index",
-    "shop/reports/stock', 'Api\\\\OperationalReportController::stock",
-    "shop/reports/customer-debt', 'Api\\\\OperationalReportController::customerDebt",
-    "shop/reports/reconciliation', 'Api\\\\OperationalReportController::reconciliation",
+    'shop/reports/sales',
+    'SalesReportController::index',
+    'shop/reports/stock',
+    'OperationalReportController::stock',
+    'shop/reports/customer-debt',
+    'OperationalReportController::customerDebt',
+    'shop/reports/reconciliation',
+    'OperationalReportController::reconciliation',
 ]) assert.ok(routes.includes(route), 'Missing registered source report route: ' + route);
 assert.ok(!salesHistory.includes('reportOpen.value') && !salesHistory.includes('SalesReportPanel'), 'Sales workspace renders only the registered SalesReportsPanel');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-reports')"), 'Sales drill-down accepts period-bearing report hash');
