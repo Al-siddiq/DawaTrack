@@ -71,7 +71,13 @@ Static contract test files:
 - The existing four report APIs remain the sole source of dashboard figures.
 - The dashboard's four independent reads are not one database transaction; freshness is displayed per source.
 
-## 5. Verification status — not claimed as passed
+## 5. Owner-requested corrections
+
+The Owner reviewed the initial Home screenshot and requested the Shop overview to appear first, followed by Continue an unfinished sale and then the four quick-action cards. `WorkspaceHome` has been reordered to match that sequence.
+
+The Finished shop checks card returned a generic server error. Source tracing identified a bind-parameter mismatch in `ReconciliationReportQuery`: the finalized-session list query supplied duplicate Tenant/Shop values in addition to the derived variance-subquery and outer Shop-scope values. The bind array now starts empty and adds only the values for the actual SQL placeholders, in SQL order. The PHP static contract test covers this correction.
+
+## 6. Verification status — not claimed as passed
 
 The repository changes and documentation are committed on the GitHub branch. I cannot execute commands inside the user's local Windows/XAMPP PHP/MySQL/Node environment from this delivery session. Therefore none of the following is represented as Pass:
 
@@ -87,7 +93,7 @@ The repository changes and documentation are committed on the GitHub branch. I c
 
 The manual register remains Not run until the Owner records observed results. Static source assertions and source inspection are not native acceptance.
 
-## 6. Owner handover and stop point
+## 7. Owner handover and stop point
 
 WP3 is ready for local syntax/static checks, the locked frontend build and Owner-led native verification. The exact commands, actor matrix, expected outcomes and evidence requirements are in the Manual Verification Guide.
 
