@@ -84,3 +84,7 @@ Auth remains server-rendered, with visible Shop/Admin area and current branding.
 ## Integration limits
 
 UI2-C completes the shared shell/navigation foundation. Existing task bodies still contain legacy wording/layout to migrate in UI-3; those are not hidden or falsely counted as redesigned. All new paths and base styling are real production integration, not the A/B specimen gallery. Native HTTP, CSP, device, keyboard/screen-reader, print and full business regression are covered by the accompanying manual checklist. Owner acceptance is recorded separately without inventing per-case evidence.
+
+## Phase 8 WP1 — Sales report role behavior
+
+The existing Sales destination is shared by the Sales report and Sales/Returns history; do not add a new sidebar or bottom destination. A Primary Owner follows the existing role-derived permission policy. Staff with `report.view` can open the report. Staff with `sale.view` can open Sales/Returns history, receipts and the separate Sell/draft destination. Staff with both can switch between the report and history. Staff with report.view only must land directly on the report and must not trigger Sales-history or draft reads. The Sell destination remains gated by `sale.view`; `report.view` does not grant sale creation or receipt access. `sale.profit.view` independently controls the “Money left after paying for goods” figure. Backend checks remain authoritative; navigation capabilities are presentation hints only.

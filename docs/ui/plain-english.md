@@ -33,25 +33,18 @@ Technical identifiers in code, APIs, migration files and developer records can r
 Before handing over a screen, read its menu label, heading, buttons, prompts, status, errors and empty state aloud. Check that a trader can follow the next step. Render every stage as well as the start page. A developer check does not replace the owner trying the screen with real shop users.
 
 
-## Phase 8 Sales reports
+## Phase 8 Sales report language
 
-Sales reports must be understandable without accounting knowledge. Use the words shown on the screen and explain each amount in one short sentence.
+A Sales report must be understandable without accounting knowledge. Use short labels and explain each amount beside it. Avoid unexplained words such as revenue, net sales, COGS, margin, turnover or reconciliation variance on Shop pages.
 
-| Avoid | Use on the Shop screen |
+| Report label | Explain it this way |
 |---|---|
-| Revenue / turnover | Sales |
-| Net Sales | Sales after returns |
-| Payment composition | How customers paid |
-| Receivable / debtor | Customer bill / amount left to pay |
-| Credit Sales | Sales left on a customer bill |
-| COGS | Cost of the products sold |
-| Gross margin / margin | Money left after product costs (gross profit before shop expenses), with a plain explanation |
-| Net Profit | Do not show this in Phase 8; it is outside the approved scope |
-| Reporting period | Dates shown |
-| Refreshed at | Last updated |
+| Money from sales after returns | The value of goods sold, less goods returned or cancelled. |
+| Cash after refunds | Cash received, less Cash paid back to customers. |
+| Bank transfers after refunds | Transfers received, less transfers paid back. |
+| Money customers can pay later | The part customers were allowed to pay later, less any amount removed after a return. Later repayments are not counted as new sales. |
+| Money left after paying for goods | This is Gross Profit: money left after paying for the goods sold. Shop bills and other expenses have not been taken out. |
 
-Explain that Cash and Transfer are money received or refunded. Explain that Credit is not money received; it is the part added to a Customer bill. Explain that collections of an old bill do not count as a new Sale.
+Show the Shop dates, Shop time zone and last refresh time. Do not call Gross Profit net profit. If a user cannot see profit, say that their access does not include profit figures and direct them to the Shop Owner. Do not show a blank, zero or masked-looking profit amount that could be mistaken for a real result.
 
-When showing Gross Profit, say: “This is sales after returns minus the saved cost of the products sold. Shop expenses have not been taken away.” Also explain that the cost saved when the Sale was recorded is used; a missing cost can make the figure incomplete.
-
-Use short headings, familiar words, readable amounts, and a clear next action. Do not rely on color alone. Show the selected dates and Shop time zone. Never display cost or profit details when the actor lacks `sale.profit.view`. Before acceptance, read every report label, explanation, warning and empty/error message aloud with a Shop user.
+The existing Sales workspace remains the entry point. A Staff member with `report.view` can open the report; `sale.view` separately controls Sales and Returns history and the Sell destination; `sale.profit.view` separately controls the money-left-after-goods figure and cost values. Use the simple screen label first and explain the technical name only where it helps. The Primary Owner continues to use the existing role-derived authority. Do not introduce a new role or broaden Staff grants.

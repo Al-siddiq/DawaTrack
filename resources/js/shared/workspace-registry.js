@@ -1,9 +1,9 @@
 export const shopPages = Object.freeze([
     { id: 'home', label: 'Home', icon: 'home', hash: '#home', group: 'home' },
-    { id: 'sale-drafts', label: 'Sell', icon: 'sell', hash: '#sale-drafts', prefixes: ['#sale-draft/', '#sale-drafts/'], capability: 'view_sale_drafts', group: 'sell' },
-    { id: 'products', label: 'Stock', icon: 'stock', hash: '#products', prefixes: ['#products/'], capability: 'view_inventory', group: 'stock', trackEdits: true },
+    { id: 'sale-drafts', label: 'Sell', icon: 'sell', hash: '#sale-drafts', prefixes: ['#sale-draft/', '#sale-drafts/'], capability: 'view_sale_entry', group: 'sell' },
+    { id: 'products', label: 'Stock', icon: 'stock', hash: '#products', capability: 'view_inventory', group: 'stock', trackEdits: true },
     { id: 'customers', label: 'Customers', icon: 'customers', hash: '#customers', prefixes: ['#customers/debts', '#customers/debt/'], capability: 'view_customers', group: 'customers' },
-    { id: 'sale-history', label: 'Sales', icon: 'sales', hash: '#sale-history', prefixes: ['#sale/', '#sales-report'], capability: 'view_sales_workspace', group: 'menu' },
+    { id: 'sale-history', label: 'Sales', icon: 'sales', hash: '#sale-history', prefixes: ['#sale/', '#sales-reports'], capability: 'view_sales_workspace', group: 'menu', section: 'Work' },
     { id: 'intakes', label: 'Stock deliveries', icon: 'add', hash: '#intakes', capability: 'view_inventory', group: 'stock', parent: 'Stock', parentId: 'products', sidebar: false, trackEdits: true },
     { id: 'cash-controls', label: 'Cash check', icon: 'cash', hash: '#cash-controls', prefixes: ['#cash-controls/'], capability: 'view_cash_controls', group: 'menu', section: 'Work', trackEdits: true },
     { id: 'stock-controls', label: 'Stock check', icon: 'stock', hash: '#stock-controls', prefixes: ['#stock-controls/'], capability: 'view_cash_controls', group: 'menu', section: 'Work', trackEdits: true },

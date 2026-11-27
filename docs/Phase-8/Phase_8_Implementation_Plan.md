@@ -1,8 +1,8 @@
 # Phase 8 — Authoritative Reporting and Operational Dashboard
 
 **Prepared:** 24 November 2026 (Africa/Lagos)  
-**Status:** **COMPLETED — Phase 8 closed 27 November 2026 by explicit Owner whole-phase acceptance.** WP1–WP3 were accepted and integrated to `main`; see [Phase 8 closure report](Phase_8_Closure_Report.md) and [dated Owner decision](../acceptance/2026-11-27-phase-08-owner-closure.md).  
-**Baseline:** `main` at `98cb8d4ee99c8668a18aa92993b7828dc982902f` (Phase 7 WP4 integration, PR #53).  
+**Status:** Owner plan accepted and WP1 commencement instructed on 25 November 2026. WP1 implementation underway; WP2 and WP3 have not started. See the [dated Owner decision](../acceptance/2026-11-25-phase-08-plan-owner-acceptance.md).  
+**Baseline:** `main` at `d6e967cd5c4e95d490e9107a4d0c3b9b882a24bf` (post-Phase 7 closure documentation, before WP1 implementation). Phase 7 source integration is PR #53 at `98cb8d4ee99c8668a18aa92993b7828dc982902f`.  
 **Delivery model:** Three sequential, independently reviewable end-to-end work packages. Each package includes its own backend, API, frontend, security, audit, documentation and manual verification. The next package starts only after explicit Owner acceptance of the preceding package.
 
 ## 1. Authority and controlling foundation
@@ -191,6 +191,8 @@ Every package is vertical and end-to-end: backend queries, API contracts, permis
 **Frontend**
 - Add Sales summary/report screens to the existing Shop navigation and permission presentation.
 - Provide daily/monthly/custom date filters, Sales totals, Cash/Transfer/Credit composition, Gross Profit before expenses, period labels, source detail links, loading/empty/error/stale/access-mode states.
+- Apply the existing plain-English UI policy: every amount has a short everyday explanation; avoid unexplained accounting vocabulary. Use labels such as Sales after returns, Cash after refunds, Bank transfers after refunds, Credit after returns and Gross profit before shop expenses.
+- Preserve the existing role and grant model: report.view opens the report; sale.view separately opens Sales/Returns history; sale.profit.view separately reveals Gross Profit/COGS. The Primary Owner remains role-authorized; Staff grants are not expanded. A report-only Staff member must not trigger Sales history reads.
 - Use the existing UI primitives and mobile card/list transformation. Any chart must have a textual equivalent.
 
 **Documentation and package verification**
@@ -348,7 +350,7 @@ Phase 8 is complete only when all of the following are true:
 - Keep historical delivery reports immutable as historical records. Later acceptance is recorded in a new dated Owner decision/closure record; it does not rewrite old evidence or manufacture case-level results.
 - Source integration, database migration, production deployment, backup/restore and operational release remain separate recorded decisions. No production action is implied by package acceptance.
 
-## 10. Planning assumptions and decisions required before implementation
+## 10. Implementation decisions and continuing gates
 
 1. Phase 7 is recorded closed by the Owner's explicit confirmation on 24 November 2026. Phase 8 depends on that completed Reconciliation foundation.
 2. `report.view` already exists in the permission catalogue. WP1 must verify its actual runtime registration and Shop UI exposure; do not add a broad report-management permission.
@@ -356,7 +358,7 @@ Phase 8 is complete only when all of the following are true:
 4. No new Reporting module is presumed. Begin with the existing owning modules and module-map dependency direction. If a genuinely necessary shared composition boundary is discovered, document the alternatives and obtain approval before creating it.
 5. No new database table is presumed. Index changes require measured query-plan evidence and paired migration/SQL.
 6. No new dependency or frontend architecture is approved.
-7. The Phase 8 implementation plan itself is prepared at the Owner's request. Implementation begins only after the Owner accepts this plan and explicitly instructs commencement of WP1.
+7. The Owner accepted this plan on 24 November 2026 and explicitly instructed WP1 commencement. WP1 is underway on the dedicated feature branch; WP2 remains gated on WP1 Owner acceptance.
 
 ## 11. Expected final handover
 

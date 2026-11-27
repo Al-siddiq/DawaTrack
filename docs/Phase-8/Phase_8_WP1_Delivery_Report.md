@@ -1,53 +1,55 @@
-# Phase 8 WP1 — Sales, Payment Mix and Gross Profit Reports
+# Phase 8 WP1 — Sales reports delivery report
 
-**Status:** Implementation candidate prepared for Owner review; native acceptance is pending.  
-**Prepared:** 25 November 2026 (Africa/Lagos).  
-**Base:** `main` at `f5b815662807d96f75c257b62de0ccd7cbb98111`.  
-**Branch:** `feature/phase-8-wp1-sales-reporting`.
+**Implementation branch:** `codex/phase-08-wp1-sales-reports`  
+**Base:** `d6e967cd5c4e95d490e9107a4d0c3b9b882a24bf`  
+**Status:** Implementation changes prepared; awaiting native verification and Owner acceptance. WP2 has not started.
 
-## 1. Delivered implementation candidate
+## 1. Delivered source changes
 
-- Added read-only Sales-owned `SalesReportQuery` with Shop-local date boundaries, bounded 366-day range, daily/monthly grouping, Sales/Return totals, Cash/Transfer receipts/refunds, Credit snapshots/adjustments and permission-gated historical COGS/Gross Profit.
-- Added authenticated `GET /api/v1/shop/reports/sales` route and transport-only `SalesReportController`.
-- Reused existing `report.view` and `sale.profit.view`; no permission code or Staff grant was added.
-- Added report-only Shop navigation capability while preserving independent Sales history permission.
-- Added responsive Sales summary UI inside the existing Sales workspace using the existing Vue runtime/component/API conventions.
-- Added plain-English report labels, period explanations, cost/profit explanation, payment-mix warning, refresh time, loading/error/empty states and mobile-friendly period cards.
-- Added WP1 API/source/UI contracts, source traceability matrix and the 12-case manual result register.
+- `app/Modules/Sales/Infrastructure/SalesReportQuery.php` — Shop-scoped repeatable-read report projection; Shop timezone period handling; signed Sales, Cash, Transfer and Credit totals; source-evidence reconciliation; permission-gated historical Gross Profit and cost-state caveat.
+- `app/Controllers/Api/SalesReportController.php` — transport-only GET controller using the existing CommercialController envelope and no-store boundary.
+- `app/Config/Routes.php` — `GET /api/v1/shop/reports/sales`.
+- `app/Controllers/Api/ShopController.php` — presentation capability `view_sales_workspace` derived from existing `sale.view OR report.view`; no new grant.
+- `resources/js/shared/workspace-registry.js` — existing Sales workspace now supports report-only access and a Sales report hash alias.
+- `resources/js/components/sales-reports-panel.js` — plain-English report filters, amounts, explanation, date/timezone/freshness and access-aware source link.
+- `resources/js/components/sale-history-panel.js` — existing Sales workspace switches between report and Sales/Returns history without changing existing record flows.
 
-## 2. Financial behavior
+## 2. Source rules preserved
 
-- Posted Sale rows contribute positive Sales; posted Return/compensation rows use their persisted opposite `kind` to contribute the negative/positive effect established by the existing compensation service.
-- Payment rows use persisted `RECEIPT`/`REFUND` and `CASH`/`TRANSFER` evidence.
-- Credit comes from Sale credit snapshots plus Sale-linked signed Receivable adjustments. Debt collections are not added as Sales.
-- COGS comes only from historical `sale_items.line_cogs_amount` snapshots and is not recalculated from current Stock costs.
-- Gross Profit is Sales after Returns minus net historical product cost. Expenses are not deducted and no Net Profit metric exists.
-- Profit/COGS query and response fields are omitted unless `sale.profit.view` is granted.
+- Posted evidence only; drafts are excluded.
+- Sale, Return and compensation signs are explicit and source-linked.
+- Cash/Transfer use posted Sale payment receipt/refund evidence.
+- Credit uses posted Receivables and sale-owned return/cancellation adjustments; collections and generic bill corrections are not counted as new Sales.
+- Each saved Sales header is checked against its own item lines before aggregation; payment/credit composition is then checked with MySQL DECIMAL arithmetic. Inconsistent evidence is rejected, not silently presented.
+- Gross Profit uses historical Sale Item COGS snapshots and the existing Inventory cost-state reconstruction. It is hidden unless `sale.profit.view` is independently granted.
+- Shop-local date boundaries are converted to UTC and filtered using `posted_at`.
+- No schema, migration, SQL twin, index, dependency, Audit write, new permission, duplicate ledger, export or offline report storage is added.
 
-## 3. Database and dependency decision
+## 3. UI requirement
 
-No schema migration, SQL twin, new index, table, cache, dependency or new permission was added. Existing Sales/Payment indexes are used. No production data, environment secrets or generated assets were changed in this branch.
+The report is inside the existing Shop Sales workspace. Staff with `report.view` can see the report; Staff with `sale.view` can see Sales/Returns history; users with both can switch between them. Primary Owner behavior remains role-derived. Gross Profit visibility remains separately governed by `sale.profit.view`.
 
-## 4. UI role and plain-language behavior
+The labels and explanations use everyday words: money from sales after returns, Cash after refunds, bank transfers after refunds, money customers can pay later, and money left after paying for goods. The Gross Profit meaning is explained without expecting accounting knowledge. It displays Shop dates, Shop timezone and last refresh time. When the browser goes offline it clears displayed figures, explains that reports are not saved for offline use, and reloads after reconnection.
 
-The existing Sales menu destination is available to a user with either `sale.view` or `report.view`. A report-only Staff member sees the report but does not gain Sales history access. A user with both permissions can move between Sales history and Sales summary. The server continues to enforce `report.view` on the report route and `sale.view` on Sales history.
+## 4. Verification status
 
-The report uses everyday labels and explains Credit and Gross Profit. The Gross Profit section is explicitly marked “before shop expenses”. It does not use formal Net Profit language or expose cost values to a user without `sale.profit.view`.
+| Verification | Status |
+|---|---|
+| Repository source review and contract alignment | 31/31 source-level assertions manually confirmed against the feature-branch files; this is not a PHP test execution |
+| Documentation/source consistency | Prepared; review in PR |
+| Native PHP syntax/lint | Not run in this environment |
+| WP1 source contract guard (`php tests/contracts/p8-wp1.php`) | Added and extended; PHP execution not run in this environment |
+| CodeIgniter route/service integration | Not run in a native app environment |
+| MySQL 8.4 SQL execution and evidence fixtures | Not run |
+| EXPLAIN/representative-volume performance | Not run |
+| Staff report-only / Sales-only / both / Owner role browser checks | Not run |
+| Gross Profit masking and historical provisional-cost cases | Not run |
+| Mobile/tablet/desktop and keyboard/accessibility checks | Not run |
+| Frontend build and generated asset verification | Full `npm run build` not run. Changed published JavaScript modules were copied byte-for-byte from their `resources/js` sources; the release-manifest check remains pending. |
+| Owner hands-on manual acceptance | Pending |
 
-## 5. Verification status
+The absence of a native application/database/browser session is not represented as a pass. The manual guide and result register identify the checks required before WP1 acceptance. No result is marked Pass without an observed run.
 
-- GitHub source updates: prepared on the feature branch.
-- PHP syntax checks for the fetched SalesReportQuery and SalesReportController source: **Passed** (isolated `php -l`; this is not an application runtime test).
-- JavaScript syntax checks for the fetched SalesReportPanel and SalesHistoryPanel source: **Passed** (`node --check`; this is not a browser test).
-- Frontend asset build: **Not run**. The repository checkout/dependencies are not available in this execution environment; generated `public/assets/` files were deliberately not hand-edited. Run the established `npm run build` in the repository checkout before integrating/deploying this candidate.
-- Native PHP/CodeIgniter HTTP execution: **Not run in this environment**.
-- Native MySQL reconciliation fixtures and EXPLAIN/EXPLAIN ANALYZE: **Not run**.
-- Browser/device/keyboard/accessibility review: **Not run**.
-- P8-01–P8-12: remain **Not run** in [the manual result register](Phase_8_WP1_Manual_Results.csv).
-- The implementation candidate has not been represented as Owner-accepted or production-deployed.
+## 5. Next gate
 
-The source matrix is [Phase_8_WP1_Source_Matrix.csv](Phase_8_WP1_Source_Matrix.csv); API, source and UI rules are in [Phase_8_WP1_Integration_Contracts.md](Phase_8_WP1_Integration_Contracts.md).
-
-## 6. Owner acceptance gate
-
-Review the candidate and execute P8-01–P8-12 in the supported native Shop environment. Any observed mismatch must be corrected and retested before WP1 is accepted and WP2 begins. Do not mark an unobserved test as Pass.
+Run the WP1 native verification guide against the exact PR candidate and a MySQL 8.4 test database with synthetic Shop records. Resolve any failed case, then obtain explicit Owner acceptance before starting WP2.

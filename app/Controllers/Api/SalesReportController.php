@@ -8,17 +8,10 @@ use App\Modules\Sales\Infrastructure\SalesReportQuery;
 
 final class SalesReportController extends CommercialController
 {
-    private function reports(): SalesReportQuery
+    public function index()
     {
-        return new SalesReportQuery(db_connect(), $this->access());
-    }
-
-    public function sales()
-    {
-        return $this->execute(
-            fn ($context) => $this->ok(
-                $this->reports()->report($context, $this->request->getGet()),
-            ),
-        );
+        return $this->execute(fn ($context) => $this->ok(
+            (new SalesReportQuery(db_connect(), $this->access()))->show($context, $this->request->getGet()),
+        ));
     }
 }

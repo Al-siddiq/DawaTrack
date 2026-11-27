@@ -521,7 +521,7 @@ Bank reconciliation, offline finalization, silent device exclusion, automatic Ca
 
 ## Phase 8 — Authoritative Reporting and Operational Dashboard
 
-**CLOSED — 27 November 2026 by explicit Owner whole-phase acceptance.** WP1, WP2 and WP3 are accepted and integrated to `main` at `53f92462700d79c97f37e9506762ae07d05849e3` (PRs #56–#58, merged in dependency order). See the [Phase 8 closure report](Phase-8/Phase_8_Closure_Report.md), [Owner acceptance](acceptance/2026-11-27-phase-08-owner-closure.md), [closure checklist](Phase-8/Phase_8_Closure_Checklist.md) and [final operations handover](operations/phase-08-final-handover.md). Export was not approved and is not implemented. Production deployment, backup/restore and operational release remain separate decisions.
+**Owner plan accepted and WP1 commencement instructed — 25 November 2026:** [Owner decision](acceptance/2026-11-25-phase-08-plan-owner-acceptance.md). [Phase 8 three-package implementation plan](Phase-8/Phase_8_Implementation_Plan.md). WP1 implements Sales/payment mix/Gross Profit reporting under the existing Sales, Inventory, Identity and Shop UI ownership rules. Native verification and WP1 Owner acceptance remain pending; WP2/WP3 have not started.
 
 ### Objective
 Turn authoritative transactions into useful Phase 1 summaries without a second truth.

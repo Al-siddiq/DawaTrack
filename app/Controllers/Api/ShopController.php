@@ -65,7 +65,10 @@ final class ShopController extends BaseController
                     'view_debt' => $hasPermission('customer.view') && $hasPermission('debt.view'),
                     'collect_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record'),
                     'allocate_debt_payments' => $hasPermission('customer.view') && $hasPermission('debt.view') && $hasPermission('debt.payment.record') && $hasPermission('debt.payment.allocate'),
-                    'view_sale_drafts' => $hasPermission('sale.view'),
+                    // The Sales workspace mounts for either authorized view. The Sell destination
+                    // remains independently hidden unless sale.view is granted.
+                    'view_sale_drafts' => $hasPermission('sale.view') || $hasPermission('report.view'),
+                    'view_sale_entry' => $hasPermission('sale.view'),
                     'view_sales_workspace' => $hasPermission('sale.view') || $hasPermission('report.view'),
                     'view_inventory' => $hasPermission('inventory.view'),
                     'manage_products' => $hasPermission('product.manage'),

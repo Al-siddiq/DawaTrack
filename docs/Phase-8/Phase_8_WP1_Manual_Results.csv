@@ -1,13 +1,13 @@
-case_id,requirement,environment,fixture_shop,actor_and_permissions,period_and_timezone,expected_result,actual_result,evidence_reference,reviewer,observed_at_africa_lagos,status
-P8-01,Daily Sales totals against posted Sale and Return details,Not supplied,Not supplied,Not supplied,Not run,Must reconcile to posted source detail,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-02,Monthly Sales across month boundary,Not supplied,Not supplied,Not supplied,Not run,Must reconcile across Shop-local month boundary,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-03,Custom range and adjacent day boundary,Not supplied,Not supplied,Not supplied,Not run,No missing or double-counted posting at adjacent dates,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-04,Cash-only Sales composition,Not supplied,Not supplied,Not supplied,Not run,Cash receipts less refunds match posted Sale evidence,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-05,Transfer-only and mixed Cash/Transfer composition,Not supplied,Not supplied,Not supplied,Not run,Each channel matches posted payment evidence,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-06,Full and partial Credit composition,Not supplied,Not supplied,Not supplied,Not run,Credit snapshots match Sale-linked Receivables,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-07,Return/refund and linked compensation counted once,Not supplied,Not supplied,Not supplied,Not run,Return and compensation effects have correct signs and are counted once,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-08,Debt collection is not new Sales revenue,Not supplied,Not supplied,Not supplied,Not run,Collection does not increase Sales or Gross Profit,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-09,Historical COGS/Gross Profit does not change with current cost,Not supplied,Not supplied,Not supplied,Not run,Historical Sale Item cost snapshots drive Gross Profit,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-10,Expenses remain separate and no net-profit result,Not supplied,Not supplied,Not supplied,Not run,Expenses are not deducted from Gross Profit,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-11,Profit/COGS masked through API and UI,Not supplied,Not supplied,Not supplied,Not run,Without sale.profit.view no cost/profit field or UI value is present,Not observed,Not supplied,Not supplied,Not supplied,Not run
-P8-12,Date bounds,loading/error/empty and responsive UI,Not supplied,Not supplied,Not supplied,Not run,366-day bound and all UI states work on phone and desktop,Not observed,Not supplied,Not supplied,Not supplied,Not run
+case_id,scenario,status,commit,environment,actor,expected,actual,evidence,reviewer,observed_at,defect
+P8-01,"Today report",Not run,,,,,,,,,
+P8-02,"This month report",Not run,,,,,,,,,
+P8-03,"Custom date and Shop timezone boundary",Not run,,,,,,,,,
+P8-04,"Cash-only Sales",Not run,,,,,,,,,
+P8-05,"Transfer-only and mixed Sales",Not run,,,,,,,,,
+P8-06,"Credit Sales and Receivable evidence",Not run,,,,,,,,,
+P8-07,"Returns and compensation",Not run,,,,,,,,,
+P8-08,"Debt collection is not new Sales",Not run,,,,,,,,,
+P8-09,"Historical cost snapshot",Not run,,,,,,,,,
+P8-10,"Expenses remain separate",Not run,,,,,,,,,
+P8-11,"Profit permission masking",Not run,,,,,,,,,
+P8-12,"Range validation, empty/error, responsive and accessibility",Not run,,,,,,,,,
