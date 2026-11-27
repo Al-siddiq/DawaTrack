@@ -52,9 +52,12 @@ assert.ok(dashboard.includes("per_page: '1'"), 'Dashboard uses summary-only WP2 
 assert.ok(dashboard.includes('new AbortController()'), 'Requests are cancellable');
 assert.ok(dashboard.includes("addEventListener('offline'") && dashboard.includes("addEventListener('online'"), 'Offline and online transitions are handled');
 assert.ok(home.includes('OperationalDashboardPanel'), 'Dashboard is integrated into Shop Home');
-assert.ok(home.indexOf('canViewReports.value && h(OperationalDashboardPanel') < home.indexOf('unfinishedSalesSection(),'), 'Shop overview is first');
+assert.ok(home.indexOf("'ui-home-intro'") < home.indexOf('canViewReports.value && h(OperationalDashboardPanel'), 'Personal greeting is the first Home section');
+assert.ok(home.indexOf('canViewReports.value && h(OperationalDashboardPanel') < home.indexOf('unfinishedSalesSection(),'), 'Shop overview follows the greeting and precedes unfinished sales');
 assert.ok(home.indexOf('unfinishedSalesSection()') < home.indexOf('quickActionsSection()'), 'Unfinished sales precede quick actions');
-assert.ok(home.includes("'Quick actions'"), 'Four primary quick actions are grouped under a clear heading');
+assert.ok(home.includes("'What would you like to do?'"), 'Quick-action section uses the requested heading');
+assert.ok(home.includes("'ui-home-actions'"), 'Four primary quick actions are grouped together');
+assert.ok(!home.includes("'Quick actions'"), 'Generic Quick actions heading is removed');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
 assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
