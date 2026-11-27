@@ -190,14 +190,15 @@ Check at approximately 360–390 px, 768 px and 1280–1440 px:
 ## 16. P8-37 — Home section order
 
 1. Sign in as the Shop Owner and open Home.
-2. Confirm Shop overview is the first Home content, with its four report cards at the top.
-3. Confirm Continue an unfinished sale follows the overview, including the empty state when no unfinished sale exists.
-4. Confirm the four primary quick-action cards follow the unfinished-sale section: New sale, Find a product, Customers and Sales, subject to the existing navigation permissions.
-5. Confirm the starting-cash reminder and any READ_ONLY plan shortcut do not appear before the Shop overview.
+2. Confirm the personal greeting (`Hello, [Shop user]`) is the first Home section.
+3. Confirm Shop overview follows the greeting and contains its four report cards.
+4. Confirm Continue an unfinished sale follows the overview, including the empty state when no unfinished sale exists.
+5. Confirm the four primary quick-action cards follow the unfinished-sale section: New sale, Find a product, Customers and Sales, subject to the existing navigation permissions. Their section heading must read **What would you like to do?**
+6. Confirm the starting-cash reminder and any READ_ONLY plan shortcut appear only after the four primary quick actions.
 
 ## 17. Evidence and stop point
 
-For every P8-25–P8-36 row in `Phase_8_WP3_Manual_Results.csv`, record:
+For every P8-25–P8-37 row in `Phase_8_WP3_Manual_Results.csv`, record:
 
 - PHP, CodeIgniter, Shield, MySQL and browser versions;
 - synthetic fixture and Shop;
