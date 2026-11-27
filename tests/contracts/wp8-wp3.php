@@ -40,6 +40,7 @@ $manual = $read('docs/Phase-8/Phase_8_WP3_Manual_Results.csv');
 $guide = $read('docs/Phase-8/Phase_8_WP3_Manual_Verification_Guide.md');
 $performance = $read('docs/Phase-8/Phase_8_WP3_Performance_Notes.md');
 $operations = $read('docs/Phase-8/Phase_8_WP3_Operations_Handover.md');
+$reconciliation = $read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
 
 $assert(str_contains($dashboard, "'/api/v1/shop/reports/sales'"), 'Dashboard consumes accepted Sales report API');
 $assert(str_contains($dashboard, "'/api/v1/shop/reports/stock'"), 'Dashboard consumes accepted Stock report API');
@@ -64,6 +65,9 @@ $assert(str_contains($dashboard, 'Finalized Cash, Stock and combined checks'), '
 $assert(str_contains($dashboard, '#sales-report'), 'Sales drill-down route is preserved');
 $assert(str_contains($dashboard, 'URLSearchParams'), 'Sales drill-down carries the selected period');
 $assert(str_contains($home, 'OperationalDashboardPanel'), 'Dashboard is integrated into existing Shop Home');
+$assert(strpos($home, 'OperationalDashboardPanel') < strpos($home, 'unfinishedSalesSection()'), 'Shop overview renders before unfinished sales');
+$assert(strpos($home, 'unfinishedSalesSection()') < strpos($home, 'quickActionsSection()'), 'Unfinished sales render before quick actions');
+$assert(str_contains($reconciliation, '$binds = [];') && str_contains($reconciliation, 'The variance subquery is first in SQL, followed by the outer Shop scope.'), 'Reconciliation list query binds only its actual SQL placeholders');
 $assert(str_contains($home, "props.context.permissions.includes('report.view')"), 'Shop Home only mounts dashboard for report viewers');
 $assert(str_contains($salesHistory, "location.hash.startsWith('#sales-report?')"), 'Sales history accepts period-bearing report hash');
 $assert(str_contains($salesHistory, 'if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales history initializes carried dates before Sales report child mounts');
