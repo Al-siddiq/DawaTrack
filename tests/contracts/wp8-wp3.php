@@ -86,7 +86,7 @@ $assert(str_contains($throttle, '&& ! $isReportQuery'), 'Report GET requests are
 $assert(str_contains($throttle, 'return [20, 60]'), 'Report GET requests have a bounded per-user rate limit');
 $assert(str_contains($throttle, "return '/api/v1/shop/reports'"), 'All report routes share one per-user throttle bucket');
 $assert(str_contains($routes, "shop/reports/sales', 'Api\\\\SalesReportController::index") && str_contains($routes, "shop/reports/stock', 'Api\\\\OperationalReportController::stock") && str_contains($routes, "shop/reports/customer-debt', 'Api\\\\OperationalReportController::customerDebt") && str_contains($routes, "shop/reports/reconciliation', 'Api\\\\OperationalReportController::reconciliation"), 'All four source report routes map to their existing controllers');
-$assert(str_contains($salesQuery, "DraftInput::only($input, ['period', 'from_date', 'to_date'])"), 'Sales query accepts only the approved period and date fields');
+$assert(str_contains($salesQuery, "DraftInput::only(\$input, ['period', 'from_date', 'to_date'])"), 'Sales query accepts only the approved period and date fields');
 $assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3 adds no dashboard or export route');
 $assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
 $assert(str_contains($contract, 'Export is not approved and is not implemented'), 'Export disposition is documented');
