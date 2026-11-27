@@ -81,7 +81,7 @@ export const WorkspaceHome = {
                         title: 'No unfinished sales',
                         message: canSell.value ? 'Choose New sale when you are ready.' : 'Saved unfinished sales will appear here.',
                     }),
-                !loading.value && !error.value && ...drafts.value.map(draft => h('article', {
+                ...(!loading.value && !error.value ? drafts.value.map(draft => h('article', {
                     key: draft.public_id,
                     class: 'ui-home-draft',
                 }, [
@@ -95,7 +95,7 @@ export const WorkspaceHome = {
                         variant: 'secondary',
                         onClick: () => go(`#sale-draft/${draft.public_id}`),
                     }, () => 'Continue sale'),
-                ])),
+                ])) : []),
                 !loading.value && !error.value && h(UiButton, {
                     variant: 'secondary',
                     onClick: () => go('#sale-drafts'),
