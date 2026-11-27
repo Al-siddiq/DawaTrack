@@ -52,7 +52,7 @@ export const SaleHistoryPanel = {
                 canViewSales() ? action('Sales and returns', showSales, pending.value || childBusy.value) : null,
             ]),
             ...feedback(error.value, ''), confirmation.render(),
-            selected.value ? h('div', { class: 'trading-stack' }, [
+            reportOpen.value ? h(SalesReportPanel, { permissions: props.permissions, initialFrom: reportFrom.value, initialTo: reportTo.value, onBack: backFromReport }) : selected.value ? h('div', { class: 'trading-stack' }, [
                 h('div', { class: 'ui-actions' }, [action('Back to sales', () => confirmation.guard(back, '#sale-history'), pending.value || childBusy.value), action('Reload saved record', () => confirmation.guard(() => open(selected.value.public_id)), pending.value || childBusy.value)]),
                 pending.value && h(UiLoading, { label: 'Loading saved record…' }),
                 selected.value.status === 'DRAFT'

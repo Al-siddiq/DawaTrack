@@ -17,7 +17,8 @@ final class SensitiveRateLimitFilter implements FilterInterface
     {
         $path = RequestPath::normalized($request);
         $isAuditQuery = str_contains($path, '/audit-events');
-        if (in_array(strtoupper($request->getMethod()), ['GET', 'HEAD', 'OPTIONS'], true) && ! $isAuditQuery) {
+        $isReportQuery = str_starts_with($path, '/api/v1/shop/reports/');
+        if (in_array(strtoupper($request->getMethod()), ['GET', 'HEAD', 'OPTIONS'], true) && ! $isAuditQuery && ! $isReportQuery) {
             return null;
         }
 
@@ -74,6 +75,10 @@ final class SensitiveRateLimitFilter implements FilterInterface
             return [60, 60];
         }
 
+        if (str_starts_with($path, '/api/v1/shop/reports/')) {
+            return [20, 60];
+        }
+
         if (str_contains($path, '/reset-password')) {
             return [5, 300];
         }
@@ -101,6 +106,10 @@ final class SensitiveRateLimitFilter implements FilterInterface
 
         if (str_contains($path, '/shop/audit-events')) {
             return '/api/v1/shop/audit-events';
+        }
+
+        if (str_starts_with($path, '/api/v1/shop/reports/')) {
+            return '/api/v1/shop/reports';
         }
 
         if (str_starts_with($path, '/api/v1/shop/devices')) {
