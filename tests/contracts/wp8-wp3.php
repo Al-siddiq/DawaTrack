@@ -52,8 +52,12 @@ $assert(str_contains($dashboard, 'view_customer_debt_report === true'), 'Debt ca
 $assert(str_contains($dashboard, 'view_reconciliation_report === true'), 'Reconciliation card uses existing source capability');
 $assert(str_contains($dashboard, 'data.profit_visible'), 'Gross Profit card respects WP1 profit masking');
 $assert(str_contains($dashboard, 'data.variance_visibility'), 'Reconciliation card respects WP2 variance masking');
-$assert(str_contains($dashboard, "per_page: '1'"), 'WP2 dashboard requests use summary-only page size');
-$assert(str_contains($dashboard, "group_by: 'MONTH'"), 'Sales dashboard request uses compact monthly series');
+$assert(str_contains($dashboard, "per_page: '20'"), 'WP2 dashboard requests use the supported report page size');
+$assert(str_contains($dashboard, "period: 'CUSTOM'") && str_contains($dashboard, 'from_date: start') && str_contains($dashboard, 'to_date: end'), 'Sales dashboard sends the accepted custom-period query');
+$assert(str_contains($dashboard, "period: 'TODAY'"), 'Sales dashboard uses the accepted default period');
+$assert(str_contains($dashboard, 'data.sales') && str_contains($dashboard, 'data.payments') && str_contains($dashboard, 'data.gross_profit.amount'), 'Sales dashboard reads the authoritative API response fields');
+$assert(str_contains($dashboard, "'#sales-reports?'"), 'Sales drill-down preserves the selected custom date range');
+
 $assert(str_contains($dashboard, 'new AbortController()'), 'Dashboard requests are cancellable');
 $assert(str_contains($dashboard, "addEventListener('offline'"), 'Dashboard handles offline transition');
 $assert(str_contains($dashboard, "addEventListener('online'"), 'Dashboard refreshes when connection returns');
@@ -73,7 +77,10 @@ $assert(strpos($home, 'canViewReports.value && h(OperationalDashboardPanel') < s
 $assert(strpos($home, 'unfinishedSalesSection()') < strpos($home, 'quickActionsSection()'), 'Unfinished sales render before quick actions');
 $assert(str_contains($reconciliation, '$binds = [];') && str_contains($reconciliation, 'The variance subquery is first in SQL, followed by the outer Shop scope.'), 'Reconciliation list query binds only its actual SQL placeholders');
 $assert(str_contains($home, "props.context.permissions.includes('report.view')"), 'Shop Home only mounts dashboard for report viewers');
-$assert(str_contains($salesHistory, "location.hash.startsWith('#sales-report?')"), 'Sales history accepts period-bearing report hash');
+$assert(str_contains($salesHistory, "location.hash.startsWith('#sales-reports')"), 'Sales history accepts a period-bearing report hash');
+$assert(str_contains($salesHistory, "selected.value ? h('div', { class: 'trading-stack' }, ["), 'Sales history has no undefined Sales report render branch');
+$salesReports = $read('resources/js/components/sales-reports-panel.js');
+$assert(str_contains($salesReports, "hashParams.get('from_date')") && str_contains($salesReports, "hashParams.get('to_date')"), 'Sales report reads dashboard-selected dates');
 $assert(str_contains($salesHistory, 'if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales history initializes carried dates before Sales report child mounts');
 $assert(str_contains($salesHistory, 'initialFrom: reportFrom.value'), 'Sales report receives selected start date');
 $assert(str_contains($salesHistory, 'initialTo: reportTo.value'), 'Sales report receives selected end date');
@@ -87,7 +94,8 @@ $assert(str_contains($filters, "'api/v1/shop/reports/*'"), 'All report GET paths
 $assert(str_contains($throttle, '&& ! $isReportQuery'), 'Report GET requests are not skipped by the sensitive throttle');
 $assert(str_contains($throttle, 'return [20, 60]'), 'Report GET requests have a bounded per-user rate limit');
 $assert(str_contains($throttle, "return '/api/v1/shop/reports'"), 'All report routes share one per-user throttle bucket');
-$assert(str_contains($routes, "shop/reports/sales") && str_contains($routes, "shop/reports/stock") && str_contains($routes, "shop/reports/customer-debt") && str_contains($routes, "shop/reports/reconciliation"), 'Existing four source report routes remain registered');
+$assert(str_contains($routes, "shop/reports/sales") && str_contains($routes, "shop/reports/stock") && str_contains($routes, "shop/reports/customer-debt") && str_contains($routes, "shop/reports/reconciliation"), 'All four source report routes are registered');
+$assert(str_contains($routes, 'OperationalReportController::stock') && str_contains($routes, 'OperationalReportController::customerDebt') && str_contains($routes, 'OperationalReportController::reconciliation'), 'WP2 report routes target the operational report controller methods');
 $assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3 adds no dashboard or export route');
 $assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
 $assert(str_contains($contract, 'Export is not approved and is not implemented'), 'Export disposition is documented');
