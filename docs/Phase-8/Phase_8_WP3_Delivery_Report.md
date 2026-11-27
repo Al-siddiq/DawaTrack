@@ -52,7 +52,7 @@ The dashboard does not add a Reporting module, dashboard-specific SQL, a competi
 
 - `Phase_8_WP3_Composition_Contract.md`
 - `Phase_8_WP3_Source_Matrix.csv`
-- `Phase_8_WP3_Manual_Results.csv` — P8-25–P8-36 reserved, all currently Not run.
+- `Phase_8_WP3_Manual_Results.csv` — P8-25–P8-37 reserved, all currently Not run.
 - `Phase_8_WP3_Manual_Verification_Guide.md`
 - `Phase_8_WP3_Performance_Notes.md` — query-plan and performance evidence register; all measurements remain Not run.
 - `Phase_8_WP3_Operations_Handover.md` — permissions, freshness, rate limits and safe recovery.
