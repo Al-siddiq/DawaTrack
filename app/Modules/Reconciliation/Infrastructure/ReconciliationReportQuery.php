@@ -107,7 +107,9 @@ final class ReconciliationReportQuery
 
             $select = 's.public_id,s.scope,s.cutoff_at,s.finalized_at';
             $join = '';
-            $binds = [$context->tenantId, $context->shopId];
+            // Bind only the placeholders that are actually present in the list query.
+            // The variance subquery is first in SQL, followed by the outer Shop scope.
+            $binds = [];
             if ($cashVisible || $stockVisible) {
                 $columns = [];
                 if ($cashVisible) {

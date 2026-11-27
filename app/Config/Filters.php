@@ -162,6 +162,7 @@ class Filters extends BaseFilters
                 'api/v1/shop/staff/*',
                 'api/v1/shop/audit-events',
                 'api/v1/shop/audit-events/*',
+                'api/v1/shop/reports/*',
             ],
         ],
     ];
