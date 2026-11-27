@@ -71,7 +71,7 @@ The dashboard is shown only when `report.view` is active. Each card is independe
 4. If the actor has `sale.profit.view`, compare Gross Profit with the WP1 report's Gross Profit. It must remain Gross Profit before expenses.
 5. If the actor lacks `sale.profit.view`, verify no Gross Profit or COGS value is returned/rendered; the dashboard must show the access explanation instead.
 6. Change the date range and apply it. Confirm only the Sales card refreshes and its totals match WP1.
-7. Open the Sales report from the dashboard. Confirm the selected `from` and `to` dates are carried into the Sales report and the same values are shown.
+7. Open the Sales report from the dashboard. Confirm the selected `from_date` and `to_date` are carried in the `#sales-reports` hash and the Sales report opens with `period=CUSTOM` and the same dates.
 
 Do not compare Gross Profit with Net Profit or deduct Financial Movement expenses.
 
@@ -124,7 +124,7 @@ WP2 APIs do not accept a historical period filter. The dashboard must not imply 
 Use browser developer tools with Network preserve log enabled.
 
 1. Load Home once. Count requests: exactly one request per authorized report family (Sales, Stock, Customer Debt, Reconciliation); unauthorized families must not be requested.
-2. Confirm the three WP2 summary requests use `per_page=1&page=1`.
+2. Confirm the three WP2 summary requests use the supported `per_page=20&page=1` pagination values.
 3. Confirm Sales uses the WP1 maximum range and never exceeds 366 inclusive Shop-local days.
 4. Confirm typing in the date fields does not send requests. Only Update Sales period submits a new Sales request.
 5. Confirm a Sales period change does not reload Stock, Debt or Reconciliation.
