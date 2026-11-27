@@ -7,7 +7,7 @@
 | Approved Phase 8 plan and fixed scope | Accepted | [Phase 8 implementation plan](Phase_8_Implementation_Plan.md) |
 | WP1 Sales/Payment Mix/Gross Profit | Owner-accepted | 25 Nov decision; PR #56 integrated |
 | WP2 Stock/Customer Debt/Reconciliation | Owner-accepted | 26 Nov decision; PR #57 integrated |
-| WP3 Shop Dashboard and integration | Owner-accepted | 27 Nov decision; PR #58 integrated |
+| WP3 Shop Dashboard and integration | Owner-accepted | [WP3 decision](../acceptance/2026-11-27-phase-08-wp3-owner-acceptance.md); PR #58 integrated |
 | Whole-phase Owner review | Accepted; Phase 8 closed | [Dated Owner decision](../acceptance/2026-11-27-phase-08-owner-closure.md) |
 | Source integration | Complete | PR #58 → WP2; PR #57 → WP1; PR #56 → main |
 | Exact accepted source | Recorded | main commit `53f92462700d79c97f37e9506762ae07d05849e3` |
