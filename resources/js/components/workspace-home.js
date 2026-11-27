@@ -117,15 +117,21 @@ export const WorkspaceHome = {
             ].filter(Boolean);
 
             return h('section', { class: 'ui-home-quick-actions', 'aria-labelledby': 'ui-home-actions-title' }, [
-                h('h2', { id: 'ui-home-actions-title' }, 'Quick actions'),
+                h('h2', { id: 'ui-home-actions-title' }, 'What would you like to do?'),
                 h('div', { class: 'ui-home-actions' }, actions),
-                allowed('subscription') && props.access.mode === 'READ_ONLY'
-                    && shortcut('View plan', 'See your current shop access.', 'plan', '#subscription'),
             ]);
         }
 
         return () => h('section', { class: 'ui-home' }, [
-            // Owner priority: business overview is the first Home content.
+            // Personal greeting is the page introduction, not a section below the work areas.
+            h('section', { class: 'ui-home-intro', 'aria-labelledby': 'ui-home-greeting' }, [
+                h('h2', { id: 'ui-home-greeting' }, `Hello${props.userName ? `, ${props.userName}` : ''}`),
+                h('p', ['BLOCKED', 'CLOSED'].includes(props.access.mode)
+                    ? 'Check the shop access message above for the next step.'
+                    : 'Here is what is happening in your shop today.'),
+            ]),
+
+            // Owner priority: business overview follows the greeting and leads the Home workspace.
             canViewReports.value && h(OperationalDashboardPanel, {
                 permissions: props.context.permissions,
                 capabilities: props.context.capabilities,
@@ -133,19 +139,13 @@ export const WorkspaceHome = {
                 onNavigate: go,
             }),
 
-            // The next section is always the unfinished-sale workspace when available.
+            // Continue unfinished work immediately after the business overview.
             unfinishedSalesSection(),
 
-            // Four primary shortcuts follow the operational work in progress.
+            // The four primary shortcuts are grouped under the action-oriented heading.
             quickActionsSection(),
 
-            h('section', { class: 'ui-home-intro' }, [
-                h('h2', `Hello${props.userName ? `, ${props.userName}` : ''}`),
-                h('p', ['BLOCKED', 'CLOSED'].includes(props.access.mode)
-                    ? 'Check the shop access message above for the next step.'
-                    : 'What would you like to do?'),
-            ]),
-
+            // Secondary operational prompts follow the four primary actions.
             allowed('opening-cash') && canSell.value && baseline.value === null
                 && h(UiInformationPanel, {
                     title: 'Record your starting cash',
@@ -154,6 +154,8 @@ export const WorkspaceHome = {
                     h('p', 'Record your starting cash once before recording cash sales.'),
                     h(UiButton, { variant: 'secondary', icon: 'cash', onClick: () => go('#opening-cash') }, () => 'Set starting cash'),
                 ]),
+            allowed('subscription') && props.access.mode === 'READ_ONLY'
+                && shortcut('View plan', 'See your current shop access.', 'plan', '#subscription'),
         ]);
 
     },
