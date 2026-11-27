@@ -42,9 +42,12 @@ export const SalesReportsPanel = {
         let alive = true;
         let refreshAfterPending = false;
         const online = ref(typeof navigator === 'undefined' || navigator.onLine !== false);
-        const period = ref('TODAY');
-        const fromDate = ref('');
-        const toDate = ref('');
+        const hashQueryIndex = location.hash.indexOf('?');
+        const hashParams = new URLSearchParams(hashQueryIndex >= 0 ? location.hash.slice(hashQueryIndex + 1) : '');
+        const requestedPeriod = hashParams.get('period');
+        const period = ref(['TODAY', 'THIS_MONTH', 'CUSTOM'].includes(requestedPeriod) ? requestedPeriod : 'TODAY');
+        const fromDate = ref(hashParams.get('from_date') || '');
+        const toDate = ref(hashParams.get('to_date') || '');
         const report = ref(null);
         const pending = ref(false);
         const error = ref('');
