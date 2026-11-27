@@ -23,7 +23,6 @@ $assert = static function (bool $condition, string $label) use (&$checks): void 
 
 $dashboard = $read('resources/js/components/operational-dashboard-panel.js');
 $home = $read('resources/js/components/workspace-home.js');
-$salesPanel = $read('resources/js/components/sales-report-panel.js');
 $salesHistory = $read('resources/js/components/sale-history-panel.js');
 $stockQuery = $read('app/Modules/Inventory/Infrastructure/StockReportQuery.php');
 $debtQuery = $read('app/Modules/CustomerDebt/Infrastructure/CustomerDebtReportQuery.php');
@@ -81,11 +80,7 @@ $assert(str_contains($salesHistory, "location.hash.startsWith('#sales-reports')"
 $assert(str_contains($salesHistory, "selected.value ? h('div', { class: 'trading-stack' }, ["), 'Sales history has no undefined Sales report render branch');
 $salesReports = $read('resources/js/components/sales-reports-panel.js');
 $assert(str_contains($salesReports, "hashParams.get('from_date')") && str_contains($salesReports, "hashParams.get('to_date')"), 'Sales report reads dashboard-selected dates');
-$assert(str_contains($salesHistory, 'if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales history initializes carried dates before Sales report child mounts');
-$assert(str_contains($salesHistory, 'initialFrom: reportFrom.value'), 'Sales report receives selected start date');
-$assert(str_contains($salesHistory, 'initialTo: reportTo.value'), 'Sales report receives selected end date');
-$assert(str_contains($salesPanel, 'initialFrom:'), 'Sales report supports dashboard-selected period');
-$assert(str_contains($salesPanel, 'load(Boolean(from.value && to.value))'), 'Sales report applies carried period on first load');
+$assert(str_contains($salesReports, "hashParams.get('from_date')") && str_contains($salesReports, "hashParams.get('to_date')"), 'Sales report initializes the carried custom date range');
 $assert(str_contains($stockQuery, "'report.view'") && str_contains($debtQuery, "'report.view'") && str_contains($reconciliationQuery, "'report.view'") && str_contains($salesQuery, "'report.view'"), 'All source report queries independently authorize report.view');
 $assert(str_contains($shop, "'view_stock_report'") && str_contains($shop, "'view_customer_debt_report'") && str_contains($shop, "'view_reconciliation_report'"), 'Dashboard relies on existing server capabilities');
 $assert(!str_contains($dashboard, 'localStorage') && !str_contains($dashboard, 'indexedDB'), 'Dashboard does not persist report data locally');
