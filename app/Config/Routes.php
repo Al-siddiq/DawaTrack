@@ -162,6 +162,9 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('shop/returns/(:segment)/post', 'Api\ReturnController::post/$1', ['filter' => 'authenticated']);
     $routes->delete('shop/returns/(:segment)', 'Api\ReturnController::discard/$1', ['filter' => 'authenticated']);
     $routes->get('shop/reports/sales', 'Api\SalesReportController::sales', ['filter' => 'authenticated']);
+    $routes->get('shop/reports/stock', 'Api\OperationalReportController::stock', ['filter' => 'authenticated']);
+    $routes->get('shop/reports/customer-debt', 'Api\OperationalReportController::customerDebt', ['filter' => 'authenticated']);
+    $routes->get('shop/reports/reconciliation', 'Api\OperationalReportController::reconciliation', ['filter' => 'authenticated']);
     $routes->get('shop/sales', 'Api\SaleController::index', ['filter' => 'authenticated']);
     $routes->get('shop/sales/(:segment)', 'Api\SaleController::show/$1', ['filter' => 'authenticated']);
     $routes->post('shop/sales/(:segment)/post', 'Api\SaleController::post/$1', ['filter' => 'authenticated']);

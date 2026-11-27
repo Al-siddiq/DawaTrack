@@ -4,14 +4,14 @@ import { apiRequest } from '../api/http-client.js';
 const { h, ref, onMounted, onUnmounted } = window.Vue;
 
 export const SalesReportPanel = {
-    props: { permissions: { type: Array, default: () => [] } },
+    props: { permissions: { type: Array, default: () => [] }, initialFrom: { type: String, default: '' }, initialTo: { type: String, default: '' } },
     emits: ['back'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
         const report = ref(null);
         const loading = ref(false);
         const error = ref('');
-        const from = ref('');
-        const to = ref('');
+        const from = ref(props.initialFrom);
+        const to = ref(props.initialTo);
         const groupBy = ref('DAY');
         let alive = true;
         let requestNumber = 0;
@@ -110,7 +110,7 @@ export const SalesReportPanel = {
             ]);
         }
 
-        onMounted(() => load(false));
+        onMounted(() => load(Boolean(from.value && to.value)));
         onUnmounted(() => { alive = false; requestNumber++; });
 
         return () => h('section', { class: 'sales-report-workspace', 'aria-busy': loading.value }, [

@@ -72,6 +72,14 @@ final class ShopController extends BaseController
                     'adjust_inventory' => $hasPermission('inventory.adjust'),
                     'manage_intakes' => $hasPermission('inventory.intake'),
                     'reverse_inventory' => $hasPermission('inventory.reverse'),
+                    'view_stock_report' => $hasPermission('report.view') && $hasPermission('inventory.view'),
+                    'view_customer_debt_report' => $hasPermission('report.view') && $hasPermission('customer.view') && $hasPermission('debt.view'),
+                    'view_reconciliation_report' => $hasPermission('report.view') && $hasPermission('reconciliation.view'),
+                    'view_operational_reports' => $hasPermission('report.view') && (
+                        $hasPermission('inventory.view')
+                        || ($hasPermission('customer.view') && $hasPermission('debt.view'))
+                        || $hasPermission('reconciliation.view')
+                    ),
                 ],
                 'access' => [
                     'mode' => $decision->mode,
