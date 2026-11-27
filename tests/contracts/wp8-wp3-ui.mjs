@@ -54,6 +54,7 @@ assert.ok(dashboard.includes("addEventListener('offline'") && dashboard.includes
 assert.ok(home.includes('OperationalDashboardPanel'), 'Dashboard is integrated into Shop Home');
 assert.ok(home.indexOf('OperationalDashboardPanel') < home.indexOf('unfinishedSalesSection()'), 'Shop overview is first');
 assert.ok(home.indexOf('unfinishedSalesSection()') < home.indexOf('quickActionsSection()'), 'Unfinished sales precede quick actions');
+assert.ok(home.includes("'Quick actions'"), 'Four primary quick actions are grouped under a clear heading');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
 assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
