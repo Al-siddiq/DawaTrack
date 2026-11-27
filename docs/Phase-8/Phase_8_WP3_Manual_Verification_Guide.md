@@ -77,6 +77,8 @@ Do not compare Gross Profit with Net Profit or deduct Financial Movement expense
 
 ## 5. P8-26 — Stock, Customer Debt and Reconciliation cards equal WP2
 
+**WP3 correction note:** The initial Reconciliation dashboard error was traced to extra bind values in the finalized-session list query. The variance subquery and outer Shop scope now receive only the parameters matching their SQL placeholders. Re-run the Reconciliation card with an Owner/reviewer account and with a non-reviewer account; verify the summary loads in both cases and that variance fields remain masked for the non-reviewer. Do not mark this case Pass until the local database confirms it.
+
 For each card the actor is authorized to see:
 
 - **Current Stock:** compare Product count, low-stock count, negative-stock count, confirmed Stock value and valuation completeness with the WP2 Stock report. Do not add quantities across different Product units.
