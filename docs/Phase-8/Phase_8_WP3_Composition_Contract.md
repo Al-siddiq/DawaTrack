@@ -35,7 +35,7 @@ READ_ONLY permits these authorized GET reads. BLOCKED/CLOSED must not trigger da
 
 ## 4. Period and date semantics
 
-The Sales card uses the same WP1 Shop-local date range, 366-day maximum and report grouping semantics as the Sales report. The selected `from` and `to` dates are passed to the existing Sales report route and are carried into the Sales drill-down hash so the Sales report opens on the same selected period.
+The Sales card uses the existing Sales report contract: `period=TODAY` for the initial view, or `period=CUSTOM&from_date=YYYY-MM-DD&to_date=YYYY-MM-DD` for a selected range. The source query enforces the Shop-local 366-calendar-day maximum. The selected custom dates are carried in the `#sales-reports` drill-down hash so the Sales report opens on the same period. The response fields are `period.from_date`, `period.to_date`, `period.timezone`, `sales.*`, `payments.*` and `gross_profit.amount` (when permitted).
 
 WP2 has deliberately different source semantics and accepts no historical period filter:
 - Stock is the current Stock Position.
@@ -50,7 +50,7 @@ All source reports expose their existing Shop timezone and freshness information
 
 No dashboard cache, local persistence, polling timer, background sync or Phase 10 offline behavior is added.
 
-A dashboard load requests each authorized report once. The WP2 requests use `per_page=1&page=1` because the dashboard consumes summary values only; the report query still calculates the complete filtered summary from its authoritative source. The Sales request uses the selected period and `group_by=MONTH` to keep its dashboard payload compact.
+A dashboard load requests each authorized report once. The WP2 requests use the supported `per_page=20&page=1` pagination contract; the report queries calculate complete filtered summaries from their authoritative sources. The Sales request uses only the accepted `period`, `from_date` and `to_date` parameters. The Sales report API does not accept `group_by`, `from` or `to`.
 
 The response's existing `as_of` or `refreshed_at` value is the per-source freshness/version marker. A refresh re-reads the relevant existing source endpoint. A changed Sales period re-requests only Sales; it does not unnecessarily reload current Stock, Debt or finalized Reconciliation. Concurrent duplicate requests for the same source are prevented, and requests are aborted when the Home dashboard unmounts.
 

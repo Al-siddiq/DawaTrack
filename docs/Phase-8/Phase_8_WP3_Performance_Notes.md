@@ -9,10 +9,10 @@ The dashboard composes the four accepted report APIs. It adds no dashboard SQL, 
 
 | Source | Dashboard request | Bounded work |
 |---|---|---|
-| Sales | `GET /api/v1/shop/reports/sales?group_by=MONTH` plus applied `from`/`to` | Existing WP1 Shop-local range maximum of 366 inclusive days; aggregate series is grouped monthly for the dashboard |
-| Stock | `GET /api/v1/shop/reports/stock?state=ALL&page=1&per_page=1` | Existing WP2 aggregate plus one list row; the full Shop summary remains source-owned |
-| Customer Debt | `GET /api/v1/shop/reports/customer-debt?status=OWING&customer_status=ALL&page=1&per_page=1` | Existing WP2 Receivable projection and full matching summary; one list row |
-| Reconciliation | `GET /api/v1/shop/reports/reconciliation?scope=ALL&page=1&per_page=1` | Existing WP2 finalized evidence summary; one list row |
+| Sales | `GET /api/v1/shop/reports/sales?period=TODAY` or `period=CUSTOM&from_date=...&to_date=...` | Existing WP1 Shop-local range maximum of 366 inclusive days; source summary fields are rendered without client-side aggregation |
+| Stock | `GET /api/v1/shop/reports/stock?state=ALL&page=1&per_page=20` | Existing WP2 aggregate plus a bounded first page; the full Shop summary remains source-owned |
+| Customer Debt | `GET /api/v1/shop/reports/customer-debt?status=OWING&customer_status=ALL&page=1&per_page=20` | Existing WP2 Receivable projection and full matching summary; bounded first page |
+| Reconciliation | `GET /api/v1/shop/reports/reconciliation?scope=ALL&page=1&per_page=20` | Existing WP2 finalized evidence summary; bounded first page |
 
 Only authorized report families are requested. One request per source is in flight at a time. Dashboard refresh is explicit; a Sales period change reloads only Sales. No polling timer or background retry loop is added.
 

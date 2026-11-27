@@ -24,7 +24,7 @@ The dashboard does not add a Reporting module, dashboard-specific SQL, a competi
 - Current Customer balances card consumes the existing Customer Debt report and displays outstanding/overdue totals and customer counts.
 - Finished shop checks card consumes the existing Reconciliation report and displays finalized counts plus only those variance counts permitted by `variance_visibility`.
 - Dashboard cards do not recalculate source values. All money remains a source decimal string and is formatted only for display.
-- WP2 summary calls use `page=1&per_page=1`; Sales uses the existing bounded WP1 date contract and monthly grouping.
+- WP2 dashboard calls use the supported `page=1&per_page=20` values. Sales uses the accepted `period`, `from_date` and `to_date` contract and renders the source response fields without client-side aggregation.
 
 ### Period, freshness and drill-down
 
