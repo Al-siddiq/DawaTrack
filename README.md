@@ -2,11 +2,11 @@
 
 DawaTrack is a modular CodeIgniter 4 application for Nigerian chemist/PPMV operations, with tenant isolation, staff permissions, accountable stock and commercial evidence, and a responsive white-label Shop/Admin/Auth interface.
 
-## Current position — 24 November 2026
+## Current position — 27 November 2026
 
 **Phase 7 is CLOSED by explicit Owner whole-phase acceptance.** The Owner confirms that Phase 7 was reviewed, tested and verified. The accepted programme includes WP1–WP4; WP4 PR #53 is merged to main at `98cb8d4ee99c8668a18aa92993b7828dc982902f`. See the [dated Owner acceptance](docs/acceptance/2026-11-24-phase-07-owner-closure.md), [Phase 7 closure report](docs/Phase-7/Phase_7_Closure_Report.md), [closure checklist](docs/Phase-7/Phase_7_Closure_Checklist.md) and [final operations handover](docs/operations/phase-07-final-handover.md). Production deployment remains a separate operational decision.
 
-**Phase 8 — Authoritative Reporting and Operational Dashboard:** the [three-package implementation plan](docs/Phase-8/Phase_8_Implementation_Plan.md) has been prepared against the Strategic Roadmap, Technical Blueprint and Database Schema Design v1.1. Phase 8 WP1 implementation is in progress on the feature branch; native database, HTTP, browser and Owner acceptance checks remain pending.
+**Phase 8 is CLOSED by explicit Owner whole-phase acceptance.** WP1, WP2 and WP3 were accepted sequentially and integrated to `main` at `53f92462700d79c97f37e9506762ae07d05849e3` through PRs #58, #57 and #56. See the [dated Owner acceptance](docs/acceptance/2026-11-27-phase-08-owner-closure.md), [Phase 8 closure report](docs/Phase-8/Phase_8_Closure_Report.md), [closure checklist](docs/Phase-8/Phase_8_Closure_Checklist.md), [source integration/release decision](docs/Phase-8/Phase_8_Release_Decision.md) and [final operations handover](docs/operations/phase-08-final-handover.md). Production deployment and operational release remain separate decisions.
 
 Historical Phase 5 and Phase 6 package/acceptance records remain linked in their respective sections below. Historical delivery reports and manual registers are not rewritten by the Phase 7 closure record.
 
