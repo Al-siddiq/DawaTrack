@@ -11,3 +11,4 @@ P8-33,No cache is introduced; source freshness and no-store behavior remain isol
 P8-34,Export remains absent unless exact scope and authority are separately approved,,,,,,,"Not run",,,,
 P8-35,Loading empty error stale offline and access-mode states are honest,,,,,,,"Not run",,,,
 P8-36,Phone tablet desktop keyboard and accessible text alternatives,,,,,,,"Not run",,,,
+P8-37,Shop overview appears first followed by Continue an unfinished sale and then four quick action cards,,,,,,,"Not run",,,,
