@@ -73,7 +73,7 @@ Static contract test files:
 
 ## 5. Owner-requested corrections
 
-The Owner reviewed the initial Home screenshot and requested the Shop overview to appear first, followed by Continue an unfinished sale and then the four quick-action cards. `WorkspaceHome` has been reordered to match that sequence.
+The Owner reviewed the Home layout and clarified the intended hierarchy: personal greeting first; Shop overview second; Continue an unfinished sale third; and the four primary quick-action cards fourth. The quick-action section heading is **What would you like to do?**. The starting-cash reminder and READ_ONLY plan shortcut are secondary prompts and appear after the four primary actions. `WorkspaceHome` and the WP3 contract tests now enforce this hierarchy. P8-37 remains Not run pending local browser verification.
 
 The Finished shop checks card returned a generic server error. Source tracing identified a bind-parameter mismatch in `ReconciliationReportQuery`: the finalized-session list query supplied duplicate Tenant/Shop values in addition to the derived variance-subquery and outer Shop-scope values. The bind array now starts empty and adds only the values for the actual SQL placeholders, in SQL order. The PHP static contract test covers this correction.
 
@@ -87,7 +87,7 @@ The repository changes and documentation are committed on the GitHub branch. I c
 - `node tests/contracts/wp8-wp3-ui.mjs`;
 - locked `npm run build` and generated `public/assets/`;
 - native authenticated HTTP, rate-limit, response-header and permission checks;
-- P8-25–P8-36 manual cases;
+- P8-25–P8-37 manual cases;
 - EXPLAIN/EXPLAIN ANALYZE, pilot-shaped performance, request-storm and cross-Shop isolation evidence;
 - phone/tablet/desktop, keyboard and accessibility checks.
 
