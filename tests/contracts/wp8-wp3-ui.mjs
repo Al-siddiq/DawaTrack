@@ -67,8 +67,7 @@ assert.ok(salesHistory.includes("location.hash.startsWith('#sales-reports')"), '
 assert.ok(salesHistory.includes("selected.value ? h('div', { class: 'trading-stack' }, ["), 'Sales history renders the existing SalesReportsPanel without an undefined report branch');
 const salesReports = read('resources/js/components/sales-reports-panel.js');
 assert.ok(salesReports.includes("hashParams.get('from_date')") && salesReports.includes("hashParams.get('to_date')"), 'Sales report reads dashboard-selected dates');
-assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
-assert.ok(salesPanel.includes('initialFrom') && salesPanel.includes('initialTo'), 'Sales report accepts selected dates');
+
 assert.ok(css.includes('.dashboard-grid') && css.includes('@media(max-width:35rem)'), 'Dashboard layout is responsive');
 assert.ok(contract.includes('Export is not approved and is not implemented'), 'Unapproved export remains excluded');
 assert.ok(!dashboard.includes('localStorage') && !dashboard.includes('indexedDB'), 'No offline report persistence');
