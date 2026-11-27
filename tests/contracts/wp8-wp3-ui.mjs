@@ -6,7 +6,7 @@ const read = path => fs.readFileSync(new URL(path, root), 'utf8');
 const dashboard = read('resources/js/components/operational-dashboard-panel.js');
 const home = read('resources/js/components/workspace-home.js');
 const salesHistory = read('resources/js/components/sale-history-panel.js');
-const salesPanel = read('resources/js/components/sales-report-panel.js');
+const salesPanel = read('resources/js/components/sales-reports-panel.js');
 const css = read('resources/css/app.scss');
 const contract = read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
 const reconciliationQuery = read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
@@ -18,11 +18,9 @@ for (const phrase of [
     'Current customer balances',
     'Finished shop checks',
     'Sales after returns',
-    'Cash refunded',
-    'Transfer refunded',
-    'Credit added back to customer bills',
-    'Credit removed from customer bills',
-    'Sales and payment records do not match for this period.',
+    'Cash after refunds',
+    'Bank transfers after refunds',
+    'Customer Credit created',
     'Gross profit before expenses',
     'Customers who still owe',
     'Cash checks with a difference',
@@ -59,9 +57,10 @@ assert.ok(home.includes("'What would you like to do?'"), 'Quick-action section u
 assert.ok(home.includes("'ui-home-actions'"), 'Four primary quick actions are grouped together');
 assert.ok(!home.includes("'Quick actions'"), 'Generic Quick actions heading is removed');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
-assert.ok(salesHistory.includes("location.hash.startsWith('#sales-report?')"), 'Sales drill-down accepts period query');
-assert.ok(salesHistory.includes('if (isSalesReportHash()) readSalesReportPeriod();'), 'Sales dates initialize before child report mounts');
-assert.ok(salesPanel.includes('initialFrom') && salesPanel.includes('initialTo'), 'Sales report accepts selected dates');
+assert.ok(salesHistory.includes("location.hash.startsWith('#sales-reports')"), 'Sales drill-down accepts period-bearing report hash');
+assert.ok(salesPanel.includes("hashParams.get('period')") && salesPanel.includes("hashParams.get('from_date')") && salesPanel.includes("hashParams.get('to_date')"), 'Sales report initializes the dashboard-selected period');
+assert.ok(dashboard.includes("period: 'TODAY'") && dashboard.includes("period: 'CUSTOM'") && dashboard.includes('from_date: start') && dashboard.includes('to_date: end'), 'Dashboard sends the WP1 period/date request contract');
+assert.ok(dashboard.includes('data.sales || {}') && dashboard.includes('data.payments || {}') && dashboard.includes('data.gross_profit'), 'Dashboard reads the WP1 Sales response contract');
 assert.ok(css.includes('.dashboard-grid') && css.includes('@media(max-width:35rem)'), 'Dashboard layout is responsive');
 assert.ok(contract.includes('Export is not approved and is not implemented'), 'Unapproved export remains excluded');
 assert.ok(!dashboard.includes('localStorage') && !dashboard.includes('indexedDB'), 'No offline report persistence');
