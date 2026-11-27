@@ -88,8 +88,8 @@ $assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3
 $assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
 $assert(str_contains($contract, 'Export is not approved and is not implemented'), 'Export disposition is documented');
 $assert(str_contains($contract, 'not one database transaction'), 'Independent source freshness is documented honestly');
-$assert(str_contains($matrix, 'P8-25') && str_contains($matrix, 'P8-36'), 'WP3 source matrix maps all reserved manual cases');
-$assert(str_contains($manual, 'P8-25') && str_contains($manual, 'P8-36') && str_contains($manual, 'Not run'), 'WP3 manual register preserves unrun acceptance cases');
+$assert(str_contains($matrix, 'P8-25') && str_contains($matrix, 'P8-37'), 'WP3 source matrix maps all reserved manual cases');
+$assert(str_contains($manual, 'P8-25') && str_contains($manual, 'P8-37') && str_contains($manual, 'Not run'), 'WP3 manual register preserves unrun acceptance cases');
 $assert(str_contains($guide, 'P8-34') && str_contains($guide, 'EXPLAIN'), 'WP3 manual guide covers export disposition and query plans');
 $assert(str_contains($performance, 'No EXPLAIN or EXPLAIN ANALYZE output has been captured yet'), 'WP3 performance evidence is honestly marked pending');
 $assert(str_contains($operations, '20 requests per 60 seconds'), 'WP3 operations handover documents report rate limits');
