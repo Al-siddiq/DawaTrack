@@ -34,8 +34,8 @@ function utcDate(value) {
 
 function timeLabel(data) {
     if (!data) return 'Refresh time not available';
-    const timezone = data.period?.timezone_name || data.shop?.timezone_name || 'Africa/Lagos';
-    const raw = data.as_of || data.refreshed_at;
+    const timezone = data.period?.timezone_name || data.period?.timezone || data.shop?.timezone_name || 'Africa/Lagos';
+    const raw = data.as_of || data.refreshed_at || data.period?.refreshed_at;
     if (!raw) return 'Refresh time not available';
     const date = utcDate(raw);
     if (Number.isNaN(date.getTime())) return 'Refresh time not available';
@@ -109,10 +109,10 @@ export const OperationalDashboardPanel = {
                 state.data = response.data;
                 state.stale = false;
                 if (name === 'sales') {
-                    from.value = from.value || response.data.period?.from || '';
-                    to.value = to.value || response.data.period?.to || '';
-                    appliedFrom.value = response.data.period?.from || '';
-                    appliedTo.value = response.data.period?.to || '';
+                    from.value = from.value || response.data.period?.from_date || '';
+                    to.value = to.value || response.data.period?.to_date || '';
+                    appliedFrom.value = response.data.period?.from_date || '';
+                    appliedTo.value = response.data.period?.to_date || '';
                 }
             } catch (failure) {
                 if (!alive || controllers[name] !== controller || failure.name === 'AbortError') return;
@@ -133,12 +133,12 @@ export const OperationalDashboardPanel = {
         }
 
         function salesParams(usePendingPeriod = false) {
-            const params = new URLSearchParams({ group_by: 'MONTH' });
             const start = usePendingPeriod ? from.value : appliedFrom.value;
             const end = usePendingPeriod ? to.value : appliedTo.value;
-            if (start) params.set('from', start);
-            if (end) params.set('to', end);
-            return params;
+            if (start && end) {
+                return new URLSearchParams({ period: 'CUSTOM', from_date: start, to_date: end });
+            }
+            return new URLSearchParams({ period: 'TODAY' });
         }
 
         async function loadSales(usePendingPeriod = false) {
@@ -208,10 +208,14 @@ export const OperationalDashboardPanel = {
 
         function openSales() {
             const params = new URLSearchParams();
-            if (appliedFrom.value) params.set('from', appliedFrom.value);
-            if (appliedTo.value) params.set('to', appliedTo.value);
-            const query = params.toString();
-            emit('navigate', '#sales-report' + (query ? '?' + query : ''));
+            if (appliedFrom.value && appliedTo.value) {
+                params.set('period', 'CUSTOM');
+                params.set('from_date', appliedFrom.value);
+                params.set('to_date', appliedTo.value);
+            } else {
+                params.set('period', 'TODAY');
+            }
+            emit('navigate', '#sales-reports?' + params.toString());
         }
 
         const openShopReports = () => emit('navigate', '#shop-reports');
@@ -263,23 +267,21 @@ export const OperationalDashboardPanel = {
         }
 
         function salesCard(data) {
-            const summary = data.summary || {};
+            const salesSummary = data.sales || {};
+            const payments = data.payments || {};
+            const grossProfit = data.gross_profit;
             return h('div', { class: 'dashboard-card-content' }, [
-                h('p', { class: 'dashboard-period' }, 'Sales period: ' + dateLabel(data.period.from) + ' to ' + dateLabel(data.period.to) + ' · ' + data.period.timezone_name),
-                !summary.payment_mix_matches_sales && h(UiAlert, { severity: 'warning', message: 'Sales and payment records do not match for this period. Ask the shop owner to review the linked records.', dismissible: false }),
+                h('p', { class: 'dashboard-period' }, 'Sales period: ' + dateLabel(data.period?.from_date) + ' to ' + dateLabel(data.period?.to_date) + ' · ' + (data.period?.timezone || 'Shop time')),
                 h('div', { class: 'dashboard-metrics' }, [
-                    metric('Sales after returns', money(summary.net_sales, data.currency_code)),
-                    metric('Sales before returns', money(summary.sales_added, data.currency_code)),
-                    metric('Returns and cancelled sales', money(summary.returns_and_cancellations, data.currency_code)),
-                    metric('Cash received', money(summary.cash_received, data.currency_code)),
-                    metric('Cash refunded', money(summary.cash_refunded, data.currency_code)),
-                    metric('Transfer received', money(summary.transfer_received, data.currency_code)),
-                    metric('Transfer refunded', money(summary.transfer_refunded, data.currency_code)),
-                    metric('Credit created', money(summary.credit_created, data.currency_code)),
-                    metric('Credit added back to customer bills', money(summary.credit_adjustments_increase, data.currency_code)),
-                    metric('Credit removed from customer bills', money(summary.credit_adjustments_decrease, data.currency_code)),
-                    data.profit_visible
-                        ? metric('Gross profit before expenses', money(summary.gross_profit, data.currency_code), data.profit_cost_note || '')
+                    metric('Sales after returns', money(salesSummary.amount)),
+                    metric('Saved sales', count(salesSummary.sale_count)),
+                    metric('Returns', count(salesSummary.return_count)),
+                    metric('Cancellations', count(salesSummary.cancellation_count)),
+                    metric('Cash after refunds', money(payments.cash_amount)),
+                    metric('Bank transfers after refunds', money(payments.transfer_amount)),
+                    metric('Customer Credit created', money(payments.credit_amount)),
+                    data.profit_visible && grossProfit
+                        ? metric('Gross profit before expenses', money(grossProfit.amount), grossProfit.message || '')
                         : metric('Product cost and profit', 'Not available', 'Your current access does not include these figures.'),
                 ]),
             ]);
