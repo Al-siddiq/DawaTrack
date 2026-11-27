@@ -20,7 +20,7 @@ The dashboard is a read-only composition of the four accepted report APIs. It co
 
 No dashboard-specific SQL, report service, API route, database table, materialized summary, duplicate balance or new module is introduced. Existing source endpoints continue to own all calculations and independently authorize every read.
 
-## 2. Permission and access contract
+## 3. Permission and access contract
 
 The dashboard summary is rendered only when the current server-provided permission list includes `report.view`. Each card is independently gated by the same effective source capability used by its report page:
 
@@ -33,7 +33,7 @@ Capabilities only control presentation. They are not authorization credentials. 
 
 READ_ONLY permits these authorized GET reads. BLOCKED/CLOSED must not trigger dashboard report requests and remain governed by the existing Shop shell and AccessGate. The dashboard adds no Staff grant and no permission code.
 
-## 3. Period and date semantics
+## 4. Period and date semantics
 
 The Sales card uses the same WP1 Shop-local date range, 366-day maximum and report grouping semantics as the Sales report. The selected `from` and `to` dates are passed to the existing Sales report route and are carried into the Sales drill-down hash so the Sales report opens on the same selected period.
 
@@ -46,7 +46,7 @@ Those cards are explicitly labelled **Current Stock**, **Current customer balanc
 
 All source reports expose their existing Shop timezone and freshness information. Sales `refreshed_at` is the WP1 UTC timestamp; WP2 provides `as_of` UTC and Shop-local `refreshed_at`. The dashboard presents each source's own refresh time and does not claim a single atomic cross-report snapshot.
 
-## 4. Refresh, version and change dependencies
+## 5. Refresh, version and change dependencies
 
 No dashboard cache, local persistence, polling timer, background sync or Phase 10 offline behavior is added.
 
@@ -58,7 +58,7 @@ The four source reads are independent, not one database transaction. The interfa
 
 No request is made for an unauthorized card. A 401/403 response clears that card's data. A network failure may retain only the last in-memory successful result with an explicit stale warning while online. When offline, live report figures are cleared and an offline message is shown; no report data is stored in localStorage, IndexedDB or a service-worker cache.
 
-## 5. Dashboard fields and presentation
+## 6. Dashboard fields and presentation
 
 - **Sales:** sales after returns; Sales before returns; returns/cancellations; Cash received/refunded; Transfer received/refunded; Credit created/adjusted; Gross Profit before expenses only when `profit_visible`. No Net Profit or expense deduction.
 - **Current Stock:** Product count; low-stock count; negative-stock count; confirmed Stock value and valuation completeness. No total quantity across unlike units.
@@ -67,15 +67,15 @@ No request is made for an unauthorized card. A 401/403 response clears that card
 
 All money remains a decimal string from the source report and is formatted for display only. The dashboard does not recompute totals or derive new financial values. The source card links to its existing report/detail route.
 
-## 6. Failure and access-mode behavior
+## 7. Failure and access-mode behavior
 
 Each source card has independent loading, empty, error, stale and refresh states; one unavailable source does not suppress other authorized cards. Offline clears live figures. No report requests are made in BLOCKED/CLOSED. READ_ONLY is identified as read-only where the Shop shell presents that mode; the dashboard has no mutation controls.
 
-## 7. Export disposition
+## 8. Export disposition
 
 **Export is not approved and is not implemented in this WP3 candidate.** The Owner has not specified a report family, fields, date/row bounds, format, audience, distinct authority or Audit contract. Therefore there is no export route, UI, permission, file generation, download path or export Audit event. P8-34 verifies that export is absent unless a complete separate Owner approval is recorded.
 
-## 8. Performance and acceptance
+## 9. Performance and acceptance
 
 No new cache, index, migration, SQL twin, table, dependency, framework or CI workflow is introduced. Performance evidence must measure the four existing report routes against pilot-shaped MySQL data and capture query plans; source inspection is not a substitute.
 
