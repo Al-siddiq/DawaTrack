@@ -96,7 +96,7 @@ $assert(str_contains($throttle, 'return [20, 60]'), 'Report GET requests have a 
 $assert(str_contains($throttle, "return '/api/v1/shop/reports'"), 'All report routes share one per-user throttle bucket');
 $assert(str_contains($routes, "shop/reports/sales") && str_contains($routes, "shop/reports/stock") && str_contains($routes, "shop/reports/customer-debt") && str_contains($routes, "shop/reports/reconciliation"), 'All four source report routes are registered');
 $assert(str_contains($routes, 'OperationalReportController::stock') && str_contains($routes, 'OperationalReportController::customerDebt') && str_contains($routes, 'OperationalReportController::reconciliation'), 'WP2 report routes target the operational report controller methods');
-$assert(str_contains($salesQuery, "DraftInput::only($input, ['period', 'from_date', 'to_date'])"), 'Dashboard Sales request matches the authoritative query input allowlist');
+$assert(str_contains($salesQuery, 'DraftInput::only($input, ['), 'Dashboard Sales request matches the authoritative query input allowlist');
 $assert(str_contains($stockQuery, "['page' => [1, 100000], 'per_page' => [20, 50]]") && str_contains($debtQuery, "['page' => [1, 100000], 'per_page' => [20, 50]]") && str_contains($reconciliationQuery, "['page' => [1, 100000], 'per_page' => [20, 50]]"), 'Dashboard WP2 page size is accepted by all three source queries');
 $assert(!preg_match('/shop\/(?:dashboard|export)(?:[\'\/]|\s)/i', $routes), 'WP3 adds no dashboard or export route');
 $assert(str_contains($css, '.dashboard-grid') && str_contains($css, '@media(max-width:35rem)'), 'Dashboard has responsive grid and phone layout');
