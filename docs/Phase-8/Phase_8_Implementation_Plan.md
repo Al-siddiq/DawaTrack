@@ -1,7 +1,7 @@
 # Phase 8 — Authoritative Reporting and Operational Dashboard
 
 **Prepared:** 24 November 2026 (Africa/Lagos)  
-**Status:** Owner accepted 25 November 2026. Phase 8 WP1 implementation candidate is in progress; native verification and package acceptance remain pending.  
+**Status:** **COMPLETED — Phase 8 closed 27 November 2026 by explicit Owner whole-phase acceptance.** WP1–WP3 were accepted and integrated to `main`; see [Phase 8 closure report](Phase_8_Closure_Report.md) and [dated Owner decision](../acceptance/2026-11-27-phase-08-owner-closure.md).  
 **Baseline:** `main` at `98cb8d4ee99c8668a18aa92993b7828dc982902f` (Phase 7 WP4 integration, PR #53).  
 **Delivery model:** Three sequential, independently reviewable end-to-end work packages. Each package includes its own backend, API, frontend, security, audit, documentation and manual verification. The next package starts only after explicit Owner acceptance of the preceding package.
 
