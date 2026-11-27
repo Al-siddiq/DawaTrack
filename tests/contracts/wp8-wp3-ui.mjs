@@ -10,6 +10,7 @@ const salesPanel = read('resources/js/components/sales-reports-panel.js');
 const css = read('resources/css/app.scss');
 const contract = read('docs/Phase-8/Phase_8_WP3_Composition_Contract.md');
 const reconciliationQuery = read('app/Modules/Reconciliation/Infrastructure/ReconciliationReportQuery.php');
+const routes = read('app/Config/Routes.php');
 
 for (const phrase of [
     'Shop overview',
@@ -57,6 +58,13 @@ assert.ok(home.includes("'What would you like to do?'"), 'Quick-action section u
 assert.ok(home.includes("'ui-home-actions'"), 'Four primary quick actions are grouped together');
 assert.ok(!home.includes("'Quick actions'"), 'Generic Quick actions heading is removed');
 assert.ok(reconciliationQuery.includes('$binds = [];'), 'Reconciliation query starts with no unused SQL bind values');
+for (const route of [
+    "shop/reports/sales', 'Api\\\\SalesReportController::index",
+    "shop/reports/stock', 'Api\\\\OperationalReportController::stock",
+    "shop/reports/customer-debt', 'Api\\\\OperationalReportController::customerDebt",
+    "shop/reports/reconciliation', 'Api\\\\OperationalReportController::reconciliation",
+]) assert.ok(routes.includes(route), 'Missing registered source report route: ' + route);
+assert.ok(!salesHistory.includes('reportOpen.value') && !salesHistory.includes('SalesReportPanel'), 'Sales workspace renders only the registered SalesReportsPanel');
 assert.ok(salesHistory.includes("location.hash.startsWith('#sales-reports')"), 'Sales drill-down accepts period-bearing report hash');
 assert.ok(salesPanel.includes("hashParams.get('period')") && salesPanel.includes("hashParams.get('from_date')") && salesPanel.includes("hashParams.get('to_date')"), 'Sales report initializes the dashboard-selected period');
 assert.ok(dashboard.includes("period: 'TODAY'") && dashboard.includes("period: 'CUSTOM'") && dashboard.includes('from_date: start') && dashboard.includes('to_date: end'), 'Dashboard sends the WP1 period/date request contract');
