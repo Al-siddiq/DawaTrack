@@ -155,10 +155,10 @@ SQL, [$membershipPublicId])->getRowArray();
             ], ['debug' => false]);
 
             $email = emailer(['mailType' => 'html'])
-                ->setFrom(setting('Email.fromEmail'), setting('Email.fromName') ?? '')
-                ->setTo($recipient)
-                ->setSubject(lang('Auth.magicLinkSubject'))
-                ->setMessage($message);
+                ->setFrom(setting('Email.fromEmail'), setting('Email.fromName') ?? '');
+            $email->setTo($recipient);
+            $email->setSubject(lang('Auth.magicLinkSubject'));
+            $email->setMessage($message);
 
             $sent = $email->send(false);
             $email->clear();
