@@ -56,3 +56,23 @@ The governing source defines the requirement; existing paths record inspected so
 ## Status maintenance
 
 Allowed statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR MANUAL VERIFICATION, PASS, FAIL, DEFERRED BY APPROVED SCOPE CHANGE. Record actual commit/path, case ID, evidence, observed result and reviewer. Code existence, build success or static assertions alone never constitute PASS. Scope changes require explicit Owner approval.
+
+
+## WP1 implementation status — 28 November 2026
+
+**Overall status: IN PROGRESS — implementation source prepared; local engineering/runtime verification and Owner manual acceptance remain pending.**
+
+| WP1 ID | Implementation source | Current status |
+|---|---|---|
+| WP1-01 | AdminAuthController, PlatformAdminFilter, PlatformMfaService, PlatformAdminEmail2FA, Admin shell | IN PROGRESS — source boundary inspected; runtime MFA/session checks pending |
+| WP1-02 | Modules/Platform/Application/PlatformDashboardQuery.php; GET operations/dashboard | IN PROGRESS — source prepared; database reconciliation pending |
+| WP1-03 | Dashboard query uses one UTC as_of; implementation report documents metric rules | IN PROGRESS — independent fixture reconciliation pending |
+| WP1-04 | Modules/Platform/Application/PlatformTenantDirectoryQuery.php; GET operations/tenants | IN PROGRESS — bounded server-side query prepared; filter/pagination runtime checks pending |
+| WP1-05 | Modules/Platform/Application/PlatformTenantDetailQuery.php; GET operations/tenants/{publicId} | IN PROGRESS — bounded safe detail prepared; local API checks pending |
+| WP1-06 | Grouped Staff and entitlement projections; no per-Tenant query loop | IN PROGRESS — query-count/EXPLAIN evidence pending |
+| WP1-07 | resources/js/admin/app.js | IN PROGRESS — loading/empty/error/offline/detail states prepared; browser checks pending |
+| WP1-08 | Dashboard DTO and UI allowlist | IN PROGRESS — source inspection completed; response payload review pending |
+| WP1-09 | Existing platform.access permission and current schema reused | IN PROGRESS — source diff review completed; local schema diff pending |
+| WP1-10 | Existing Bootstrap/UI responsive layout | IN PROGRESS — source prepared; phone/tablet/desktop checks pending |
+
+The implementation report is `WP1_Implementation_Report_and_Local_Verification.md`. WP1-M01 through WP1-M38 remain NOT RUN until the Owner executes them locally. No requirement is marked PASS from source existence or static review alone.
