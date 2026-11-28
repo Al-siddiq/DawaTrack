@@ -30,7 +30,11 @@ final class OwnerActivationController extends BaseController
         $magicLinkSession = $this->isMagicLinkSession();
 
         if ($requiresPasswordReset && ! $magicLinkSession) {
-            return redirect()->to(site_url('change-password'));
+            auth()->logout();
+            return redirect()->to(site_url('login/magic-link'))->with('message', 'Your secure setup session expired. Enter the Owner email to request a fresh invitation link.');
+        }
+        if ($magicLinkSession) {
+            session()->setTempdata('magicLogin', true, 1800);
         }
 
         return view('auth/owner_activate', [
@@ -64,7 +68,8 @@ final class OwnerActivationController extends BaseController
         $newPassword = null;
         if ($requiresPasswordReset) {
             if (! $magicLinkSession) {
-                return redirect()->to(site_url('change-password'));
+                auth()->logout();
+                return redirect()->to(site_url('login/magic-link'))->with('message', 'Your secure setup session expired. Enter the Owner email to request a fresh invitation link.');
             }
             $rules = [
                 'password' => ['label' => 'New password', 'rules' => ['required', 'strong_password']],
