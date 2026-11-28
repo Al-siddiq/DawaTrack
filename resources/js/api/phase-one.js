@@ -34,7 +34,16 @@ export const phaseOneApi = {
         `/api/v1/platform/domains/${id}/${action}`,
         json('POST', values)
     ),
-    platformOperations: () => apiRequest('/api/v1/platform/operations/tenants'),
+    platformDashboard: () => apiRequest('/api/v1/platform/operations/dashboard'),
+    platformOperations: (filters = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') query.set(key, String(value));
+        });
+        const suffix = query.toString();
+        return apiRequest('/api/v1/platform/operations/tenants' + (suffix ? '?' + suffix : ''));
+    },
+    platformTenant: (publicId) => apiRequest('/api/v1/platform/operations/tenants/' + encodeURIComponent(publicId)),
     subscriptionAction: (id, values) => apiRequest(
         `/api/v1/platform/operations/tenants/${id}/subscriptions`,
         json('POST', values)

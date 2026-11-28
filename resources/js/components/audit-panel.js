@@ -6,7 +6,7 @@ import {
   UiAccordion,
   UiBadge,
 } from "./ui/index.js";
-import { field, action, submit, message } from "./commercial-ui.js";
+import { field, action, submit, message, pager } from "./commercial-ui.js";
 import { facts, note, selectField, managementLabel } from "./management-ui.js";
 const { ref, reactive, h, onMounted, onUnmounted, nextTick } = window.Vue;
 const readable = (value) =>
@@ -36,6 +36,10 @@ export const AuditPanel = {
       resource_public_id: "",
       correlation_id: "",
     });
+    const supportTenants = ref(props.tenants),
+      supportSearch = ref(""),
+      supportSearchLoading = ref(false),
+      supportPagination = ref({ page: 1, per_page: 25, total: 0, total_pages: 0 });
     const support = reactive({
       tenant_public_id: "",
       shop_public_id: "",
@@ -45,14 +49,48 @@ export const AuditPanel = {
       shop_name: "",
     });
     let generation = 0,
+      supportSearchGeneration = 0,
       alive = true;
     onUnmounted(() => {
       alive = false;
       generation++;
+      supportSearchGeneration++;
       Object.keys(support).forEach((key) => {
         support[key] = "";
       });
     });
+    async function searchSupportTenants(pageNumber = 1) {
+      const request = ++supportSearchGeneration;
+      supportSearchLoading.value = true;
+      if (pageNumber === 1) {
+        supportTenants.value = [];
+        supportPagination.value = { page: 1, per_page: 25, total: 0, total_pages: 0 };
+        support.tenant_public_id = "";
+        support.shop_public_id = "";
+      }
+      error.value = "";
+      try {
+        const response = await phaseOneApi.platformOperations({
+          q: supportSearch.value.trim(),
+          page: pageNumber,
+          per_page: 25,
+        });
+        if (!alive || request !== supportSearchGeneration) return;
+        supportTenants.value = (response.data.items || [])
+          .filter(item => item.shop && item.shop.public_id)
+          .map(item => ({
+            public_id: item.tenant_public_id,
+            legal_or_business_name: item.business_name,
+            shop_public_id: item.shop.public_id,
+            shop_name: item.shop.name,
+          }));
+        supportPagination.value = response.data.pagination;
+      } catch (failure) {
+        if (alive && request === supportSearchGeneration) error.value = message(failure);
+      } finally {
+        if (alive && request === supportSearchGeneration) supportSearchLoading.value = false;
+      }
+    }
     onMounted(() => load());
     const authorized = () =>
       props.mode === "owner" || view.value === "normal" || !!support.access_id;
@@ -152,9 +190,11 @@ export const AuditPanel = {
         tenant_name: "",
         shop_name: "",
       });
-      if (supportMode)
-        nextTick(() => document.getElementById("support-shop")?.focus());
-      else load();
+      if (supportMode) {
+        supportSearch.value = "";
+        searchSupportTenants(1);
+        nextTick(() => document.getElementById("support-shop-search")?.focus());
+      } else load();
     }
     function filterForm() {
       if (!authorized()) return null;
@@ -245,6 +285,29 @@ export const AuditPanel = {
                 note(
                   "Choose one shop and enter why support access is needed. This does not sign you in as the shop owner.",
                 ),
+                field(
+                  "support-shop-search",
+                  "Find a shop",
+                  supportSearch.value,
+                  (value) => {
+                    supportSearch.value = value;
+                    support.tenant_public_id = "";
+                    support.shop_public_id = "";
+                  },
+                  { type: "search", disabled: loading.value || supportSearchLoading.value, onKeydown: event => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              searchSupportTenants(1);
+            }
+          } },
+                ),
+                action(
+                  "Search shops",
+                  () => searchSupportTenants(1),
+                  loading.value || supportSearchLoading.value,
+                  "btn-outline-primary",
+                ),
+                supportSearchLoading.value && h(UiLoading, { label: "Searching shops…" }),
                 selectField(
                   "support-shop",
                   "Shop to support",
@@ -252,18 +315,22 @@ export const AuditPanel = {
                   (value) => {
                     support.tenant_public_id = value;
                     support.shop_public_id =
-                      props.tenants.find((item) => item.public_id === value)
+                      supportTenants.value.find((item) => item.public_id === value)
                         ?.shop_public_id || "";
                   },
                   [
                     ["", "Choose a shop"],
-                    ...props.tenants.map((item) => [
+                    ...supportTenants.value.map((item) => [
                       item.public_id,
-                      `${item.legal_or_business_name} · ${item.shop_name}`,
+                      item.legal_or_business_name + " · " + item.shop_name,
                     ]),
                   ],
-                  { required: true, disabled: loading.value },
+                  { required: true, disabled: loading.value || supportSearchLoading.value },
                 ),
+                supportPagination.value.total_pages > 1 &&
+                  pager(supportPagination.value, loading.value || supportSearchLoading.value, searchSupportTenants),
+                !supportSearchLoading.value && !supportTenants.value.length &&
+                  note("No matching Shops were found. Change the search and try again."),
                 field(
                   "support-shop-reference",
                   "Shop reference",
@@ -285,7 +352,7 @@ export const AuditPanel = {
                     disabled: loading.value,
                   },
                 ),
-                submit("Confirm support access", loading.value, {
+                submit("Confirm support access", loading.value || supportSearchLoading.value, {
                   loading: loading.value,
                 }),
               ],

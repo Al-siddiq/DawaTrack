@@ -230,7 +230,9 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->post('platform/domains/(:segment)/primary', 'Api\PlatformDomainController::primary/$1', ['filter' => 'platformAdmin:platform.domains']);
     $routes->post('platform/domains/(:segment)/deactivate', 'Api\PlatformDomainController::deactivate/$1', ['filter' => 'platformAdmin:platform.domains']);
     $routes->post('platform/domains/(:segment)/fallback', 'Api\PlatformDomainController::fallback/$1', ['filter' => 'platformAdmin:platform.domains']);
+    $routes->get('platform/operations/dashboard', 'Api\PlatformOperationsController::dashboard', ['filter' => 'platformAdmin:platform.access']);
     $routes->get('platform/operations/tenants', 'Api\PlatformOperationsController::tenants', ['filter' => 'platformAdmin:platform.access']);
+    $routes->get('platform/operations/tenants/(:segment)', 'Api\PlatformOperationsController::tenantDetail/$1', ['filter' => 'platformAdmin:platform.access']);
     $routes->post('platform/operations/tenants/(:segment)/subscriptions', 'Api\PlatformOperationsController::subscription/$1', ['filter' => 'platformAdmin:platform.subscriptions']);
     $routes->post('platform/operations/tenants/(:segment)/(:segment)', 'Api\PlatformOperationsController::tenantLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);
     $routes->post('platform/operations/shops/(:segment)/(:segment)', 'Api\PlatformOperationsController::shopLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);

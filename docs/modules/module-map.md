@@ -5,6 +5,7 @@
 - `Libraries/Http` owns canonical request correlation and API response contracts.
 - `Filters` owns cross-cutting authentication, Platform authority, request context, throttling, session, CSRF, and response-security boundaries.
 - `Modules/TenantShop` owns Tenant/Shop context, onboarding, settings, and lifecycle.
+- `Modules/Platform` owns read-only Platform Admin aggregate, Tenant directory, and Tenant detail queries composed from authoritative module tables. It does not own Tenant business mutations, ShopContext, membership, or a parallel data store.
 - `Modules/Identity` owns memberships, Staff lifecycle, and grants.
 - `Modules/BrandingDomain` owns branding, assets, hostname, and domain lifecycle.
 - `Modules/Subscription` owns immutable entitlement periods/events and their operational queries.
