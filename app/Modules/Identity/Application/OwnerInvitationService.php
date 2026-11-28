@@ -97,16 +97,18 @@ SQL, [$membershipPublicId])->getRowArray();
                 }
 
                 helper('text');
-                $token = random_string('crypto', 40);
+                $token = random_string('crypto', 20);
                 $expires = Time::now()->addSeconds(setting('Auth.magicLinkLifetime'));
                 $identityModel = model(UserIdentityModel::class);
                 $identityModel->deleteIdentitiesByType($user, Session::ID_TYPE_MAGIC_LINK);
-                $identityModel->insert([
+                if ($identityModel->insert([
                     'user_id' => (int) $membership['user_id'],
                     'type' => Session::ID_TYPE_MAGIC_LINK,
                     'secret' => $token,
                     'expires' => $expires,
-                ]);
+                ]) === false) {
+                    throw new ApiException('OWNER_INVITATION_FAILED', 'The Owner access link could not be prepared.', 500);
+                }
 
                 $this->audit->append(new AuditAppendCommand(
                     actor: AuditActor::platformUser($adminUserId, (int) $membership['tenant_id'], (int) $membership['shop_id']),
