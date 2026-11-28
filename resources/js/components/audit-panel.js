@@ -198,7 +198,8 @@ export const AuditPanel = {
           class: "commercial-filters audit-filters",
           onSubmit: (event) => {
             event.preventDefault();
-            load();
+            if (!support.tenant_public_id) searchSupportTenants(1);
+            else load();
           },
         },
         [
@@ -283,7 +284,11 @@ export const AuditPanel = {
                   "support-shop-search",
                   "Find a shop",
                   supportSearch.value,
-                  (value) => { supportSearch.value = value; },
+                  (value) => {
+                    supportSearch.value = value;
+                    support.tenant_public_id = "";
+                    support.shop_public_id = "";
+                  },
                   { type: "search", disabled: loading.value || supportSearchLoading.value },
                 ),
                 action(
