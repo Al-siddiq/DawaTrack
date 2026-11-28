@@ -277,8 +277,7 @@ export const AuditPanel = {
                 class: "commercial-form",
                 onSubmit: (event) => {
                   event.preventDefault();
-                  if (!support.tenant_public_id) searchSupportTenants(1);
-                  else load();
+                  load();
                 },
               },
               [
@@ -294,7 +293,12 @@ export const AuditPanel = {
                     support.tenant_public_id = "";
                     support.shop_public_id = "";
                   },
-                  { type: "search", disabled: loading.value || supportSearchLoading.value },
+                  { type: "search", disabled: loading.value || supportSearchLoading.value, onKeydown: event => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              searchSupportTenants(1);
+            }
+          } },
                 ),
                 action(
                   "Search shops",
