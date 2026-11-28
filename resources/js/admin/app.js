@@ -58,6 +58,8 @@ export const AdminApp = {
       dashboard = ref(null),
       directoryPagination = ref({ page: 1, per_page: 25, total: 0, total_pages: 0 }),
       directoryLoading = ref(false),
+      operationsPagination = ref({ page: 1, per_page: 50, total: 0, total_pages: 0 }),
+      operationsLoading = ref(false),
       directoryFilters = reactive({ tenant_status: "", shop_status: "", entitlement_status: "" }),
       tenantDetail = ref(null),
       tenantDetailLoading = ref(false),
@@ -93,7 +95,7 @@ export const AdminApp = {
       ["reason", "Why are you adding this shop?", "text", true],
     ];
     const blocked = computed(
-      () => busy.value || pageLoading.value || directoryLoading.value || tenantDetailLoading.value || !online.value,
+      () => busy.value || pageLoading.value || directoryLoading.value || operationsLoading.value || tenantDetailLoading.value || !online.value,
     );
     const connection = () => {
       online.value = navigator.onLine;
@@ -150,9 +152,26 @@ export const AdminApp = {
         },
       };
     }
-    async function loadOperations() {
-      const response = await phaseOneApi.platformOperations({ page: 1, per_page: 50 });
-      tenants.value = (response.data.items || []).map(adaptTenant);
+    let operationsGeneration = 0;
+    async function loadOperations(pageNumber = 1) {
+      const generation = ++operationsGeneration;
+      operationsLoading.value = true;
+      tenants.value = [];
+      clearErrors();
+      try {
+        const response = await phaseOneApi.platformOperations({
+          q: page.value === "plans" ? search.value.trim() : "",
+          page: pageNumber,
+          per_page: 50,
+        });
+        if (generation !== operationsGeneration) return;
+        tenants.value = (response.data.items || []).map(adaptTenant);
+        operationsPagination.value = response.data.pagination;
+      } catch (failure) {
+        if (generation === operationsGeneration) error.value = message(failure);
+      } finally {
+        if (generation === operationsGeneration) operationsLoading.value = false;
+      }
     }
     async function loadDashboard() {
       dashboard.value = (await phaseOneApi.platformDashboard()).data;
@@ -217,7 +236,7 @@ export const AdminApp = {
         }
         else if (id === "domains" && can("platform.domains")) await loadDomains();
         else if (id === "shops" && can("platform.access")) await loadDirectory(1);
-        else if (["plans", "activity"].includes(id) && can("platform.access")) await loadOperations();
+        else if (id === "plans" && can("platform.access")) await loadOperations(1);
       } catch (failure) {
         if (generation === loadGeneration) error.value = message(failure);
       } finally {
@@ -931,34 +950,33 @@ export const AdminApp = {
                   !pageLoading.value &&
                   can("platform.access") &&
                   directoryView(),
-                ["plans", "domains"].includes(page.value) &&
+                page.value === "plans" &&
                   !pageLoading.value &&
+                  can("platform.access") &&
                   h("div", { class: "trading-stack" }, [
-                    field(
-                      "admin-search",
-                      page.value === "domains" ? "Find a web address" : "Find a Tenant",
-                      search.value,
-                      (value) => { search.value = value; },
-                      { type: "search" },
-                    ),
-                    action(
-                      "Reload this section",
-                      () => confirmation.guard(() => loadPage(page.value)),
-                      blocked.value,
-                      "btn-outline-primary",
-                      { icon: "refresh" },
-                    ),
-                    page.value === "domains" && can("platform.domains")
-                      ? domains.value
-                          .filter((row) => (row.hostname + " " + row.shop_name).toLowerCase().includes(search.value.toLowerCase()))
-                          .map(domainCard)
-                      : can("platform.access")
-                        ? tenants.value
-                            .filter((row) => (row.shop_name + " " + row.legal_or_business_name).toLowerCase().includes(search.value.toLowerCase()))
-                            .map(tenantCard)
-                        : note("Your current Admin access does not include the Tenant list.", "warning"),
-                    !error.value && ((page.value === "domains" && !domains.value.length) || (page.value === "plans" && !tenants.value.length)) &&
-                      h(UiEmptyState, { title: "No records to show", message: "Records will appear here when available." }),
+                    field("admin-search", "Find a Tenant", search.value, value => { search.value = value; }, { type: "search", disabled: blocked.value }),
+                    h("div", { class: "ui-actions" }, [
+                      action("Search Tenants", () => loadOperations(1), blocked.value, "btn-primary"),
+                      action("Clear search", () => { search.value = ""; loadOperations(1); }, blocked.value),
+                      action("Reload this section", () => loadOperations(operationsPagination.value.page), blocked.value, "btn-outline-primary"),
+                    ]),
+                    operationsLoading.value && h(UiLoading, { label: "Loading plan accounts…" }),
+                    !operationsLoading.value && tenants.value.map(tenantCard),
+                    !operationsLoading.value && !error.value && !tenants.value.length && h(UiEmptyState, {
+                      title: operationsPagination.value.total ? "No matching Tenants" : "No Tenants registered",
+                      message: operationsPagination.value.total ? "Change the search and try again." : "Tenant accounts will appear here after onboarding.",
+                    }),
+                    !operationsLoading.value && operationsPagination.value.total_pages > 1 && pager(operationsPagination.value, blocked.value, loadOperations),
+                    h("small", operationsPagination.value.total + " Tenant record(s) · page " + operationsPagination.value.page + " of " + operationsPagination.value.total_pages),
+                  ]),
+                page.value === "domains" &&
+                  !pageLoading.value &&
+                  can("platform.domains") &&
+                  h("div", { class: "trading-stack" }, [
+                    field("admin-search", "Find a web address", search.value, value => { search.value = value; }, { type: "search" }),
+                    action("Reload this section", () => confirmation.guard(() => loadPage(page.value)), blocked.value, "btn-outline-primary", { icon: "refresh" }),
+                    domains.value.filter(row => (row.hostname + " " + row.shop_name).toLowerCase().includes(search.value.toLowerCase())).map(domainCard),
+                    !error.value && !domains.value.length && h(UiEmptyState, { title: "No records to show", message: "Records will appear here when available." }),
                   ]),
                 page.value === "activity" &&
                   can("platform.audit") &&
