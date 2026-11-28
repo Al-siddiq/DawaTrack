@@ -93,7 +93,7 @@ export const AdminApp = {
       ["reason", "Why are you adding this shop?", "text", true],
     ];
     const blocked = computed(
-      () => busy.value || pageLoading.value || !online.value,
+      () => busy.value || pageLoading.value || directoryLoading.value || tenantDetailLoading.value || !online.value,
     );
     const connection = () => {
       online.value = navigator.onLine;
@@ -160,6 +160,7 @@ export const AdminApp = {
     async function loadDirectory(pageNumber = 1) {
       const generation = ++directoryGeneration;
       directoryLoading.value = true;
+      tenants.value = [];
       clearErrors();
       try {
         const response = await phaseOneApi.platformOperations({
@@ -690,7 +691,7 @@ export const AdminApp = {
         facts([
           ["Current entitlement", periodText(entitlement.current)],
           ["Next scheduled entitlement", periodText(entitlement.next)],
-          ["Recent previous periods", entitlement.historical_periods.length],
+          ["Recent previous periods", (entitlement.historical_periods || []).length],
         ]),
         ...(entitlement.historical_periods || []).map(row => h("p", { key: row.public_id }, periodText(row))),
         h("h3", "Primary web address"),
@@ -917,7 +918,7 @@ export const AdminApp = {
                   !pageLoading.value &&
                   can("platform.access") &&
                   h("div", { class: "trading-stack" }, [
-                    action("Refresh dashboard", () => loadDashboard(), blocked.value, "btn-outline-primary"),
+                    action("Refresh dashboard", () => loadPage("overview"), blocked.value, "btn-outline-primary"),
                     dashboardView(),
                   ]),
                 page.value === "shops" &&
