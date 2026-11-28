@@ -20,6 +20,8 @@ $routes->get('platform-admin/mfa', 'Web\AdminAuthController::stepUp', ['as' => '
 $routes->post('platform-admin/mfa/restart', 'Web\AdminAuthController::restart', ['as' => 'admin.mfa.restart', 'filter' => 'platformAdminIdentity']);
 $routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin:platform.access']);
 $routes->get('logout', 'Web\SecuritySessionController::logout', ['as' => 'dawatrack.logout']);
+$routes->get('owner/activate', 'Web\\OwnerActivationController::show', ['as' => 'owner.activate', 'filter' => 'authenticated']);
+$routes->post('owner/activate', 'Web\\OwnerActivationController::complete', ['filter' => 'authenticated']);
 
 $routes->get('change-password', 'Web\\PasswordChangeController::show', ['as' => 'password.change','filter' => 'authenticated',
     ]
