@@ -89,9 +89,9 @@ export const AdminApp = {
       ["city_town", "City or town", "text", true],
       ["state_region", "State or region", "text", true],
       ["platform_subdomain", "DawaTrack address prefix", "text", true],
-      ["owner_name", "Shop owner name", "text", true],
+      ["owner_name", "Primary Owner name", "text", true],
       ["owner_email", "Primary Owner email", "email", true],
-      ["reason", "Why are you adding this shop?", "text", true],
+      ["reason", "Why are you registering this Tenant?", "text", true],
     ];
     const blocked = computed(
       () => busy.value || pageLoading.value || directoryLoading.value || operationsLoading.value || tenantDetailLoading.value || !online.value,
