@@ -27,6 +27,27 @@ final class OwnerInvitationService
     }
 
     /** @return array{delivery_status: string, expires_at: string} */
+    public function issueForTenant(string $tenantPublicId, int $adminUserId, string $reason, bool $recovery = false): array
+    {
+        $expectedStatus = $recovery ? 'ACTIVE' : 'INVITED';
+        $membership = $this->db->table('tenant_memberships m')
+            ->select('m.public_id')
+            ->join('tenants t', 't.id = m.tenant_id')
+            ->where([
+                't.public_id' => $tenantPublicId,
+                't.status' => $recovery ? 'ACTIVE' : 'ONBOARDING',
+                'm.role' => 'PRIMARY_OWNER',
+                'm.status' => $expectedStatus,
+            ])
+            ->get()->getRowArray();
+        if ($membership === null) {
+            throw new ApiException('RESOURCE_NOT_FOUND', 'The expected Primary Owner was not found.', 404);
+        }
+
+        return $this->issueForMembership((string) $membership['public_id'], $adminUserId, $reason, $recovery);
+    }
+
+    /** @return array{delivery_status: string, expires_at: string} */
     public function issueForMembership(
         string $membershipPublicId,
         int $adminUserId,
