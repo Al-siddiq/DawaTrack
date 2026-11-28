@@ -198,8 +198,7 @@ export const AuditPanel = {
           class: "commercial-filters audit-filters",
           onSubmit: (event) => {
             event.preventDefault();
-            if (!support.tenant_public_id) searchSupportTenants(1);
-            else load();
+            load();
           },
         },
         [
@@ -273,7 +272,8 @@ export const AuditPanel = {
                 class: "commercial-form",
                 onSubmit: (event) => {
                   event.preventDefault();
-                  load();
+                  if (!support.tenant_public_id) searchSupportTenants(1);
+                  else load();
                 },
               },
               [
