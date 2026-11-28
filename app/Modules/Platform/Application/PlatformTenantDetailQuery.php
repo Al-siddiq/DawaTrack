@@ -65,6 +65,11 @@ SQL, [$publicId])->getRowArray();
             ->where(['tenant_id' => $tenantId, 'role' => 'STAFF', 'status' => 'ACTIVE'])
             ->countAllResults();
 
+        $currentCount = (int) ($this->db->query(
+            'SELECT COUNT(*) AS total FROM subscriptions WHERE tenant_id = ? AND starts_at <= ? AND ends_at > ?',
+            [$tenantId, $asOf, $asOf],
+        )->getRowArray()['total'] ?? 0);
+
         $currentRows = $this->db->query(<<<'SQL'
 SELECT sub.public_id,
        sub.entitlement_type,
