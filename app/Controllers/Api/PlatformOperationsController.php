@@ -52,8 +52,9 @@ final class PlatformOperationsController extends BaseController
             $input = $this->request->getJSON(true) ?? [];
             return $this->ok(service('ownerInvitationService')->issueForTenant(
                 $tenant,
+                (is_string($input['current_owner_membership_public_id'] ?? null) ? $input['current_owner_membership_public_id'] : ''),
                 (int) auth()->id(),
-                (string) ($input['reason'] ?? ''),
+                (is_string($input['reason'] ?? null) ? $input['reason'] : ''),
                 true,
             ));
         });
@@ -68,7 +69,7 @@ final class PlatformOperationsController extends BaseController
                 (is_string($input['current_owner_membership_public_id'] ?? null) ? $input['current_owner_membership_public_id'] : ''),
                 (is_string($input['target_email'] ?? null) ? $input['target_email'] : ''),
                 (int) auth()->id(),
-                (string) ($input['reason'] ?? ''),
+                (is_string($input['reason'] ?? null) ? $input['reason'] : ''),
                 (($input['confirmed'] ?? null) === true),
             );
             $membershipPublicId = $result['owner_membership_public_id'];
