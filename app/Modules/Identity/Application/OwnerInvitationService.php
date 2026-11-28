@@ -90,6 +90,13 @@ SQL, [$membershipPublicId])->getRowArray();
                 if ($membership['membership_status'] !== $expectedMembership || $membership['tenant_status'] !== $expectedTenant) {
                     throw new ApiException('OWNER_STATE_CHANGED', 'The Primary Owner state changed. Refresh the Tenant details and try again.', 409);
                 }
+                if ($this->db->table('tenant_memberships')->where([
+                    'tenant_id' => (int) $membership['tenant_id'],
+                    'role' => 'PRIMARY_OWNER',
+                    'status' => $expectedMembership,
+                ])->countAllResults() !== 1 || $this->db->table('shops')->where('tenant_id', (int) $membership['tenant_id'])->countAllResults() !== 1) {
+                    throw new ApiException('OWNER_INVARIANT_FAILED', 'The Tenant Owner or Shop relationship needs Platform Administrator review.', 409);
+                }
 
                 $user = auth()->getProvider()->findById((int) $membership['user_id']);
                 if ($user === null || $user->inGroup('platform_admin')) {
