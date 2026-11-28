@@ -59,7 +59,7 @@ A failed operation rolls back the password/force-reset change, Tenant/Shop/membe
 
 ### Owner recovery and invitation resend
 
-The Identity service issues a fresh Shield magic-link identity, invalidating the prior unused magic link. It requires a bounded reason and the current reviewed Owner membership public UUID. It records `owner.invitation_issued` or `owner.recovery_requested` in the same transaction as token identity creation. Email delivery occurs after commit and is reported separately; the token is never returned.
+The Identity service issues a fresh Shield magic-link identity, invalidating the prior unused magic link. Initial invitations/resends also invalidate the pending Owner's remembered credentials, non-password API/2FA identities and prior sessions; active Owner recovery does not unnecessarily log out the current Owner. It requires a bounded reason and the current reviewed Owner membership public UUID. It records `owner.invitation_issued` or `owner.recovery_requested` in the same transaction as token identity creation. Email delivery occurs after commit and is reported separately; the token is never returned.
 
 The existing Shield password-change page now permits a one-time magic-link-authenticated user with a force-reset requirement to choose a password without entering an unknown current password. Normal password-based forced-reset behavior is preserved. Platform Admin MFA is still cleared and the Platform Admin is signed out after a password change.
 
