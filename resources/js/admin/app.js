@@ -619,7 +619,7 @@ export const AdminApp = {
       ]);
     }
     function metricCard(title, value, detail = "") {
-      return h("article", { class: "commercial-card admin-metric-card" }, [
+      return h("article", { class: "commercial-card admin-metric-card col" }, [
         h("p", title),
         h("strong", String(value ?? "—")),
         detail && h("small", detail),
@@ -632,7 +632,7 @@ export const AdminApp = {
       const deviceText = m.devices.state === "AVAILABLE" ? (m.devices.active + " active · " + m.devices.revoked + " revoked") : "Not available";
       const syncText = m.sync_foundation.state === "AVAILABLE" ? m.sync_foundation.generation_state : "Not available";
       return h("div", { class: "admin-dashboard" }, [
-        h("div", { class: "admin-dashboard-grid" }, [
+        h("div", { class: "row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3" }, [
           metricCard("Total Tenants", m.tenants.total, m.tenants.active + " active · " + m.tenants.suspended + " paused"),
           metricCard("Onboarding", m.tenants.onboarding, "Accounts being set up"),
           metricCard("Closed Tenants", m.tenants.closed, "Closed business accounts"),
@@ -716,17 +716,17 @@ export const AdminApp = {
     function directoryView() {
       if (tenantDetail.value || tenantDetailLoading.value) return tenantDetailView();
       return h("div", { class: "trading-stack" }, [
-        h("div", { class: "admin-directory-filters" }, [
-          field("admin-search", "Find a Tenant, Shop or web address", search.value, value => { search.value = value; }, { type: "search", disabled: blocked.value }),
-          selectField("tenant-status-filter", "Tenant status", directoryFilters.tenant_status, value => { directoryFilters.tenant_status = value; }, [
+        h("div", { class: "row g-3" }, [
+          h("div", { class: "col-12 col-md-6 col-xl-3" }, [field("admin-search", "Find a Tenant, Shop or web address", search.value, value => { search.value = value; }, { type: "search", disabled: blocked.value })]),
+          h("div", { class: "col-12 col-md-6 col-xl-3" }, [selectField("tenant-status-filter", "Tenant status", directoryFilters.tenant_status, value => { directoryFilters.tenant_status = value; }, [
             ["", "All Tenant statuses"], ["ONBOARDING", "Onboarding"], ["ACTIVE", "Active"], ["SUSPENDED", "Paused"], ["CLOSED", "Closed"],
-          ], { disabled: blocked.value }),
-          selectField("shop-status-filter", "Shop status", directoryFilters.shop_status, value => { directoryFilters.shop_status = value; }, [
+          ], { disabled: blocked.value })]),
+          h("div", { class: "col-12 col-md-6 col-xl-3" }, [selectField("shop-status-filter", "Shop status", directoryFilters.shop_status, value => { directoryFilters.shop_status = value; }, [
             ["", "All Shop statuses"], ["ACTIVE", "Active"], ["INACTIVE", "Inactive"],
-          ], { disabled: blocked.value }),
-          selectField("entitlement-status-filter", "Plan status", directoryFilters.entitlement_status, value => { directoryFilters.entitlement_status = value; }, [
+          ], { disabled: blocked.value })]),
+          h("div", { class: "col-12 col-md-6 col-xl-3" }, [selectField("entitlement-status-filter", "Plan status", directoryFilters.entitlement_status, value => { directoryFilters.entitlement_status = value; }, [
             ["", "All plan statuses"], ["TRIAL", "Trial"], ["ACTIVE", "Paid and current"], ["EXPIRED", "Expired"], ["SCHEDULED", "Scheduled"], ["NONE", "No plan"],
-          ], { disabled: blocked.value }),
+          ], { disabled: blocked.value })]),
         ]),
         h("div", { class: "ui-actions" }, [
           action("Search Tenants", applyDirectoryFilters, blocked.value || directoryLoading.value, "btn-primary"),
