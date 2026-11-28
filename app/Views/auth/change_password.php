@@ -78,4 +78,11 @@
     </button>
 </form>
 
+<?php if (empty($magicLinkSession)): ?>
+    <p class="auth-help">
+        If you do not know your current password,
+        <a href="<?= esc(site_url('logout'), 'attr') ?>">sign out and request a secure sign-in link</a>.
+    </p>
+<?php endif; ?>
+
 <?= $this->endSection() ?>
