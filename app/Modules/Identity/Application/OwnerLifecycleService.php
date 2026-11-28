@@ -159,12 +159,13 @@ SQL, [$tenantPublicId])->getRowArray();
 
                 $formerOwnerUserId = (int) $current['user_id'];
                 $targetUserId = (int) $target->id;
-                $this->db->table('auth_remember_tokens')->where('user_id', $formerOwnerUserId)->delete();
-                $this->db->table('auth_identities')
-                    ->where('user_id', $formerOwnerUserId)
-                    ->whereIn('type', ['magic-link', 'access_token', 'hmac', 'email_2fa'])
-                    ->delete();
-
+                foreach ([$formerOwnerUserId, $targetUserId] as $affectedUserId) {
+                    $this->db->table('auth_remember_tokens')->where('user_id', $affectedUserId)->delete();
+                    $this->db->table('auth_identities')
+                        ->where('user_id', $affectedUserId)
+                        ->whereIn('type', ['magic-link', 'access_token', 'hmac', 'email_2fa'])
+                        ->delete();
+                }
                 $this->audit->append(new AuditAppendCommand(
                     actor: AuditActor::platformUser($adminUserId, (int) $tenant['tenant_id'], (int) $tenant['shop_id']),
                     actionCode: 'owner.reassigned',
