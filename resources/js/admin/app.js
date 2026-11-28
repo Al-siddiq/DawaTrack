@@ -771,12 +771,12 @@ export const AdminApp = {
           ["Invited", data.primary_owner.invited_at || "Not invited"],
           ["Activated", data.primary_owner.activated_at || "Not activated"],
         ]),
-        data.primary_owner.membership_status === "INVITED" && h("section", { class: "commercial-card" }, [
+        can("platform.tenants") && data.primary_owner.membership_status === "INVITED" && h("section", { class: "commercial-card" }, [
           h("p", "The Tenant and Shop are pending. The Owner must accept the invitation before access is activated."),
           field("owner-action-reason", "Reason for resending invitation", ownerActionForm.reason, value => { ownerActionForm.reason = value; }, { required: true, disabled: blocked.value }),
           action("Resend Owner invitation", ownerInvitationAction, blocked.value, "btn-primary"),
         ]),
-        data.primary_owner.membership_status === "ACTIVE" && h("section", { class: "commercial-card" }, [
+        can("platform.tenants") && data.primary_owner.membership_status === "ACTIVE" && h("section", { class: "commercial-card" }, [
           h("h4", "Owner access recovery"),
           field("owner-action-reason", "Reason for access recovery or transfer", ownerActionForm.reason, value => { ownerActionForm.reason = value; }, { required: true, disabled: blocked.value }),
           action("Send Owner access recovery link", ownerRecoveryAction, blocked.value, "btn-outline-primary"),
