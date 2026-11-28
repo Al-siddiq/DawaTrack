@@ -75,6 +75,9 @@ SQL, [$tenantPublicId])->getRowArray();
                 if ($tenant['tenant_status'] !== 'ACTIVE') {
                     throw new ApiException('OWNER_REASSIGNMENT_UNAVAILABLE', 'Owner reassignment is available only after Tenant activation.', 409);
                 }
+                if ($this->db->table('shops')->where('tenant_id', (int) $tenant['tenant_id'])->countAllResults() !== 1) {
+                    throw new ApiException('ONE_SHOP_INVARIANT', 'The Tenant Shop relationship needs Platform Administrator review.', 409);
+                }
 
                 $current = $this->db->table('tenant_memberships')
                     ->where([
@@ -99,10 +102,12 @@ SQL, [$tenantPublicId])->getRowArray();
                 $targetMembership = $this->db->table('tenant_memberships')
                     ->where(['tenant_id' => (int) $tenant['tenant_id'], 'user_id' => (int) $target->id])
                     ->get()->getRowArray();
-                (new MembershipInvariantService($this->db))->assertUserMayActivate(
+                $membershipInvariants = new MembershipInvariantService($this->db);
+                $membershipInvariants->assertUserMayActivate(
                     (int) $target->id,
                     $targetMembership === null ? null : (int) $targetMembership['id'],
                 );
+                $membershipInvariants->assertUserMayBeInvitedAsPrimaryOwner((int) $target->id, (int) $tenant['tenant_id']);
 
                 $now = UtcTimestamp::now();
                 $formerGrantRows = $this->db->table('membership_permission_grants')
@@ -200,6 +205,13 @@ SQL, [$tenantPublicId])->getRowArray();
                             'former_owner' => false,
                         ],
                     ));
+                }
+
+                $activeOwnerCount = $this->db->table('tenant_memberships')
+                    ->where(['tenant_id' => (int) $tenant['tenant_id'], 'role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'])
+                    ->countAllResults();
+                if ($activeOwnerCount !== 1) {
+                    throw new ApiException('OWNER_INVARIANT_FAILED', 'The Tenant must have exactly one active Primary Owner.', 409);
                 }
 
                 $this->audit->append(new AuditAppendCommand(
