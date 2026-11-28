@@ -64,8 +64,8 @@ final class PlatformTenantDirectoryQuery
              FROM ({$base}) directory
              WHERE {$predicate}
              ORDER BY directory.tenant_created_at DESC, directory.sort_id DESC
-             LIMIT ? OFFSET ?",
-            array_merge([$asOf], $params, [$filters['per_page'], $offset]),
+             LIMIT {$filters['per_page']} OFFSET {$offset}",
+            array_merge([$asOf], $params),
         )->getResultArray();
 
         $items = array_map(static function (array $row): array {
@@ -85,6 +85,7 @@ final class PlatformTenantDirectoryQuery
                 'entitlement' => [
                     'status' => $row['entitlement_status'],
                     'plan_code' => $row['current_plan_code'],
+                    'plan_name' => $row['current_plan_name'],
                     'starts_at' => $row['current_starts_at'],
                     'ends_at' => $row['current_ends_at'],
                     'scheduled_count' => (int) $row['future_count'],
@@ -202,11 +203,13 @@ LEFT JOIN (
         SUM(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN 1 ELSE 0 END) AS current_count,
         MAX(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN sub.entitlement_type ELSE NULL END) AS current_type,
         MAX(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN sub.plan_code_snapshot ELSE NULL END) AS current_plan_code,
+        MAX(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN plan.name ELSE NULL END) AS current_plan_name,
         MAX(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN sub.starts_at ELSE NULL END) AS current_starts_at,
         MAX(CASE WHEN sub.starts_at <= clock.as_of AND sub.ends_at > clock.as_of THEN sub.ends_at ELSE NULL END) AS current_ends_at,
         SUM(CASE WHEN sub.starts_at > clock.as_of THEN 1 ELSE 0 END) AS future_count,
         MAX(CASE WHEN sub.ends_at <= clock.as_of THEN sub.ends_at ELSE NULL END) AS latest_ended
     FROM subscriptions sub
+    INNER JOIN subscription_plans plan ON plan.id = sub.subscription_plan_id
     CROSS JOIN (SELECT ? AS as_of) clock
     GROUP BY sub.tenant_id
 ) ent ON ent.tenant_id = t.id
