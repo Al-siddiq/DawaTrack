@@ -211,7 +211,10 @@ export const AdminApp = {
       search.value = "";
       tenantDetail.value = null;
       try {
-        if (id === "overview" && can("platform.access")) await loadDashboard();
+        if (id === "overview" && can("platform.access")) {
+          dashboard.value = null;
+          await loadDashboard();
+        }
         else if (id === "domains" && can("platform.domains")) await loadDomains();
         else if (id === "shops" && can("platform.access")) await loadDirectory(1);
         else if (["plans", "activity"].includes(id) && can("platform.access")) await loadOperations();
