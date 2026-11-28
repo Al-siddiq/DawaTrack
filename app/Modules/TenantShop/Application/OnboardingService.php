@@ -35,7 +35,7 @@ final class OnboardingService
      * The advisory lock serializes global identity, hostname and one-Shop checks.
      *
      * @param array<string, mixed> $input
-     * @return array{tenant_public_id: string, shop_public_id: string, hostname: string, owner_email: string, owner_membership_public_id: string, owner_user_id: int}
+     * @return array{tenant_public_id: string, shop_public_id: string, hostname: string, owner_email: string, owner_membership_public_id: string, owner_user_id: int, owner_identity_reused: bool, tenant_status: string, shop_status: string, owner_membership_status: string}
      */
     public function onboard(array $input, int $adminUserId): array
     {
@@ -127,6 +127,9 @@ final class OnboardingService
                     'owner_status' => 'INVITED',
                     'tenant_status' => 'ONBOARDING',
                     'owner_identity_reused' => $ownerIdentityReused,
+                'tenant_status' => 'ONBOARDING',
+                'shop_status' => 'INACTIVE',
+                'owner_membership_status' => 'INVITED',
                 ],
             ));
             (new ChangeSequenceService($this->database, service('requestContext')))->publish([
