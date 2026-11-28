@@ -420,9 +420,20 @@ SQL, [$userId])->getRowArray();
         $emailIdentity = $this->database->table('auth_identities')
             ->where(['user_id' => (int) $user->id, 'type' => 'email_password'])
             ->get()->getRowArray();
-        if ($emailIdentity !== null && (int) ($emailIdentity['force_reset'] ?? 0) !== 1) {
+        if ($emailIdentity === null) {
+            throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'The Owner email identity cannot receive a secure invitation.', 409);
+        }
+        if ((int) ($emailIdentity['force_reset'] ?? 0) !== 1) {
             $user->forcePasswordReset();
-            $provider->save($user);
+            if (! $provider->save($user)) {
+                throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'The Owner password setup state could not be prepared.', 409);
+            }
+        }
+        $emailIdentity = $this->database->table('auth_identities')
+            ->where(['user_id' => (int) $user->id, 'type' => 'email_password'])
+            ->get()->getRowArray();
+        if ($emailIdentity === null || (int) ($emailIdentity['force_reset'] ?? 0) !== 1) {
+            throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'The Owner password setup state could not be prepared.', 409);
         }
 
         return ['user_id' => (int) $user->id];
