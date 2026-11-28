@@ -29,24 +29,3 @@
 @media (prefers-reduced-motion: reduce) {
   .ui-spinner { animation: none; }
 }
-
-
-/* Phase 9 Platform Admin overview and Tenant directory. */
-.ui-scope .admin-dashboard { display: grid; gap: var(--ui-space-4); }
-.ui-scope .admin-dashboard-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ui-space-3); }
-.ui-scope .admin-metric-card { display: grid; align-content: start; gap: .35rem; min-width: 0; }
-.ui-scope .admin-metric-card p { margin: 0; font-size: var(--ui-text-help); }
-.ui-scope .admin-metric-card strong { color: var(--ui-ink); font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; overflow-wrap: anywhere; }
-.ui-scope .admin-metric-card small, .ui-scope .admin-expiry-panel small { color: var(--ui-muted); }
-.ui-scope .admin-expiry-panel { display: grid; gap: var(--ui-space-2); }
-.ui-scope .admin-expiry-panel h3, .ui-scope .admin-expiry-panel p { margin: 0; }
-.ui-scope .admin-directory-filters { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(150px, 1fr)); gap: var(--ui-space-3); align-items: end; }
-.ui-scope .admin-tenant-detail { display: grid; gap: var(--ui-space-3); }
-.ui-scope .admin-tenant-detail h2, .ui-scope .admin-tenant-detail h3 { margin: 0; }
-@media (max-width: 900px) {
-  .ui-scope .admin-dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ui-scope .admin-directory-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 560px) {
-  .ui-scope .admin-dashboard-grid, .ui-scope .admin-directory-filters { grid-template-columns: minmax(0, 1fr); }
-}
