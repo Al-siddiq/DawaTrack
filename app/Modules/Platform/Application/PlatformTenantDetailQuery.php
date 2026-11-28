@@ -57,10 +57,22 @@ SQL, [$publicId])->getRowArray();
         $asOf = UtcTimestamp::now();
         $tenantId = (int) $tenant['tenant_internal_id'];
         $shopId = $tenant['shop_internal_id'] === null ? null : (int) $tenant['shop_internal_id'];
-        $owner = $this->db->table('tenant_memberships')
-            ->select('status')
-            ->where(['tenant_id' => $tenantId, 'role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'])
-            ->get()->getRowArray();
+        $owner = $this->db->query(<<<'SQL'
+SELECT m.public_id AS membership_public_id,
+       m.status AS membership_status,
+       m.created_at AS invited_at,
+       m.activated_at,
+       u.username AS owner_name,
+       i.secret AS owner_email
+FROM tenant_memberships m
+INNER JOIN users u ON u.id = m.user_id
+LEFT JOIN auth_identities i ON i.user_id = u.id AND i.type = 'email_password'
+WHERE m.tenant_id = ?
+  AND m.role = 'PRIMARY_OWNER'
+  AND m.status IN ('ACTIVE', 'INVITED')
+ORDER BY CASE WHEN m.status = 'ACTIVE' THEN 0 ELSE 1 END, m.created_at DESC
+LIMIT 1
+SQL, [$tenantId])->getRowArray();
         $staffCount = (int) $this->db->table('tenant_memberships')
             ->where(['tenant_id' => $tenantId, 'role' => 'STAFF', 'status' => 'ACTIVE'])
             ->countAllResults();
@@ -187,7 +199,14 @@ SQL, [$tenantId, $asOf])->getResultArray();
                 'timezone_name' => $tenant['timezone_name'],
                 'currency_code' => $tenant['currency_code'],
             ],
-            'primary_owner' => ['membership_status' => $owner['status'] ?? 'NOT_FOUND'],
+            'primary_owner' => [
+                'membership_public_id' => $owner['membership_public_id'] ?? null,
+                'membership_status' => $owner['membership_status'] ?? 'NOT_FOUND',
+                'owner_name' => $owner['owner_name'] ?? null,
+                'owner_email' => $owner['owner_email'] ?? null,
+                'invited_at' => $owner['invited_at'] ?? null,
+                'activated_at' => $owner['activated_at'] ?? null,
+            ],
             'active_staff_count' => $staffCount,
             'entitlements' => [
                 'current' => $current,

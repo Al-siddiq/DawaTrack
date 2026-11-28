@@ -102,6 +102,7 @@ class Filters extends BaseFilters
                     'login/*',
                     'auth/a/*',
                     'change-password',
+                    'owner/activate',
                     'logout',
                     'platform-admin/login',
                     'platform-admin/mfa',

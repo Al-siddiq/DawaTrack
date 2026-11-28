@@ -1,10 +1,10 @@
 # Phase 9 — WP1 Implementation Report and Local Verification
 
 **Work package:** WP1 — Platform Admin Foundation, Dashboard and Tenant Discovery  
-**Status:** Implementation source prepared; awaiting local engineering/runtime checks and Owner manual verification.  
+**Status:** ACCEPTED BY OWNER — 28 November 2026.  
 **Authorization:** Owner approved and authorized WP1 on 28 November 2026.  
 **Branch:** `docs/phase-9-strategic-implementation-plan`  
-**Runtime acceptance:** NOT YET RUN.  
+**Owner acceptance:** The Owner reports completing local manual verification and explicitly accepted WP1 on 28 November 2026. Case-by-case execution evidence was not attached to this repository update.  
 **Production deployment:** Not performed.
 
 ## 1. Delivered implementation
@@ -209,10 +209,8 @@ Use the authenticated browser session and browser Developer Tools Network panel.
 
 ## 6. Manual acceptance register
 
-All WP1-M01 through WP1-M38 in the Detailed Implementation Contract remain **NOT RUN** until executed in the local environment. Record actual environment, timestamp, actor, fixture, steps, expected result, observed result, evidence reference and reviewer. A source review, generated-file sync or build result is not manual acceptance.
+**Owner acceptance recorded:** On 28 November 2026, the Owner stated that WP1 had been manually verified and accepted. This satisfies the WP1 acceptance gate and authorizes progression to WP2. Individual WP1-M01 through WP1-M38 observations/evidence were not included in the acceptance message; preserve any local screenshots, request logs, fixture reconciliation and case notes in the project evidence register if a later audit requires them. This report does not invent per-case observations.
 
-## 7. Stop condition
+## 7. Acceptance record
 
-After local preparation and engineering checks, stop and provide the Owner with the observed results. Resolve any failure and repeat the affected checks. WP1 remains pending until the Owner completes local manual verification and explicitly accepts WP1.
-
-WP2 must not commence before that acceptance.
+WP1 was manually verified and explicitly accepted by the Owner on 28 November 2026. The WP1 gate is closed. The PR remains a code-review/integration artifact and has not been merged or deployed to production. WP2 may proceed on a stacked branch based on the accepted WP1 branch.

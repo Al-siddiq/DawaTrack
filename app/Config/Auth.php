@@ -457,6 +457,10 @@ class Auth extends ShieldAuth
             return site_url(ltrim($destination, '/'));
         }
 
+        if ($user !== null && $this->hasPendingOwnerActivation((int) $user->id)) {
+            return site_url('owner/activate');
+        }
+
         $candidate = (string) (session()->getTempdata('beforeLoginUrl') ?? '/');
         if (! str_starts_with($candidate, '/') || str_starts_with($candidate, '//')) {
             return service('sameOriginUrl')->to('/');
@@ -500,9 +504,26 @@ class Auth extends ShieldAuth
      */
     public function forcePasswordResetRedirect(): string
     {
-        $url = setting('Auth.redirects')['force_reset'];
+        $user = auth()->user();
+        if ($user !== null && $this->hasPendingOwnerActivation((int) $user->id)) {
+            return site_url('owner/activate');
+        }
 
+        $url = setting('Auth.redirects')['force_reset'];
         return $this->getUrl($url);
+    }
+
+    private function hasPendingOwnerActivation(int $userId): bool
+    {
+        return db_connect()->table('tenant_memberships m')
+            ->join('tenants t', 't.id = m.tenant_id')
+            ->where([
+                'm.user_id' => $userId,
+                'm.role' => 'PRIMARY_OWNER',
+                'm.status' => 'INVITED',
+                't.status' => 'ONBOARDING',
+            ])
+            ->countAllResults() > 0;
     }
 
     /**

@@ -13,7 +13,9 @@
     </h1>
 
     <p>
-        Your temporary password must be replaced before you can continue.
+        <?= ! empty($magicLinkSession)
+            ? 'You signed in using a secure one-time link. Choose a new password to secure your account.'
+            : 'Your temporary password must be replaced before you can continue.' ?>
     </p>
 </header>
 
@@ -25,18 +27,20 @@
 >
     <?= csrf_field() ?>
 
-    <label for="current-password">
-        Current temporary password
-    </label>
+    <?php if (empty($magicLinkSession)): ?>
+        <label for="current-password">
+            Current temporary password
+        </label>
 
-    <input
-        id="current-password"
-        name="current_password"
-        type="password"
-        class="form-control"
-        autocomplete="current-password"
-        required
-    >
+        <input
+            id="current-password"
+            name="current_password"
+            type="password"
+            class="form-control"
+            autocomplete="current-password"
+            required
+        >
+    <?php endif; ?>
 
     <label for="new-password">
         New password
@@ -73,5 +77,12 @@
         Change password
     </button>
 </form>
+
+<?php if (empty($magicLinkSession)): ?>
+    <p class="auth-help">
+        If you do not know your current password,
+        <a href="<?= esc(site_url('logout'), 'attr') ?>">sign out and request a secure sign-in link</a>.
+    </p>
+<?php endif; ?>
 
 <?= $this->endSection() ?>

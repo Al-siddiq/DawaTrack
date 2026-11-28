@@ -148,3 +148,14 @@ Typed actions reconciliation.cash_started/device_required/cash_counted/cash_comm
 ## Phase 7 WP3
 
 WP3 adds control_started/counted/committed/reviewed/explained/finalized/aborted, stock_expected/counted/explained/variance_finalized/adjusted and late_operation_associated actions under reconciliation.*. Per-Product stock_expected links causally to start; Stock adjustment uses Inventory Audit with source UUIDs/delta/current before/after. Deduplicated SYSTEM late associations preserve original source times and refresh the control through publication. Notes keep text in approved note rows, not unbounded Audit metadata. See [integration contract](Phase-7/Phase_7_WP3_Integration_Contracts.md).
+
+
+## Phase 9 WP2 — Tenant onboarding and Primary Owner lifecycle
+
+The Platform onboarding transaction records `owner.created` on the invited `tenant_membership` and `tenant.onboarded` on the pending Tenant. The Tenant remains ONBOARDING, Shop INACTIVE and Owner membership INVITED until the Owner accepts a Shield one-time magic link. Invitation issuance is recorded as SECURITY/`owner.invitation_issued`; active Owner access recovery is SECURITY/`owner.recovery_requested`. Both require an explicit bounded reason, bind to the reviewed membership public UUID, and never store or expose the magic-link token in Audit metadata.
+
+Owner acceptance atomically activates the invited membership, Tenant and Shop, starts the 30-day Trial, publishes the related Tenant/Shop/membership/subscription changes and appends SECURITY/`owner.activated`. If the invitation requires password setup, `identity.password_changed` is appended in the same transaction. A failed activation rolls back password/force-reset, business, Audit and Sync changes. A repeated activation cannot create a second Trial because only the single INVITED Primary Owner membership can be activated.
+
+Primary Owner reassignment appends SECURITY/`owner.reassigned` and any required `permission.revoked` events in the same transaction as deactivating the former membership, promoting/creating the new membership, revoking old membership grants and publishing the two membership changes. It uses the shared identity-membership advisory lock and existing unique active-Owner guard. The former and new Owner's remembered tokens, magic-link/access-token/HMAC/2FA identities and authenticated sessions are invalidated after commit; the former Shield user is not globally disabled. A new one-time access link is issued to the new Owner after commit. Email delivery is external to the transaction and reported separately; failure does not reverse the ownership transfer and can be retried with a new reasoned recovery request.
+
+No raw password, generated temporary password, magic-link token, reset token, email body, or credential verifier is Audit metadata. Audit is immutable and append-only; a failed Audit append aborts the owning database transaction.

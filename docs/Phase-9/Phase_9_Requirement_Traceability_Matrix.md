@@ -1,7 +1,7 @@
 # Phase 9 — Requirement Traceability Matrix
 
-**Status:** Prepared following Owner approval of the Phase 9 Strategic Implementation Plan.  
-**Scope:** Planning only; no runtime implementation is authorized.  
+**Status:** Phase 9 plan approved; WP1 Owner-accepted; WP2 implementation in progress.  
+**Scope:** Planning and implementation traceability on the Phase 9 feature branches; production deployment is not authorized.  
 **Baseline:** main at Phase 8 closure commit 2972f80bbc0d94c6a9e7c8e5b5756e378d4039e6.
 
 ## Reading this matrix
@@ -60,7 +60,7 @@ Allowed statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR MANUAL VERIFICATI
 
 ## WP1 implementation status — 28 November 2026
 
-**Overall status: IN PROGRESS — implementation source prepared; local engineering/runtime verification and Owner manual acceptance remain pending.**
+**Overall status: PASS — the Owner reports completing manual verification and explicitly accepted WP1 on 28 November 2026. Individual case-level observations were not included in the acceptance message.**
 
 | WP1 ID | Implementation source | Current status |
 |---|---|---|
@@ -75,4 +75,24 @@ Allowed statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR MANUAL VERIFICATI
 | WP1-09 | Existing platform.access permission and current schema reused | IN PROGRESS — source diff review completed; local schema diff pending |
 | WP1-10 | Existing Bootstrap/UI responsive layout | IN PROGRESS — source prepared; phone/tablet/desktop checks pending |
 
-The implementation report is `WP1_Implementation_Report_and_Local_Verification.md`. WP1-M01 through WP1-M38 remain NOT RUN until the Owner executes them locally. No requirement is marked PASS from source existence or static review alone.
+The implementation report is `WP1_Implementation_Report_and_Local_Verification.md`. Owner acceptance closes the WP1 gate and authorizes WP2. Preserve any local WP1 case evidence separately; the assistant does not invent case-level observations.
+
+
+## WP2 implementation status — 28 November 2026
+
+**Overall status: IN PROGRESS — implementation source being prepared on `phase-9/wp2-tenant-onboarding-primary-owner`. Local PHP/MySQL runtime verification and Owner manual acceptance are pending.**
+
+| WP2 ID | Requirement | Implementation source | Current status |
+|---|---|---|---|
+| WP2-01 | Guided Tenant/Shop onboarding without Admin-managed passwords | TenantShop OnboardingService; Admin onboarding form | IN PROGRESS — invitation-first graph implemented; runtime checks pending |
+| WP2-02 | Primary Owner identity creation or safe reuse | OnboardingService; MembershipInvariantService | IN PROGRESS — email identity, active-account and membership invariants implemented |
+| WP2-03 | One-time Owner invitation and secure acceptance | OwnerInvitationService; Shield magic-link; OwnerActivationController | IN PROGRESS — mail delivery and end-to-end acceptance pending |
+| WP2-04 | Pending/active onboarding states and Trial timing | TenantShop OnboardingService | IN PROGRESS — pending Tenant/Shop/Owner; Trial begins at activation |
+| WP2-05 | Owner recovery and invitation resend | OwnerInvitationService; Platform Operations API/UI | IN PROGRESS — delivery/retry tests pending |
+| WP2-06 | Primary Owner reassignment | OwnerLifecycleService | IN PROGRESS — serialized transaction, membership/grant changes, Audit and session revocation implemented |
+| WP2-07 | Former and new Owner session/credential invalidation | OwnerLifecycleService; UserSessionRevocationService | IN PROGRESS — runtime session/remember-token checks pending |
+| WP2-08 | Audit and sync atomicity | AuditService; ChangeSequenceService | IN PROGRESS — source transactions prepared; rollback/sequence tests pending |
+| WP2-09 | Resumable onboarding and duplicate prevention | OnboardingService; invitation resend | IN PROGRESS — retry path prepared; duplicate/concurrency fixtures pending |
+| WP2-10 | Responsive Owner lifecycle UI | Admin app and Owner activation view | IN PROGRESS — browser/manual checks pending |
+
+The WP2 governing contract is `WP2_Tenant_Onboarding_and_Primary_Owner_Lifecycle_Contract.md`. The implementation report and manual verification register will be added before PR review. No WP2 requirement is marked PASS until local runtime and Owner acceptance are recorded.

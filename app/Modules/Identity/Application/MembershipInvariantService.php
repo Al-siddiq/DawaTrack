@@ -32,4 +32,25 @@ final class MembershipInvariantService
             );
         }
     }
+    /** Prevents one identity from holding multiple pending Primary Owner invitations. */
+    public function assertUserMayBeInvitedAsPrimaryOwner(int $userId, ?int $exceptTenantId = null): void
+    {
+        $builder = $this->database->table('tenant_memberships')
+            ->where('user_id', $userId)
+            ->where('role', 'PRIMARY_OWNER')
+            ->where('status', 'INVITED');
+
+        if ($exceptTenantId !== null) {
+            $builder->where('tenant_id !=', $exceptTenantId);
+        }
+
+        if ($builder->countAllResults() > 0) {
+            throw new ApiException(
+                'OWNER_INVITATION_CONFLICT',
+                'This identity already has a pending Primary Owner invitation.',
+                409,
+            );
+        }
+    }
+
 }

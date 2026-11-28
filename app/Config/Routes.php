@@ -20,6 +20,8 @@ $routes->get('platform-admin/mfa', 'Web\AdminAuthController::stepUp', ['as' => '
 $routes->post('platform-admin/mfa/restart', 'Web\AdminAuthController::restart', ['as' => 'admin.mfa.restart', 'filter' => 'platformAdminIdentity']);
 $routes->get('platform-admin', 'Web\ShellController::admin', ['as' => 'admin.shell', 'filter' => 'platformAdmin:platform.access']);
 $routes->get('logout', 'Web\SecuritySessionController::logout', ['as' => 'dawatrack.logout']);
+$routes->get('owner/activate', 'Web\\OwnerActivationController::show', ['as' => 'owner.activate', 'filter' => 'authenticated']);
+$routes->post('owner/activate', 'Web\\OwnerActivationController::complete', ['filter' => 'authenticated']);
 
 $routes->get('change-password', 'Web\\PasswordChangeController::show', ['as' => 'password.change','filter' => 'authenticated',
     ]
@@ -233,6 +235,9 @@ $routes->group('api/v1', static function (RouteCollection $routes): void {
     $routes->get('platform/operations/dashboard', 'Api\PlatformOperationsController::dashboard', ['filter' => 'platformAdmin:platform.access']);
     $routes->get('platform/operations/tenants', 'Api\PlatformOperationsController::tenants', ['filter' => 'platformAdmin:platform.access']);
     $routes->get('platform/operations/tenants/(:segment)', 'Api\PlatformOperationsController::tenantDetail/$1', ['filter' => 'platformAdmin:platform.access']);
+    $routes->post('platform/operations/tenants/(:segment)/owner/invitation', 'Api\\PlatformOperationsController::ownerInvitation/$1', ['filter' => 'platformAdmin:platform.tenants']);
+$routes->post('platform/operations/tenants/(:segment)/owner/recovery', 'Api\\PlatformOperationsController::ownerRecovery/$1', ['filter' => 'platformAdmin:platform.tenants']);
+$routes->post('platform/operations/tenants/(:segment)/owner/reassign', 'Api\\PlatformOperationsController::ownerReassign/$1', ['filter' => 'platformAdmin:platform.tenants']);
     $routes->post('platform/operations/tenants/(:segment)/subscriptions', 'Api\PlatformOperationsController::subscription/$1', ['filter' => 'platformAdmin:platform.subscriptions']);
     $routes->post('platform/operations/tenants/(:segment)/(:segment)', 'Api\PlatformOperationsController::tenantLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);
     $routes->post('platform/operations/shops/(:segment)/(:segment)', 'Api\PlatformOperationsController::shopLifecycle/$1/$2', ['filter' => 'platformAdmin:platform.tenants']);

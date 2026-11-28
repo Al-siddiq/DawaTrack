@@ -15,10 +15,26 @@ final class OnboardingController extends BaseController
     public function create()
     {
         try {
-            $result = Services::onboardingService()->onboard(
-                $this->request->getJSON(true) ?? [],
-                (int) auth()->id(),
-            );
+            $input = $this->request->getJSON(true) ?? [];
+            $result = Services::onboardingService()->onboard($input, (int) auth()->id());
+            $membershipPublicId = $result['owner_membership_public_id'];
+            unset($result['owner_user_id'], $result['owner_membership_public_id']);
+
+            try {
+                $invitation = service('ownerInvitationService')->issueForMembership(
+                    $membershipPublicId,
+                    (int) auth()->id(),
+                    (string) ($input['reason'] ?? ''),
+                );
+                $result['invitation_delivery_status'] = $invitation['delivery_status'];
+                $result['invitation_expires_at'] = $invitation['expires_at'];
+            } catch (Throwable $deliveryFailure) {
+                log_message('error', 'tenant.onboarding_invitation_failed {request_id} {exception_class}', [
+                    'request_id' => Services::requestContext()->requestId(),
+                    'exception_class' => $deliveryFailure::class,
+                ]);
+                $result['invitation_delivery_status'] = 'FAILED';
+            }
 
             return ApiResponse::success($this->response, $result, Services::requestContext()->requestId(), 201);
         } catch (ApiException $exception) {

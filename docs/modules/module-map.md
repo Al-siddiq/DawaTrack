@@ -6,7 +6,7 @@
 - `Filters` owns cross-cutting authentication, Platform authority, request context, throttling, session, CSRF, and response-security boundaries.
 - `Modules/TenantShop` owns Tenant/Shop context, onboarding, settings, and lifecycle.
 - `Modules/Platform` owns read-only Platform Admin aggregate, Tenant directory, and Tenant detail queries composed from authoritative module tables. It does not own Tenant business mutations, ShopContext, membership, or a parallel data store.
-- `Modules/Identity` owns memberships, Staff lifecycle, and grants.
+- `Modules/Identity` owns memberships, Staff lifecycle, grants, Shield Owner invitation/recovery orchestration, and transactional Primary Owner reassignment. It coordinates with TenantShop onboarding and uses the shared membership invariant/lock; it does not create a parallel identity or credential store.
 - `Modules/BrandingDomain` owns branding, assets, hostname, and domain lifecycle.
 - `Modules/Subscription` owns immutable entitlement periods/events and their operational queries.
 - `Modules/Audit` owns typed immutable Audit commands, authority/scope validation, vocabulary, reason/metadata/causal policy, append, and safe output representation.
