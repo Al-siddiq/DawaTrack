@@ -203,6 +203,8 @@ export const AdminApp = {
     async function openTenantDetail(tenant) {
       tenantDetailLoading.value = true;
       tenantDetail.value = null;
+      ownerActionForm.reason = "";
+      ownerActionForm.target_email = "";
       clearErrors();
       try {
         tenantDetail.value = (await phaseOneApi.platformTenant(tenant.public_id)).data;
@@ -935,6 +937,7 @@ export const AdminApp = {
               ["Shop reference", result.shop_public_id],
               ["Owner email", result.owner_email],
               ["Invitation email", managementLabel(result.invitation_delivery_status)],
+              ["Invitation link expires", result.invitation_expires_at || "Not available"],
               ["DawaTrack web address", result.hostname],
             ]),
             note(
