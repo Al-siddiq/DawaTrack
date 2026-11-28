@@ -105,20 +105,24 @@ SQL, [$tenantPublicId])->getRowArray();
                 );
 
                 $now = UtcTimestamp::now();
-                $formerGrantCount = $this->db->table('membership_permission_grants')
+                $formerGrantRows = $this->db->table('membership_permission_grants')
+                    ->select('permission_code')
                     ->where(['membership_id' => (int) $current['id']])
                     ->where('revoked_at', null)
-                    ->countAllResults();
+                    ->get()->getResultArray();
+                $formerGrantCount = count($formerGrantRows);
                 if ($formerGrantCount > 0) {
                     $this->db->table('membership_permission_grants')
                         ->where(['membership_id' => (int) $current['id']])
                         ->where('revoked_at', null)
                         ->update(['revoked_by_user_id' => $adminUserId, 'revoked_at' => $now]);
                 }
-                $targetGrantCount = $targetMembership === null ? 0 : $this->db->table('membership_permission_grants')
+                $targetGrantRows = $targetMembership === null ? [] : $this->db->table('membership_permission_grants')
+                    ->select('permission_code')
                     ->where(['membership_id' => (int) $targetMembership['id']])
                     ->where('revoked_at', null)
-                    ->countAllResults();
+                    ->get()->getResultArray();
+                $targetGrantCount = count($targetGrantRows);
                 if ($targetGrantCount > 0) {
                     $this->db->table('membership_permission_grants')
                         ->where(['membership_id' => (int) $targetMembership['id']])
@@ -166,8 +170,24 @@ SQL, [$tenantPublicId])->getRowArray();
                         ->whereIn('type', ['magic-link', 'access_token', 'hmac', 'email_2fa'])
                         ->delete();
                 }
+                $platformActor = AuditActor::platformUser($adminUserId, (int) $tenant['tenant_id'], (int) $tenant['shop_id']);
+                foreach (array_merge($formerGrantRows, $targetGrantRows) as $grant) {
+                    $this->audit->append(new AuditAppendCommand(
+                        actor: $platformActor,
+                        actionCode: 'permission.revoked',
+                        category: AuditCategory::SECURITY,
+                        resourceType: 'tenant_membership',
+                        resourcePublicId: (string) ($grant['permission_code'] !== '' ? ($targetMembership['public_id'] ?? $current['public_id']) : $current['public_id']),
+                        reason: $reason,
+                        metadata: [
+                            'permission_code' => $grant['permission_code'],
+                            'owner_transfer' => true,
+                        ],
+                    ));
+                }
+
                 $this->audit->append(new AuditAppendCommand(
-                    actor: AuditActor::platformUser($adminUserId, (int) $tenant['tenant_id'], (int) $tenant['shop_id']),
+                    actor: $platformActor,
                     actionCode: 'owner.reassigned',
                     category: AuditCategory::SECURITY,
                     resourceType: 'tenant_membership',
