@@ -68,7 +68,9 @@ SQL, [$asOf])->getRowArray() ?? [];
         ];
         if ($this->db->tableExists('registered_devices')) {
             $fields = $this->db->getFieldNames('registered_devices');
-            if (in_array('status', $fields, true)) {
+            if (in_array('status', $fields, true) && in_array('tenant_id', $fields, true)
+                && in_array('shop_id', $fields, true) && in_array('public_id', $fields, true)
+                && in_array('credential_hash', $fields, true)) {
                 $deviceCounts = $this->db->query(
                     "SELECT COUNT(*) AS registered,
                         SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active,
