@@ -116,7 +116,9 @@ final class PasswordChangeController extends BaseController
                 'password' => $newPassword,
             ]);
 
-            $users->save($user);
+            if (! $users->save($user)) {
+                throw new \\RuntimeException('Password update was rejected.');
+            }
 
             /*
              * Clear Shield's force_reset flag only after
