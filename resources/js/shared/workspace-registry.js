@@ -24,7 +24,8 @@ export function permittedShopPages(context, mode) {
         && (!['BLOCKED', 'CLOSED'].includes(mode) || ['home', 'audit'].includes(item.id)));
 }
 export const adminPages = Object.freeze([
-    { id: 'shops', label: 'Shops', icon: 'shop', hash: '#shops', permission: 'platform.access', trackEdits: true },
+    { id: 'overview', label: 'Overview', icon: 'home', hash: '#overview', permission: 'platform.access' },
+    { id: 'shops', label: 'Tenants', icon: 'shop', hash: '#shops', permission: 'platform.access', trackEdits: true },
     { id: 'onboard', label: 'Add shop', icon: 'add', hash: '#onboard', permission: 'platform.onboard', trackEdits: true },
     { id: 'plans', label: 'Plans', icon: 'plan', hash: '#plans', permission: 'platform.subscriptions', trackEdits: true },
     { id: 'domains', label: 'Web addresses', icon: 'web-address', hash: '#domains', permission: 'platform.domains', trackEdits: true },
