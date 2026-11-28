@@ -66,26 +66,26 @@ class Services extends BaseService
         );
     }
 
-    public static function ownerLifecycleService(bool $getShared = true): \\App\\Modules\\Identity\\Application\\OwnerLifecycleService
+    public static function ownerLifecycleService(bool $getShared = true): \App\Modules\Identity\Application\OwnerLifecycleService
     {
         if ($getShared) {
             return static::getSharedInstance('ownerLifecycleService');
         }
 
-        return new \\App\\Modules\\Identity\\Application\\OwnerLifecycleService(
+        return new \App\Modules\Identity\Application\OwnerLifecycleService(
             db_connect(),
             static::auditService(),
             static::userSessionRevocation()
         );
     }
 
-    public static function ownerInvitationService(bool $getShared = true): \\App\\Modules\\Identity\\Application\\OwnerInvitationService
+    public static function ownerInvitationService(bool $getShared = true): \App\Modules\Identity\Application\OwnerInvitationService
     {
         if ($getShared) {
             return static::getSharedInstance('ownerInvitationService');
         }
 
-        return new \\App\\Modules\\Identity\\Application\\OwnerInvitationService(
+        return new \App\Modules\Identity\Application\OwnerInvitationService(
             db_connect(),
             static::auditService()
         );
@@ -151,13 +151,13 @@ class Services extends BaseService
      * }
      */
 }
- \\App\\Modules\\Identity\\Application\\OwnerInvitationService
+ \App\Modules\Identity\Application\OwnerInvitationService
     {
         if ($getShared) {
             return static::getSharedInstance('ownerInvitationService');
         }
 
-        return new \\App\\Modules\\Identity\\Application\\OwnerInvitationService(
+        return new \App\Modules\Identity\Application\OwnerInvitationService(
             db_connect(),
             static::auditService()
         );
