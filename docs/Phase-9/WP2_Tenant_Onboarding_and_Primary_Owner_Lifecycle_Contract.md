@@ -44,7 +44,7 @@ Platform Admin onboarding form:
 - The activation operation atomically changes the membership to ACTIVE, Tenant to ACTIVE, Shop to ACTIVE, creates the initial 30-day Trial and emits reasoned Audit/Sync evidence.
 - A successful commit is required before the Owner is shown as active.
 - A failed activation leaves the graph pending and retryable. It must not create duplicate Trials, memberships or Audit events.
-- Existing users without an email/password identity may accept by magic link and activate without inventing an alternate credential record.
+- An existing eligible Shield account is reused through its existing email/password identity. Accounts without a usable email/password identity are not silently converted or given a parallel credential record.
 
 ## 5. Owner recovery and invitation resend
 
@@ -61,7 +61,7 @@ Platform Admin onboarding form:
 - A target already in this Tenant as Staff may be promoted by updating the existing membership row; no duplicate tenant/user membership is inserted.
 - Under the existing identity-membership advisory lock and a database transaction, the former Owner membership is deactivated, the target membership is created/promoted to ACTIVE PRIMARY_OWNER, and the unique active-owner guard remains authoritative.
 - The transaction records immutable Audit evidence and publishes the relevant membership change.
-- The former Owner's remembered/magic-link identities are invalidated and their sessions are revoked after commit. Their global Shield user is not disabled.
+- The former Owner's remembered/magic-link identities are invalidated and their sessions are revoked after commit. The target identity's existing sessions are also revoked so its new Owner access is re-established through the fresh link. Existing permission grants on the promoted Staff membership are revoked. The former Owner's global Shield user is not disabled.
 - The new Owner receives a Shield magic-link recovery/access email after commit. Delivery failure does not roll back the completed reassignment and is surfaced for retry.
 - If the current Owner changed since the Admin reviewed the detail, reject with a conflict and require refresh.
 
