@@ -117,7 +117,7 @@ final class PasswordChangeController extends BaseController
             ]);
 
             if (! $users->save($user)) {
-                throw new \\RuntimeException('Password update was rejected.');
+                throw new \RuntimeException('Password update was rejected.');
             }
 
             /*
