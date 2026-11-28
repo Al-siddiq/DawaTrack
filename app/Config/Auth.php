@@ -505,9 +505,7 @@ class Auth extends ShieldAuth
     public function forcePasswordResetRedirect(): string
     {
         $user = auth()->user();
-        $magicLink = session()->getTempdata('magicLogin');
-        if ($user !== null && ($magicLink === true || $magicLink === 1 || $magicLink === '1')
-            && $this->hasPendingOwnerActivation((int) $user->id)) {
+        if ($user !== null && $this->hasPendingOwnerActivation((int) $user->id)) {
             return site_url('owner/activate');
         }
 
