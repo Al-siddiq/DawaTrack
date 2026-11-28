@@ -25,7 +25,12 @@ final class PasswordChangeController extends BaseController
             return redirect()->to(service('sameOriginUrl')->to('/'));
         }
 
-        return view('auth/change_password', ['magicLinkSession' => $this->isMagicLinkSession()]);
+        $magicLinkSession = $this->isMagicLinkSession();
+        if ($magicLinkSession) {
+            session()->setTempdata('magicLogin', true, 1800);
+        }
+
+        return view('auth/change_password', ['magicLinkSession' => $magicLinkSession]);
     }
 
     public function update(): RedirectResponse
