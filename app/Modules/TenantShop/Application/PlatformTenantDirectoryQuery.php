@@ -60,7 +60,21 @@ final class PlatformTenantDirectoryQuery
         $offset = ($filters['page'] - 1) * $filters['per_page'];
 
         $rows = $this->db->query(
-            "SELECT directory.*
+            "SELECT directory.tenant_public_id,
+                    directory.business_name,
+                    directory.tenant_status,
+                    directory.tenant_created_at,
+                    directory.shop_public_id,
+                    directory.shop_name,
+                    directory.shop_status,
+                    directory.primary_hostname,
+                    directory.active_staff_count,
+                    directory.entitlement_status,
+                    directory.current_plan_code,
+                    directory.current_plan_name,
+                    directory.current_starts_at,
+                    directory.current_ends_at,
+                    directory.future_count
              FROM ({$base}) directory
              WHERE {$predicate}
              ORDER BY directory.tenant_created_at DESC, directory.sort_id DESC
