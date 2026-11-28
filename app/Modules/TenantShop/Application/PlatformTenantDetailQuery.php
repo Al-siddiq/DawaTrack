@@ -22,7 +22,9 @@ final class PlatformTenantDetailQuery
         }
 
         $tenant = $this->db->query(<<<'SQL'
-SELECT t.public_id AS tenant_public_id,
+SELECT t.id AS tenant_internal_id,
+       s.id AS shop_internal_id,
+       t.public_id AS tenant_public_id,
        t.legal_or_business_name AS business_name,
        t.status AS tenant_status,
        t.status_reason,
@@ -53,13 +55,12 @@ SQL, [$publicId])->getRowArray();
         }
 
         $asOf = UtcTimestamp::now();
+        $tenantId = (int) $tenant['tenant_internal_id'];
+        $shopId = $tenant['shop_internal_id'] === null ? null : (int) $tenant['shop_internal_id'];
         $owner = $this->db->table('tenant_memberships')
             ->select('status')
-            ->where(['tenant_id' => $this->tenantId($publicId), 'role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'])
+            ->where(['tenant_id' => $tenantId, 'role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'])
             ->get()->getRowArray();
-
-        $tenantId = $this->tenantId($publicId);
-        $shopId = $this->shopId($tenantId);
         $staffCount = (int) $this->db->table('tenant_memberships')
             ->where(['tenant_id' => $tenantId, 'role' => 'STAFF', 'status' => 'ACTIVE'])
             ->countAllResults();
@@ -171,14 +172,4 @@ SQL, [$tenantId])->getResultArray();
         ];
     }
 
-    private function tenantId(string $publicId): int
-    {
-        return (int) $this->db->table('tenants')->select('id')->where('public_id', $publicId)->get()->getRowArray()['id'];
-    }
-
-    private function shopId(int $tenantId): ?int
-    {
-        $row = $this->db->table('shops')->select('id')->where('tenant_id', $tenantId)->get()->getRowArray();
-        return $row === null ? null : (int) $row['id'];
-    }
 }
