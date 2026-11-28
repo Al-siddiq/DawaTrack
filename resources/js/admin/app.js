@@ -37,7 +37,7 @@ export const AdminApp = {
     );
     const workspaceNavigation = useWorkspaceNavigation({
       items: navigation,
-      fallback: "shops",
+      fallback: "overview",
     });
     workspaceNavigation.initialize();
     const page = workspaceNavigation.currentId,
