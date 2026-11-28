@@ -256,13 +256,9 @@ export const AdminApp = {
     async function onboard() {
       if (!can("platform.onboard")) return;
       await run(async () => {
-        try {
-          Object.assign(result, (await phaseOneApi.onboard(form)).data);
-          step.value = 3;
-        } finally {
-
-        }
-      }, "Shop account created.");
+        Object.assign(result, (await phaseOneApi.onboard(form)).data);
+        step.value = 3;
+      }, "Tenant onboarding created. Owner invitation delivery is shown below.");
       if (error.value) step.value = 1;
     }
     async function domainAction(domain, command, ready) {
@@ -899,11 +895,11 @@ export const AdminApp = {
                       : "",
                 }),
               )
-              .concat(submit("Review shop details", blocked.value)),
+              .concat(submit("Review Tenant details", blocked.value)),
           ),
         step.value === 2 &&
           h("section", { class: "commercial-card" }, [
-            h("h3", "Check shop and owner details"),
+            h("h3", "Review Tenant and Primary Owner details"),
             facts(
               fields.map(([key, label]) => [label, form[key] || "Not provided"]),
             ),
@@ -925,7 +921,7 @@ export const AdminApp = {
                 "btn-primary",
                 {
                   loading: busy.value,
-                  busyLabel: "Creating shop account…",
+                  busyLabel: "Creating Tenant…",
                   icon: "add",
                 },
               ),
@@ -933,7 +929,7 @@ export const AdminApp = {
           ]),
         step.value === 3 &&
           h("section", { class: "commercial-card" }, [
-            h("h3", "Shop account created"),
+            h("h3", "Tenant onboarding created"),
             facts([
               ["Business reference", result.tenant_public_id],
               ["Shop reference", result.shop_public_id],
@@ -951,7 +947,7 @@ export const AdminApp = {
       ].filter(Boolean);
     }
     watch(page, (id, previous) => {
-      if (previous === "onboard") form.owner_password = "";
+
       loadPage(id);
     });
     onMounted(() => {
