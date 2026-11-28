@@ -153,7 +153,7 @@ SQL, [$tenantId, $asOf])->getResultArray();
         }
 
         $sync = ['state' => 'UNAVAILABLE', 'active_generation_count' => null, 'generation_state' => 'UNAVAILABLE'];
-        if ($this->db->tableExists('sync_generations')) {
+        if ($this->db->tableExists('sync_generations') && in_array('status', $this->db->getFieldNames('sync_generations'), true)) {
             $active = (int) $this->db->table('sync_generations')->where('status', 'ACTIVE')->countAllResults();
             $sync = [
                 'state' => 'AVAILABLE',
