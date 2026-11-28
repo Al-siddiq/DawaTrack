@@ -54,6 +54,7 @@ final class OwnerLifecycleService
 
         $this->lock();
         $formerOwnerUserId = 0;
+        $targetUserId = 0;
         try {
             $this->db->transException(true)->transBegin();
             try {
@@ -104,6 +105,27 @@ SQL, [$tenantPublicId])->getRowArray();
                 );
 
                 $now = UtcTimestamp::now();
+                $formerGrantCount = $this->db->table('membership_permission_grants')
+                    ->where(['membership_id' => (int) $current['id']])
+                    ->where('revoked_at', null)
+                    ->countAllResults();
+                if ($formerGrantCount > 0) {
+                    $this->db->table('membership_permission_grants')
+                        ->where(['membership_id' => (int) $current['id']])
+                        ->where('revoked_at', null)
+                        ->update(['revoked_by_user_id' => $adminUserId, 'revoked_at' => $now]);
+                }
+                $targetGrantCount = $targetMembership === null ? 0 : $this->db->table('membership_permission_grants')
+                    ->where(['membership_id' => (int) $targetMembership['id']])
+                    ->where('revoked_at', null)
+                    ->countAllResults();
+                if ($targetGrantCount > 0) {
+                    $this->db->table('membership_permission_grants')
+                        ->where(['membership_id' => (int) $targetMembership['id']])
+                        ->where('revoked_at', null)
+                        ->update(['revoked_by_user_id' => $adminUserId, 'revoked_at' => $now]);
+                }
+
                 $this->db->table('tenant_memberships')->where('id', (int) $current['id'])->update([
                     'status' => 'DEACTIVATED',
                     'deactivated_at' => $now,
@@ -136,6 +158,7 @@ SQL, [$tenantPublicId])->getRowArray();
                 }
 
                 $formerOwnerUserId = (int) $current['user_id'];
+                $targetUserId = (int) $target->id;
                 $this->db->table('auth_remember_tokens')->where('user_id', $formerOwnerUserId)->delete();
                 $this->db->table('auth_identities')
                     ->where('user_id', $formerOwnerUserId)
@@ -153,6 +176,8 @@ SQL, [$tenantPublicId])->getRowArray();
                         'former_owner_membership_public_id' => $current['public_id'],
                         'new_owner_membership_public_id' => $newMembershipPublicId,
                         'target_membership_reused' => $targetMembership !== null,
+                        'former_owner_grants_revoked' => $formerGrantCount,
+                        'target_staff_grants_revoked' => $targetGrantCount,
                     ],
                 ));
 
@@ -179,6 +204,7 @@ SQL, [$tenantPublicId])->getRowArray();
         }
 
         $this->sessionRevocation->revokeAll($formerOwnerUserId);
+        $this->sessionRevocation->revokeAll($targetUserId);
         return $result;
     }
 
