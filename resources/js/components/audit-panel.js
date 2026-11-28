@@ -62,6 +62,11 @@ export const AuditPanel = {
     async function searchSupportTenants(pageNumber = 1) {
       const request = ++supportSearchGeneration;
       supportSearchLoading.value = true;
+      if (pageNumber === 1) {
+        supportTenants.value = [];
+        support.tenant_public_id = "";
+        support.shop_public_id = "";
+      }
       error.value = "";
       try {
         const response = await phaseOneApi.platformOperations({
