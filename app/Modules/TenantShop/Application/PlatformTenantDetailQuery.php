@@ -106,7 +106,13 @@ SQL, [$tenantId])->getResultArray();
         }
 
         $devices = ['state' => 'UNAVAILABLE', 'registered' => null, 'active' => null, 'revoked' => null];
-        if ($this->db->tableExists('registered_devices') && in_array('status', $this->db->getFieldNames('registered_devices'), true)) {
+        if ($this->db->tableExists('registered_devices')) {
+            $deviceFields = $this->db->getFieldNames('registered_devices');
+            $deviceReady = array_diff(['status', 'tenant_id', 'shop_id', 'public_id', 'credential_hash'], $deviceFields) === [];
+        } else {
+            $deviceReady = false;
+        }
+        if ($deviceReady) {
             $counts = $this->db->query(
                 "SELECT COUNT(*) AS registered,
                     SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active,
