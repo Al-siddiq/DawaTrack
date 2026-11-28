@@ -942,6 +942,7 @@ export const AdminApp = {
               ["Business reference", result.tenant_public_id],
               ["Shop reference", result.shop_public_id],
               ["Owner email", result.owner_email],
+              ["Owner account", result.owner_identity_reused ? "Existing account reused" : "New account created"],
               ["Invitation email", managementLabel(result.invitation_delivery_status)],
               ["Invitation link expires", result.invitation_expires_at || "Not available"],
               ["DawaTrack web address", result.hostname],
