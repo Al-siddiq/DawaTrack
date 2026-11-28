@@ -691,7 +691,10 @@ export const AdminApp = {
       }))) return;
       let delivery = "FAILED";
       await run(async () => {
-        const response = await phaseOneApi.ownerInvitation(data.tenant.public_id, { reason });
+        const response = await phaseOneApi.ownerInvitation(data.tenant.public_id, {
+          current_owner_membership_public_id: data.primary_owner.membership_public_id,
+          reason,
+        });
         delivery = response.data.delivery_status;
         tenantDetail.value = (await phaseOneApi.platformTenant(data.tenant.public_id)).data;
         ownerActionForm.reason = "";
@@ -710,7 +713,10 @@ export const AdminApp = {
       }))) return;
       let delivery = "FAILED";
       await run(async () => {
-        const response = await phaseOneApi.ownerRecovery(data.tenant.public_id, { reason });
+        const response = await phaseOneApi.ownerRecovery(data.tenant.public_id, {
+          current_owner_membership_public_id: data.primary_owner.membership_public_id,
+          reason,
+        });
         delivery = response.data.delivery_status;
         tenantDetail.value = (await phaseOneApi.platformTenant(data.tenant.public_id)).data;
         ownerActionForm.reason = "";
