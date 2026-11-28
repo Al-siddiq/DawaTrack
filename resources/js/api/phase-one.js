@@ -44,6 +44,18 @@ export const phaseOneApi = {
         return apiRequest('/api/v1/platform/operations/tenants' + (suffix ? '?' + suffix : ''));
     },
     platformTenant: (publicId) => apiRequest('/api/v1/platform/operations/tenants/' + encodeURIComponent(publicId)),
+    ownerInvitation: (publicId, values) => apiRequest(
+        `/api/v1/platform/operations/tenants/${encodeURIComponent(publicId)}/owner/invitation`,
+        json('POST', values)
+    ),
+    ownerRecovery: (publicId, values) => apiRequest(
+        `/api/v1/platform/operations/tenants/${encodeURIComponent(publicId)}/owner/recovery`,
+        json('POST', values)
+    ),
+    ownerReassign: (publicId, values) => apiRequest(
+        `/api/v1/platform/operations/tenants/${encodeURIComponent(publicId)}/owner/reassign`,
+        json('POST', values)
+    ),
     subscriptionAction: (id, values) => apiRequest(
         `/api/v1/platform/operations/tenants/${id}/subscriptions`,
         json('POST', values)
