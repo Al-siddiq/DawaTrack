@@ -66,7 +66,92 @@ class Services extends BaseService
         );
     }
 
+    public static function ownerLifecycleService(bool $getShared = true): \\App\\Modules\\Identity\\Application\\OwnerLifecycleService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('ownerLifecycleService');
+        }
+
+        return new \\App\\Modules\\Identity\\Application\\OwnerLifecycleService(
+            db_connect(),
+            static::auditService(),
+            static::userSessionRevocation()
+        );
+    }
+
     public static function ownerInvitationService(bool $getShared = true): \\App\\Modules\\Identity\\Application\\OwnerInvitationService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('ownerInvitationService');
+        }
+
+        return new \\App\\Modules\\Identity\\Application\\OwnerInvitationService(
+            db_connect(),
+            static::auditService()
+        );
+    }
+
+    public static function platformMfa(bool $getShared = true): \App\Security\PlatformMfaService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('platformMfa');
+        }
+
+        return new \App\Security\PlatformMfaService(static::session(), static::auditService());
+    }
+
+    public static function userSessionRevocation(bool $getShared = true): \App\Security\UserSessionRevocationService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('userSessionRevocation');
+        }
+
+        return new \App\Security\UserSessionRevocationService(static::cache(), static::session());
+    }
+
+    public static function cspNonce(bool $getShared = true): CspNonce
+    {
+        if ($getShared) {
+            return static::getSharedInstance('cspNonce');
+        }
+
+        return new CspNonce();
+    }
+
+    public static function sameOriginUrl(bool $getShared = true): SameOriginUrl 
+    {
+        if ($getShared) {
+            return static::getSharedInstance(
+                'sameOriginUrl'
+            );
+        }
+
+        $request = static::request();
+
+        if (! $request instanceof IncomingRequest) {
+            throw new \LogicException(
+                'Same-origin URL generation requires an HTTP request.'
+            );
+        }
+
+        return new SameOriginUrl(
+            db_connect(),
+            $request
+        );
+    }
+
+    /*
+     * public static function example($getShared = true)
+     * {
+     *     if ($getShared) {
+     *         return static::getSharedInstance('example');
+     *     }
+     *
+     *     return new \CodeIgniter\Example();
+     * }
+     */
+}
+ \\App\\Modules\\Identity\\Application\\OwnerInvitationService
     {
         if ($getShared) {
             return static::getSharedInstance('ownerInvitationService');
