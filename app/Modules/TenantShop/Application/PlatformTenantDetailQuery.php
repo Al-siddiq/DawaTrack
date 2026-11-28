@@ -80,6 +80,10 @@ ORDER BY sub.starts_at DESC, sub.id DESC
 LIMIT 5
 SQL, [$tenantId])->getResultArray();
 
+        $currentCount = (int) ($this->db->query(
+            'SELECT COUNT(*) AS total FROM subscriptions WHERE tenant_id = ? AND starts_at <= ? AND ends_at > ?',
+            [$tenantId, $asOf, $asOf],
+        )->getRowArray()['total'] ?? 0);
         $current = null;
         $next = null;
         $history = [];
@@ -95,6 +99,10 @@ SQL, [$tenantId])->getResultArray();
             } elseif ($period['ends_at'] <= $asOf && count($history) < 3) {
                 $history[] = $period;
             }
+        }
+
+        if ($currentCount > 1) {
+            $current = null;
         }
 
         $domain = null;
@@ -167,6 +175,8 @@ SQL, [$tenantId])->getResultArray();
             'active_staff_count' => $staffCount,
             'entitlements' => [
                 'current' => $current,
+                'current_count' => $currentCount,
+                'integrity_issue' => $currentCount > 1,
                 'next' => $next,
                 'historical_periods' => $history,
                 'history_limit' => 3,
