@@ -9,7 +9,7 @@ use App\Exceptions\ApiException;
 use App\Libraries\Http\ApiResponse;
 use App\Modules\Subscription\Application\SubscriptionService;
 use App\Modules\Platform\Application\PlatformDashboardQuery;
-use App\Modules\Platform\Application\PlatformLifecycleService;
+use App\Modules\TenantShop\Application\PlatformLifecycleService;
 use App\Modules\Platform\Application\PlatformTenantDetailQuery;
 use App\Modules\Platform\Application\PlatformTenantDirectoryQuery;
 use Config\Services;
