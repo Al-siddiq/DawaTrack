@@ -112,7 +112,7 @@ final class OnboardingService
                 resourceType: 'tenant_membership',
                 resourcePublicId: $membershipPublicId,
                 reason: $data['reason'],
-                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'INVITED'],
+                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'INVITED', 'identity_reused' => $ownerIdentityReused],
             ));
             $this->audit->append(new AuditAppendCommand(
                 actor: $platformActor,
@@ -126,6 +126,7 @@ final class OnboardingService
                     'owner_membership_public_id' => $membershipPublicId,
                     'owner_status' => 'INVITED',
                     'tenant_status' => 'ONBOARDING',
+                    'owner_identity_reused' => $ownerIdentityReused,
                 ],
             ));
             (new ChangeSequenceService($this->database, service('requestContext')))->publish([
@@ -147,6 +148,7 @@ final class OnboardingService
                 'owner_email' => $data['owner_email'],
                 'owner_membership_public_id' => $membershipPublicId,
                 'owner_user_id' => $ownerUserId,
+                'owner_identity_reused' => $ownerIdentityReused,
             ];
         } catch (Throwable $exception) {
             $this->database->transRollback();
@@ -396,11 +398,12 @@ SQL, [$userId])->getRowArray();
         }
     }
 
-    /** @return array{user_id: int} */
+    /** @return array{user_id: int, identity_reused: bool} */
     private function createOwner(array $data): array
     {
         $provider = auth()->getProvider();
         $user = $provider->findByCredentials(['email' => $data['owner_email']]);
+        $identityReused = $user !== null;
         if ($user === null) {
             $user = new User([
                 'username' => $data['owner_name'],
@@ -436,7 +439,7 @@ SQL, [$userId])->getRowArray();
             throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'The Owner password setup state could not be prepared.', 409);
         }
 
-        return ['user_id' => (int) $user->id];
+        return ['user_id' => (int) $user->id, 'identity_reused' => $identityReused];
     }
 
     private function assertNoShopExists(int $tenantId): void
