@@ -63,7 +63,8 @@ export const AdminApp = {
       directoryFilters = reactive({ tenant_status: "", shop_status: "", entitlement_status: "" }),
       tenantDetail = ref(null),
       tenantDetailLoading = ref(false),
-      operationForms = reactive({});
+      operationForms = reactive({}),
+      ownerActionForm = reactive({ target_email: "", reason: "" });
     const form = reactive({
       business_name: "",
       shop_name: "",
@@ -76,8 +77,7 @@ export const AdminApp = {
       platform_subdomain: "",
       owner_name: "",
       owner_email: "",
-      owner_password: "",
-      reason: "New shop account",
+      reason: "New Tenant onboarding",
     });
     const fields = [
       ["business_name", "Business name", "text", true],
@@ -90,8 +90,7 @@ export const AdminApp = {
       ["state_region", "State or region", "text", true],
       ["platform_subdomain", "DawaTrack address prefix", "text", true],
       ["owner_name", "Shop owner name", "text", true],
-      ["owner_email", "Shop owner email", "email", true],
-      ["owner_password", "Temporary owner password", "password", true],
+      ["owner_email", "Primary Owner email", "email", true],
       ["reason", "Why are you adding this shop?", "text", true],
     ];
     const blocked = computed(
@@ -261,7 +260,7 @@ export const AdminApp = {
           Object.assign(result, (await phaseOneApi.onboard(form)).data);
           step.value = 3;
         } finally {
-          form.owner_password = "";
+
         }
       }, "Shop account created.");
       if (error.value) step.value = 1;
@@ -682,6 +681,72 @@ export const AdminApp = {
         ]),
       ]);
     }
+    async function ownerInvitationAction() {
+      const data = tenantDetail.value;
+      if (!data || data.primary_owner.membership_status !== "INVITED") return;
+      const reason = ownerActionForm.reason.trim();
+      if (!reason) { error.value = "Enter why the Owner invitation is being resent."; return; }
+      if (!(await confirmation.ask({
+        title: "Resend the Primary Owner invitation?",
+        message: "A fresh one-time sign-in link will be emailed. Any previous unused invitation link will stop working.",
+        confirm: "Resend invitation",
+      }))) return;
+      let delivery = "FAILED";
+      await run(async () => {
+        const response = await phaseOneApi.ownerInvitation(data.tenant.public_id, { reason });
+        delivery = response.data.delivery_status;
+        tenantDetail.value = (await phaseOneApi.platformTenant(data.tenant.public_id)).data;
+        ownerActionForm.reason = "";
+      }, "Owner invitation request processed.");
+      if (!error.value && delivery === "FAILED") notice.value = "The invitation link was prepared, but the email was not delivered. You can safely retry.";
+    }
+    async function ownerRecoveryAction() {
+      const data = tenantDetail.value;
+      if (!data || data.primary_owner.membership_status !== "ACTIVE") return;
+      const reason = ownerActionForm.reason.trim();
+      if (!reason) { error.value = "Enter why Owner access recovery is required."; return; }
+      if (!(await confirmation.ask({
+        title: "Send Owner access recovery?",
+        message: "A fresh one-time sign-in link will be emailed to the current Primary Owner. Any previous unused magic link will stop working.",
+        confirm: "Send recovery link",
+      }))) return;
+      let delivery = "FAILED";
+      await run(async () => {
+        const response = await phaseOneApi.ownerRecovery(data.tenant.public_id, { reason });
+        delivery = response.data.delivery_status;
+        tenantDetail.value = (await phaseOneApi.platformTenant(data.tenant.public_id)).data;
+        ownerActionForm.reason = "";
+      }, "Owner access recovery request processed.");
+      if (!error.value && delivery === "FAILED") notice.value = "The access link was prepared, but the email was not delivered. Retry when email service is available.";
+    }
+    async function ownerReassignAction() {
+      const data = tenantDetail.value;
+      const owner = data?.primary_owner;
+      if (!data || owner?.membership_status !== "ACTIVE") return;
+      const reason = ownerActionForm.reason.trim();
+      const targetEmail = ownerActionForm.target_email.trim();
+      if (!targetEmail || !reason) { error.value = "Enter the new Owner email and the reason for the transfer."; return; }
+      if (!(await confirmation.ask({
+        title: "Transfer Primary Owner responsibility?",
+        message: "Current Owner: " + (owner.owner_name || owner.owner_email) + ". New Owner: " + targetEmail + ". The former Owner's sessions and remembered access will be revoked. This action cannot be undone automatically.",
+        confirm: "Confirm Owner transfer",
+        danger: true,
+      }))) return;
+      let delivery = "FAILED";
+      await run(async () => {
+        const response = await phaseOneApi.ownerReassign(data.tenant.public_id, {
+          current_owner_membership_public_id: owner.membership_public_id,
+          target_email: targetEmail,
+          reason,
+          confirmed: true,
+        });
+        delivery = response.data.new_owner_access_delivery_status;
+        tenantDetail.value = (await phaseOneApi.platformTenant(data.tenant.public_id)).data;
+        ownerActionForm.target_email = "";
+        ownerActionForm.reason = "";
+      }, "Primary Owner responsibility transferred.");
+      if (!error.value && delivery === "FAILED") notice.value = "Ownership was transferred, but the new Owner access email was not delivered. Use Owner recovery to retry.";
+    }
     function tenantDetailView() {
       if (tenantDetailLoading.value) return h(UiLoading, { label: "Loading Tenant details…" });
       const data = tenantDetail.value;
@@ -700,6 +765,30 @@ export const AdminApp = {
           ["Status reason", tenant.status_reason || "None recorded"],
           ["Primary Owner membership", managementLabel(data.primary_owner.membership_status)],
           ["Active Staff", data.active_staff_count],
+        ]),
+        h("h3", "Primary Owner"),
+        facts([
+          ["Owner name", data.primary_owner.owner_name || "Not recorded"],
+          ["Owner email", data.primary_owner.owner_email || "Not available"],
+          ["Membership status", managementLabel(data.primary_owner.membership_status)],
+          ["Membership reference", data.primary_owner.membership_public_id || "Not available"],
+          ["Invited", data.primary_owner.invited_at || "Not invited"],
+          ["Activated", data.primary_owner.activated_at || "Not activated"],
+        ]),
+        data.primary_owner.membership_status === "INVITED" && h("section", { class: "commercial-card" }, [
+          h("p", "The Tenant and Shop are pending. The Owner must accept the invitation before access is activated."),
+          field("owner-action-reason", "Reason for resending invitation", ownerActionForm.reason, value => { ownerActionForm.reason = value; }, { required: true, disabled: blocked.value }),
+          action("Resend Owner invitation", ownerInvitationAction, blocked.value, "btn-primary"),
+        ]),
+        data.primary_owner.membership_status === "ACTIVE" && h("section", { class: "commercial-card" }, [
+          h("h4", "Owner access recovery"),
+          field("owner-action-reason", "Reason for access recovery or transfer", ownerActionForm.reason, value => { ownerActionForm.reason = value; }, { required: true, disabled: blocked.value }),
+          action("Send Owner access recovery link", ownerRecoveryAction, blocked.value, "btn-outline-primary"),
+          h("hr"),
+          h("h4", "Reassign Primary Owner"),
+          field("owner-target-email", "New Owner's existing DawaTrack email", ownerActionForm.target_email, value => { ownerActionForm.target_email = value; }, { type: "email", required: true, disabled: blocked.value }),
+          note("The new Owner must already have an active DawaTrack account and must not have active access to another Tenant."),
+          action("Review and transfer ownership", ownerReassignAction, blocked.value, "btn-outline-danger"),
         ]),
         h("h3", "Shop details"),
         shop ? facts([
@@ -770,7 +859,7 @@ export const AdminApp = {
     }
     function onboarding() {
       return [
-        h("h2", "Add a shop"),
+        h("h2", "Register a Tenant"),
         h(
           "ol",
           { class: "step-indicator", "aria-label": "Add shop progress" },
@@ -803,15 +892,11 @@ export const AdminApp = {
                 formField(form, key, label, {
                   type,
                   required: !!required,
-                  minlength: type === "password" ? 12 : undefined,
-                  autocomplete:
-                    type === "password" ? "new-password" : undefined,
-                  help:
-                    key === "platform_subdomain"
-                      ? "Enter the address prefix only, for example myshop."
-                      : key === "owner_password"
-                        ? "At least 12 characters. The owner must change this password on first sign-in."
-                        : "",
+                  help: key === "platform_subdomain"
+                    ? "Enter the address prefix only, for example myshop."
+                    : key === "owner_email"
+                      ? "We will email the Primary Owner a secure invitation link. They will set their own password."
+                      : "",
                 }),
               )
               .concat(submit("Review shop details", blocked.value)),
@@ -820,15 +905,10 @@ export const AdminApp = {
           h("section", { class: "commercial-card" }, [
             h("h3", "Check shop and owner details"),
             facts(
-              fields.map(([key, label, type]) => [
-                label,
-                type === "password"
-                  ? "Set (hidden)"
-                  : form[key] || "Not provided",
-              ]),
+              fields.map(([key, label]) => [label, form[key] || "Not provided"]),
             ),
             note(
-              "The password is not shown here and is cleared after submission. Creating this account also creates its first shop and owner.",
+              "The Tenant and Shop remain pending until the Primary Owner accepts the secure email invitation. The Owner creates their own password; no temporary password is shared.",
             ),
             h("div", { class: "ui-actions" }, [
               action(
@@ -839,7 +919,7 @@ export const AdminApp = {
                 busy.value,
               ),
               action(
-                "Create shop account",
+                "Create Tenant and send invitation",
                 onboard,
                 blocked.value,
                 "btn-primary",
@@ -858,10 +938,14 @@ export const AdminApp = {
               ["Business reference", result.tenant_public_id],
               ["Shop reference", result.shop_public_id],
               ["Owner email", result.owner_email],
+              ["Invitation email", managementLabel(result.invitation_delivery_status)],
               ["DawaTrack web address", result.hostname],
             ]),
             note(
-              "Keep these details for your records. The temporary password is not shown again.",
+              result.invitation_delivery_status === "SENT"
+                ? "The secure Owner invitation email was sent. The Tenant and Shop will activate after the Owner accepts it."
+                : "The Tenant is safely saved as pending, but the invitation email was not delivered. Open Tenant details and resend the invitation.",
+              result.invitation_delivery_status === "SENT" ? "success" : "warning",
             ),
           ]),
       ].filter(Boolean);
@@ -876,7 +960,7 @@ export const AdminApp = {
       window.addEventListener("offline", connection);
     });
     onUnmounted(() => {
-      form.owner_password = "";
+
       window.removeEventListener("online", connection);
       window.removeEventListener("offline", connection);
     });
