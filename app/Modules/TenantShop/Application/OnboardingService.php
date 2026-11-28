@@ -49,7 +49,9 @@ final class OnboardingService
             $now = UtcTimestamp::now();
             $owner = $this->createOwner($data);
             $ownerUserId = (int) $owner['user_id'];
-            (new MembershipInvariantService($this->database))->assertUserMayActivate($ownerUserId);
+            $membershipInvariants = new MembershipInvariantService($this->database);
+            $membershipInvariants->assertUserMayActivate($ownerUserId);
+            $membershipInvariants->assertUserMayBeInvitedAsPrimaryOwner($ownerUserId);
 
             $tenantPublicId = Uuid::v4();
             $this->database->table('tenants')->insert([
@@ -187,6 +189,16 @@ SQL, [$userId])->getRowArray();
 
                 if ($membership === null || $membership['tenant_status'] !== 'ONBOARDING' || $membership['shop_status'] !== 'INACTIVE') {
                     throw new ApiException('OWNER_INVITATION_NOT_PENDING', 'There is no pending Owner invitation to activate.', 409);
+                }
+                if ($this->database->table('tenant_memberships')
+                    ->where(['user_id' => $userId, 'role' => 'PRIMARY_OWNER', 'status' => 'INVITED'])
+                    ->countAllResults() !== 1) {
+                    throw new ApiException('OWNER_INVITATION_AMBIGUOUS', 'The Owner invitation state needs Platform Administrator review.', 409);
+                }
+                $membershipInvariants = new MembershipInvariantService($this->database);
+                $membershipInvariants->assertUserMayBeInvitedAsPrimaryOwner($userId, (int) $membership['tenant_id']);
+                if ($this->database->table('shops')->where('tenant_id', (int) $membership['tenant_id'])->countAllResults() !== 1) {
+                    throw new ApiException('ONE_SHOP_INVARIANT', 'The Tenant Shop relationship needs Platform Administrator review.', 409);
                 }
                 if ($this->database->table('sync_generations')->where('status', 'ACTIVE')->countAllResults() !== 1) {
                     throw new ApiException('SYNC_GENERATION_REQUIRED', 'The platform recovery generation is not ready. Contact the Platform Administrator.', 409);
@@ -378,7 +390,9 @@ SQL, [$userId])->getRowArray();
             if (! $existingOwner->active || $existingOwner->inGroup('platform_admin')) {
                 throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'That Owner identity cannot be used.', 409, ['owner_email' => ['Choose an active non-Platform account.']]);
             }
-            (new MembershipInvariantService($this->database))->assertUserMayActivate((int) $existingOwner->id);
+            $membershipInvariants = new MembershipInvariantService($this->database);
+            $membershipInvariants->assertUserMayActivate((int) $existingOwner->id);
+            $membershipInvariants->assertUserMayBeInvitedAsPrimaryOwner((int) $existingOwner->id);
         }
     }
 
