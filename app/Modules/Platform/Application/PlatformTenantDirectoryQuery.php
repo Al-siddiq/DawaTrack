@@ -193,6 +193,7 @@ SELECT
     COALESCE(ent.current_count, 0) AS current_count,
     COALESCE(ent.future_count, 0) AS future_count,
     ent.current_plan_code,
+    ent.current_plan_name,
     ent.current_starts_at,
     ent.current_ends_at,
     CASE
