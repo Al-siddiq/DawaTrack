@@ -92,6 +92,7 @@ The corresponding generated public JavaScript copies were synchronized byte-for-
 - `public/assets/js/admin/app.js`
 - `public/assets/js/api/phase-one.js`
 - `public/assets/js/shared/workspace-registry.js`
+- `public/assets/js/components/audit-panel.js`
 
 No new Sass styling or CSS output change is required for this implementation; existing responsive Bootstrap/UI styles are reused.
 
