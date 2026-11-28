@@ -35,7 +35,7 @@ final class OnboardingService
      * The advisory lock serializes global identity, hostname and one-Shop checks.
      *
      * @param array<string, mixed> $input
-     * @return array{tenant_public_id: string, shop_public_id: string, hostname: string, owner_email: string}
+     * @return array{tenant_public_id: string, shop_public_id: string, hostname: string, owner_email: string, owner_membership_public_id: string, owner_user_id: int}
      */
     public function onboard(array $input, int $adminUserId): array
     {
@@ -55,8 +55,8 @@ final class OnboardingService
             $this->database->table('tenants')->insert([
                 'public_id' => $tenantPublicId,
                 'legal_or_business_name' => $data['business_name'],
-                'status' => 'ACTIVE',
-                'activated_at' => $now,
+                'status' => 'ONBOARDING',
+                'activated_at' => null,
                 'created_by_user_id' => $adminUserId,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -78,8 +78,8 @@ final class OnboardingService
                 'country_code' => 'NG',
                 'timezone_name' => 'Africa/Lagos',
                 'currency_code' => 'NGN',
-                'status' => 'ACTIVE',
-                'activated_at' => $now,
+                'status' => 'INACTIVE',
+                'activated_at' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
@@ -91,8 +91,8 @@ final class OnboardingService
                 'tenant_id' => $tenantId,
                 'user_id' => $ownerUserId,
                 'role' => 'PRIMARY_OWNER',
-                'status' => 'ACTIVE',
-                'activated_at' => $now,
+                'status' => 'INVITED',
+                'activated_at' => null,
                 'created_by_user_id' => $adminUserId,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -101,7 +101,6 @@ final class OnboardingService
 
             $brandingPublicId = $this->createBranding($tenantId, $shopId, $adminUserId, $data['shop_name'], $now);
             $domainPublicId = $this->createPlatformDomain($tenantId, $shopId, $adminUserId, $data['hostname'], $now);
-            $subscription = $this->createTrial($tenantId, $adminUserId, $now);
 
             $platformActor = AuditActor::platformUser($adminUserId, $tenantId, $shopId);
             $this->audit->append(new AuditAppendCommand(
@@ -111,7 +110,7 @@ final class OnboardingService
                 resourceType: 'tenant_membership',
                 resourcePublicId: $membershipPublicId,
                 reason: $data['reason'],
-                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'ACTIVE'],
+                metadata: ['role' => 'PRIMARY_OWNER', 'status' => 'INVITED'],
             ));
             $this->audit->append(new AuditAppendCommand(
                 actor: $platformActor,
@@ -123,8 +122,8 @@ final class OnboardingService
                 metadata: [
                     'shop_public_id' => $shopPublicId,
                     'owner_membership_public_id' => $membershipPublicId,
-                    'subscription_public_id' => $subscription['public_id'],
-                    'plan' => 'TRIAL',
+                    'owner_status' => 'INVITED',
+                    'tenant_status' => 'ONBOARDING',
                 ],
             ));
             (new ChangeSequenceService($this->database, service('requestContext')))->publish([
@@ -133,7 +132,6 @@ final class OnboardingService
                 new ChangeCommand($tenantId, $shopId, 'tenant_membership', $membershipPublicId),
                 new ChangeCommand($tenantId, $shopId, 'shop_branding_profile', $brandingPublicId),
                 new ChangeCommand($tenantId, $shopId, 'shop_domain', $domainPublicId),
-                new ChangeCommand($tenantId, null, 'subscription', $subscription['public_id']),
             ]);
 
             if (! $this->database->transCommit()) {
@@ -145,10 +143,151 @@ final class OnboardingService
                 'shop_public_id' => $shopPublicId,
                 'hostname' => $data['hostname'],
                 'owner_email' => $data['owner_email'],
+                'owner_membership_public_id' => $membershipPublicId,
+                'owner_user_id' => $ownerUserId,
             ];
         } catch (Throwable $exception) {
             $this->database->transRollback();
             throw $exception;
+        } finally {
+            $this->database->query('SELECT RELEASE_LOCK(?)', [self::LOCK_NAME]);
+        }
+    }
+
+    /**
+     * Completes a Primary Owner invitation after Shield magic-link authentication.
+     *
+     * @return array{tenant_public_id: string, shop_public_id: string, trial_public_id: string, password_changed: bool}
+     */
+    public function completeOwnerActivation(int $userId, ?string $newPassword = null): array
+    {
+        $this->acquireLock();
+        try {
+            $this->database->transException(true)->transBegin();
+            try {
+                $membership = $this->database->query(<<<'SQL'
+SELECT m.id AS membership_id,
+       m.public_id AS membership_public_id,
+       m.tenant_id,
+       m.user_id,
+       t.public_id AS tenant_public_id,
+       t.status AS tenant_status,
+       s.id AS shop_id,
+       s.public_id AS shop_public_id,
+       s.status AS shop_status
+FROM tenant_memberships m
+INNER JOIN tenants t ON t.id = m.tenant_id
+INNER JOIN shops s ON s.tenant_id = t.id
+WHERE m.user_id = ?
+  AND m.role = 'PRIMARY_OWNER'
+  AND m.status = 'INVITED'
+LIMIT 1
+FOR UPDATE
+SQL, [$userId])->getRowArray();
+
+                if ($membership === null || $membership['tenant_status'] !== 'ONBOARDING' || $membership['shop_status'] !== 'INACTIVE') {
+                    throw new ApiException('OWNER_INVITATION_NOT_PENDING', 'There is no pending Owner invitation to activate.', 409);
+                }
+                if ($this->database->table('sync_generations')->where('status', 'ACTIVE')->countAllResults() !== 1) {
+                    throw new ApiException('SYNC_GENERATION_REQUIRED', 'The platform recovery generation is not ready. Contact the Platform Administrator.', 409);
+                }
+                if ($this->database->table('subscription_plans')->where(['code' => 'TRIAL', 'is_active' => 1])->countAllResults() !== 1) {
+                    throw new ApiException('TRIAL_PLAN_REQUIRED', 'The Trial plan is not available. Contact the Platform Administrator.', 409);
+                }
+
+                $provider = auth()->getProvider();
+                $user = $provider->findById($userId);
+                if ($user === null || ! $user->active || $user->inGroup('platform_admin')) {
+                    throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'The Owner identity is unavailable.', 409);
+                }
+                $emailIdentity = $this->database->table('auth_identities')
+                    ->where(['user_id' => $userId, 'type' => 'email_password'])
+                    ->get()->getRowArray();
+                $requiresReset = $emailIdentity !== null && (int) ($emailIdentity['force_reset'] ?? 0) === 1;
+                if ($requiresReset && ($newPassword === null || $newPassword === '')) {
+                    throw new ApiException('VALIDATION_FAILED', 'Choose a new password to finish setting up your account.', 422, ['password' => ['A new password is required.']]);
+                }
+                if (! $requiresReset && $newPassword !== null) {
+                    throw new ApiException('OWNER_PASSWORD_STATE_CHANGED', 'The Owner password state changed. Reload and try again.', 409);
+                }
+
+                (new MembershipInvariantService($this->database))->assertUserMayActivate($userId, (int) $membership['membership_id']);
+                $now = UtcTimestamp::now();
+                $passwordChanged = false;
+                if ($requiresReset) {
+                    $user->password = $newPassword;
+                    if (! $provider->save($user)) {
+                        throw new ApiException('OWNER_PASSWORD_SETUP_FAILED', 'The new password could not be saved.', 500);
+                    }
+                    $user->undoForcePasswordReset();
+                    $passwordChanged = true;
+                }
+
+                $this->database->table('tenant_memberships')->where('id', (int) $membership['membership_id'])->update([
+                    'status' => 'ACTIVE',
+                    'activated_at' => $now,
+                    'deactivated_at' => null,
+                    'updated_at' => $now,
+                ]);
+                $this->database->table('tenants')->where('id', (int) $membership['tenant_id'])->update([
+                    'status' => 'ACTIVE',
+                    'activated_at' => $now,
+                    'updated_at' => $now,
+                ]);
+                $this->database->table('shops')->where('id', (int) $membership['shop_id'])->update([
+                    'status' => 'ACTIVE',
+                    'activated_at' => $now,
+                    'deactivated_at' => null,
+                    'updated_at' => $now,
+                ]);
+
+                $trial = $this->createTrial((int) $membership['tenant_id'], $userId, $now);
+                $this->audit->append(new AuditAppendCommand(
+                    actor: AuditActor::identityUser($userId),
+                    actionCode: 'owner.activated',
+                    category: AuditCategory::SECURITY,
+                    resourceType: 'tenant_membership',
+                    resourcePublicId: $membership['membership_public_id'],
+                    reason: 'Owner accepted the onboarding invitation.',
+                    metadata: [
+                        'membership_status' => 'ACTIVE',
+                        'tenant_status' => 'ACTIVE',
+                        'shop_status' => 'ACTIVE',
+                        'trial_created' => true,
+                    ],
+                ));
+                if ($passwordChanged) {
+                    $this->audit->append(new AuditAppendCommand(
+                        actor: AuditActor::identityUser($userId),
+                        actionCode: 'identity.password_changed',
+                        category: AuditCategory::SECURITY,
+                        resourceType: 'user_identity',
+                        reason: 'Owner completed the invitation password setup.',
+                        metadata: ['forced_reset' => true],
+                    ));
+                }
+
+                (new ChangeSequenceService($this->database, service('requestContext')))->publish([
+                    new ChangeCommand((int) $membership['tenant_id'], null, 'tenant', $membership['tenant_public_id']),
+                    new ChangeCommand((int) $membership['tenant_id'], (int) $membership['shop_id'], 'shop', $membership['shop_public_id']),
+                    new ChangeCommand((int) $membership['tenant_id'], (int) $membership['shop_id'], 'tenant_membership', $membership['membership_public_id']),
+                    new ChangeCommand((int) $membership['tenant_id'], null, 'subscription', $trial['public_id']),
+                ]);
+
+                if (! $this->database->transCommit()) {
+                    throw new ApiException('OWNER_ACTIVATION_FAILED', 'Owner activation could not be committed.', 500);
+                }
+
+                return [
+                    'tenant_public_id' => $membership['tenant_public_id'],
+                    'shop_public_id' => $membership['shop_public_id'],
+                    'trial_public_id' => $trial['public_id'],
+                    'password_changed' => $passwordChanged,
+                ];
+            } catch (Throwable $exception) {
+                $this->database->transRollback();
+                throw $exception;
+            }
         } finally {
             $this->database->query('SELECT RELEASE_LOCK(?)', [self::LOCK_NAME]);
         }
@@ -169,11 +308,10 @@ final class OnboardingService
             'platform_subdomain' => strtolower(trim((string) ($input['platform_subdomain'] ?? ''))),
             'owner_name' => trim((string) ($input['owner_name'] ?? '')),
             'owner_email' => strtolower(trim((string) ($input['owner_email'] ?? ''))),
-            'owner_password' => (string) ($input['owner_password'] ?? ''),
             'reason' => trim((string) ($input['reason'] ?? '')),
         ];
         $errors = [];
-        foreach (['business_name', 'shop_name', 'address_line_1', 'city_town', 'state_region', 'platform_subdomain', 'owner_name', 'owner_email', 'owner_password', 'reason'] as $required) {
+        foreach (['business_name', 'shop_name', 'address_line_1', 'city_town', 'state_region', 'platform_subdomain', 'owner_name', 'owner_email', 'reason'] as $required) {
             if ($fields[$required] === '') {
                 $errors[$required] = ['This field is required.'];
             }
@@ -197,9 +335,6 @@ final class OnboardingService
         }
         if ($fields['contact_phone'] !== null && (mb_strlen($fields['contact_phone']) > 32 || preg_match('/^\+?[0-9().\s-]+$/', $fields['contact_phone']) !== 1)) {
             $errors['contact_phone'] = ['Enter a valid phone number of no more than 32 characters.'];
-        }
-        if (strlen($fields['owner_password']) < 12) {
-            $errors['owner_password'] = ['Use a password of at least 12 characters.'];
         }
         if (preg_match('/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/', $fields['platform_subdomain']) !== 1) {
             $errors['platform_subdomain'] = ['Use a lowercase DNS label without a scheme, path, or port.'];
@@ -238,8 +373,12 @@ final class OnboardingService
         if ($this->database->table('shop_domains')->where('hostname', $hostname)->countAllResults() > 0) {
             throw new ApiException('HOSTNAME_UNAVAILABLE', 'That platform address is unavailable.', 409, ['platform_subdomain' => ['Choose another platform subdomain.']]);
         }
-        if (auth()->getProvider()->findByCredentials(['email' => $ownerEmail]) !== null) {
-            throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'That Owner identity cannot be used.', 409, ['owner_email' => ['Use an email not assigned to another account.']]);
+        $existingOwner = auth()->getProvider()->findByCredentials(['email' => $ownerEmail]);
+        if ($existingOwner !== null) {
+            if (! $existingOwner->active || $existingOwner->inGroup('platform_admin')) {
+                throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'That Owner identity cannot be used.', 409, ['owner_email' => ['Choose an active non-Platform account.']]);
+            }
+            (new MembershipInvariantService($this->database))->assertUserMayActivate((int) $existingOwner->id);
         }
     }
 
@@ -247,23 +386,32 @@ final class OnboardingService
     private function createOwner(array $data): array
     {
         $provider = auth()->getProvider();
-        $user = new User([
-            'username' => $data['owner_name'],
-            'email' => $data['owner_email'],
-            'password' => $data['owner_password'],
-            'active' => 1,
-        ]);
-        if (! $provider->save($user)) {
-            throw new ApiException('VALIDATION_FAILED', 'The Owner identity is invalid.', 422, ['owner_email' => ['The Owner identity could not be created.']]);
+        $user = $provider->findByCredentials(['email' => $data['owner_email']]);
+        if ($user === null) {
+            $user = new User([
+                'username' => $data['owner_name'],
+                'email' => $data['owner_email'],
+                'password' => 'Dt!' . bin2hex(random_bytes(24)) . 'Aa9!',
+                'active' => 1,
+            ]);
+            if (! $provider->save($user)) {
+                throw new ApiException('VALIDATION_FAILED', 'The Owner identity is invalid.', 422, ['owner_email' => ['The Owner identity could not be created.']]);
+            }
+            $user = $provider->findById((int) $provider->getInsertID());
         }
-        $userId = (int) $provider->getInsertID();
-        $savedUser = $provider->findById($userId);
-        if ($savedUser !== null && method_exists($savedUser, 'forcePasswordReset')) {
-            $savedUser->forcePasswordReset();
-            $provider->save($savedUser);
+        if ($user === null || ! $user->active || $user->inGroup('platform_admin')) {
+            throw new ApiException('OWNER_IDENTITY_UNAVAILABLE', 'That Owner identity cannot be used.', 409);
         }
 
-        return ['user_id' => $userId];
+        $emailIdentity = $this->database->table('auth_identities')
+            ->where(['user_id' => (int) $user->id, 'type' => 'email_password'])
+            ->get()->getRowArray();
+        if ($emailIdentity !== null && (int) ($emailIdentity['force_reset'] ?? 0) !== 1) {
+            $user->forcePasswordReset();
+            $provider->save($user);
+        }
+
+        return ['user_id' => (int) $user->id];
     }
 
     private function assertNoShopExists(int $tenantId): void
