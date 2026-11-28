@@ -337,7 +337,7 @@ export const AuditPanel = {
                     disabled: loading.value,
                   },
                 ),
-                submit("Confirm support access", loading.value, {
+                submit("Confirm support access", loading.value || supportSearchLoading.value, {
                   loading: loading.value,
                 }),
               ],
