@@ -75,6 +75,7 @@ SQL, [$membershipPublicId])->getRowArray();
                     throw new ApiException('RESOURCE_NOT_FOUND', 'Primary Owner not found.', 404);
                 }
 
+                helper('text');
                 $token = random_string('crypto', 40);
                 $expires = Time::now()->addSeconds(setting('Auth.magicLinkLifetime'));
                 $identityModel = model(UserIdentityModel::class);
