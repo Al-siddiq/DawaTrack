@@ -65,7 +65,7 @@ SQL, [$publicId])->getRowArray();
             ->where(['tenant_id' => $tenantId, 'role' => 'STAFF', 'status' => 'ACTIVE'])
             ->countAllResults();
 
-        $periods = $this->db->query(<<<'SQL'
+        $currentRows = $this->db->query(<<<'SQL'
 SELECT sub.public_id,
        sub.entitlement_type,
        sub.plan_code_snapshot AS plan_code,
@@ -76,34 +76,45 @@ SELECT sub.public_id,
 FROM subscriptions sub
 INNER JOIN subscription_plans plan ON plan.id = sub.subscription_plan_id
 WHERE sub.tenant_id = ?
+  AND sub.starts_at <= ?
+  AND sub.ends_at > ?
 ORDER BY sub.starts_at DESC, sub.id DESC
-LIMIT 5
-SQL, [$tenantId])->getResultArray();
+LIMIT 2
+SQL, [$tenantId, $asOf, $asOf])->getResultArray();
 
-        $currentCount = (int) ($this->db->query(
-            'SELECT COUNT(*) AS total FROM subscriptions WHERE tenant_id = ? AND starts_at <= ? AND ends_at > ?',
-            [$tenantId, $asOf, $asOf],
-        )->getRowArray()['total'] ?? 0);
-        $current = null;
-        $next = null;
-        $history = [];
-        foreach ($periods as $period) {
-            if ($period['starts_at'] <= $asOf && $period['ends_at'] > $asOf) {
-                if ($current === null) {
-                    $current = $period;
-                }
-            } elseif ($period['starts_at'] > $asOf) {
-                if ($next === null || $period['starts_at'] < $next['starts_at']) {
-                    $next = $period;
-                }
-            } elseif ($period['ends_at'] <= $asOf && count($history) < 3) {
-                $history[] = $period;
-            }
-        }
+        $next = $this->db->query(<<<'SQL'
+SELECT sub.public_id,
+       sub.entitlement_type,
+       sub.plan_code_snapshot AS plan_code,
+       sub.starts_at,
+       sub.ends_at,
+       sub.max_active_staff_snapshot,
+       plan.name AS plan_name
+FROM subscriptions sub
+INNER JOIN subscription_plans plan ON plan.id = sub.subscription_plan_id
+WHERE sub.tenant_id = ?
+  AND sub.starts_at > ?
+ORDER BY sub.starts_at ASC, sub.id ASC
+LIMIT 1
+SQL, [$tenantId, $asOf])->getRowArray();
 
-        if ($currentCount > 1) {
-            $current = null;
-        }
+        $history = $this->db->query(<<<'SQL'
+SELECT sub.public_id,
+       sub.entitlement_type,
+       sub.plan_code_snapshot AS plan_code,
+       sub.starts_at,
+       sub.ends_at,
+       sub.max_active_staff_snapshot,
+       plan.name AS plan_name
+FROM subscriptions sub
+INNER JOIN subscription_plans plan ON plan.id = sub.subscription_plan_id
+WHERE sub.tenant_id = ?
+  AND sub.ends_at <= ?
+ORDER BY sub.ends_at DESC, sub.id DESC
+LIMIT 3
+SQL, [$tenantId, $asOf])->getResultArray();
+
+        $current = $currentCount === 1 ? ($currentRows[0] ?? null) : null;
 
         $domain = null;
         if ($shopId !== null) {
