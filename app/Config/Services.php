@@ -66,6 +66,18 @@ class Services extends BaseService
         );
     }
 
+    public static function ownerInvitationService(bool $getShared = true): \\App\\Modules\\Identity\\Application\\OwnerInvitationService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('ownerInvitationService');
+        }
+
+        return new \\App\\Modules\\Identity\\Application\\OwnerInvitationService(
+            db_connect(),
+            static::auditService()
+        );
+    }
+
     public static function platformMfa(bool $getShared = true): \App\Security\PlatformMfaService
     {
         if ($getShared) {
