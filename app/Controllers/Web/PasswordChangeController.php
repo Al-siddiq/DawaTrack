@@ -25,7 +25,7 @@ final class PasswordChangeController extends BaseController
             return redirect()->to(service('sameOriginUrl')->to('/'));
         }
 
-        return view('auth/change_password');
+        return view('auth/change_password', ['magicLinkSession' => $this->isMagicLinkSession()]);
     }
 
     public function update(): RedirectResponse
@@ -40,30 +40,31 @@ final class PasswordChangeController extends BaseController
             return redirect()->to(service('sameOriginUrl')->to('/'));
         }
 
-        $rules = [
-            'current_password' => [
-                'label' => 'Current password',
-                'rules' => [
-                    'required',
-                ],
-            ],
+        $magicLinkSession = $this->isMagicLinkSession();
+        $rules = [];
 
-            'password' => [
+        if (! $magicLinkSession) {
+            $rules['current_password'] = [
+                'label' => 'Current password',
+                'rules' => ['required'],
+            ];
+        }
+
+        $rules['password'] = [
                 'label' => 'New password',
                 'rules' => [
                     'required',
                     'strong_password',
                 ],
-            ],
+            ];
 
-            'password_confirm' => [
+        $rules['password_confirm'] = [
                 'label' => 'Confirm new password',
                 'rules' => [
                     'required',
                     'matches[password]',
                 ],
-            ],
-        ];
+            ];
 
         if (! $this->validateData(
             $this->request->getPost(),
@@ -81,29 +82,20 @@ final class PasswordChangeController extends BaseController
                 );
         }
 
-        $currentPassword = (string) $this->request->getPost(
-            'current_password'
-        );
+        $newPassword = (string) $this->request->getPost('password');
 
-        $newPassword = (string) $this->request->getPost(
-            'password'
-        );
+        if (! $magicLinkSession) {
+            $currentPassword = (string) $this->request->getPost('current_password');
+            $result = auth()->check([
+                'email' => $user->email,
+                'password' => $currentPassword,
+            ]);
 
-        /*
-         * Re-authenticate before allowing the credential mutation.
-         */
-        $result = auth()->check([
-            'email'    => $user->email,
-            'password' => $currentPassword,
-        ]);
-
-        if (! $result->isOK()) {
-            return redirect()
-                ->to(service('sameOriginUrl')->to('change-password'))
-                ->with(
-                    'error',
-                    'The current password is incorrect.'
-                );
+            if (! $result->isOK()) {
+                return redirect()
+                    ->to(service('sameOriginUrl')->to('change-password'))
+                    ->with('error', 'The current password is incorrect.');
+            }
         }
 
         $database = db_connect();
@@ -170,11 +162,8 @@ final class PasswordChangeController extends BaseController
         /*
          * Existing sessions should not survive a credential change.
          */
-        service('userSessionRevocation')
-            ->revokeAll((int) $user->id);
-
-        service('userSessionRevocation')
-            ->clearSessionMarker();
+        service('userSessionRevocation')->revokeAll((int) $user->id);
+        service('userSessionRevocation')->clearSessionMarker();
 
         if ($user->inGroup('platform_admin')) {
             service('platformMfa')->clear(
@@ -183,13 +172,25 @@ final class PasswordChangeController extends BaseController
             );
         }
 
+        if ($magicLinkSession && ! $user->inGroup('platform_admin')) {
+            service('userSessionRevocation')->markCurrentSession();
+            session()->removeTempdata('magicLogin');
+            return redirect()
+                ->to(service('sameOriginUrl')->to('/'))
+                ->with('message', 'Password changed successfully.');
+        }
+
         auth()->logout();
+        session()->removeTempdata('magicLogin');
 
         return redirect()
             ->to(service('sameOriginUrl')->to('login'))
-            ->with(
-                'message',
-                'Password changed successfully. Sign in with your new password.'
-            );
+            ->with('message', 'Password changed successfully. Sign in with your new password.');
+    }
+
+    private function isMagicLinkSession(): bool
+    {
+        $marker = session()->getTempdata('magicLogin');
+        return $marker === true || $marker === 1 || $marker === '1';
     }
 }
