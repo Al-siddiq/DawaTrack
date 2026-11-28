@@ -180,7 +180,7 @@ SQL, [$tenantPublicId])->getRowArray();
                     $this->audit->append(new AuditAppendCommand(
                         actor: $platformActor,
                         actionCode: 'permission.revoked',
-                        category: AuditCategory::SECURITY,
+                        category: AuditCategory::AUTHORIZATION,
                         resourceType: 'tenant_membership',
                         resourcePublicId: (string) $current['public_id'],
                         reason: $reason,
@@ -195,7 +195,7 @@ SQL, [$tenantPublicId])->getRowArray();
                     $this->audit->append(new AuditAppendCommand(
                         actor: $platformActor,
                         actionCode: 'permission.revoked',
-                        category: AuditCategory::SECURITY,
+                        category: AuditCategory::AUTHORIZATION,
                         resourceType: 'tenant_membership',
                         resourcePublicId: (string) $targetMembership['public_id'],
                         reason: $reason,
