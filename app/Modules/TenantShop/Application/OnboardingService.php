@@ -320,7 +320,7 @@ SQL, [$userId])->getRowArray();
             'platform_subdomain' => strtolower(trim((string) ($input['platform_subdomain'] ?? ''))),
             'owner_name' => trim((string) ($input['owner_name'] ?? '')),
             'owner_email' => strtolower(trim((string) ($input['owner_email'] ?? ''))),
-            'reason' => trim((string) ($input['reason'] ?? '')),
+            'reason' => is_string($input['reason'] ?? null) ? trim($input['reason']) : '',
         ];
         $errors = [];
         foreach (['business_name', 'shop_name', 'address_line_1', 'city_town', 'state_region', 'platform_subdomain', 'owner_name', 'owner_email', 'reason'] as $required) {
