@@ -130,6 +130,7 @@ export const AdminApp = {
         public_id: row.tenant_public_id,
         legal_or_business_name: row.business_name,
         status: row.tenant_status,
+        entitlement_status: entitlement.status,
         tenant_created_at: row.tenant_created_at,
         shop_public_id: row.shop?.public_id || "",
         shop_name: row.shop?.name || "Shop record unavailable",
@@ -446,6 +447,7 @@ export const AdminApp = {
           h("p", tenant.legal_or_business_name),
           facts([
             ["Business account", managementLabel(tenant.status)],
+            ["Plan status", managementLabel(tenant.entitlement_status)],
             ["Current plan", current?.plan_name || "No current plan"],
             [
               "Current plan period",
@@ -689,8 +691,9 @@ export const AdminApp = {
         ]) : note("No Shop record is linked to this Tenant.", "warning"),
         h("h3", "Entitlements"),
         facts([
-          ["Current entitlement", periodText(entitlement.current)],
+          ["Current entitlement", entitlement.integrity_issue ? "Multiple current periods — review required" : periodText(entitlement.current)],
           ["Next scheduled entitlement", periodText(entitlement.next)],
+          ["Current periods detected", entitlement.current_count],
           ["Recent previous periods", (entitlement.historical_periods || []).length],
         ]),
         ...(entitlement.historical_periods || []).map(row => h("p", { key: row.public_id }, periodText(row))),
