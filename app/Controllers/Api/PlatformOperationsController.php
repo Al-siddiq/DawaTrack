@@ -33,6 +33,64 @@ final class PlatformOperationsController extends BaseController
         return $this->run(fn () => $this->ok((new PlatformTenantDetailQuery(db_connect()))->find($tenantPublicId)));
     }
 
+    public function ownerInvitation(string $tenant)
+    {
+        return $this->run(function () use ($tenant) {
+            $input = $this->request->getJSON(true) ?? [];
+            return $this->ok(service('ownerInvitationService')->issueForTenant(
+                $tenant,
+                (int) auth()->id(),
+                (string) ($input['reason'] ?? ''),
+            ));
+        });
+    }
+
+    public function ownerRecovery(string $tenant)
+    {
+        return $this->run(function () use ($tenant) {
+            $input = $this->request->getJSON(true) ?? [];
+            return $this->ok(service('ownerInvitationService')->issueForTenant(
+                $tenant,
+                (int) auth()->id(),
+                (string) ($input['reason'] ?? ''),
+                true,
+            ));
+        });
+    }
+
+    public function ownerReassign(string $tenant)
+    {
+        return $this->run(function () use ($tenant) {
+            $input = $this->request->getJSON(true) ?? [];
+            $result = service('ownerLifecycleService')->reassign(
+                $tenant,
+                (string) ($input['current_owner_membership_public_id'] ?? ''),
+                (string) ($input['target_email'] ?? ''),
+                (int) auth()->id(),
+                (string) ($input['reason'] ?? ''),
+                (bool) ($input['confirmed'] ?? false),
+            );
+            $membershipPublicId = $result['owner_membership_public_id'];
+            unset($result['former_owner_user_id']);
+            try {
+                $access = service('ownerInvitationService')->issueForMembership(
+                    $membershipPublicId,
+                    (int) auth()->id(),
+                    (string) ($input['reason'] ?? 'Primary Owner reassignment access handover.'),
+                    true,
+                );
+                $result['new_owner_access_delivery_status'] = $access['delivery_status'];
+            } catch (Throwable $deliveryFailure) {
+                log_message('error', 'owner_reassignment_access_email_failed {request_id} {exception_class}', [
+                    'request_id' => Services::requestContext()->requestId(),
+                    'exception_class' => $deliveryFailure::class,
+                ]);
+                $result['new_owner_access_delivery_status'] = 'FAILED';
+            }
+            return $this->ok($result);
+        });
+    }
+
     public function subscription(string $tenant)
     {
         return $this->run(fn () => $this->ok((new SubscriptionService(db_connect(), Services::auditService()))->create(
