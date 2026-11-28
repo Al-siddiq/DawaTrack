@@ -64,6 +64,7 @@ export const AuditPanel = {
       supportSearchLoading.value = true;
       if (pageNumber === 1) {
         supportTenants.value = [];
+        supportPagination.value = { page: 1, per_page: 25, total: 0, total_pages: 0 };
         support.tenant_public_id = "";
         support.shop_public_id = "";
       }
