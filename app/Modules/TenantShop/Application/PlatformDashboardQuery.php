@@ -57,7 +57,7 @@ SQL, [$asOf])->getRowArray() ?? [];
             "SELECT COUNT(DISTINCT u.id) AS total
              FROM users u
              INNER JOIN auth_groups_users gu ON gu.user_id = u.id
-             WHERE gu.group = 'platform_admin' AND u.active = 1 AND u.deleted_at IS NULL",
+             WHERE gu.`group` = 'platform_admin' AND u.active = 1 AND u.deleted_at IS NULL",
         )->getRowArray()['total'];
 
         $devices = [
