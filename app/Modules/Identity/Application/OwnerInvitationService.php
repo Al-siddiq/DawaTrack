@@ -27,7 +27,7 @@ final class OwnerInvitationService
     }
 
     /** @return array{delivery_status: string, expires_at: string} */
-    public function issueForTenant(string $tenantPublicId, int $adminUserId, string $reason, bool $recovery = false): array
+    public function issueForTenant(string $tenantPublicId, string $expectedMembershipPublicId, int $adminUserId, string $reason, bool $recovery = false): array
     {
         $expectedStatus = $recovery ? 'ACTIVE' : 'INVITED';
         $membership = $this->db->table('tenant_memberships m')
@@ -42,6 +42,9 @@ final class OwnerInvitationService
             ->get()->getRowArray();
         if ($membership === null) {
             throw new ApiException('RESOURCE_NOT_FOUND', 'The expected Primary Owner was not found.', 404);
+        }
+        if (! hash_equals((string) $membership['public_id'], $expectedMembershipPublicId)) {
+            throw new ApiException('OWNER_STATE_CHANGED', 'The Primary Owner changed. Refresh Tenant details and try again.', 409);
         }
 
         return $this->issueForMembership((string) $membership['public_id'], $adminUserId, $reason, $recovery);
