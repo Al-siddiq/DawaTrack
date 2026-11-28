@@ -34,7 +34,7 @@ Platform Admin onboarding form:
 - Tenant, Shop, membership, branding and primary platform domain are created atomically using the existing onboarding transaction and advisory lock.
 - The initial Trial is not created until Owner activation.
 - An invitation is issued through Shield's existing one-time magic-link identity. Existing magic-link identities are invalidated before issuing a new token.
-- Invitation email delivery failure does not roll back the already committed onboarding graph; the Tenant remains ONBOARDING and the Admin can safely resend. The API reports delivery state without exposing the token.
+- Before sending an invitation, the prior pending Owner's sessions, remember-me tokens and non-password API/2FA identities are invalidated; the email/password identity remains available for Shield's force-reset flow. Invitation email delivery failure does not roll back the already committed onboarding graph; the Tenant remains ONBOARDING and the Admin can safely resend. The API reports delivery state without exposing the token.
 
 ## 4. Owner invitation acceptance
 
@@ -70,6 +70,7 @@ Platform Admin onboarding form:
 - One Shop per Tenant.
 - At most one ACTIVE PRIMARY_OWNER per Tenant, enforced by the existing generated unique guard.
 - One active Tenant membership per Shield identity, enforced through `MembershipInvariantService` under the shared identity-membership advisory lock.
+- At most one pending Primary Owner invitation per Shield identity, preventing multiple Tenants from competing for the single Shield magic-link identity.
 - No raw passwords, reset tokens, magic-link tokens or credential verifiers in API responses, logs, Audit metadata or UI.
 - No Platform Admin impersonation and no Tenant business-data access is opened by onboarding/reassignment.
 - All sensitive Owner operations require a non-empty reason (maximum 500 chars) and current-state confirmation where applicable.
