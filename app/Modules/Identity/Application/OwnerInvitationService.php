@@ -73,6 +73,7 @@ SELECT m.id AS membership_id,
        t.status AS tenant_status,
        s.id AS shop_id,
        i.secret AS owner_email,
+       i.force_reset AS owner_force_reset,
        u.active AS user_active
 FROM tenant_memberships m
 INNER JOIN tenants t ON t.id = m.tenant_id
@@ -92,6 +93,9 @@ SQL, [$membershipPublicId])->getRowArray();
                 $expectedTenant = $recovery ? 'ACTIVE' : 'ONBOARDING';
                 if ($membership['membership_status'] !== $expectedMembership || $membership['tenant_status'] !== $expectedTenant) {
                     throw new ApiException('OWNER_STATE_CHANGED', 'The Primary Owner state changed. Refresh the Tenant details and try again.', 409);
+                }
+                if (! $recovery && (int) ($membership['owner_force_reset'] ?? 0) !== 1) {
+                    throw new ApiException('OWNER_PASSWORD_SETUP_REQUIRED', 'The invited Owner must be required to set a new password.', 409);
                 }
                 if ($this->db->table('tenant_memberships')->where([
                     'tenant_id' => (int) $membership['tenant_id'],
