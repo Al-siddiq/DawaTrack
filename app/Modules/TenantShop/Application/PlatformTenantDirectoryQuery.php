@@ -78,7 +78,7 @@ final class PlatformTenantDirectoryQuery
              FROM ({$base}) directory
              WHERE {$predicate}
              ORDER BY directory.tenant_created_at DESC, directory.sort_id DESC
-             LIMIT {$filters['per_page']} OFFSET {$offset}",
+             LIMIT " . $filters['per_page'] . " OFFSET " . $offset,
             array_merge([$asOf], $params),
         )->getResultArray();
 
