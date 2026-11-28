@@ -171,17 +171,33 @@ SQL, [$tenantPublicId])->getRowArray();
                         ->delete();
                 }
                 $platformActor = AuditActor::platformUser($adminUserId, (int) $tenant['tenant_id'], (int) $tenant['shop_id']);
-                foreach (array_merge($formerGrantRows, $targetGrantRows) as $grant) {
+                foreach ($formerGrantRows as $grant) {
                     $this->audit->append(new AuditAppendCommand(
                         actor: $platformActor,
                         actionCode: 'permission.revoked',
                         category: AuditCategory::SECURITY,
                         resourceType: 'tenant_membership',
-                        resourcePublicId: (string) ($grant['permission_code'] !== '' ? ($targetMembership['public_id'] ?? $current['public_id']) : $current['public_id']),
+                        resourcePublicId: (string) $current['public_id'],
                         reason: $reason,
                         metadata: [
                             'permission_code' => $grant['permission_code'],
                             'owner_transfer' => true,
+                            'former_owner' => true,
+                        ],
+                    ));
+                }
+                foreach ($targetGrantRows as $grant) {
+                    $this->audit->append(new AuditAppendCommand(
+                        actor: $platformActor,
+                        actionCode: 'permission.revoked',
+                        category: AuditCategory::SECURITY,
+                        resourceType: 'tenant_membership',
+                        resourcePublicId: (string) $targetMembership['public_id'],
+                        reason: $reason,
+                        metadata: [
+                            'permission_code' => $grant['permission_code'],
+                            'owner_transfer' => true,
+                            'former_owner' => false,
                         ],
                     ));
                 }
