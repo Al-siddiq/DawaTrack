@@ -10,6 +10,7 @@ use App\Modules\Audit\Domain\AuditActor;
 use App\Modules\Audit\Domain\AuditAppendCommand;
 use App\Modules\Audit\Domain\AuditCategory;
 use App\Support\SensitiveReason;
+use App\Security\UserSessionRevocationService;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Authentication\Authenticators\Session;
@@ -23,6 +24,7 @@ final class OwnerInvitationService
     public function __construct(
         private readonly BaseConnection $db,
         private readonly AuditService $audit,
+        private readonly UserSessionRevocationService $sessionRevocation,
     ) {
     }
 
@@ -115,6 +117,13 @@ SQL, [$membershipPublicId])->getRowArray();
                 $expires = Time::now()->addSeconds(setting('Auth.magicLinkLifetime'));
                 $identityModel = model(UserIdentityModel::class);
                 $identityModel->deleteIdentitiesByType($user, Session::ID_TYPE_MAGIC_LINK);
+                if (! $recovery) {
+                    $this->db->table('auth_remember_tokens')->where('user_id', (int) $membership['user_id'])->delete();
+                    $this->db->table('auth_identities')
+                        ->where('user_id', (int) $membership['user_id'])
+                        ->whereIn('type', ['access_token', 'hmac_sha256', 'email_2fa'])
+                        ->delete();
+                }
                 if ($identityModel->insert([
                     'user_id' => (int) $membership['user_id'],
                     'type' => Session::ID_TYPE_MAGIC_LINK,
@@ -148,6 +157,9 @@ SQL, [$membershipPublicId])->getRowArray();
             $this->releaseLock();
         }
 
+        if (! $recovery) {
+            $this->sessionRevocation->revokeAll((int) $membership['user_id']);
+        }
         $delivered = $this->sendMagicLink($membership['owner_email'], $user, $token);
         return [
             'delivery_status' => $delivered ? 'SENT' : 'FAILED',
