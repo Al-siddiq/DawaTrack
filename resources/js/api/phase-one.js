@@ -41,9 +41,9 @@ export const phaseOneApi = {
             if (value !== undefined && value !== null && value !== '') query.set(key, String(value));
         });
         const suffix = query.toString();
-        return apiRequest(\`/api/v1/platform/operations/tenants\${suffix ? \`?\${suffix}\` : ''}\`);
+        return apiRequest('/api/v1/platform/operations/tenants' + (suffix ? '?' + suffix : '));
     },
-    platformTenant: (publicId) => apiRequest(\`/api/v1/platform/operations/tenants/\${encodeURIComponent(publicId)}\`),
+    platformTenant: (publicId) => apiRequest('/api/v1/platform/operations/tenants/' + encodeURIComponent(publicId)),
     subscriptionAction: (id, values) => apiRequest(
         `/api/v1/platform/operations/tenants/${id}/subscriptions`,
         json('POST', values)
