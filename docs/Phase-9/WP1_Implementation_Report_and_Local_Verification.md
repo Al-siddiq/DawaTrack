@@ -118,6 +118,7 @@ This is source-level evidence only. Runtime MFA expiry, session, CSRF, route and
 - Inspected the pinned Shield 1.4.1 migration for the user enabled/deleted and group membership schema.
 - Inspected the current Tenant, Shop, subscription, domain, Device and Sync-generation migrations.
 - Confirmed the generated JavaScript files are byte-for-byte identical to their corresponding resource sources.
+- Passed parser-only JavaScript syntax checks for the four changed resource modules after stripping module import/export declarations; this is not a browser/runtime or npm build check.
 - Reviewed the new query/DTO allowlists for internal identifier and credential leakage.
 - Reviewed route filters, parameter allowlists, bounded page sizes and the removal of the former N+1 directory loop.
 - Confirmed no Phase 9 schema migration or permission change was added.
