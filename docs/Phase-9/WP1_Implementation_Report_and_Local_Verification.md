@@ -201,6 +201,9 @@ Use the authenticated browser session and browser Developer Tools Network panel.
 - Confirm offline state does not display cached Admin data or permit mutations.
 - Inspect localStorage, sessionStorage and IndexedDB for Admin API data; none should be stored.
 - Confirm Add shop, Plans, Web addresses, Activity and scoped support Audit remain functional.
+- On Plans, search for a Tenant beyond the first 50 records and navigate the server-paginated result pages.
+- In Activity support mode, search by Tenant/Shop name or hostname, navigate 25-result pages, select the intended Shop and confirm the search does not start support access or create an Audit scope.
+- Verify keyboard Enter in the support search triggers a search; only the explicit support confirmation after selecting a Shop and entering a reason starts the support workflow.
 - Verify Overview, Tenants, Tenant detail and existing workflows at phone, tablet and desktop widths.
 
 ## 6. Manual acceptance register
