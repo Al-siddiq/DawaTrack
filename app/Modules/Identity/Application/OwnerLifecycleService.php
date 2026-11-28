@@ -172,7 +172,7 @@ SQL, [$tenantPublicId])->getRowArray();
                     $this->db->table('auth_remember_tokens')->where('user_id', $affectedUserId)->delete();
                     $this->db->table('auth_identities')
                         ->where('user_id', $affectedUserId)
-                        ->whereIn('type', ['magic-link', 'access_token', 'hmac', 'email_2fa'])
+                        ->whereIn('type', ['magic-link', 'access_token', 'hmac_sha256', 'email_2fa'])
                         ->delete();
                 }
                 $platformActor = AuditActor::platformUser($adminUserId, (int) $tenant['tenant_id'], (int) $tenant['shop_id']);
