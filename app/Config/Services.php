@@ -87,7 +87,8 @@ class Services extends BaseService
 
         return new \App\Modules\Identity\Application\OwnerInvitationService(
             db_connect(),
-            static::auditService()
+            static::auditService(),
+            static::userSessionRevocation()
         );
     }
 
